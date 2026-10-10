@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="color-scheme" content="light dark">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -13,8 +13,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=1">
 <link rel="icon" type="image/png" href="icon-192.png?v=1">
 <script>try{var t=localStorage.getItem("via-theme");if(t)document.documentElement.setAttribute("data-theme",t);var v=JSON.parse(localStorage.getItem("via-trip")||"null"),pk=null;try{pk=sessionStorage.getItem("via-pick")}catch(e){}if(pk){document.documentElement.setAttribute("data-city",pk);document.documentElement.classList.add("pick")}else if(v&&v.date)document.documentElement.setAttribute("data-city",v.dest||"paris")}catch(e){}</script>
-<script>(function(){try{var sa=navigator.standalone===true||matchMedia("(display-mode: standalone)").matches;if(!sa)return;var r=document.documentElement;r.classList.add("sa");function f(){var p=innerHeight>=innerWidth,sh=p?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);var h=Math.max(innerHeight,document.documentElement.clientHeight||0);if(sh>h&&sh-h<80)h=sh;r.style.setProperty("--apph",h+"px")}f();addEventListener("resize",f);addEventListener("pageshow",f);if(window.visualViewport)visualViewport.addEventListener("resize",f);addEventListener("orientationchange",function(){setTimeout(f,300)})}catch(e){}})();</script>
-<script>(function(){try{var h=Math.max(screen.height,screen.width),r=h>=926?55:h>=852?55:h>=844?47:h>=812?44:h>=736?0:39;if(r)document.documentElement.style.setProperty("--scr",r+"px")}catch(e){}})();</script>
+<script>(function(){try{var ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);var sa=ios&&(navigator.standalone===true||matchMedia("(display-mode: standalone)").matches);if(!sa)return;var r=document.documentElement;r.classList.add("sa");function f(){var p=innerHeight>=innerWidth,sh=p?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);var h=Math.max(innerHeight,document.documentElement.clientHeight||0);if(sh>h&&sh-h<80)h=sh;r.style.setProperty("--apph",h+"px")}f();addEventListener("resize",f);addEventListener("pageshow",f);if(window.visualViewport)visualViewport.addEventListener("resize",f);addEventListener("orientationchange",function(){setTimeout(f,300)})}catch(e){}})();</script>
+<script>(function(){try{var h=Math.max(screen.height,screen.width),ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1),r=!ios?34:h>=926?55:h>=852?55:h>=844?47:h>=812?44:h>=736?0:39;if(r)document.documentElement.style.setProperty("--scr",r+"px")}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" media="print" onload="this.media='all'">
 <title>Viatico</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -787,6 +787,25 @@ html.sa #dest{bottom:auto;height:var(--apph)}
 :root[data-city="lisbona"][data-theme="dark"] body::before,:root[data-city="lisbona"]:has(#dm:checked) body::before{background:radial-gradient(58% 44% at 4% 2%,color-mix(in srgb,#1c4f8f 70%,transparent),transparent 70%),radial-gradient(46% 38% at 96% 10%,color-mix(in srgb,#866100 26%,transparent),transparent 70%),radial-gradient(44% 36% at 6% 56%,color-mix(in srgb,#f5c400 12%,transparent),transparent 70%),radial-gradient(58% 46% at 98% 98%,color-mix(in srgb,#f9e496 9%,transparent),transparent 70%)!important;opacity:1!important}
 @media (prefers-color-scheme:dark){:root[data-city="lisbona"]:not([data-theme="light"]) body::before{background:radial-gradient(58% 44% at 4% 2%,color-mix(in srgb,#1c4f8f 70%,transparent),transparent 70%),radial-gradient(46% 38% at 96% 10%,color-mix(in srgb,#866100 26%,transparent),transparent 70%),radial-gradient(44% 36% at 6% 56%,color-mix(in srgb,#f5c400 12%,transparent),transparent 70%),radial-gradient(58% 46% at 98% 98%,color-mix(in srgb,#f9e496 9%,transparent),transparent 70%)!important}}
 html.pick #splash{display:none!important}
+/* --- v7: rifiniture grafiche + Android --- */
+#dest{background:color-mix(in srgb,var(--bg) 84%,transparent)}
+.dcity b,.dcity small{min-width:0;overflow-wrap:anywhere;hyphens:auto}
+.dcity em{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:400px){
+ .dcity{grid-template-columns:1fr;grid-template-rows:auto;row-gap:1px;padding:12px 12px 11px}
+ .dcity .dem{grid-row:auto;font-size:1.7rem;margin-bottom:4px}
+ .dcity b{font-size:1rem}
+ .dcity em{font-size:.66rem;margin-top:6px}
+ .dcard{padding:20px 14px 16px}
+ .dname{font-size:2.1rem}
+}
+#setup{background:color-mix(in srgb,var(--bg) 84%,transparent)}
+.sgrp label.f{justify-content:flex-end}
+@media (max-width:480px){body:not(.scrolled) .wx{width:0;margin-left:0;padding:0;border-width:0;overflow:hidden}.appt{flex:1 1 auto;min-width:0}}
+.tabbar{background:linear-gradient(180deg,var(--hi2),transparent 55%),color-mix(in srgb,var(--bg) 78%,transparent)!important;-webkit-backdrop-filter:blur(22px) saturate(200%)!important;backdrop-filter:blur(22px) saturate(200%)!important}
+@media (max-width:420px){#costi th,#costi td{padding:9px 7px;font-size:.92rem}#costi td:not(:first-child),#costi th:not(:first-child){white-space:nowrap;width:1%}#costi td:first-child,#costi th:first-child{width:auto}}
+button,label,summary,a{touch-action:manipulation}
+@media (pointer:coarse){button,.dp,.chip,label[for^="t-"]{min-height:44px}}
 </style>
 </head>
 <body>
