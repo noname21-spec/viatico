@@ -489,9 +489,32 @@ function openDest(){closeSetup();closeSheet();setCity(null);dfind.value="";rende
 function closeDest(){destEl.classList.remove("on");destEl.setAttribute("aria-hidden","true")}
 PAR.openDest=openDest;
 dfind.addEventListener("input",renderDest);
+/* zoom sulla card scelta: la card si espande a schermo intero con i colori della città */
+var zbusy=false;
+function zoomGo(btn,d,fn){
+if(zbusy)return;
+if(!btn.animate||(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){fn();return}
+zbusy=true;
+var r=btn.getBoundingClientRect(),cl=document.createElement("div");
+cl.className="dcity ok zcl";cl.setAttribute("aria-hidden","true");
+cl.style.cssText="--a:"+d.col[0]+";--b:"+d.col[1]+";--c:"+d.col[2]+";left:"+r.left+"px;top:"+r.top+"px;width:"+r.width+"px;height:"+r.height+"px";
+cl.innerHTML=btn.innerHTML+'<i class="zwash"></i><div class="zc"><span class="zem">'+d.e+'</span><b class="zn">'+esc(d.n)+'</b></div>';
+document.body.appendChild(cl);btn.style.visibility="hidden";
+var E="cubic-bezier(.7,0,.2,1)",geo=cl.animate([{left:r.left+"px",top:r.top+"px",width:r.width+"px",height:r.height+"px",borderRadius:"22px"},{left:"0px",top:"0px",width:"100%",height:"100%",borderRadius:"0px"}],{duration:540,easing:E,fill:"forwards"});
+[].forEach.call(cl.children,function(c){
+ if(c.classList.contains("zwash"))c.animate([{opacity:0},{opacity:1}],{duration:380,delay:60,easing:"ease-out",fill:"forwards"});
+ else if(c.classList.contains("zc"))c.animate([{opacity:0,transform:"scale(.6)"},{opacity:1,transform:"none"}],{duration:320,delay:230,easing:"cubic-bezier(.2,1.3,.4,1)",fill:"forwards"});
+ else c.animate([{opacity:1},{opacity:0}],{duration:200,fill:"forwards"})});
+destEl.animate([{opacity:1},{opacity:0}],{duration:420,easing:"ease-in",fill:"forwards"});
+var fin=function(){
+ try{ss("via-zoom",JSON.stringify({a:d.col[0],b:d.col[1],c:d.col[2],e:d.e,n:d.n}))}catch(x){}
+ fn();
+ setTimeout(function(){destEl.getAnimations().forEach(function(a){a.cancel()});btn.style.visibility="";zbusy=false;
+  cl.animate([{opacity:1},{opacity:0}],{duration:420,easing:"ease-out",fill:"forwards"}).onfinish=function(){cl.remove()}},60)};
+geo.onfinish=fin;geo.oncancel=function(){cl.remove();zbusy=false}}
 dgrid.addEventListener("click",function(e){var b=e.target.closest(".dcity");if(!b)return;var d=dOf(b.dataset.city);
 if(!d.ok){b.animate&&b.animate([{transform:"translateX(0)"},{transform:"translateX(-4px)"},{transform:"translateX(4px)"},{transform:"none"}],{duration:300,easing:"ease-out"});toast("La guida di "+d.n+" arriva presto ✨");return}
-if(d.id!==PD.id){goCity(d.id,"setup");return}setCity(d.id);closeDest();openSetup(!CFG)});
+zoomGo(b,d,function(){if(d.id!==PD.id){goCity(d.id,"setup");return}setCity(d.id);closeDest();openSetup(!CFG)})});
 $("#sback").addEventListener("click",function(){openDest()});
 $("#shdest").addEventListener("click",function(){openDest()});
 PAR.openSetup=openSetup;
@@ -538,5 +561,5 @@ document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeSheet(
 
 /* avvio */
 if(CFG&&CFG.date&&CFG.a_arr&&CFG.r_dep){if(!CFG.date_r)CFG.date_r=CFG.date;setCity(PD.id);renderAll();if(TRIP.multi&&CFG.stay&&CFG.stay.addr&&!CFG.stay.geo)geocode();if(OPEN==="setup")openSetup(false)}
-else{CFG=null;if(PICK&&CITIES[PICK]){setCity(PD.id);openSetup(true)}else{setCity(null);setTimeout(openDest,matchMedia("(prefers-reduced-motion: reduce)").matches?0:1900)}}
+else{CFG=null;if(PICK&&CITIES[PICK]){setCity(PD.id);openSetup(true)}else{setCity(null);setTimeout(openDest,matchMedia("(prefers-reduced-motion: reduce)").matches?0:2500)}}
 })();

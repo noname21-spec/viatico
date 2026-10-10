@@ -67,6 +67,7 @@ function closeQr(){qrbox.classList.remove("on");qrbox.setAttribute("aria-hidden"
 function copyText(t){return(navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(t):Promise.reject()).catch(function(){var a=document.createElement("textarea");a.value=t;a.setAttribute("readonly","");a.style.cssText="position:fixed;opacity:0;top:0";document.body.appendChild(a);a.select();var ok=false;try{ok=document.execCommand("copy")}catch(e){}a.remove();if(!ok)throw 0})}
 if(qrbox){
  $("#shapp").addEventListener("click",function(){openQr()});
+ var ds=$("#dshare");if(ds)ds.addEventListener("click",function(){openQr()});
  $("#qrclose").addEventListener("click",closeQr);
  qrbox.addEventListener("click",function(e){if(e.target===qrbox)closeQr()});
  document.addEventListener("keydown",function(e){if(e.key==="Escape")closeQr()});
