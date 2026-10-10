@@ -471,7 +471,7 @@ $$("input,select",form).forEach(function(x){x.classList.remove("bad")});serr.tex
 closeSheet();setup.classList.add("on");setup.setAttribute("aria-hidden","false");setup.scrollTop=0}
 function closeSetup(){setup.classList.remove("on");setup.setAttribute("aria-hidden","true")}
 /* ===== destinazioni ===== */
-var DEST=(window.CITY_ORDER||Object.keys(CITIES)).map(function(id){var C=CITIES[id];return{id:id,n:C.n,c:C.cn,e:C.e,ok:1,col:C.col,k:C.k}}).concat(window.SOON||[]);
+var DEST=(window.CITY_ORDER||Object.keys(CITIES)).map(function(id){var C=CITIES[id];return{id:id,n:C.n,c:C.cn,e:C.e,ok:1,col:C.col,k:C.k,r:(window.REG||{})[id]||"eu"}}).concat(window.SOON||[]);
 var SETDEST=PD.id;
 function dOf(id){return DEST.filter(function(d){return d.id===id})[0]||DEST[0]}
 function setCity(id){var r=document.documentElement,cur=r.getAttribute("data-city")||"";if((id||"")===cur)return;if(id)r.setAttribute("data-city",id);else r.removeAttribute("data-city");
@@ -481,9 +481,12 @@ function goCity(id,open){ss("via-pick",id);if(open)ss("via-open",open);location.
 function rangeOf(c){var a=dateObj(c.date),b=dateObj(c.date_r||c.date);if((c.date_r||c.date)===c.date)return dateShort(c.date);return a.getUTCMonth()===b.getUTCMonth()?a.getUTCDate()+"–"+b.getUTCDate()+" "+MESI[b.getUTCMonth()]:dateShort(c.date)+" – "+dateShort(c.date_r)}
 var destEl=$("#dest"),dgrid=$("#dgrid"),dfind=$("#dfind");
 function sw(d){return '--a:'+d.col[0]+';--b:'+d.col[1]+';--c:'+d.col[2]}
-function renderDest(){var q=(dfind.value||"").trim().toLowerCase(),list=DEST.filter(function(d){return !q||d.k.indexOf(q)>=0||d.n.toLowerCase().indexOf(q)>=0});
+var DREG="";
+(function(){var el=$("#dreg");if(!el)return;var R=window.REGN||{};el.innerHTML='<button type="button" class="on" data-r="">Tutte</button>'+Object.keys(R).map(function(k){return '<button type="button" data-r="'+k+'">'+R[k]+'</button>'}).join("");
+el.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;DREG=b.dataset.r;$$("button",el).forEach(function(x){x.classList.toggle("on",x===b)});renderDest()})})();
+function renderDest(){var q=(dfind.value||"").trim().toLowerCase(),list=DEST.filter(function(d){return(!DREG||d.r===DREG)&&(!q||d.k.indexOf(q)>=0||d.n.toLowerCase().indexOf(q)>=0)});
 dgrid.innerHTML=list.map(function(d){return '<button type="button" class="dcity'+(d.ok?" ok":"")+'" data-city="'+d.id+'" style="'+sw(d)+'"><i class="dsw"></i><span class="dem">'+d.e+'</span><b>'+esc(d.n)+'</b><small>'+esc(d.c)+'</small><em>'+(d.ok?"Guida completa":"In arrivo")+'</em></button>'}).join("");
-var none=$("#dnone");none.hidden=list.length>0;if(!list.length)none.textContent="Nessuna guida per «"+dfind.value.trim()+"», per ora. Le prossime città arrivano presto.";
+var none=$("#dnone");none.hidden=list.length>0;if(!list.length)none.textContent=q?"Nessuna città per «"+dfind.value.trim()+"», per ora. Ne aggiungiamo di nuove di continuo.":"Nessuna città in questa area, per ora.";
 var mine=$("#dmine");if(SAVED&&SAVED.date&&CITIES[SAVED.dest]){var d=dOf(SAVED.dest);mine.hidden=false;mine.innerHTML='<button type="button" class="dtrip" style="'+sw(d)+'"><span>'+d.e+'</span><div><small>Il tuo viaggio</small><b>'+esc(d.n)+' · '+esc(rangeOf(SAVED))+'</b></div><i>›</i></button>';$(".dtrip",mine).addEventListener("click",function(){if(SAVED.dest===PD.id&&CFG){closeDest();setCity(PD.id)}else goCity(SAVED.dest)})}else{mine.hidden=true;mine.innerHTML=""}}
 function openDest(){closeSetup();closeSheet();setCity(null);dfind.value="";renderDest();destEl.classList.add("on");destEl.setAttribute("aria-hidden","false");destEl.scrollTop=0}
 function closeDest(){destEl.classList.remove("on");destEl.setAttribute("aria-hidden","true")}

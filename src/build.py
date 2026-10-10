@@ -1,5 +1,6 @@
 import os,json
 from themes import css_for
+from world import W,REG as REGN
 d=os.path.dirname(os.path.abspath(__file__))
 r=lambda n:open(os.path.join(d,n)).read()
 ORDER=["paris","bcn","roma","londra","amsterdam","lisbona","berlino","praga","vienna"]
@@ -14,9 +15,11 @@ META={
 "praga":{"n":"Praga","c":"Repubblica Ceca","e":"🏰","col":["#11457e","#c8102e","#d4a017"],"k":"praga prague repubblica ceca"},
 "vienna":{"n":"Vienna","c":"Austria","e":"🎻","col":["#a7102a","#d9b25f","#ffffff"],"k":"vienna wien austria"}}
 have=[c for c in ORDER if os.path.exists(os.path.join(d,'cities',c+'.js'))]
-soon=[dict(id=c,**META[c]) for c in ORDER if c not in have and c in META]
+RG={"paris":"eu","bcn":"eu","roma":"eu","londra":"eu","amsterdam":"eu","lisbona":"eu","berlino":"eu","praga":"eu","vienna":"eu"}
+soon=[dict(id=c,r=RG[c],**META[c]) for c in ORDER if c not in have and c in META]
+soon+=[dict(id=i,n=n,c=c,e=e,r=r,col=col,k=k) for (i,n,c,e,r,col,k) in W if i not in have]
 cities=r('cities/_it.js')+'\n'+''.join(r('cities/'+c+'.js')+'\n' for c in have)
-boot='window.CITY_ORDER='+json.dumps(have)+';window.SOON='+json.dumps(soon,ensure_ascii=False)+''';
+boot='window.CITY_ORDER='+json.dumps(have)+';window.REG='+json.dumps(RG)+';window.REGN='+json.dumps(REGN,ensure_ascii=False)+';window.SOON='+json.dumps(soon,ensure_ascii=False)+''';
 (function(){var id=null;try{id=sessionStorage.getItem("via-pick")}catch(e){}if(!id||!CITIES[id]){id=null;try{var t=JSON.parse(localStorage.getItem("via-trip")||"null");if(t&&t.date)id=t.dest||"paris"}catch(e){}}
 window.PD=CITIES[id]||CITIES[CITY_ORDER[0]];Object.keys(CITIES).forEach(function(k){var C=CITIES[k];C.fx=C.fx||{};C.T=C.T||{}});
 /* skyline della città */
