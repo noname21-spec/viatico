@@ -759,6 +759,16 @@ html.pick #splash{display:none!important}
 @media (max-width:480px){body:not(.scrolled) .wx{width:0;margin-left:0;padding:0;border-width:0;overflow:hidden}.appt{flex:1 1 auto;min-width:0}}
 .tabbar{background:linear-gradient(180deg,var(--hi2),transparent 55%),color-mix(in srgb,var(--bg) 78%,transparent)!important;-webkit-backdrop-filter:blur(22px) saturate(200%)!important;backdrop-filter:blur(22px) saturate(200%)!important}
 @media (max-width:420px){#costi th,#costi td{padding:9px 7px;font-size:.92rem}#costi td:not(:first-child),#costi th:not(:first-child){white-space:nowrap;width:1%}#costi td:first-child,#costi th:first-child{width:auto}}
+/* --- barra condensabile al centro con l'icona dell'app --- */
+.tabbar{transition:width .5s cubic-bezier(.22,1,.36,1),right .5s cubic-bezier(.22,1,.36,1),height .4s ease,border-radius .5s ease,box-shadow .4s ease,background-color .5s ease,color .5s ease}
+body.tbmin .tabbar{width:58px;height:58px;right:calc(50% - 29px);padding:5px;border-radius:50%!important;-webkit-tap-highlight-color:transparent}
+body.tbmin .tabbar label{display:none!important}
+body.tbmin .tbind{left:5px!important;top:5px;bottom:5px;width:calc(100% - 10px)!important}
+.tbicon{position:absolute;z-index:2;inset:8px;width:calc(100% - 16px);height:calc(100% - 16px);border-radius:50%;object-fit:cover;pointer-events:none;opacity:0;transform:scale(.4) rotate(-40deg);transition:opacity .25s ease,transform .5s cubic-bezier(.22,1,.36,1);box-shadow:0 1px 3px rgba(0,0,0,.25)}
+body.tbmin .tbicon{opacity:1;transform:none}
+.tbdots{z-index:3;top:-5px!important;right:-5px!important;width:26px!important;height:26px!important;line-height:24px!important;font-size:.85rem!important;border:1px solid var(--edge)}
+html.sa body.tbmin .tabbar{top:calc(var(--apph) - 58px - 10px - env(safe-area-inset-bottom,0px)*.45)}
+@media (prefers-reduced-motion:reduce){.tabbar,.tbicon{transition-duration:.01s}}
 button,label,summary,a{touch-action:manipulation}
 @media (pointer:coarse){button,.dp,.chip,label[for^="t-"]{min-height:44px}}
 </style>

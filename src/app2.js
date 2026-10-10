@@ -178,12 +178,16 @@ if(cfg()){render();setTimeout(function(){auto(false)},1500)}
 var rs=[].slice.call(document.querySelectorAll(".tabr")),bar=document.querySelector(".tabbar"),body=document.body,cur=0,t1,t2,blks=[].slice.call(document.querySelectorAll(".blk"));
 function onBlk(){var a=document.querySelector(".tabr:checked");blks.forEach(function(b){b.classList.toggle("on",a&&b.id===a.id.slice(2))})}
 rs.forEach(function(r,i){if(r.checked)cur=i;r.addEventListener("change",function(){if(!r.checked)return;body.classList.remove("dir-r","dir-l");void body.offsetWidth;body.classList.add(i>=cur?"dir-r":"dir-l");cur=i;onBlk();
-bar.classList.remove("moving");void bar.offsetWidth;bar.classList.add("moving");clearTimeout(t1);t1=setTimeout(function(){bar.classList.remove("moving")},1050);setMin(false);upd()})});
+bar.classList.remove("moving");void bar.offsetWidth;bar.classList.add("moving");clearTimeout(t1);t1=setTimeout(function(){bar.classList.remove("moving")},1050);setMin(false);badge(r);if(r.id==="t-mappa")setTimeout(function(){if(isMap())setMin(true)},600);upd()})});
 /* barra che si riduce a un pulsante tondo mentre scorri */
-var last={};function setMin(on){body.classList.toggle("tbmin",on)}
-blks.forEach(function(b){b.addEventListener("scroll",function(){var y=Math.max(0,Math.min(b.scrollTop,b.scrollHeight-b.clientHeight)),d=y-(last[b.id]||0);last[b.id]=y;if(Math.abs(d)>4&&!body.classList.contains("tbmin")&&!body.classList.contains("nomin"))setMin(true)},{passive:true})});
+function isMap(){var a=document.querySelector(".tabr:checked");return !!a&&a.id==="t-mappa"}
+function badge(r){var l=r&&document.querySelector('label[for="'+r.id+'"] .em'),d=bar.querySelector(".tbdots");if(l&&d)d.textContent=l.textContent}
+var last={},lockT=0;function setMin(on){if(on===body.classList.contains("tbmin"))return;body.classList.toggle("tbmin",on);lockT=Date.now();bar.setAttribute("aria-label",on?"Apri le sezioni":"Sezioni")}
+blks.forEach(function(b){b.addEventListener("scroll",function(){var y=Math.max(0,Math.min(b.scrollTop,b.scrollHeight-b.clientHeight)),d=y-(last[b.id]||0);last[b.id]=y;if(body.classList.contains("nomin")||Date.now()-lockT<700)return;var mn=body.classList.contains("tbmin");if(!mn&&d>4&&y>24)setMin(true);else if(mn&&(d<-10||y<=8)&&!isMap())setMin(false)},{passive:true})});
 bar.addEventListener("click",function(e){if(body.classList.contains("tbmin")){e.preventDefault();e.stopPropagation();setMin(false)}},true);
 var wasMin=false;new MutationObserver(function(){var m=body.classList.contains("tbmin");if(m===wasMin)return;wasMin=m;if(!m){bar.classList.remove("opening");void bar.offsetWidth;bar.classList.add("opening");clearTimeout(t2);t2=setTimeout(function(){bar.classList.remove("opening")},600)}}).observe(body,{attributes:true,attributeFilter:["class"]});
+document.addEventListener("pointerdown",function(e){if(body.classList.contains("tbmin")||bar.contains(e.target))return;var a=document.querySelector(".tabr:checked"),b=a&&document.getElementById(a.id.slice(2));if(a&&(a.id==="t-mappa"||(b&&b.scrollTop>24)))setMin(true)},{passive:true});
+badge(document.querySelector(".tabr:checked"));
 function rOf(l){return l&&document.getElementById(l.htmlFor)}
 /* tocca la sezione già aperta: torna in cima */
 [].forEach.call(bar.querySelectorAll("label"),function(l){l.addEventListener("click",function(){if(body.classList.contains("tbmin"))return;var r=rOf(l);if(!r||!r.checked)return;var b=document.getElementById(r.id.slice(2));if(!b||b.scrollTop<=0)return;body.classList.add("nomin");try{b.scrollTo({top:0,behavior:"smooth"})}catch(e){b.scrollTop=0}clearTimeout(l._t);l._t=setTimeout(function(){body.classList.remove("nomin")},900)})});

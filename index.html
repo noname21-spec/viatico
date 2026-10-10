@@ -804,6 +804,16 @@ html.pick #splash{display:none!important}
 @media (max-width:480px){body:not(.scrolled) .wx{width:0;margin-left:0;padding:0;border-width:0;overflow:hidden}.appt{flex:1 1 auto;min-width:0}}
 .tabbar{background:linear-gradient(180deg,var(--hi2),transparent 55%),color-mix(in srgb,var(--bg) 78%,transparent)!important;-webkit-backdrop-filter:blur(22px) saturate(200%)!important;backdrop-filter:blur(22px) saturate(200%)!important}
 @media (max-width:420px){#costi th,#costi td{padding:9px 7px;font-size:.92rem}#costi td:not(:first-child),#costi th:not(:first-child){white-space:nowrap;width:1%}#costi td:first-child,#costi th:first-child{width:auto}}
+/* --- barra condensabile al centro con l'icona dell'app --- */
+.tabbar{transition:width .5s cubic-bezier(.22,1,.36,1),right .5s cubic-bezier(.22,1,.36,1),height .4s ease,border-radius .5s ease,box-shadow .4s ease,background-color .5s ease,color .5s ease}
+body.tbmin .tabbar{width:58px;height:58px;right:calc(50% - 29px);padding:5px;border-radius:50%!important;-webkit-tap-highlight-color:transparent}
+body.tbmin .tabbar label{display:none!important}
+body.tbmin .tbind{left:5px!important;top:5px;bottom:5px;width:calc(100% - 10px)!important}
+.tbicon{position:absolute;z-index:2;inset:8px;width:calc(100% - 16px);height:calc(100% - 16px);border-radius:50%;object-fit:cover;pointer-events:none;opacity:0;transform:scale(.4) rotate(-40deg);transition:opacity .25s ease,transform .5s cubic-bezier(.22,1,.36,1);box-shadow:0 1px 3px rgba(0,0,0,.25)}
+body.tbmin .tbicon{opacity:1;transform:none}
+.tbdots{z-index:3;top:-5px!important;right:-5px!important;width:26px!important;height:26px!important;line-height:24px!important;font-size:.85rem!important;border:1px solid var(--edge)}
+html.sa body.tbmin .tabbar{top:calc(var(--apph) - 58px - 10px - env(safe-area-inset-bottom,0px)*.45)}
+@media (prefers-reduced-motion:reduce){.tabbar,.tbicon{transition-duration:.01s}}
 button,label,summary,a{touch-action:manipulation}
 @media (pointer:coarse){button,.dp,.chip,label[for^="t-"]{min-height:44px}}
 </style>
@@ -932,7 +942,7 @@ button,label,summary,a{touch-action:manipulation}
 <div class="appbar"><span class="appt" id="appt">Parigi</span><span class="wx" id="wx" aria-live="polite"><i class="wxi" aria-hidden="true">🌤️</i><b id="wxt">--°</b></span></div>
 <button type="button" class="gear" id="gear" aria-label="Impostazioni">⚙️</button>
 <label for="dm" class="iosw" title="Modalità chiara/scura"><span class="trk"><b class="ic sun" aria-hidden="true">☀️</b><b class="ic moon" aria-hidden="true">🌙</b><i class="knob"></i></span><span class="vh">Modalità scura</span></label>
-<nav class="tabbar" aria-label="Sezioni"><i class="tbind" aria-hidden="true"></i><label for="t-itinerario"><b class="em em-spin" aria-hidden="true">🕗</b><span>Tappe</span></label><label for="t-voli"><b class="em em-fly" aria-hidden="true">✈️</b><span>Voli</span></label><label for="t-mappa"><b class="em em-unfold" aria-hidden="true">🗺️</b><span>Mappa</span></label><label for="t-mangiare"><b class="em em-bob" aria-hidden="true">🥐</b><span>Pasti</span></label><label for="t-costi"><b class="em em-flip" aria-hidden="true">💶</b><span>Costi</span></label><label for="t-consigli"><b class="em em-glow" aria-hidden="true">💡</b><span>Consigli</span></label><i class="tbdots" aria-hidden="true">⋯</i></nav>
+<nav class="tabbar" aria-label="Sezioni"><i class="tbind" aria-hidden="true"></i><label for="t-itinerario"><b class="em em-spin" aria-hidden="true">🕗</b><span>Tappe</span></label><label for="t-voli"><b class="em em-fly" aria-hidden="true">✈️</b><span>Voli</span></label><label for="t-mappa"><b class="em em-unfold" aria-hidden="true">🗺️</b><span>Mappa</span></label><label for="t-mangiare"><b class="em em-bob" aria-hidden="true">🥐</b><span>Pasti</span></label><label for="t-costi"><b class="em em-flip" aria-hidden="true">💶</b><span>Costi</span></label><label for="t-consigli"><b class="em em-glow" aria-hidden="true">💡</b><span>Consigli</span></label><img class="tbicon" src="icon-192.png" alt="" aria-hidden="true" draggable="false"><i class="tbdots" aria-hidden="true">🕗</i></nav>
 
 <div id="sheet" aria-hidden="true"><div class="shc" role="dialog" aria-label="Impostazioni">
 <h3>⚙️ Impostazioni</h3>
@@ -3821,12 +3831,16 @@ if(cfg()){render();setTimeout(function(){auto(false)},1500)}
 var rs=[].slice.call(document.querySelectorAll(".tabr")),bar=document.querySelector(".tabbar"),body=document.body,cur=0,t1,t2,blks=[].slice.call(document.querySelectorAll(".blk"));
 function onBlk(){var a=document.querySelector(".tabr:checked");blks.forEach(function(b){b.classList.toggle("on",a&&b.id===a.id.slice(2))})}
 rs.forEach(function(r,i){if(r.checked)cur=i;r.addEventListener("change",function(){if(!r.checked)return;body.classList.remove("dir-r","dir-l");void body.offsetWidth;body.classList.add(i>=cur?"dir-r":"dir-l");cur=i;onBlk();
-bar.classList.remove("moving");void bar.offsetWidth;bar.classList.add("moving");clearTimeout(t1);t1=setTimeout(function(){bar.classList.remove("moving")},1050);setMin(false);upd()})});
+bar.classList.remove("moving");void bar.offsetWidth;bar.classList.add("moving");clearTimeout(t1);t1=setTimeout(function(){bar.classList.remove("moving")},1050);setMin(false);badge(r);if(r.id==="t-mappa")setTimeout(function(){if(isMap())setMin(true)},600);upd()})});
 /* barra che si riduce a un pulsante tondo mentre scorri */
-var last={};function setMin(on){body.classList.toggle("tbmin",on)}
-blks.forEach(function(b){b.addEventListener("scroll",function(){var y=Math.max(0,Math.min(b.scrollTop,b.scrollHeight-b.clientHeight)),d=y-(last[b.id]||0);last[b.id]=y;if(Math.abs(d)>4&&!body.classList.contains("tbmin")&&!body.classList.contains("nomin"))setMin(true)},{passive:true})});
+function isMap(){var a=document.querySelector(".tabr:checked");return !!a&&a.id==="t-mappa"}
+function badge(r){var l=r&&document.querySelector('label[for="'+r.id+'"] .em'),d=bar.querySelector(".tbdots");if(l&&d)d.textContent=l.textContent}
+var last={},lockT=0;function setMin(on){if(on===body.classList.contains("tbmin"))return;body.classList.toggle("tbmin",on);lockT=Date.now();bar.setAttribute("aria-label",on?"Apri le sezioni":"Sezioni")}
+blks.forEach(function(b){b.addEventListener("scroll",function(){var y=Math.max(0,Math.min(b.scrollTop,b.scrollHeight-b.clientHeight)),d=y-(last[b.id]||0);last[b.id]=y;if(body.classList.contains("nomin")||Date.now()-lockT<700)return;var mn=body.classList.contains("tbmin");if(!mn&&d>4&&y>24)setMin(true);else if(mn&&(d<-10||y<=8)&&!isMap())setMin(false)},{passive:true})});
 bar.addEventListener("click",function(e){if(body.classList.contains("tbmin")){e.preventDefault();e.stopPropagation();setMin(false)}},true);
 var wasMin=false;new MutationObserver(function(){var m=body.classList.contains("tbmin");if(m===wasMin)return;wasMin=m;if(!m){bar.classList.remove("opening");void bar.offsetWidth;bar.classList.add("opening");clearTimeout(t2);t2=setTimeout(function(){bar.classList.remove("opening")},600)}}).observe(body,{attributes:true,attributeFilter:["class"]});
+document.addEventListener("pointerdown",function(e){if(body.classList.contains("tbmin")||bar.contains(e.target))return;var a=document.querySelector(".tabr:checked"),b=a&&document.getElementById(a.id.slice(2));if(a&&(a.id==="t-mappa"||(b&&b.scrollTop>24)))setMin(true)},{passive:true});
+badge(document.querySelector(".tabr:checked"));
 function rOf(l){return l&&document.getElementById(l.htmlFor)}
 /* tocca la sezione già aperta: torna in cima */
 [].forEach.call(bar.querySelectorAll("label"),function(l){l.addEventListener("click",function(){if(body.classList.contains("tbmin"))return;var r=rOf(l);if(!r||!r.checked)return;var b=document.getElementById(r.id.slice(2));if(!b||b.scrollTop<=0)return;body.classList.add("nomin");try{b.scrollTo({top:0,behavior:"smooth"})}catch(e){b.scrollTop=0}clearTimeout(l._t);l._t=setTimeout(function(){body.classList.remove("nomin")},900)})});
