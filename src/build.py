@@ -24,11 +24,14 @@ boot='window.CITY_ORDER='+json.dumps(have)+';window.REG='+json.dumps(RG)+';windo
 window.PD=CITIES[id]||CITIES[CITY_ORDER[0]];Object.keys(CITIES).forEach(function(k){var C=CITIES[k];C.fx=C.fx||{};C.T=C.T||{}});
 /* skyline della città */
 if(PD.SKY)[].forEach.call(document.querySelectorAll("svg.sky,svg.spsky"),function(sv){var df=sv.querySelector("defs");sv.innerHTML="";if(df)sv.appendChild(df);sv.insertAdjacentHTML("beforeend",PD.SKY)})})();'''
+cfgp=os.path.join(d,'supabase.json')
+SBC=json.load(open(cfgp)) if os.path.exists(cfgp) else {}
+SYNC=r('sync.js').replace('__SB_URL__',SBC.get('url','')).replace('__SB_KEY__',SBC.get('key',''))
 head=r('head.html')
 theme=''.join(css_for(c) for c in have if c!='paris')
 mark='html.pick #splash{display:none!important}'
 assert head.count(mark)==1
 head=head.replace(mark,theme+mark)
-html=head+r('body.html')+'<script>\n'+r('globe.js').replace('__LANDMASK__',r('landmask.txt').strip())+'\n</script>\n<script>\n'+cities+boot+'\n</script>\n<script>\n'+r('app1.js')+'\n</script>\n<script>\n'+r('app2.js')+'\n</script>\n<script>\n'+r('pdf.js')+'\n</script>\n</body>\n</html>\n'
+html=head+r('body.html')+'<script>\n'+r('globe.js').replace('__LANDMASK__',r('landmask.txt').strip())+'\n</script>\n<script>\n'+cities+boot+'\n</script>\n<script>\n'+r('app1.js')+'\n</script>\n<script>\n'+r('app2.js')+'\n</script>\n<script>\n'+r('pdf.js')+'\n</script>\n<script>\n'+SYNC+'\n</script>\n</body>\n</html>\n'
 open('/home/claude/viatico/index.html','w').write(html)
 print(len(html),have)

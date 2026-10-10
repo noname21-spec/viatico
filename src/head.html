@@ -813,7 +813,7 @@ html.sa body.tbmin .tabbar{top:calc(var(--apph) - 58px - 10px - env(safe-area-in
 #zin.out{animation:zinOut .65s ease forwards}
 @keyframes zinOut{to{opacity:0;transform:scale(1.06)}}
 /* --- fluidità: niente sfocature sulle grandi superfici (la sfocatura resta solo su barra in alto e barra sezioni) --- */
-.blk,.scard,.dcard,.shc,.qrc,#dest,#setup,#sheet,#qrbox,.gear{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.blk,.scard,.dcard,.shc,.qrc,#dest,#setup,#sheet,#qrbox,#acct,.gear{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 .appbar::before{-webkit-backdrop-filter:blur(14px) saturate(160%)!important;backdrop-filter:blur(14px) saturate(160%)!important}
 .tabbar{-webkit-backdrop-filter:blur(14px) saturate(170%)!important;backdrop-filter:blur(14px) saturate(170%)!important}
 .dlatin{margin:16px 0 0!important;padding:12px 14px;border-radius:var(--r3);border:1px solid var(--edge);background:color-mix(in srgb,var(--hi) 18%,transparent)}
@@ -849,6 +849,11 @@ html.hold .blk,html.hold .tabbar,html.hold .appbar,html.hold .gear{visibility:hi
 .dmh{margin:0 2px 8px;font:800 .72rem Manrope,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
 .dtw{position:relative;margin-bottom:10px}.dtw .dtrip{padding-right:52px}.dtx{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;border:0;background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--mute);font:800 .8rem Manrope,system-ui,sans-serif;cursor:pointer}.dtx:active{transform:translateY(-50%) scale(.9)}.dtrip i{display:none}
 html.hold .ahome{visibility:hidden}
+#acct{position:fixed;inset:0;z-index:171;display:flex;align-items:center;justify-content:center;padding:16px;background:color-mix(in srgb,#000 38%,transparent);opacity:0;visibility:hidden;transition:opacity .3s ease,visibility 0s linear .3s}
+#acct.on{opacity:1;visibility:visible;transition:opacity .3s ease,visibility 0s}#acct .qrc .cls{margin-top:4px}
+.authb span{font-weight:900;font-size:1.05rem;width:1.2em;text-align:center}.authb.apple{background:#111;color:#fff!important;text-shadow:none!important}
+.dacct{display:flex;align-items:center;gap:12px;width:100%;margin:16px 0 0;padding:10px 14px;border-radius:var(--r2);border:1px solid var(--edge);background:color-mix(in srgb,var(--c3) 9%,var(--gl2));color:var(--ink);font:inherit;text-align:left;cursor:pointer}.dacct[hidden]{display:none}
+.dacct>span:first-child{font-size:1.3rem}.dacct .atx{flex:1;min-width:0}.dacct .at{display:block;font-size:.95rem}.dacct .as{display:block;color:var(--mute);font-size:.76rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dacct i{font-style:normal;font-weight:800;color:var(--c3);font-size:1.3rem}
 button,label,summary,a{touch-action:manipulation}
 </style>
 </head>
