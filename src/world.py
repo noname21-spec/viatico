@@ -48,7 +48,6 @@ W=[
 ("dubai","Dubai","Emirati Arabi","🏜️","as",["#00732f","#c8102e","#c9a24a"],"dubai emirati arabi uae"),
 ("abudhabi","Abu Dhabi","Emirati Arabi","🕌","as",["#00732f","#c8102e","#e8e8e8"],"abu dhabi emirati arabi uae"),
 ("doha","Doha","Qatar","🦅","as",["#8a1538","#e8e8e8","#c9a24a"],"doha qatar"),
-("telaviv","Tel Aviv","Israele","🏖️","as",["#0038b8","#e8e8e8","#7fb6d6"],"tel aviv israele israel"),
 ("gerusalemme","Gerusalemme","Israele","🕍","as",["#0038b8","#c9a24a","#e8e8e8"],"gerusalemme jerusalem israele israel"),
 ("newyork","New York","Stati Uniti","🗽","am",["#1f3a6b","#b22234","#f1bf00"],"new york nyc usa stati uniti america"),
 ("losangeles","Los Angeles","Stati Uniti","🎞️","am",["#1f3a6b","#f58220","#b22234"],"los angeles la usa stati uniti america"),
