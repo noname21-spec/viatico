@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=1">
 <link rel="icon" type="image/png" href="icon-192.png?v=1">
-<script>try{var t=localStorage.getItem("via-theme");if(t)document.documentElement.setAttribute("data-theme",t);var v=JSON.parse(localStorage.getItem("via-trip")||"null"),pk=null;try{pk=sessionStorage.getItem("via-pick")}catch(e){}if(pk){document.documentElement.setAttribute("data-city",pk);document.documentElement.classList.add("pick")}else if(v&&v.date)document.documentElement.setAttribute("data-city",v.dest||"paris")}catch(e){}</script>
+<script>try{var t=localStorage.getItem("via-theme");if(t)document.documentElement.setAttribute("data-theme",t);var v=JSON.parse(localStorage.getItem("via-trip")||"null"),pk=null;try{pk=sessionStorage.getItem("via-pick")}catch(e){}if(pk){document.documentElement.setAttribute("data-city",pk);document.documentElement.classList.add("pick","hold")}else if(v&&v.date)document.documentElement.setAttribute("data-city",v.dest||"paris");else document.documentElement.classList.add("hold")}catch(e){}</script>
 <script>(function(){try{var ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);var sa=ios&&(navigator.standalone===true||matchMedia("(display-mode: standalone)").matches);if(!sa)return;var r=document.documentElement;r.classList.add("sa");function f(){var p=innerHeight>=innerWidth,sh=p?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);var h=Math.max(innerHeight,document.documentElement.clientHeight||0);if(sh>h&&sh-h<80)h=sh;r.style.setProperty("--apph",h+"px")}f();addEventListener("resize",f);addEventListener("pageshow",f);if(window.visualViewport)visualViewport.addEventListener("resize",f);addEventListener("orientationchange",function(){setTimeout(f,300)})}catch(e){}})();</script>
 <script>(function(){try{var h=Math.max(screen.height,screen.width),ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1),r=!ios?34:h>=926?55:h>=852?55:h>=844?47:h>=812?44:h>=736?0:39;if(r)document.documentElement.style.setProperty("--scr",r+"px")}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" media="print" onload="this.media='all'">
@@ -486,7 +486,7 @@ html.sa #setup{bottom:auto;height:var(--apph)}
 .scard h2{margin:0;font-size:1.8rem;font-weight:800;letter-spacing:-.03em;background:var(--gradx);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 .scard .lead{margin:6px 0 14px}
 .sgrp{margin:0 0 12px;padding:12px;border-radius:var(--r3);border:1px solid var(--edge);background:color-mix(in srgb,var(--paper) 22%,transparent);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
-.sgrp>legend{grid-column:1/-1;float:left;width:100%;padding:0;margin:0 0 2px;font-size:.82rem;font-weight:800;color:var(--mute);display:flex;align-items:center;gap:6px}
+.sgrp>.sglg{grid-column:1/-1;float:left;width:100%;padding:0;margin:0 0 2px;font-size:.82rem;font-weight:800;color:var(--mute);display:flex;align-items:center;gap:6px}
 .sgrp label.f{display:flex;flex-direction:column;gap:4px;font-size:.76rem;color:var(--mute);font-weight:700;min-width:0}
 .sgrp label.f.w{grid-column:1/-1}
 .sgrp input[type=text],.sgrp input[type=date],.sgrp input[type=time]{display:block;width:100%;max-width:100%;min-width:0;height:44px;margin:0;padding:0 10px;border-radius:11px;border:1px solid var(--edge);background:color-mix(in srgb,var(--paper) 60%,transparent);color:var(--ink);font:700 16px Manrope,system-ui,sans-serif;-webkit-appearance:none;appearance:none;text-align:left}
@@ -712,7 +712,9 @@ html.sa #dest{bottom:auto;height:var(--apph)}
 .dgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0 4px}
 .dcity{position:relative;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto auto;column-gap:10px;align-items:center;padding:12px;border-radius:var(--r2);text-align:left;color:var(--ink);font:inherit;cursor:pointer;overflow:hidden;background:linear-gradient(160deg,color-mix(in srgb,var(--hi) 50%,transparent) 0%,color-mix(in srgb,var(--hi) 10%,transparent) 50%,color-mix(in srgb,var(--hi) 20%,transparent) 100%),var(--gl2);border:1px solid var(--edge);box-shadow:inset 0 1px 0 var(--hi),0 10px 26px var(--glsh);transition:transform .25s var(--ease),box-shadow .25s ease}
 .dcity:active{transform:scale(.97)}
-.dcity .dsw{position:absolute;left:0;right:0;top:0;height:5px;background:linear-gradient(90deg,var(--a),var(--b),var(--c))}
+.dcity{isolation:isolate}
+.dcity .dsw{position:absolute;inset:0;z-index:-1;border-radius:inherit;background:linear-gradient(135deg,color-mix(in srgb,var(--a) 34%,transparent),color-mix(in srgb,var(--b) 24%,transparent) 55%,color-mix(in srgb,var(--c) 30%,transparent))}
+.dcity:not(.ok) .dsw{opacity:.6}
 .dcity .dem{grid-row:1/4;font-size:1.9rem;line-height:1}
 .dcity b{font-size:1.02rem;font-weight:800}
 .dcity small{color:var(--mute);font-weight:600;font-size:.76rem}
@@ -868,18 +870,39 @@ html.sa body.tbmin .tabbar{top:calc(var(--apph) - 58px - 10px - env(safe-area-in
 .blk,.scard,.dcard,.shc,.qrc,#dest,#setup,#sheet,#qrbox,.gear{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 .appbar::before{-webkit-backdrop-filter:blur(14px) saturate(160%)!important;backdrop-filter:blur(14px) saturate(160%)!important}
 .tabbar{-webkit-backdrop-filter:blur(14px) saturate(170%)!important;backdrop-filter:blur(14px) saturate(170%)!important}
-.dqrow{display:flex;align-items:center;justify-content:space-between;gap:12px}.dqrow .dq{margin:0}
-.dshare{flex:none;width:76px;height:76px;min-height:0;padding:0;border:0;border-radius:50%;aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:linear-gradient(135deg,var(--pin),var(--blue));color:var(--bg);font:800 .66rem Manrope,system-ui,sans-serif;letter-spacing:.01em;cursor:pointer;position:relative;box-shadow:0 8px 20px color-mix(in srgb,var(--pin) 42%,transparent),inset 0 1px 0 rgba(255,255,255,.4)}
-.dshare::before,.dshare::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--pin);z-index:-1;animation:dshPulse 2s ease-out infinite}.dshare::after{animation-delay:1s}
-.dshare>span{font-size:1.65rem;line-height:1;animation:dshBob 2s ease-in-out infinite}
+.dlatin{margin:16px 0 0!important;padding:12px 14px;border-radius:var(--r3);border:1px solid var(--edge);background:color-mix(in srgb,var(--hi) 18%,transparent)}
+.dqrow{margin:18px 0 12px;display:flex;align-items:center;justify-content:space-between;gap:12px}.dqrow .dq{margin:0}
+.dshare{flex:none;position:relative;height:48px;min-height:0;padding:0 18px 0 14px;border:0;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:9px;background:linear-gradient(135deg,var(--pin),var(--blue));color:var(--bg);font:800 .95rem Manrope,system-ui,sans-serif;letter-spacing:.01em;cursor:pointer;box-shadow:0 6px 16px color-mix(in srgb,var(--pin) 40%,transparent),inset 0 1px 0 rgba(255,255,255,.4)}
+.dshare>span{font-size:1.3rem;line-height:1;animation:dshBob 2s ease-in-out infinite}
 .dshare b{font-weight:800}
-.dshare:active{transform:scale(.93)}
-@keyframes dshPulse{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.4);opacity:0}}
+.dshare:active{transform:scale(.96)}
+.dshare::before{content:"";position:absolute;inset:0;border-radius:14px;border:2px solid var(--pin);pointer-events:none;animation:dshPulse 2s ease-out infinite}
+@keyframes dshPulse{0%{transform:scale(1);opacity:.65}100%{transform:scale(1.14,1.3);opacity:0}}
 @keyframes dshBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
-@media (prefers-reduced-motion:reduce){.dshare::before,.dshare::after,.dshare>span{animation:none}.dshare::before,.dshare::after{display:none}}
+@media (prefers-reduced-motion:reduce){.dshare::before{display:none}.dshare>span{animation:none}}
 body:has(#dest.on,#setup.on) :is(.blk,.tabbar,.appbar,.gear){visibility:hidden!important;transition:visibility 0s linear .4s!important}
 .shc,.qrc{background:linear-gradient(180deg,var(--hi2),transparent 38%),color-mix(in srgb,var(--bg) 93%,transparent)!important}
 #dest,#setup{background:color-mix(in srgb,var(--bg) 40%,transparent)!important}
+.ssub{margin:10px 0 0;padding:9px 12px;border-radius:12px;border:1px solid var(--edge);background:color-mix(in srgb,var(--hi) 20%,transparent);display:flex;align-items:center;gap:6px}
+.dnote:not(:empty),.sgrp .snote{margin:0;padding:10px 12px;border-radius:12px;border:1px solid var(--edge);background:color-mix(in srgb,var(--hi) 16%,transparent);line-height:1.45}
+.dnote:empty{display:none}
+.hero::before{display:none}
+.hero .sub{display:block;margin:14px 0 18px;padding:12px 14px;text-align:left;font-size:.9rem;font-weight:600;line-height:1.5;color:var(--ink);opacity:1;max-width:none;border:1px solid var(--edge);border-radius:var(--r3);background:color-mix(in srgb,var(--hi) 22%,transparent)}
+/* cambio scheda più rapido e pulito */
+.blk{transition:opacity .16s ease,visibility 0s linear .16s}
+body:has(#t-itinerario:checked) #itinerario,body:has(#t-voli:checked) #voli,body:has(#t-mappa:checked) #mappa,body:has(#t-mangiare:checked) #mangiare,body:has(#t-costi:checked) #costi,body:has(#t-consigli:checked) #consigli{transition:opacity .2s ease .04s,visibility 0s}
+.blk.on>*{animation-duration:.42s}
+.blk>*:nth-child(2){animation-delay:.03s!important}.blk>*:nth-child(3){animation-delay:.06s!important}.blk>*:nth-child(4){animation-delay:.09s!important}.blk>*:nth-child(5){animation-delay:.12s!important}.blk>*:nth-child(n+6){animation-delay:.15s!important}
+.blk.on>h2.sec,.blk.on>.hero h1,.blk.on .hero h1,.scard h2{animation-duration:.45s!important}
+@keyframes titleIn{0%{opacity:0;transform:translate3d(0,6px,0)}100%{opacity:1;transform:none}}
+body.dir-r .blk.on{animation:slideInR .36s var(--ease) both}
+body.dir-l .blk.on{animation:slideInL .36s var(--ease) both}
+/* all'avvio nessuna schermata dell'app dietro a destinazioni e modulo */
+html.hold .blk,html.hold .tabbar,html.hold .appbar,html.hold .gear{visibility:hidden!important;transition:none!important}
+.ahome{pointer-events:auto;flex:none;width:34px;height:34px;margin:0 10px 0 -4px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--edge);background:color-mix(in srgb,var(--c3) 12%,var(--gl2));color:var(--c3);cursor:pointer;box-shadow:inset 0 1px 0 var(--hi);transition:transform .25s cubic-bezier(.22,1,.36,1)}.ahome:active{transform:scale(.9)}
+.dmh{margin:0 2px 8px;font:800 .72rem Manrope,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.dtw{position:relative;margin-bottom:10px}.dtw .dtrip{padding-right:52px}.dtx{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;border:0;background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--mute);font:800 .8rem Manrope,system-ui,sans-serif;cursor:pointer}.dtx:active{transform:translateY(-50%) scale(.9)}.dtrip i{display:none}
+html.hold .ahome{visibility:hidden}
 button,label,summary,a{touch-action:manipulation}
 </style>
 </head>
@@ -991,7 +1014,7 @@ button,label,summary,a{touch-action:manipulation}
 </section>
 </main>
 
-<div class="appbar"><span class="appt" id="appt">Parigi</span><span class="wx" id="wx" aria-live="polite"><i class="wxi" aria-hidden="true">🌤️</i><b id="wxt">--°</b></span></div>
+<div class="appbar"><button type="button" class="ahome" id="ahome" aria-label="Tutti i viaggi: torna alla pagina principale"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/></svg></button><span class="appt" id="appt">Parigi</span><span class="wx" id="wx" aria-live="polite"><i class="wxi" aria-hidden="true">🌤️</i><b id="wxt">--°</b></span></div>
 <button type="button" class="gear" id="gear" aria-label="Impostazioni">⚙️</button>
 <label for="dm" class="iosw" title="Modalità chiara/scura"><span class="trk"><b class="ic sun" aria-hidden="true">☀️</b><b class="ic moon" aria-hidden="true">🌙</b><i class="knob"></i></span><span class="vh">Modalità scura</span></label>
 <nav class="tabbar" aria-label="Sezioni"><i class="tbind" aria-hidden="true"></i><label for="t-itinerario"><b class="em em-spin" aria-hidden="true">🕗</b><span>Tappe</span></label><label for="t-voli"><b class="em em-fly" aria-hidden="true">✈️</b><span>Voli</span></label><label for="t-mappa"><b class="em em-unfold" aria-hidden="true">🗺️</b><span>Mappa</span></label><label for="t-mangiare"><b class="em em-bob" aria-hidden="true">🥐</b><span>Pasti</span></label><label for="t-costi"><b class="em em-flip" aria-hidden="true">💶</b><span>Costi</span></label><label for="t-consigli"><b class="em em-glow" aria-hidden="true">💡</b><span>Consigli</span></label><img class="tbicon" src="icon-192.png" alt="" aria-hidden="true" draggable="false"><i class="tbdots" aria-hidden="true">🕗</i></nav>
@@ -1000,12 +1023,12 @@ button,label,summary,a{touch-action:manipulation}
 <h3>⚙️ Impostazioni</h3>
 <div class="shtheme"><div class="shl"><span>🌗</span><span>Aspetto<small>"Sistema" segue le impostazioni del telefono</small></span></div><div class="seg3" role="radiogroup" aria-label="Aspetto"><button type="button" role="radio" data-t="auto" aria-checked="true" class="on">Sistema</button><button type="button" role="radio" data-t="light" aria-checked="false">Chiaro</button><button type="button" role="radio" data-t="dark" aria-checked="false">Scuro</button></div></div>
 <button type="button" class="row" data-edit><span>✏️</span><span>Modifica il tuo viaggio<small>Date, persone, volo e hotel</small></span></button>
-<button type="button" class="row" id="shdest"><span>🧭</span><span>Cambia destinazione<small>Torna alla scelta della città</small></span></button>
+<button type="button" class="row" id="shdest"><span>🧭</span><span>Tutti i viaggi<small>Torna alla pagina principale e organizza un altro viaggio</small></span></button>
 <button type="button" class="row" id="shpdf"><span>📄</span><span>Scarica l'itinerario in PDF<small id="shpdfs">Tutti i giorni e i costi, da salvare o stampare</small></span></button>
 <button type="button" class="row" id="shsit"><span>📤</span><span>Condividi l'itinerario<small>Invia il PDF a chi viaggia con te</small></span></button>
 <button type="button" class="row" id="shapp"><span>🔗</span><span>Condividi Viatico<small>QR code e link per far scaricare l'app</small></span></button>
 <button type="button" class="row" id="shvoli"><span>📡</span><span>Stato live dei voli<small>Collega o scollega la chiave AeroDataBox</small></span></button>
-<button type="button" class="row danger" id="shreset"><span>🗑️</span><span>Cancella tutti i dati<small>Viaggio, spese, lista e chiave salvati su questo telefono</small></span></button>
+<button type="button" class="row danger" id="shreset"><span>🗑️</span><span>Cancella tutti i dati<small>Tutti i viaggi, spese, liste e chiave salvati su questo telefono</small></span></button>
 <button type="button" class="btn ghost cls" id="shclose">Chiudi</button>
 </div></div>
 
@@ -1023,13 +1046,13 @@ button,label,summary,a{touch-action:manipulation}
 <div id="setup" aria-hidden="true"><form class="scard" id="sform" novalidate autocomplete="off">
 <div class="stop"><button type="button" class="sback" id="sback">‹ Destinazioni</button><button type="button" class="sback" id="scancel" hidden>Annulla</button></div>
 <div class="shead"><span class="sem" id="sem">🗼</span><div><small>La tua destinazione</small><h2 id="sdest">Parigi</h2><p id="sdsub">Francia · guida completa</p></div></div>
-<fieldset class="sgrp"><legend>📅 Date e persone</legend>
+<fieldset class="sgrp"><div class="sglg">📅 Date e persone</div>
 <label class="f"><span>Andata</span><input type="date" name="date" required></label>
 <label class="f"><span id="rlab">Ritorno</span><input type="date" name="date_r"></label>
 <p class="dnote w" id="dnote"></p>
 <div class="f w prow"><span>Persone</span><div class="stepper"><button type="button" data-st="-1" aria-label="Una persona in meno">−</button><output name="ppl" id="ppl">2</output><button type="button" data-st="1" aria-label="Una persona in più">+</button></div></div>
 </fieldset>
-<fieldset class="sgrp"><legend>✈️ Volo</legend>
+<fieldset class="sgrp"><div class="sglg">✈️ Volo</div>
 <label class="f w"><span>Aeroporto di partenza</span><input type="text" name="from" list="aplist" placeholder="es. Bologna (BLQ)" autocapitalize="words" spellcheck="false"></label>
 <datalist id="aplist"></datalist>
 <div class="f w"><span class="sub">Atterri a</span>
@@ -1043,7 +1066,7 @@ button,label,summary,a{touch-action:manipulation}
 <label class="f"><span>Apertura imbarco</span><input type="time" name="r_imb"></label>
 <label class="f"><span>Partenza</span><input type="time" name="r_dep" required></label>
 </fieldset>
-<fieldset class="sgrp" id="stayf"><legend>🏨 Hotel</legend>
+<fieldset class="sgrp" id="stayf"><div class="sglg">🏨 Hotel</div>
 <p class="snote w" id="stayno">Per una gita in giornata l'hotel non serve. Scegli una data di ritorno diversa dall'andata per aggiungerlo.</p>
 <div class="sgin w" id="stayin" hidden>
 <label class="f w"><span>Zona</span><select name="sz"></select></label>
@@ -3951,7 +3974,7 @@ function openSetup(first){var c=CFG||{},s=c.stay||{};form.date.value=c.date||"";
 $$('input[name=to]',form).forEach(function(r){r.checked=r.value===(c.to&&PD.PAR[c.to]?c.to:APK[0])});["a_num","a_dep","a_arr","r_num","r_imb","r_dep"].forEach(function(k){form[k].value=c[k]||""});
 form.sz.value=s.zone||PD.HZ[0][0];form.saddr.value=s.addr||"";form.sin.value=s.cin||"15:00";form.sout.value=s.cout||"11:00";form.sprice.value=s.price||"";form.stype.value=s.type||PD.TAXDEF||PD.TAX[0][0];
 $$("input,select",form).forEach(function(x){x.classList.remove("bad")});serr.textContent="";$("#scancel").hidden=!CFG;$("#stayin").hidden=true;$("#stayno").hidden=false;setHead();dnote();
-closeSheet();setup.classList.add("on");setup.setAttribute("aria-hidden","false");setup.scrollTop=0}
+closeSheet();setup.classList.add("on");setup.setAttribute("aria-hidden","false");setup.scrollTop=0;setTimeout(function(){document.documentElement.classList.remove("hold")},600)}
 function closeSetup(){setup.classList.remove("on");setup.setAttribute("aria-hidden","true")}
 /* ===== destinazioni ===== */
 var DEST=(window.CITY_ORDER||Object.keys(CITIES)).map(function(id){var C=CITIES[id];return{id:id,n:C.n,c:C.cn,e:C.e,ok:1,col:C.col,k:C.k,r:(window.REG||{})[id]||"eu"}}).concat(window.SOON||[]);
@@ -3960,6 +3983,13 @@ function dOf(id){return DEST.filter(function(d){return d.id===id})[0]||DEST[0]}
 function setCity(id){var r=document.documentElement,cur=r.getAttribute("data-city")||"";if((id||"")===cur)return;if(id)r.setAttribute("data-city",id);else r.removeAttribute("data-city");
 r.classList.remove("recolor");void r.offsetWidth;r.classList.add("recolor");clearTimeout(setCity._t);setCity._t=setTimeout(function(){r.classList.remove("recolor")},950);try{window.dispatchEvent(new Event("citycolor"))}catch(e){}}
 function setHead(){$("#sem").textContent=PD.e;$("#sdest").textContent=PD.n;$("#sdsub").textContent=PD.cn+" · guida completa";$("#alab").textContent="Atterraggio a "+PD.n}
+var TK=["via-spese","via-check","via-copt","via-water","via-vlive","via-vlive-n"];
+function trips(){var a=lj("via-trips",[]);return Array.isArray(a)?a.filter(function(t){return t&&t.cfg&&t.cfg.date&&CITIES[t.cfg.dest]}):[]}
+function putTrips(a){ls("via-trips",a.length?JSON.stringify(a.slice(0,12)):null)}
+function newTid(){return Date.now().toString(36)+Math.floor(Math.random()*1296).toString(36)}
+function parkCur(){var s=lj("via-trip",null);if(s&&s.date&&CITIES[s.dest]){if(!s.tid)s.tid=newTid();var st={};TK.forEach(function(k){var v=ls(k);if(v!=null)st[k]=v});var a=trips().filter(function(t){return t.cfg.tid!==s.tid});a.unshift({cfg:s,st:st});putTrips(a)}ls("via-trip",null);TK.forEach(function(k){ls(k,null)})}
+function switchTrip(i){var a=trips(),t=a[i];if(!t)return;a.splice(i,1);putTrips(a);parkCur();ls("via-trip",JSON.stringify(t.cfg));Object.keys(t.st||{}).forEach(function(k){if(TK.indexOf(k)>=0)ls(k,t.st[k])});goCity(t.cfg.dest)}
+function dropCur(){ls("via-trip",null);TK.forEach(function(k){ls(k,null)});CFG=null;SAVED=null;TRIP=null;SP={};CK={};COPT={}}
 function goCity(id,open){ss("via-pick",id);if(open)ss("via-open",open);location.reload()}
 function rangeOf(c){var a=dateObj(c.date),b=dateObj(c.date_r||c.date);if((c.date_r||c.date)===c.date)return dateShort(c.date);return a.getUTCMonth()===b.getUTCMonth()?a.getUTCDate()+"–"+b.getUTCDate()+" "+MESI[b.getUTCMonth()]:dateShort(c.date)+" – "+dateShort(c.date_r)}
 var destEl=$("#dest"),dgrid=$("#dgrid"),dfind=$("#dfind");
@@ -3970,8 +4000,11 @@ el.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)r
 function renderDest(){var q=(dfind.value||"").trim().toLowerCase(),list=DEST.filter(function(d){return(!DREG||d.r===DREG)&&(!q||d.k.indexOf(q)>=0||d.n.toLowerCase().indexOf(q)>=0)});
 dgrid.innerHTML=list.map(function(d){return '<button type="button" class="dcity'+(d.ok?" ok":"")+'" data-city="'+d.id+'" style="'+sw(d)+'"><i class="dsw"></i><span class="dem">'+d.e+'</span><b>'+esc(d.n)+'</b><small>'+esc(d.c)+'</small><em>'+(d.ok?"Guida completa":"In arrivo")+'</em></button>'}).join("");
 var none=$("#dnone");none.hidden=list.length>0;if(!list.length)none.textContent=q?"Nessuna città per «"+dfind.value.trim()+"», per ora. Ne aggiungiamo di nuove di continuo.":"Nessuna città in questa area, per ora.";
-var mine=$("#dmine");if(SAVED&&SAVED.date&&CITIES[SAVED.dest]){var d=dOf(SAVED.dest);mine.hidden=false;mine.innerHTML='<button type="button" class="dtrip" style="'+sw(d)+'"><span>'+d.e+'</span><div><small>Il tuo viaggio</small><b>'+esc(d.n)+' · '+esc(rangeOf(SAVED))+'</b></div><i>›</i></button>';$(".dtrip",mine).addEventListener("click",function(){if(SAVED.dest===PD.id&&CFG){closeDest();setCity(PD.id)}else goCity(SAVED.dest)})}else{mine.hidden=true;mine.innerHTML=""}}
-function openDest(){closeSetup();closeSheet();setCity(null);dfind.value="";renderDest();destEl.classList.add("on");destEl.setAttribute("aria-hidden","false");destEl.scrollTop=0}
+var mine=$("#dmine"),all=[],hasCur=SAVED&&SAVED.date&&CITIES[SAVED.dest];if(hasCur)all.push({cur:1,cfg:SAVED});trips().forEach(function(t,k){all.push({i:k,cfg:t.cfg})});
+if(all.length){mine.hidden=false;mine.innerHTML='<div class="dmh">'+(all.length>1?"I miei viaggi":"Il tuo viaggio")+'</div>'+all.map(function(t,k){var d=dOf(t.cfg.dest);return '<div class="dtw"><button type="button" class="dtrip" data-k="'+k+'" style="'+sw(d)+'"><span>'+d.e+'</span><div><small>'+(t.cur?"In corso":"Salvato")+'</small><b>'+esc(d.n)+' · '+esc(rangeOf(t.cfg))+'</b></div><i>›</i></button><button type="button" class="dtx" data-k="'+k+'" aria-label="Elimina il viaggio a '+esc(d.n)+'">✕</button></div>'}).join("");
+$$(".dtrip",mine).forEach(function(b){b.addEventListener("click",function(){var t=all[+b.dataset.k];if(t.cur){if(SAVED.dest===PD.id&&CFG){closeDest();setCity(PD.id)}else goCity(SAVED.dest)}else switchTrip(t.i)})});
+$$(".dtx",mine).forEach(function(b){b.addEventListener("click",function(){var t=all[+b.dataset.k],d=dOf(t.cfg.dest);if(!confirm("Eliminare il viaggio a "+d.n+" ("+rangeOf(t.cfg)+")? Spese e lista di questo viaggio andranno perse."))return;if(t.cur)dropCur();else{var a=trips();a.splice(t.i,1);putTrips(a)}renderDest()})})}else{mine.hidden=true;mine.innerHTML=""}}
+function openDest(){closeSetup();closeSheet();setCity(null);dfind.value="";renderDest();destEl.classList.add("on");destEl.setAttribute("aria-hidden","false");destEl.scrollTop=0;setTimeout(function(){document.documentElement.classList.remove("hold")},600)}
 function closeDest(){destEl.classList.remove("on");destEl.setAttribute("aria-hidden","true")}
 PAR.openDest=openDest;
 dfind.addEventListener("input",renderDest);
@@ -4003,6 +4036,7 @@ if(!d.ok){b.animate&&b.animate([{transform:"translateX(0)"},{transform:"translat
 zoomGo(b,d,function(){if(d.id!==PD.id){goCity(d.id,"setup");return}setCity(d.id);closeDest();openSetup(!CFG)})});
 $("#sback").addEventListener("click",function(){openDest()});
 $("#shdest").addEventListener("click",function(){openDest()});
+$("#ahome").addEventListener("click",function(){openDest()});
 PAR.openSetup=openSetup;
 $$("[data-st]",form).forEach(function(b){b.addEventListener("click",function(){var o=$("#ppl"),v=Math.max(1,Math.min(10,(+o.textContent||2)+ +b.dataset.st));o.textContent=v})});
 $("#scancel").addEventListener("click",function(){closeSetup();if(CFG)setCity(PD.id)});
@@ -4023,7 +4057,7 @@ var to=($('input[name=to]:checked',form)||{}).value||APK[0],old=(CFG&&CFG.stay)|
 var c={dest:PD.id,date:d0,date_r:d1,ppl:+$("#ppl").textContent||2,from:form.from.value.trim(),fromCode:fromCode(form.from.value),to:to,a_num:form.a_num.value.replace(/\s+/g,"").toUpperCase(),a_dep:form.a_dep.value,a_arr:form.a_arr.value,r_num:form.r_num.value.replace(/\s+/g,"").toUpperCase(),r_imb:form.r_imb.value,r_dep:form.r_dep.value};
 if(multi){var addr=form.saddr.value.trim();c.stay={zone:form.sz.value,addr:addr,cin:form.sin.value||"15:00",cout:form.sout.value||"11:00",price:parseFloat(String(form.sprice.value).replace(",","."))||0,type:form.stype.value};
 if(addr&&addr===old.addr&&old.geo){c.stay.pos=old.pos;c.stay.geo=1}}
-var first=!CFG;if(SAVED&&SAVED.dest!==PD.id){["via-spese","via-check","via-copt","via-water","via-vlive"].forEach(function(k){ls(k,null)});SP={};CK={};COPT={}}CFG=c;SAVED=c;ls("via-trip",JSON.stringify(c));closeSetup();SEL=0;renderAll();window.dispatchEvent(new Event("voli"));
+var first=!CFG;if(SAVED&&SAVED.dest!==PD.id){parkCur();SP={};CK={};COPT={}}c.tid=(CFG&&CFG.tid)||newTid();CFG=c;SAVED=c;ls("via-trip",JSON.stringify(c));closeSetup();SEL=0;renderAll();window.dispatchEvent(new Event("voli"));
 var t0=$("#t-itinerario");if(!t0.checked){t0.checked=true;t0.dispatchEvent(new Event("change",{bubbles:true}))}
 var blk=$("#itinerario");try{blk.scrollTo({top:0,behavior:"smooth"})}catch(x){blk.scrollTop=0}
 toast(first?"Itinerario pronto ✨":"Viaggio aggiornato ✓");
@@ -4041,13 +4075,13 @@ $("#shclose").addEventListener("click",closeSheet);
 sheet.addEventListener("click",function(e){if(e.target===sheet)closeSheet()});
 $$("[data-edit]").forEach(function(b){b.addEventListener("click",function(){openSetup(false)})});
 $("#shvoli").addEventListener("click",function(){closeSheet();var r=$("#t-voli");r.checked=true;r.dispatchEvent(new Event("change",{bubbles:true}));setTimeout(function(){var k=$("#vkey");k.open=true;k.scrollIntoView({behavior:"smooth",block:"center"})},350)});
-$("#shreset").addEventListener("click",function(){if(!confirm("Cancellare viaggio, spese, lista e chiave salvati su questo telefono?"))return;
-["via-trip","via-spese","via-check","via-copt","via-adb-key","via-vlive","via-vlive-n","via-water"].forEach(function(k){ls(k,null)});CFG=null;SAVED=null;TRIP=null;SP={};CK={};COPT={};closeSheet();openDest()});
+$("#shreset").addEventListener("click",function(){if(!confirm("Cancellare TUTTI i viaggi, spese, liste e la chiave salvati su questo telefono?"))return;
+["via-trip","via-trips","via-spese","via-check","via-copt","via-adb-key","via-vlive","via-vlive-n","via-water"].forEach(function(k){ls(k,null)});CFG=null;SAVED=null;TRIP=null;SP={};CK={};COPT={};closeSheet();openDest()});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeSheet();if(CFG){closeSetup();closeDest();setCity(PD.id)}}});
 
 /* avvio */
-if(CFG&&CFG.date&&CFG.a_arr&&CFG.r_dep){if(!CFG.date_r)CFG.date_r=CFG.date;setCity(PD.id);renderAll();if(TRIP.multi&&CFG.stay&&CFG.stay.addr&&!CFG.stay.geo)geocode();if(OPEN==="setup")openSetup(false)}
-else{CFG=null;if(PICK&&CITIES[PICK]){setCity(PD.id);openSetup(true)}else{setCity(null);setTimeout(openDest,matchMedia("(prefers-reduced-motion: reduce)").matches?0:2500)}}
+if(CFG&&CFG.date&&CFG.a_arr&&CFG.r_dep){if(!CFG.date_r)CFG.date_r=CFG.date;setCity(PD.id);renderAll();document.documentElement.classList.remove("hold");if(TRIP.multi&&CFG.stay&&CFG.stay.addr&&!CFG.stay.geo)geocode();if(OPEN==="setup")openSetup(false)}
+else{CFG=null;document.documentElement.classList.add("hold");if(PICK&&CITIES[PICK]){setCity(PD.id);openSetup(true)}else{setCity(null);setTimeout(openDest,matchMedia("(prefers-reduced-motion: reduce)").matches?0:2300)}}
 })();
 
 </script>

@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=1">
 <link rel="icon" type="image/png" href="icon-192.png?v=1">
-<script>try{var t=localStorage.getItem("via-theme");if(t)document.documentElement.setAttribute("data-theme",t);var v=JSON.parse(localStorage.getItem("via-trip")||"null"),pk=null;try{pk=sessionStorage.getItem("via-pick")}catch(e){}if(pk){document.documentElement.setAttribute("data-city",pk);document.documentElement.classList.add("pick")}else if(v&&v.date)document.documentElement.setAttribute("data-city",v.dest||"paris")}catch(e){}</script>
+<script>try{var t=localStorage.getItem("via-theme");if(t)document.documentElement.setAttribute("data-theme",t);var v=JSON.parse(localStorage.getItem("via-trip")||"null"),pk=null;try{pk=sessionStorage.getItem("via-pick")}catch(e){}if(pk){document.documentElement.setAttribute("data-city",pk);document.documentElement.classList.add("pick","hold")}else if(v&&v.date)document.documentElement.setAttribute("data-city",v.dest||"paris");else document.documentElement.classList.add("hold")}catch(e){}</script>
 <script>(function(){try{var ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);var sa=ios&&(navigator.standalone===true||matchMedia("(display-mode: standalone)").matches);if(!sa)return;var r=document.documentElement;r.classList.add("sa");function f(){var p=innerHeight>=innerWidth,sh=p?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);var h=Math.max(innerHeight,document.documentElement.clientHeight||0);if(sh>h&&sh-h<80)h=sh;r.style.setProperty("--apph",h+"px")}f();addEventListener("resize",f);addEventListener("pageshow",f);if(window.visualViewport)visualViewport.addEventListener("resize",f);addEventListener("orientationchange",function(){setTimeout(f,300)})}catch(e){}})();</script>
 <script>(function(){try{var h=Math.max(screen.height,screen.width),ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1),r=!ios?34:h>=926?55:h>=852?55:h>=844?47:h>=812?44:h>=736?0:39;if(r)document.documentElement.style.setProperty("--scr",r+"px")}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" media="print" onload="this.media='all'">
@@ -486,7 +486,7 @@ html.sa #setup{bottom:auto;height:var(--apph)}
 .scard h2{margin:0;font-size:1.8rem;font-weight:800;letter-spacing:-.03em;background:var(--gradx);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 .scard .lead{margin:6px 0 14px}
 .sgrp{margin:0 0 12px;padding:12px;border-radius:var(--r3);border:1px solid var(--edge);background:color-mix(in srgb,var(--paper) 22%,transparent);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
-.sgrp>legend{grid-column:1/-1;float:left;width:100%;padding:0;margin:0 0 2px;font-size:.82rem;font-weight:800;color:var(--mute);display:flex;align-items:center;gap:6px}
+.sgrp>.sglg{grid-column:1/-1;float:left;width:100%;padding:0;margin:0 0 2px;font-size:.82rem;font-weight:800;color:var(--mute);display:flex;align-items:center;gap:6px}
 .sgrp label.f{display:flex;flex-direction:column;gap:4px;font-size:.76rem;color:var(--mute);font-weight:700;min-width:0}
 .sgrp label.f.w{grid-column:1/-1}
 .sgrp input[type=text],.sgrp input[type=date],.sgrp input[type=time]{display:block;width:100%;max-width:100%;min-width:0;height:44px;margin:0;padding:0 10px;border-radius:11px;border:1px solid var(--edge);background:color-mix(in srgb,var(--paper) 60%,transparent);color:var(--ink);font:700 16px Manrope,system-ui,sans-serif;-webkit-appearance:none;appearance:none;text-align:left}
@@ -712,7 +712,9 @@ html.sa #dest{bottom:auto;height:var(--apph)}
 .dgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0 4px}
 .dcity{position:relative;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto auto;column-gap:10px;align-items:center;padding:12px;border-radius:var(--r2);text-align:left;color:var(--ink);font:inherit;cursor:pointer;overflow:hidden;background:linear-gradient(160deg,color-mix(in srgb,var(--hi) 50%,transparent) 0%,color-mix(in srgb,var(--hi) 10%,transparent) 50%,color-mix(in srgb,var(--hi) 20%,transparent) 100%),var(--gl2);border:1px solid var(--edge);box-shadow:inset 0 1px 0 var(--hi),0 10px 26px var(--glsh);transition:transform .25s var(--ease),box-shadow .25s ease}
 .dcity:active{transform:scale(.97)}
-.dcity .dsw{position:absolute;left:0;right:0;top:0;height:5px;background:linear-gradient(90deg,var(--a),var(--b),var(--c))}
+.dcity{isolation:isolate}
+.dcity .dsw{position:absolute;inset:0;z-index:-1;border-radius:inherit;background:linear-gradient(135deg,color-mix(in srgb,var(--a) 34%,transparent),color-mix(in srgb,var(--b) 24%,transparent) 55%,color-mix(in srgb,var(--c) 30%,transparent))}
+.dcity:not(.ok) .dsw{opacity:.6}
 .dcity .dem{grid-row:1/4;font-size:1.9rem;line-height:1}
 .dcity b{font-size:1.02rem;font-weight:800}
 .dcity small{color:var(--mute);font-weight:600;font-size:.76rem}
@@ -814,18 +816,39 @@ html.sa body.tbmin .tabbar{top:calc(var(--apph) - 58px - 10px - env(safe-area-in
 .blk,.scard,.dcard,.shc,.qrc,#dest,#setup,#sheet,#qrbox,.gear{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 .appbar::before{-webkit-backdrop-filter:blur(14px) saturate(160%)!important;backdrop-filter:blur(14px) saturate(160%)!important}
 .tabbar{-webkit-backdrop-filter:blur(14px) saturate(170%)!important;backdrop-filter:blur(14px) saturate(170%)!important}
-.dqrow{display:flex;align-items:center;justify-content:space-between;gap:12px}.dqrow .dq{margin:0}
-.dshare{flex:none;width:76px;height:76px;min-height:0;padding:0;border:0;border-radius:50%;aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:linear-gradient(135deg,var(--pin),var(--blue));color:var(--bg);font:800 .66rem Manrope,system-ui,sans-serif;letter-spacing:.01em;cursor:pointer;position:relative;box-shadow:0 8px 20px color-mix(in srgb,var(--pin) 42%,transparent),inset 0 1px 0 rgba(255,255,255,.4)}
-.dshare::before,.dshare::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--pin);z-index:-1;animation:dshPulse 2s ease-out infinite}.dshare::after{animation-delay:1s}
-.dshare>span{font-size:1.65rem;line-height:1;animation:dshBob 2s ease-in-out infinite}
+.dlatin{margin:16px 0 0!important;padding:12px 14px;border-radius:var(--r3);border:1px solid var(--edge);background:color-mix(in srgb,var(--hi) 18%,transparent)}
+.dqrow{margin:18px 0 12px;display:flex;align-items:center;justify-content:space-between;gap:12px}.dqrow .dq{margin:0}
+.dshare{flex:none;position:relative;height:48px;min-height:0;padding:0 18px 0 14px;border:0;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:9px;background:linear-gradient(135deg,var(--pin),var(--blue));color:var(--bg);font:800 .95rem Manrope,system-ui,sans-serif;letter-spacing:.01em;cursor:pointer;box-shadow:0 6px 16px color-mix(in srgb,var(--pin) 40%,transparent),inset 0 1px 0 rgba(255,255,255,.4)}
+.dshare>span{font-size:1.3rem;line-height:1;animation:dshBob 2s ease-in-out infinite}
 .dshare b{font-weight:800}
-.dshare:active{transform:scale(.93)}
-@keyframes dshPulse{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.4);opacity:0}}
+.dshare:active{transform:scale(.96)}
+.dshare::before{content:"";position:absolute;inset:0;border-radius:14px;border:2px solid var(--pin);pointer-events:none;animation:dshPulse 2s ease-out infinite}
+@keyframes dshPulse{0%{transform:scale(1);opacity:.65}100%{transform:scale(1.14,1.3);opacity:0}}
 @keyframes dshBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
-@media (prefers-reduced-motion:reduce){.dshare::before,.dshare::after,.dshare>span{animation:none}.dshare::before,.dshare::after{display:none}}
+@media (prefers-reduced-motion:reduce){.dshare::before{display:none}.dshare>span{animation:none}}
 body:has(#dest.on,#setup.on) :is(.blk,.tabbar,.appbar,.gear){visibility:hidden!important;transition:visibility 0s linear .4s!important}
 .shc,.qrc{background:linear-gradient(180deg,var(--hi2),transparent 38%),color-mix(in srgb,var(--bg) 93%,transparent)!important}
 #dest,#setup{background:color-mix(in srgb,var(--bg) 40%,transparent)!important}
+.ssub{margin:10px 0 0;padding:9px 12px;border-radius:12px;border:1px solid var(--edge);background:color-mix(in srgb,var(--hi) 20%,transparent);display:flex;align-items:center;gap:6px}
+.dnote:not(:empty),.sgrp .snote{margin:0;padding:10px 12px;border-radius:12px;border:1px solid var(--edge);background:color-mix(in srgb,var(--hi) 16%,transparent);line-height:1.45}
+.dnote:empty{display:none}
+.hero::before{display:none}
+.hero .sub{display:block;margin:14px 0 18px;padding:12px 14px;text-align:left;font-size:.9rem;font-weight:600;line-height:1.5;color:var(--ink);opacity:1;max-width:none;border:1px solid var(--edge);border-radius:var(--r3);background:color-mix(in srgb,var(--hi) 22%,transparent)}
+/* cambio scheda più rapido e pulito */
+.blk{transition:opacity .16s ease,visibility 0s linear .16s}
+body:has(#t-itinerario:checked) #itinerario,body:has(#t-voli:checked) #voli,body:has(#t-mappa:checked) #mappa,body:has(#t-mangiare:checked) #mangiare,body:has(#t-costi:checked) #costi,body:has(#t-consigli:checked) #consigli{transition:opacity .2s ease .04s,visibility 0s}
+.blk.on>*{animation-duration:.42s}
+.blk>*:nth-child(2){animation-delay:.03s!important}.blk>*:nth-child(3){animation-delay:.06s!important}.blk>*:nth-child(4){animation-delay:.09s!important}.blk>*:nth-child(5){animation-delay:.12s!important}.blk>*:nth-child(n+6){animation-delay:.15s!important}
+.blk.on>h2.sec,.blk.on>.hero h1,.blk.on .hero h1,.scard h2{animation-duration:.45s!important}
+@keyframes titleIn{0%{opacity:0;transform:translate3d(0,6px,0)}100%{opacity:1;transform:none}}
+body.dir-r .blk.on{animation:slideInR .36s var(--ease) both}
+body.dir-l .blk.on{animation:slideInL .36s var(--ease) both}
+/* all'avvio nessuna schermata dell'app dietro a destinazioni e modulo */
+html.hold .blk,html.hold .tabbar,html.hold .appbar,html.hold .gear{visibility:hidden!important;transition:none!important}
+.ahome{pointer-events:auto;flex:none;width:34px;height:34px;margin:0 10px 0 -4px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--edge);background:color-mix(in srgb,var(--c3) 12%,var(--gl2));color:var(--c3);cursor:pointer;box-shadow:inset 0 1px 0 var(--hi);transition:transform .25s cubic-bezier(.22,1,.36,1)}.ahome:active{transform:scale(.9)}
+.dmh{margin:0 2px 8px;font:800 .72rem Manrope,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.dtw{position:relative;margin-bottom:10px}.dtw .dtrip{padding-right:52px}.dtx{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;border:0;background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--mute);font:800 .8rem Manrope,system-ui,sans-serif;cursor:pointer}.dtx:active{transform:translateY(-50%) scale(.9)}.dtrip i{display:none}
+html.hold .ahome{visibility:hidden}
 button,label,summary,a{touch-action:manipulation}
 </style>
 </head>
