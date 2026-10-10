@@ -126,8 +126,12 @@
 
 <div id="sheet" aria-hidden="true"><div class="shc" role="dialog" aria-label="Impostazioni">
 <h3>⚙️ Impostazioni</h3>
+<div class="shtheme"><div class="shl"><span>🌗</span><span>Aspetto<small>"Sistema" segue le impostazioni del telefono</small></span></div><div class="seg3" role="radiogroup" aria-label="Aspetto"><button type="button" role="radio" data-t="auto" aria-checked="true" class="on">Sistema</button><button type="button" role="radio" data-t="light" aria-checked="false">Chiaro</button><button type="button" role="radio" data-t="dark" aria-checked="false">Scuro</button></div></div>
 <button type="button" class="row" data-edit><span>✏️</span><span>Modifica il tuo viaggio<small>Date, persone, volo e hotel</small></span></button>
 <button type="button" class="row" id="shdest"><span>🧭</span><span>Cambia destinazione<small>Torna alla scelta della città</small></span></button>
+<button type="button" class="row" id="shpdf"><span>📄</span><span>Scarica l'itinerario in PDF<small id="shpdfs">Tutti i giorni e i costi, da salvare o stampare</small></span></button>
+<button type="button" class="row" id="shsit"><span>📤</span><span>Condividi l'itinerario<small>Invia il PDF a chi viaggia con te</small></span></button>
+<button type="button" class="row" id="shapp"><span>🔗</span><span>Condividi Viatico<small>QR code e link per far scaricare l'app</small></span></button>
 <button type="button" class="row" id="shvoli"><span>📡</span><span>Stato live dei voli<small>Collega o scollega la chiave AeroDataBox</small></span></button>
 <button type="button" class="row danger" id="shreset"><span>🗑️</span><span>Cancella tutti i dati<small>Viaggio, spese, lista e chiave salvati su questo telefono</small></span></button>
 <button type="button" class="btn ghost cls" id="shclose">Chiudi</button>
@@ -182,5 +186,6 @@
 <div class="sact"><button type="submit" class="btn">✨ Crea il mio viaggio</button></div>
 <p class="snote" id="sfuso"></p>
 </form></div>
+<div id="qrbox" aria-hidden="true"><div class="qrc" role="dialog" aria-label="Condividi Viatico"><h3>🔗 Condividi Viatico</h3><div class="qrimg" id="qrimg" role="img" aria-label="Codice QR per aprire Viatico"></div><p class="qrp">Fai inquadrare il codice con la fotocamera: si apre Viatico, pronta da aggiungere alla schermata Home.</p><p class="qru" id="qru"></p><div class="qrb"><button type="button" class="btn" id="qrshare">Condividi il link</button><button type="button" class="btn ghost" id="qrcopy">Copia il link</button></div><button type="button" class="btn ghost cls" id="qrclose">Chiudi</button></div></div>
 <div class="toast" id="toast" role="status"></div>
 <noscript><p style="position:fixed;inset:auto 0 40% 0;text-align:center;padding:20px">Per usare l'app serve JavaScript.</p></noscript>

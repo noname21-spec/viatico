@@ -207,7 +207,10 @@ var cb=document.getElementById("dm"),root=document.documentElement,mq=matchMedia
 function curD(){var t=root.getAttribute("data-theme");return t?t==="dark":mq.matches}
 function sync(){cb.checked=curD();if(meta)setTimeout(function(){var v=getComputedStyle(root).getPropertyValue("--tc").trim();meta.setAttribute("content",v||(cb.checked?"#04121a":"#0388b0"))},30)}
 window.addEventListener("citycolor",sync);
-cb.addEventListener("change",function(){var t=cb.checked?"dark":"light";root.setAttribute("data-theme",t);try{localStorage.setItem("via-theme",t)}catch(e){}sync()});
+function themeNow(){return root.getAttribute("data-theme")||"auto"}
+function paintTheme(){var c=themeNow();[].forEach.call(document.querySelectorAll(".seg3 [data-t]"),function(b){var on=b.dataset.t===c;b.setAttribute("aria-checked",on?"true":"false");b.classList.toggle("on",on)})}
+function setTheme(t){if(t==="auto"){root.removeAttribute("data-theme");try{localStorage.removeItem("via-theme")}catch(e){}}else{root.setAttribute("data-theme",t);try{localStorage.setItem("via-theme",t)}catch(e){}}sync();paintTheme()}
+[].forEach.call(document.querySelectorAll(".seg3 [data-t]"),function(b){b.addEventListener("click",function(){setTheme(b.dataset.t)})});paintTheme();
 try{mq.addEventListener("change",function(){if(!root.getAttribute("data-theme"))sync()})}catch(e){}sync();
 /* meteo attuale di Parigi nella barra in alto */
 var wx=document.getElementById("wx"),wt=document.getElementById("wxt"),wi=wx.querySelector(".wxi");
