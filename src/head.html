@@ -467,7 +467,7 @@ tr.off td{opacity:.45;text-decoration:line-through}
 .fras .it{font-size:.8rem;color:var(--mute);font-weight:600}
 .say{text-align:left;font:600 .95rem Manrope,system-ui,sans-serif;color:var(--ink);background:color-mix(in srgb,var(--c3) 8%,transparent);border:0;border-radius:12px;padding:7px 11px;cursor:pointer;transition:transform .15s,background .2s}
 .say small{display:block;color:var(--c2);font-weight:600;font-size:.76rem;margin-top:2px}
-.say:active,.say.on{transform:scale(.97);background:color-mix(in srgb,var(--c3) 22%,transparent)}
+.say.mute{display:block;cursor:default}.say:active:not(.mute),.say.on{transform:scale(.97);background:color-mix(in srgb,var(--c3) 22%,transparent)}
 .call{display:inline-block;margin-right:6px;padding:3px 10px;border-radius:999px;background:var(--gradb);color:#fff!important;font-weight:800;text-decoration:none}
 /* ===== schermata «Il tuo viaggio» ===== */
 #setup{position:fixed;inset:0;z-index:150;display:flex;justify-content:center;overflow-y:auto;overscroll-behavior:none;-webkit-overflow-scrolling:touch;padding:calc(18px + env(safe-area-inset-top,0px)) 12px calc(24px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--bg) 55%,transparent);-webkit-backdrop-filter:blur(26px) saturate(170%);backdrop-filter:blur(26px) saturate(170%);opacity:0;visibility:hidden;transition:opacity .35s ease,visibility 0s linear .35s}

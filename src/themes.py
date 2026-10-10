@@ -1,15 +1,4 @@
-"""Temi colore delle città: stessi gruppi di variabili del tema di Parigi."""
-
-def lum(h):
-    h=h.lstrip('#');r,g,b=[int(h[i:i+2],16)/255 for i in (0,2,4)]
-    f=lambda c:c/12.92 if c<=.03928 else ((c+.055)/1.055)**2.4
-    return .2126*f(r)+.7152*f(g)+.0722*f(b)
-def mix(a,b,t):
-    a=a.lstrip('#');b=b.lstrip('#')
-    return '#'+''.join('%02x'%round(int(a[i:i+2],16)*(1-t)+int(b[i:i+2],16)*t) for i in (0,2,4))
-def contrast(a,b):
-    la,lb=sorted([lum(a),lum(b)],reverse=True);return (la+.05)/(lb+.05)
-
+from themes_base import *
 GLASS_L="--glass:rgba(255,255,255,.55);--glassb:rgba(255,255,255,.8);--gl:rgba(255,255,255,.3);--gl2:rgba(255,255,255,.4);--edge:rgba(255,255,255,.62);--hi:rgba(255,255,255,.95);--hi2:rgba(255,255,255,.42);--gltb:rgba(255,255,255,.18)"
 GLASS_D="--glass:rgba(255,255,255,.06);--glassb:rgba(255,255,255,.12);--gl2:rgba(255,255,255,.06);--edge:rgba(255,255,255,.14);--hi:rgba(255,255,255,.34);--hi2:rgba(255,255,255,.09);--glsh:rgba(0,0,0,.45)"
 
@@ -17,6 +6,7 @@ def grad(stops,ang=135):
     n=len(stops);return 'linear-gradient(%ddeg,%s)'%(ang,','.join('%s %d%%'%(c,round(i*100/(n-1))) for i,c in enumerate(stops)))
 
 T={}
+from palettes import mk
 # Barcellona: blu del Mediterraneo, granata e oro (i colori della città e della senyera), sabbia
 T['bcn']=dict(
  L=dict(c1='#0f4c9a',c2='#a8323e',c3='#073a7a',c4='#1f6fb8',c5='#5b9bd5',gold='#e8b21c',sand='#efd9a7',cream='#fbf1d8',pin='#073a7a',blue='#0f4c9a',food='#a8323e',
@@ -28,6 +18,16 @@ T['bcn']=dict(
  tabs=['#073a7a','#0f4c9a','#1f6fb8','#5b9bd5','#e8b21c','#efc65a','#fbf1d8'],
  lights=[('#073a7a',30),('#a8323e',18),('#e8b21c',38),('#efd9a7',80)],dlights=[('#0f4c9a',70),('#a8323e',26),('#e8b21c',12),('#efd9a7',9)],
  spark='#ffe08a',flag=['#e8b21c','#a8323e','#073a7a'],tc='#073a7a',dtc='#04122a')
+
+CITY_PAL={
+'roma':dict(pri='#9b2226',sec='#a4561a',gold='#e0a526',cream='#fbf2dc',flag=['#8e1b1b','#c7962c','#f2c14e']),
+'londra':dict(pri='#14306f',sec='#c8102e',gold='#e0b22e',cream='#f6f3ec',flag=['#c8102e','#ffffff','#14306f']),
+'amsterdam':dict(pri='#bf2a1f',sec='#2c4a6e',gold='#f39200',cream='#fbf4e8',flag=['#d52b1e','#ffffff','#2c4a6e']),
+'lisbona':dict(pri='#1c4f8f',sec='#a87900',gold='#f5c400',cream='#fbf6e6',flag=['#1c4f8f','#ffd200','#f2f2f2']),
+'berlino':dict(pri='#b3122a',sec='#3b3f4a',gold='#f0b323',cream='#f5f3ef',flag=['#e4002b','#ffffff','#111111']),
+'praga':dict(pri='#11457e',sec='#b30d27',gold='#d4a017',cream='#faf3e3',flag=['#ffffff','#c8102e','#11457e']),
+'vienna':dict(pri='#a7102a',sec='#7a5a1e',gold='#d9b25f',cream='#fbf3e2',flag=['#c8102e','#ffffff','#d9b25f'])}
+for _k,_v in CITY_PAL.items():T[_k]=mk(**_v)
 
 def css_for(cid):
     t=T[cid];L=t['L'];D=t['D'];S=':root[data-city="%s"]'%cid
