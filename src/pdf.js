@@ -249,6 +249,36 @@ if(pdfBtn){pdfBtn.addEventListener("click",function(){
   pdfS.textContent="Fatto: "+r.name;toast("PDF pronto")})
  .catch(function(){pdfS.textContent="Non sono riuscito a creare il PDF";toast("Errore nel PDF")})
  .then(function(){busy(pdfBtn,false);setTimeout(function(){pdfS.textContent=pdfS0},5000)})})}
+
+/* ---------- calendario (.ics) ---------- */
+function icsEsc(s){return String(s==null?"":s).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\r?\n/g,"\\n")}
+function fold(l){var o=[];while(l.length>70){o.push(l.slice(0,70));l=" "+l.slice(70)}o.push(l);return o.join("\r\n")}
+function tzOff(ms,tz){var p={};new Intl.DateTimeFormat("en-US",{timeZone:tz,hourCycle:"h23",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit"}).formatToParts(new Date(ms)).forEach(function(x){p[x.type]=+x.value});return(Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute,p.second)-ms)/6e4}
+function utcOf(date,min,tz){var a=date.split("-").map(Number),g=Date.UTC(a[0],a[1]-1,a[2],0,min),o=tzOff(g,tz);o=tzOff(g-o*6e4,tz);return g-o*6e4}
+function zt(ms){var d=new Date(ms),z=function(n){return("0"+n).slice(-2)};return d.getUTCFullYear()+z(d.getUTCMonth()+1)+z(d.getUTCDate())+"T"+z(d.getUTCHours())+z(d.getUTCMinutes())+"00Z"}
+function ft(date,min){var z=function(n){return("0"+n).slice(-2)};return date.replace(/-/g,"")+"T"+z(Math.floor(min/60)%24)+z(min%60)+"00"}
+function mkIcs(D){
+ var P=window.PAR,trip=P&&P.trip,cfg=P&&P.cfg,tz=(window.PD&&PD.TZ)||"Europe/Rome",L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Viatico//IT","CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:"+icsEsc(D.title)],stamp=zt(Date.now()),n=0;
+ function ev(o){n++;L.push("BEGIN:VEVENT","UID:viatico-"+(cfg&&(cfg.tid||cfg.dest+cfg.date)||"x")+"-"+n+"@viatico","DTSTAMP:"+stamp,o.when,"SUMMARY:"+icsEsc(o.title));if(o.desc)L.push("DESCRIPTION:"+icsEsc(o.desc));if(o.loc)L.push("LOCATION:"+icsEsc(o.loc));
+  (o.alarms||[]).forEach(function(a){L.push("BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:"+icsEsc(o.title),"TRIGGER:-"+a,"END:VALARM")});L.push("END:VEVENT")}
+ var tm=function(s){var m=/(\d{1,2}):(\d{2})/.exec(s||"");return m?+m[1]*60+ +m[2]:null};
+ if(cfg&&cfg.a_dep&&cfg.date&&tm(cfg.a_dep)!=null){var s0=tm(cfg.a_dep);ev({when:"DTSTART:"+ft(cfg.date,s0)+"\r\nDTEND:"+ft(cfg.date,s0+90),title:"Volo di andata"+(cfg.a_num?" "+cfg.a_num:"")+" verso "+D.city,desc:"Partenza da "+(cfg.from||"casa")+". Imbarco, documenti e bagagli: controlla la lista in Viatico.",alarms:["P1D","PT3H"]})}
+ D.days.forEach(function(d,i){var dt=trip&&trip.days[i]&&trip.days[i].date;if(!dt)return;
+  d.steps.forEach(function(s){var m=/(\d{1,2}):(\d{2})(?:\s*[–-]\s*(\d{1,2}):(\d{2}))?/.exec(s.t||"");if(!m)return;var a=+m[1]*60+ +m[2],e=m[3]?+m[3]*60+ +m[4]:a+45;if(e<=a)e=a+45;
+   var title=clean(s.title)||"Tappa",desc=s.parts.map(function(p){return clean(p.k==="item"?(p.name+(p.text?": "+p.text:"")):p.text)}).filter(Boolean).join("\n");
+   ev({when:"DTSTART:"+zt(utcOf(dt,a,tz))+"\r\nDTEND:"+zt(utcOf(dt,e,tz)),title:title+" · "+D.city,desc:desc,alarms:["PT15M"]})})});
+ if(cfg&&cfg.r_dep&&trip&&tm(cfg.r_dep)!=null){var last=trip.days[trip.days.length-1].date,r0=tm(cfg.r_dep);ev({when:"DTSTART:"+zt(utcOf(last,r0,tz))+"\r\nDTEND:"+zt(utcOf(last,r0+90,tz)),title:"Volo di ritorno"+(cfg.r_num?" "+cfg.r_num:"")+" da "+D.city,desc:"Apertura imbarco: "+(cfg.r_imb||"controlla il biglietto")+".",alarms:["PT4H","PT2H"]})}
+ L.push("END:VCALENDAR");return L.map(fold).join("\r\n")+"\r\n"}
+var calBtn=$("#shcal"),calS=$("#shcals"),calS0=calS&&calS.textContent;
+if(calBtn){calBtn.addEventListener("click",function(){
+ if(!ready())return;busy(calBtn,true);calS.textContent="Preparo il calendario…";
+ grabAll().then(function(D){var txt=mkIcs(D),name="Viatico-"+slug(D.city)+".ics",blob=new Blob([txt],{type:"text/calendar;charset=utf-8"}),file;
+  if(window.File&&navigator.canShare){try{file=new File([blob],name,{type:"text/calendar"})}catch(e){}}
+  if(isIOS&&file&&navigator.canShare({files:[file]}))navigator.share({files:[file],title:D.title}).catch(function(){});else download(blob,name);
+  calS.textContent="Fatto: apri il file per aggiungere gli eventi";toast("Calendario pronto")})
+ .catch(function(){calS.textContent="Non sono riuscito a creare il calendario";toast("Errore nel calendario")})
+ .then(function(){busy(calBtn,false);setTimeout(function(){calS.textContent=calS0},6000)})})}
+window.VIATICO_ICS=mkIcs;
 var shBtn=$("#shsit");
 if(shBtn){shBtn.addEventListener("click",function(){
  if(!ready())return;busy(shBtn,true);

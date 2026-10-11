@@ -580,6 +580,17 @@ $("#shreset").addEventListener("click",function(){if(!confirm("Cancellare TUTTI 
 ["via-trip","via-trips","via-spese","via-check","via-copt","via-adb-key","via-vlive","via-vlive-n","via-water"].forEach(function(k){ls(k,null)});CFG=null;SAVED=null;TRIP=null;SP={};CK={};COPT={};closeSheet();openDest()});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeSheet();if(CFG){closeSetup();closeDest();setCity(PD.id)}}});
 
+/* invio e importazione di un viaggio tramite link */
+function tripLink(c){var k=["dest","date","date_r","ppl","from","fromCode","to","a_num","a_dep","a_arr","r_num","r_imb","r_dep"],o={};k.forEach(function(x){if(c[x]!=null&&c[x]!=="")o[x]=c[x]});if(c.stay){o.stay={};["zone","addr","cin","cout","price","type","pos","geo"].forEach(function(x){if(c.stay[x]!=null)o.stay[x]=c.stay[x]})}
+return location.origin+location.pathname+"#t="+btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+function readLink(){var m=/^#t=([\w-]+)/.exec(location.hash||"");if(!m)return null;try{var s=m[1].replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";var o=JSON.parse(decodeURIComponent(escape(atob(s))));
+if(!o||!CITIES[o.dest]||!/^\d{4}-\d\d-\d\d$/.test(o.date||"")||!o.a_arr||!o.r_dep)return null;var c={},str=function(v){return String(v).slice(0,140)};["dest","date","date_r","from","fromCode","to","a_num","a_dep","a_arr","r_num","r_imb","r_dep"].forEach(function(x){if(o[x]!=null)c[x]=str(o[x])});c.ppl=Math.max(1,Math.min(10,+o.ppl||2));
+if(o.stay&&typeof o.stay==="object"){c.stay={};["zone","addr","cin","cout","type"].forEach(function(x){if(o.stay[x]!=null)c.stay[x]=str(o.stay[x])});c.stay.price=+o.stay.price||0;if(Array.isArray(o.stay.pos)&&o.stay.pos.length===2&&isFinite(o.stay.pos[0])&&isFinite(o.stay.pos[1])){c.stay.pos=[+o.stay.pos[0],+o.stay.pos[1]];c.stay.geo=1}}return c}catch(e){return null}}
+$("#shlink").addEventListener("click",function(){if(!CFG){toast("Imposta prima il tuo viaggio");return}var u=tripLink(CFG),d=dOf(CFG.dest);closeSheet();
+if(navigator.share)navigator.share({title:"Viaggio a "+d.n+" con Viatico",text:"Apri il mio viaggio a "+d.n+" ("+rangeOf(CFG)+") su Viatico:",url:u}).catch(function(){});else{try{navigator.clipboard.writeText(u).then(function(){toast("Link copiato")},function(){prompt("Copia il link",u)})}catch(e){prompt("Copia il link",u)}}});
+window.addEventListener("hashchange",function(){if(/^#t=/.test(location.hash))location.reload()});
+(function(){var c=readLink();if(!location.hash||!/^#t=/.test(location.hash))return;try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}if(!c){setTimeout(function(){toast("Il link del viaggio non è valido")},1500);return}
+var d=dOf(c.dest);setTimeout(function(){ask("Importare il viaggio a "+d.n+"?",rangeOf(c)+(SAVED&&SAVED.date?". Il viaggio che hai ora resta salvato nella tua lista.":"."),[{t:"Importa il viaggio",fn:function(){parkCur();c.tid=newTid();ls("via-trip",JSON.stringify(c));goCity(c.dest)}}])},document.documentElement.classList.contains("pick")?600:3000)})();
 /* tasto indietro (Android) e gesto indietro (iOS): chiudono la schermata aperta invece di uscire */
 (function(){var els={ask:$("#ask"),sheet:$("#sheet"),qr:$("#qrbox"),acct:$("#acct"),setup:$("#setup"),dest:$("#dest")},order=[],has=false,pop=false;
 try{if(history.state&&history.state.vov)history.replaceState(null,"")}catch(e){}
