@@ -4593,7 +4593,7 @@ if(shBtn){shBtn.addEventListener("click",function(){
 <script>
 /* ===== account e sincronizzazione (Supabase: Google / Apple) ===== */
 (function(){
-var SB={url:"",key:""};
+var SB={url:"https://nesozulkxioahnqfgqvt.supabase.co",key:"sb_publishable_YZne7hPWdSltL6C-Ffbusg_w5dZAISb"};
 var ok=/^https:\/\//.test(SB.url)&&SB.key.length>20;
 var KEYS=["via-trip","via-trips","via-spese","via-check","via-copt"],TK=["via-spese","via-check","via-copt"],SESS=null,UID=null,CL=null,busy=false,applying=false,timer=0,lastPull=0;
 function g(k){try{return localStorage.getItem(k)}catch(e){return null}}
@@ -4613,7 +4613,7 @@ function merge(a,b){var cur=a.cur||b.cur,all={},order=[];function add(t){if(!t||
 if(a.cur)add(a.cur);a.trips.forEach(add);if(b.cur)add(b.cur);b.trips.forEach(add);
 var cid=cur?cur.cfg.tid:null;return{v:1,cur:cid?all[cid]:null,trips:order.filter(function(i){return i!==cid}).map(function(i){return all[i]}).slice(0,12)}}
 /* libreria caricata solo quando serve */
-function lib(){return new Promise(function(res,rej){if(window.supabase)return res();var s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js";s.onload=res;s.onerror=function(){rej(new Error("offline"))};document.head.appendChild(s)})}
+function lib(){return new Promise(function(res,rej){if(window.supabase)return res();var s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.100.0/dist/umd/supabase.js";s.onload=res;s.onerror=function(){rej(new Error("offline"))};document.head.appendChild(s)})}
 function client(){return lib().then(function(){if(!CL)CL=window.supabase.createClient(SB.url,SB.key,{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});return CL})}
 function setSess(s){SESS=s;UID=s&&s.user?s.user.id:null;paint()}
 function mail(){return SESS&&SESS.user?(SESS.user.email||"account collegato"):""}
