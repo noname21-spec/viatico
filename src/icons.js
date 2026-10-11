@@ -1,4 +1,4 @@
-/* ===== icone di Viatico: sostituiscono le emoji di sistema =====
+/* ===== icone di Viaticum: sostituiscono le emoji di sistema =====
    Immagini 3D: Fluent Emoji di Microsoft (licenza MIT, vedi privacy.html). Dentro il testo ogni emoji
    viene sostituita da <img class="ic i3" data-n="nome">. Le immagini (WebP in base64) sono create in fase di build e
    trasformate in blob alla prima richiesta: così Safari le disegna sempre, a differenza degli sfondi CSS enormi. */

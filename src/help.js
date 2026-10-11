@@ -15,9 +15,9 @@ if(sel)sel.addEventListener("change",function(){var l=sel.value;try{localStorage
 /* supporto */
 var help=document.getElementById("help"),mail=document.getElementById("hlmail");
 function info(){var c=null;try{c=JSON.parse(localStorage.getItem("via-trip")||"null")}catch(e){}
-return["Viatico "+((document.getElementById("hlver")||{}).textContent||"").replace("Viatico · ",""),"Città: "+(c&&c.dest||"nessun viaggio"),"Lingua: "+cur,"Schermo: "+innerWidth+"x"+innerHeight,"Browser: "+navigator.userAgent].join("\n")}
+return["Viaticum "+((document.getElementById("hlver")||{}).textContent||"").replace("Viaticum · ",""),"Città: "+(c&&c.dest||"nessun viaggio"),"Lingua: "+cur,"Schermo: "+innerWidth+"x"+innerHeight,"Browser: "+navigator.userAgent].join("\n")}
 function openHelp(){var s=document.getElementById("sheet");if(s){s.classList.remove("on");s.setAttribute("aria-hidden","true")}
-if(mail&&mail.getAttribute("href").indexOf("mailto:")===0&&mail.dataset.ok!=="1"){var to=mail.getAttribute("href").slice(7).split("?")[0];mail.href="mailto:"+to+"?subject="+encodeURIComponent("Assistenza Viatico")+"&body="+encodeURIComponent("Descrivi il problema:\n\n\n\n---\nDettagli tecnici (non cancellare):\n"+info());mail.dataset.ok="1"}
+if(mail&&mail.getAttribute("href").indexOf("mailto:")===0&&mail.dataset.ok!=="1"){var to=mail.getAttribute("href").slice(7).split("?")[0];mail.href="mailto:"+to+"?subject="+encodeURIComponent("Assistenza Viaticum")+"&body="+encodeURIComponent("Descrivi il problema:\n\n\n\n---\nDettagli tecnici (non cancellare):\n"+info());mail.dataset.ok="1"}
 setTimeout(function(){help.classList.add("on");help.setAttribute("aria-hidden","false")},s?160:0)}
 function closeHelp(){help.classList.remove("on");help.setAttribute("aria-hidden","true")}
 document.getElementById("shhelp").addEventListener("click",openHelp);

@@ -83,8 +83,8 @@ function label(){
  st.textContent=t;sub.textContent=ST.on?t:"Voli, tappe, pasti, alloggio e lista";
  opts.classList.toggle("off",!ST.on);
  var m="I promemoria suonano quando l'app è aperta o appena usata. Per avere gli avvisi anche con l'app chiusa, aggiungi il viaggio al calendario del telefono.";
- if(ios&&!standalone)m="Su iPhone le notifiche funzionano solo se Viatico è sulla schermata Home: apri la condivisione di Safari e scegli «Aggiungi alla schermata Home». "+m;
- if(p==="denied")m="Le notifiche sono bloccate per Viatico: puoi riattivarle dalle impostazioni del telefono o del browser. Nel frattempo i promemoria compaiono dentro l'app. "+m;
+ if(ios&&!standalone)m="Su iPhone le notifiche funzionano solo se Viaticum è sulla schermata Home: apri la condivisione di Safari e scegli «Aggiungi alla schermata Home». "+m;
+ if(p==="denied")m="Le notifiche sono bloccate per Viaticum: puoi riattivarle dalle impostazioni del telefono o del browser. Nel frattempo i promemoria compaiono dentro l'app. "+m;
  note.textContent=m}
 function sync(){on.checked=!!ST.on;[].forEach.call(box.querySelectorAll(".nsw[data-k]"),function(c){c.checked=!!ST[c.dataset.k]});lead.value=String(ST.lead);label()}
 function save(){sv(KEY,ST);sigNow="";label()}
@@ -93,12 +93,12 @@ function ask(){if(!supported||Notification.permission!=="default")return Promise
  try{var r=Notification.requestPermission(function(){});return Promise.resolve(r).then(function(){return perm()})}catch(e){return Promise.resolve(perm())}}
 on.addEventListener("change",function(){
  ST.on=on.checked;save();
- if(ST.on){ask().then(function(p){label();if(p==="granted")toast("Promemoria attivati");else if(p==="denied")toast("Notifiche bloccate dal telefono: i promemoria restano dentro l'app");else if(ios&&!standalone)toast("Aggiungi Viatico alla schermata Home per le notifiche");else toast("Promemoria attivi dentro l'app");start()})}
+ if(ST.on){ask().then(function(p){label();if(p==="granted")toast("Promemoria attivati");else if(p==="denied")toast("Notifiche bloccate dal telefono: i promemoria restano dentro l'app");else if(ios&&!standalone)toast("Aggiungi Viaticum alla schermata Home per le notifiche");else toast("Promemoria attivi dentro l'app");start()})}
  else{stop();toast("Promemoria disattivati")}});
 [].forEach.call(box.querySelectorAll(".nsw[data-k]"),function(c){c.addEventListener("change",function(){ST[c.dataset.k]=c.checked?1:0;save();tick()})});
 lead.addEventListener("change",function(){ST.lead=+lead.value||15;save();tick()});
 $("#ntest").addEventListener("click",function(){
- ask().then(function(p){label();show("🔔 Viatico","Funziona! I promemoria arriveranno così.","test").then(function(ok){if(!ok&&p!=="granted")toast("Per le notifiche del telefono concedi il permesso")})})});
+ ask().then(function(p){label();show("🔔 Viaticum","Funziona! I promemoria arriveranno così.","test").then(function(ok){if(!ok&&p!=="granted")toast("Per le notifiche del telefono concedi il permesso")})})});
 $("#ncal").addEventListener("click",function(){var c=$("#shcal");if(c)c.click()});
 sync();if(ST.on)start();
 window.VNOT={list:function(){refresh();return list},state:function(){return ST},tick:tick,build:build,reset:function(){sv(FK,{})}};

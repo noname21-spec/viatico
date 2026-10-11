@@ -71,7 +71,7 @@ if(qrbox){
  $("#qrclose").addEventListener("click",closeQr);
  qrbox.addEventListener("click",function(e){if(e.target===qrbox)closeQr()});
  document.addEventListener("keydown",function(e){if(e.key==="Escape")closeQr()});
- $("#qrshare").addEventListener("click",function(){var u=appUrl();if(navigator.share){navigator.share({title:"Viatico",text:"Viatico: itinerario, voli, mappa, pasti e costi per il tuo viaggio.",url:u}).catch(function(){})}else{copyText(u).then(function(){toast("Link copiato")},function(){toast("Copia il link dal codice qui sopra")})}});
+ $("#qrshare").addEventListener("click",function(){var u=appUrl();if(navigator.share){navigator.share({title:"Viaticum",text:"Viaticum: itinerario, voli, mappa, pasti e costi per il tuo viaggio.",url:u}).catch(function(){})}else{copyText(u).then(function(){toast("Link copiato")},function(){toast("Copia il link dal codice qui sopra")})}});
  $("#qrcopy").addEventListener("click",function(){copyText(appUrl()).then(function(){toast("Link copiato")},function(){toast("Non riesco a copiare il link")})});
 }
 
@@ -165,7 +165,7 @@ function makePdf(D){
  np();
  /* copertina */
  rect(0,0,W,118,A);rect(0,118,W,3,B);
- txt(M,38,9,"F2",mixc(A,WHITE,.7),"VIATICO");
+ txt(M,38,9,"F2",mixc(A,WHITE,.7),"VIATICUM");
  var ttl=clean(D.title),tsz=26;while(tw(ttl,tsz,true)>CW&&tsz>16)tsz-=1;
  txt(M,86,tsz,"F2",lum(A)>.62?INK:WHITE,ttl);
  y=118+3+16;
@@ -206,10 +206,10 @@ function makePdf(D){
    y+=2});
   para("Stime a persona e per il gruppo: i prezzi cambiano, controllali prima di partire.",{size:8.4,col:MUTE,it:1})}
  ensure(34);y+=10;
- para("Orari, prezzi, scioperi e lavori cambiano: verifica sempre prima di partire. "+(D.only?"Costi stimati con Viatico il ":"Itinerario creato con Viatico il ")+new Date().toLocaleDateString("it-IT")+".",{size:8.4,col:MUTE,it:1});
+ para("Orari, prezzi, scioperi e lavori cambiano: verifica sempre prima di partire. "+(D.only?"Costi stimati con Viaticum il ":"Itinerario creato con Viaticum il ")+new Date().toLocaleDateString("it-IT")+".",{size:8.4,col:MUTE,it:1});
  /* piè di pagina */
  var N=pages.length;
- pages.forEach(function(pg,i){cur=pg;hline(H-M+2,LINE,M,W-M);var s=clean("Viatico · "+D.city),t=(i+1)+" / "+N;txt(M,H-M+16,8,"F1",MUTE,s);txt(W-M-tw(t,8,false),H-M+16,8,"F1",MUTE,t)});
+ pages.forEach(function(pg,i){cur=pg;hline(H-M+2,LINE,M,W-M);var s=clean("Viaticum · "+D.city),t=(i+1)+" / "+N;txt(M,H-M+16,8,"F1",MUTE,s);txt(W-M-tw(t,8,false),H-M+16,8,"F1",MUTE,t)});
  /* oggetti PDF */
  var out="%PDF-1.4\n%âãÏÓ\n",offs=[];
  function obj(s){offs.push(out.length);out+=(offs.length)+" 0 obj\n"+s+"\nendobj\n"}
@@ -217,7 +217,7 @@ function makePdf(D){
  obj("<</Type/Catalog/Pages 2 0 R>>");
  obj("<</Type/Pages/Kids["+kids.join(" ")+"]/Count "+nPg+">>");
  ["Helvetica","Helvetica-Bold","Helvetica-Oblique"].forEach(function(n){obj("<</Type/Font/Subtype/Type1/BaseFont/"+n+"/Encoding/WinAnsiEncoding>>")});
- obj("<</Title("+enc(clean(D.title))+")/Creator(Viatico)/Producer(Viatico)>>");
+ obj("<</Title("+enc(clean(D.title))+")/Creator(Viaticum)/Producer(Viaticum)>>");
  pages.forEach(function(pg,i){var s=pg.join("\n");
   obj("<</Type/Page/Parent 2 0 R/MediaBox[0 0 "+f(W)+" "+f(H)+"]/Resources<</Font<</F1 3 0 R/F2 4 0 R/F3 5 0 R>>>>/Contents "+(8+i*2)+" 0 R>>");
   obj("<</Length "+s.length+">>\nstream\n"+s+"\nendstream")});
@@ -230,12 +230,12 @@ function makePdf(D){
 window.VIATICO_PDF={make:makePdf,grab:grabAll,clean:clean,wrap:wrap};
 
 /* ---------- testo riassuntivo (se non si può condividere il file) ---------- */
-function summary(D){var o=[D.title,D.sub,""];D.days.forEach(function(d){o.push(d.head);d.steps.forEach(function(s){o.push("  "+s.t+"  "+s.title)});o.push("")});o.push("Creato con Viatico: "+appUrl());return o.join("\n")}
+function summary(D){var o=[D.title,D.sub,""];D.days.forEach(function(d){o.push(d.head);d.steps.forEach(function(s){o.push("  "+s.t+"  "+s.title)});o.push("")});o.push("Creato con Viaticum: "+appUrl());return o.join("\n")}
 
 /* ---------- pulsanti ---------- */
 function ready(){if(!document.querySelector("#steps > li")){toast("Imposta prima il tuo viaggio");return false}return true}
 function slug(s){return clean(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"viaggio"}
-function mk(){return grabAll().then(function(D){return{D:D,blob:makePdf(D),name:"Viatico-"+slug(D.city)+"-itinerario.pdf"}})}
+function mk(){return grabAll().then(function(D){return{D:D,blob:makePdf(D),name:"Viaticum-"+slug(D.city)+"-itinerario.pdf"}})}
 var isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 function download(blob,name){var u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=name;a.rel="noopener";document.body.appendChild(a);a.click();setTimeout(function(){a.remove();URL.revokeObjectURL(u)},4000)}
 var pdfBtn=$("#shpdf"),pdfS=$("#shpdfs"),pdfS0=pdfS&&pdfS.textContent;
@@ -258,11 +258,11 @@ function utcOf(date,min,tz){var a=date.split("-").map(Number),g=Date.UTC(a[0],a[
 function zt(ms){var d=new Date(ms),z=function(n){return("0"+n).slice(-2)};return d.getUTCFullYear()+z(d.getUTCMonth()+1)+z(d.getUTCDate())+"T"+z(d.getUTCHours())+z(d.getUTCMinutes())+"00Z"}
 function ft(date,min){var z=function(n){return("0"+n).slice(-2)};return date.replace(/-/g,"")+"T"+z(Math.floor(min/60)%24)+z(min%60)+"00"}
 function mkIcs(D){
- var P=window.PAR,trip=P&&P.trip,cfg=P&&P.cfg,tz=(window.PD&&PD.TZ)||"Europe/Rome",L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Viatico//IT","CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:"+icsEsc(D.title)],stamp=zt(Date.now()),n=0;
+ var P=window.PAR,trip=P&&P.trip,cfg=P&&P.cfg,tz=(window.PD&&PD.TZ)||"Europe/Rome",L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Viaticum//IT","CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:"+icsEsc(D.title)],stamp=zt(Date.now()),n=0;
  function ev(o){n++;L.push("BEGIN:VEVENT","UID:viatico-"+(cfg&&(cfg.tid||cfg.dest+cfg.date)||"x")+"-"+n+"@viatico","DTSTAMP:"+stamp,o.when,"SUMMARY:"+icsEsc(o.title));if(o.desc)L.push("DESCRIPTION:"+icsEsc(o.desc));if(o.loc)L.push("LOCATION:"+icsEsc(o.loc));
   (o.alarms||[]).forEach(function(a){L.push("BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:"+icsEsc(o.title),"TRIGGER:-"+a,"END:VALARM")});L.push("END:VEVENT")}
  var tm=function(s){var m=/(\d{1,2}):(\d{2})/.exec(s||"");return m?+m[1]*60+ +m[2]:null};
- if(cfg&&cfg.a_dep&&cfg.date&&tm(cfg.a_dep)!=null){var s0=tm(cfg.a_dep);ev({when:"DTSTART:"+ft(cfg.date,s0)+"\r\nDTEND:"+ft(cfg.date,s0+90),title:"Volo di andata"+(cfg.a_num?" "+cfg.a_num:"")+" verso "+D.city,desc:"Partenza da "+(cfg.from||"casa")+". Imbarco, documenti e bagagli: controlla la lista in Viatico.",alarms:["P1D","PT3H"]})}
+ if(cfg&&cfg.a_dep&&cfg.date&&tm(cfg.a_dep)!=null){var s0=tm(cfg.a_dep);ev({when:"DTSTART:"+ft(cfg.date,s0)+"\r\nDTEND:"+ft(cfg.date,s0+90),title:"Volo di andata"+(cfg.a_num?" "+cfg.a_num:"")+" verso "+D.city,desc:"Partenza da "+(cfg.from||"casa")+". Imbarco, documenti e bagagli: controlla la lista in Viaticum.",alarms:["P1D","PT3H"]})}
  D.days.forEach(function(d,i){var dt=trip&&trip.days[i]&&trip.days[i].date;if(!dt)return;
   d.steps.forEach(function(s){var m=/(\d{1,2}):(\d{2})(?:\s*[–-]\s*(\d{1,2}):(\d{2}))?/.exec(s.t||"");if(!m)return;var a=+m[1]*60+ +m[2],e=m[3]?+m[3]*60+ +m[4]:a+45;if(e<=a)e=a+45;
    var title=clean(s.title)||"Tappa",desc=s.parts.map(function(p){return clean(p.k==="item"?(p.name+(p.text?": "+p.text:"")):p.text)}).filter(Boolean).join("\n");
@@ -272,7 +272,7 @@ function mkIcs(D){
 var cpBtn=$("#ccpdf");
 if(cpBtn){cpBtn.addEventListener("click",function(){
  if(!ready())return;var lab=cpBtn.textContent;busy(cpBtn,true);cpBtn.textContent="Preparo il PDF…";
- var h1=T($("#itinerario h1"))||"Costi",city=(h1.split(/\s+in\s+/)[0]||h1),D={title:"Costi stimati · "+city,city:city,sub:T($("#hsub")),days:[],costs:grabCosts(),only:1},name="Viatico-"+slug(city)+"-costi.pdf";
+ var h1=T($("#itinerario h1"))||"Costi",city=(h1.split(/\s+in\s+/)[0]||h1),D={title:"Costi stimati · "+city,city:city,sub:T($("#hsub")),days:[],costs:grabCosts(),only:1},name="Viaticum-"+slug(city)+"-costi.pdf";
  try{var blob=makePdf(D),file;if(isIOS&&window.File&&navigator.canShare){try{file=new File([blob],name,{type:"application/pdf"})}catch(e){}}
   if(file&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:D.title}).catch(function(){})}else download(blob,name);toast("PDF dei costi pronto")}
  catch(e){toast("Errore nel PDF")}
@@ -280,7 +280,7 @@ if(cpBtn){cpBtn.addEventListener("click",function(){
 var calBtn=$("#shcal"),calS=$("#shcals"),calS0=calS&&calS.textContent;
 if(calBtn){calBtn.addEventListener("click",function(){
  if(!ready())return;busy(calBtn,true);calS.textContent="Preparo il calendario…";
- grabAll().then(function(D){var txt=mkIcs(D),name="Viatico-"+slug(D.city)+".ics",blob=new Blob([txt],{type:"text/calendar;charset=utf-8"}),file;
+ grabAll().then(function(D){var txt=mkIcs(D),name="Viaticum-"+slug(D.city)+".ics",blob=new Blob([txt],{type:"text/calendar;charset=utf-8"}),file;
   if(window.File&&navigator.canShare){try{file=new File([blob],name,{type:"text/calendar"})}catch(e){}}
   if(isIOS&&file&&navigator.canShare({files:[file]}))navigator.share({files:[file],title:D.title}).catch(function(){});else download(blob,name);
   calS.textContent="Fatto: apri il file per aggiungere gli eventi";toast("Calendario pronto")})
@@ -292,7 +292,7 @@ if(shBtn){shBtn.addEventListener("click",function(){
  if(!ready())return;busy(shBtn,true);
  mk().then(function(r){
   var file;try{file=new File([r.blob],r.name,{type:"application/pdf"})}catch(e){}
-  if(file&&navigator.canShare&&navigator.canShare({files:[file]}))return navigator.share({files:[file],title:r.D.title,text:"Il mio itinerario con Viatico"}).catch(function(){});
+  if(file&&navigator.canShare&&navigator.canShare({files:[file]}))return navigator.share({files:[file],title:r.D.title,text:"Il mio itinerario con Viaticum"}).catch(function(){});
   if(navigator.share)return navigator.share({title:r.D.title,text:summary(r.D)}).catch(function(){});
   return copyText(summary(r.D)).then(function(){toast("Itinerario copiato")},function(){download(r.blob,r.name);toast("PDF scaricato")})})
  .catch(function(){toast("Errore nella condivisione")})
