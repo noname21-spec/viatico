@@ -291,8 +291,10 @@ if(T.kind==="first"&&n.m<T.land){set("","Oggi si parte! ✈️",(c.a_num?"Volo "
 if(T.kind==="mid"&&n.m<T.c0){set("calm","Buongiorno! Giorno "+(di+1),"Si parte alle "+fmt(T.c0)+(T.acts.length?": "+T.acts.map(function(id){return S[id].t}).join(", ")+".":"."));return}
 var L=T.items[T.items.length-1];if(L.k==="night"&&n.m>=L.t+L.d){var nx=TRIP.days[di+1];set("calm","Buonanotte! 🌙",nx?"Domani si riparte alle "+fmt(nx.c0)+(nx.acts.length?" con "+S[nx.acts[0]].t+".":"."):"");return}}
 var cur=T.items[i],nx2=T.items[i+1];
-if(i<0){set("","Prima tappa: "+nm(T.items[0]),"Alle "+fmt(T.items[0].t)+", tra "+fdur(T.items[0].t-n.m));return}
-set("","Ora: "+nm(cur),nx2?"Prossima: "+nm(nx2)+" tra "+fdur(nx2.t-n.m):"")}
+function acts(j,k){if(di!==SEL)return;var s=steps[k],l=s&&s.querySelector("a.go"),h='<div class="lact"><button type="button" class="lb" data-j="'+j+'">Vai alla tappa</button>'+(l?'<a class="lb lb2" href="'+esc(l.getAttribute("href"))+'" target="_blank" rel="noopener">🧭 Portami lì</a>':"")+'</div>';$(".lt",live).insertAdjacentHTML("beforeend",h)}
+if(i<0){set("","Prima tappa: "+nm(T.items[0]),"Alle "+fmt(T.items[0].t)+", tra "+fdur(T.items[0].t-n.m));acts(0,0);return}
+set("","Ora: "+nm(cur),nx2?"Prossima: "+nm(nx2)+" tra "+fdur(nx2.t-n.m):"");acts(i,nx2?i+1:i)}
+$("#live").addEventListener("click",function(e){var b=e.target.closest(".lb");if(!b||b.tagName==="A")return;var s=$$("#steps .step")[+b.dataset.j];if(s)s.scrollIntoView({behavior:"smooth",block:"center"})});
 function stepTitle(T,it){var keep=P;P=T;var h=stepHTML(it);P=keep;var m=/<h2>(.*?)<\/h2>/.exec(h);return m?m[1].replace(/&amp;/g,"&").replace(/&#39;/g,"'").replace(/&quot;/g,'"'):""}
 
 /* avvisi e scioperi */
