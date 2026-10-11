@@ -206,7 +206,7 @@ function makePdf(D){
    y+=2});
   para("Stime a persona e per il gruppo: i prezzi cambiano, controllali prima di partire.",{size:8.4,col:MUTE,it:1})}
  ensure(34);y+=10;
- para("Orari, prezzi, scioperi e lavori cambiano: verifica sempre prima di partire. Itinerario creato con Viatico il "+new Date().toLocaleDateString("it-IT")+".",{size:8.4,col:MUTE,it:1});
+ para("Orari, prezzi, scioperi e lavori cambiano: verifica sempre prima di partire. "+(D.only?"Costi stimati con Viatico il ":"Itinerario creato con Viatico il ")+new Date().toLocaleDateString("it-IT")+".",{size:8.4,col:MUTE,it:1});
  /* piè di pagina */
  var N=pages.length;
  pages.forEach(function(pg,i){cur=pg;hline(H-M+2,LINE,M,W-M);var s=clean("Viatico · "+D.city),t=(i+1)+" / "+N;txt(M,H-M+16,8,"F1",MUTE,s);txt(W-M-tw(t,8,false),H-M+16,8,"F1",MUTE,t)});
@@ -269,6 +269,14 @@ function mkIcs(D){
    ev({when:"DTSTART:"+zt(utcOf(dt,a,tz))+"\r\nDTEND:"+zt(utcOf(dt,e,tz)),title:title+" · "+D.city,desc:desc,alarms:["PT15M"]})})});
  if(cfg&&cfg.r_dep&&trip&&tm(cfg.r_dep)!=null){var last=trip.days[trip.days.length-1].date,r0=tm(cfg.r_dep);ev({when:"DTSTART:"+zt(utcOf(last,r0,tz))+"\r\nDTEND:"+zt(utcOf(last,r0+90,tz)),title:"Volo di ritorno"+(cfg.r_num?" "+cfg.r_num:"")+" da "+D.city,desc:"Apertura imbarco: "+(cfg.r_imb||"controlla il biglietto")+".",alarms:["PT4H","PT2H"]})}
  L.push("END:VCALENDAR");return L.map(fold).join("\r\n")+"\r\n"}
+var cpBtn=$("#ccpdf");
+if(cpBtn){cpBtn.addEventListener("click",function(){
+ if(!ready())return;var lab=cpBtn.textContent;busy(cpBtn,true);cpBtn.textContent="Preparo il PDF…";
+ var h1=T($("#itinerario h1"))||"Costi",city=(h1.split(/\s+in\s+/)[0]||h1),D={title:"Costi stimati · "+city,city:city,sub:T($("#hsub")),days:[],costs:grabCosts(),only:1},name="Viatico-"+slug(city)+"-costi.pdf";
+ try{var blob=makePdf(D),file;if(isIOS&&window.File&&navigator.canShare){try{file=new File([blob],name,{type:"application/pdf"})}catch(e){}}
+  if(file&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:D.title}).catch(function(){})}else download(blob,name);toast("PDF dei costi pronto")}
+ catch(e){toast("Errore nel PDF")}
+ cpBtn.textContent=lab;busy(cpBtn,false)})}
 var calBtn=$("#shcal"),calS=$("#shcals"),calS0=calS&&calS.textContent;
 if(calBtn){calBtn.addEventListener("click",function(){
  if(!ready())return;busy(calBtn,true);calS.textContent="Preparo il calendario…";

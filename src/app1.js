@@ -363,12 +363,24 @@ fetch("https://api.open-meteo.com/v1/forecast?latitude="+PD.LL[0]+"&longitude="+
 var PREADY=false;
 
 /* ===== sezione voli (dati) ===== */
+function renderVcost(){var box=$("#vcost");if(!box||!CFG)return;var c=CFG,N=c.ppl,o=COPT.vl||{},F=fromInfo(c),multi=N>1,m=o.m==="tot"&&multi?"tot":"pp";
+var fld=function(k,t,sub){return '<label class="vcf"><span>'+t+(sub?'<small>'+sub+'</small>':'')+'</span><span class="vcin"><input type="number" inputmode="decimal" min="0" step="1" data-k="'+k+'" value="'+(+o[k]>0?o[k]:"")+'" placeholder="0" aria-label="'+esc(t)+'"><i>€</i></span></label>'};
+box.innerHTML='<div class="vh2"><b>💶 Costo dei voli</b></div>'+(multi?'<div class="vcm" role="radiogroup" aria-label="Come hai inserito i prezzi"><button type="button" role="radio" data-m="pp" class="'+(m==="pp"?"on":"")+'" aria-checked="'+(m==="pp")+'">A persona</button><button type="button" role="radio" data-m="tot" class="'+(m==="tot"?"on":"")+'" aria-checked="'+(m==="tot")+'">Totale per '+N+'</button></div>':'')
++fld("a","Andata",(F.code||"")+" → "+esc(c.to))+fld("r","Ritorno",esc(c.to)+" → "+(F.code||""))+fld("x","Extra","Bagagli, posti, imbarco prioritario")
++'<div class="vct"><span>Totale voli</span><span id="vctt"></span></div><p class="vcn">Le voci compaiono nella tabella dei Costi e nel PDF. Le trovi spuntabili anche lì.</p>';
+function upd(){var R=flightRows(),pp=R.reduce(function(s,r){return s+r[2]},0);$("#vctt").textContent=pp?eur(pp*N)+(multi?" ("+eur(pp)+" a persona)":""):"—"}
+function save(){COPT.vl=COPT.vl||{};ls("via-copt",JSON.stringify(COPT));upd();if(PREADY||true){renderCosti(false);renderSpese()}}
+box.querySelectorAll("input").forEach(function(i){i.addEventListener("input",function(){COPT.vl=COPT.vl||{};var v=parseFloat(String(i.value).replace(",","."));COPT.vl[i.dataset.k]=v>0?Math.round(v*100)/100:0;save()})});
+box.querySelectorAll(".vcm button").forEach(function(b){b.addEventListener("click",function(){COPT.vl=COPT.vl||{};COPT.vl.m=b.dataset.m;ls("via-copt",JSON.stringify(COPT));renderVcost();renderCosti(false);renderSpese()})});
+upd()}
+
 function renderVoli(){var c=CFG,A=TRIP.A,F=fromInfo(c),DL=TRIP.days[TRIP.n-1],fr=function(n){return n?'<a class="vch" target="_blank" rel="noopener" href="https://www.flightradar24.com/data/flights/'+encodeURIComponent(n.replace(/\s+/g,"").toLowerCase())+'">Flightradar24 ↗︎</a>':""};
 function card(side){var a=side==="a",num=a?c.a_num:c.r_num,o=a?F.code||"—":c.to,d=a?c.to:F.code||"—",dt=a?c.date:(c.date_r||c.date);
 var rows=a?[["Data",cap(dateLong(dt))],["Numero volo",num||"—"],["Partenza",c.a_dep||"—"],["Atterraggio a "+PD.n,c.a_arr]]:[["Data",cap(dateLong(dt))],["Numero volo",num||"—"],["Apertura imbarco",c.r_imb||"—"],["Partenza",c.r_dep]];
 var lk=a?[[F.url,"🛫 Partenze "+F.name],[A.url,"🛬 Arrivi "+A.n]]:[[A.url,"🛫 Partenze "+A.n],[F.url,"🛬 Arrivi "+F.name]];
 return '<div class="vcard"><div class="vleg"><span class="iata">'+esc(o)+'</span><i class="pl">✈︎</i><span class="iata">'+esc(d)+'</span> '+(a?"Andata":"Ritorno")+'</div>'+rows.map(function(r){return '<div class="vrw"><span>'+r[0]+'</span><b>'+esc(r[1])+'</b></div>'}).join("")+'<div class="vlive" data-l="'+side+'" hidden></div><div class="vlinks">'+lk.filter(function(x){return x[0]}).map(function(x){return '<a class="vch" target="_blank" rel="noopener" href="'+esc(x[0])+'">'+esc(x[1])+' ↗︎</a>'}).join("")+fr(num)+'</div></div>'}
 $("#vgrid").innerHTML=card("a")+card("r");
+renderVcost();
 $("#vtips").innerHTML='<details><summary>🛬 Dall\'aeroporto di '+esc(A.n)+(TRIP.multi?' all\'alloggio':' al centro')+'</summary><ul><li>'+esc(A.arr)+'</li><li>'+esc(A.tk)+'</li>'+(PD.fx.voliTip?PD.fx.voliTip(E):(A.vt?'<li>'+esc(A.vt)+'</li>':''))+'</ul></details><details><summary>🛫 Ritorno in aeroporto</summary><ul><li>'+(TRIP.multi?"L'ultimo giorno parti alle "+fmt(DL.leave)+". ":"Parti dall'ultima tappa alle "+fmt(DL.leave)+". ")+esc(DL.items[DL.items.length-1].ret.txt)+'</li><li>Calcolo l\'arrivo in aeroporto almeno '+fdur(A.buf)+' prima del decollo'+(DL.imb!=null?' e 45 minuti prima dell\'apertura dell\'imbarco':'')+'.</li></ul></details>'}
 
 /* ===== pasti ===== */
@@ -423,7 +435,13 @@ var opts=[{k:"single",n:"biglietti singoli",v:air+city,rows:airRow.concat(cityRo
  var k=ps.per?Math.ceil(rides/ps.per):1,pp=ps.p*k,inA=ps.air&&(ps.air===true||ps.air.indexOf(c.to)>=0),v=pp+(inA?0:air);opts.push({k:"p"+ps.n,n:ps.n+(k>1?" × "+k:""),v:v,rows:(inA?[]:airRow).concat([["tr2",ps.n+(k>1?" × "+k:"")+(inA?" (aeroporto compreso)":ps.per?" per "+rides+" corse":""),pp]]),note:ps.note})});
 opts.sort(function(a,b){return a.v-b.v});opts.slice(1).forEach(function(o){alt.push(o.n+" "+eur(o.v))});
 return{T:opts[0].rows,alt:alt,best:opts[0].k,bn:opts[0].note}}
-function costModel(){if(PD.fx.cost)return PD.fx.cost(E);
+function flightRows(){var c=CFG,N=c.ppl,o=COPT.vl||{},d=o.m==="tot"&&N>1?N:1,F=fromInfo(c),R=[],pp=function(v){return(+v||0)/d};
+if(+o.a>0)R.push(["fa","Volo di andata ("+(F.code||"partenza")+"-"+c.to+")",pp(o.a),1]);
+if(+o.r>0)R.push(["fr","Volo di ritorno ("+c.to+"-"+(F.code||"partenza")+")",pp(o.r),1]);
+if(+o.x>0)R.push(["fx","Bagagli, posti e altri extra dei voli",pp(o.x),1]);
+return R}
+function costModel(){var M=costModelBase(),V=flightRows();M.V=V;M.tV=V.reduce(function(s,r){return s+(M.on(r)?r[2]:0)},0);return M}
+function costModelBase(){if(PD.fx.cost)return PD.fx.cost(E);
 var c=CFG,N=c.ppl,acts=allActs(),tr=transport(),T=tr.T.slice(),AT=[],F=[],AL=[],h=TRIP.multi?home():null,nights=TRIP.n-1,FD=PD.FOOD;
 if(PD.TR.card)T.push(["card",PD.TR.card[1],PD.TR.card[0],1]);
 acts.forEach(function(id){var t=S[id].tk;if(t)AT.push([id,t[1],t[0],1,t[3]?1:0])});
@@ -438,14 +456,14 @@ var tn=Math.min(nights,PD.TAXMAXN||1e9);if(pp)AL.push(["tax","Tassa di soggiorno
 function on(r){if(!r[3])return true;var k=COPT[r[0]];return k==null?!r[4]:!!k}
 var sum=function(a){return a.reduce(function(s,r){return s+(on(r)?r[2]:0)},0)};
 return{N:N,T:T,AT:AT,F:F,AL:AL,on:on,tT:sum(T),tA:sum(AT),tF:sum(F),tL:sum(AL),alt:tr.alt,best:tr.best,bn:tr.bn}}
-function renderCosti(anim){var M=costModel(),N=M.N,tot=M.tT+M.tA+M.tF+M.tL;
-var cat=[["Trasporti",M.tT,"#5b95d6"],["Attrazioni",M.tA,"#e5786a"],["Cibo",M.tF,"#eeb04a"]];if(TRIP.multi)cat.push(["Alloggio",M.tL,"#62b78a"]);var off=0,i=0;
+function renderCosti(anim){var M=costModel(),N=M.N,tot=M.tT+M.tA+M.tF+M.tL+M.tV;
+var cat=[["Trasporti",M.tT,"#5b95d6"],["Attrazioni",M.tA,"#e5786a"],["Cibo",M.tF,"#eeb04a"]];if(TRIP.multi)cat.push(["Alloggio",M.tL,"#62b78a"]);if(M.V.length)cat.splice(1,0,["Voli",M.tV,"#8c7bd8"]);var off=0,i=0;
 var arcs=cat.map(function(c){var len=tot?Math.max(0,c[1]/tot*100-1.2):0,o='<circle class="arc'+(anim?" anim":"")+'" cx="60" cy="60" r="46" pathLength="100" stroke="'+c[2]+'" style="--len:'+len.toFixed(2)+';--off:'+(-off).toFixed(2)+';--i:'+(i++)+'"/>';off+=tot?c[1]/tot*100:0;return o}).join("");
 $("#cdonut").innerHTML='<div class="donut"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="46" class="arc-bg"/>'+arcs+'</svg><div class="dc"><b>'+eur(tot)+'</b><span>a persona'+(TRIP.n>1?" in "+TRIP.n+" giorni":"")+'</span>'+(N>1?'<small>'+eur(tot*N)+' in '+N+'</small>':'')+'</div></div><ul class="dleg">'+cat.map(function(c){return '<li><i style="background:'+c[2]+'"></i><span>'+c[0]+'</span><b>'+eur(c[1])+'</b></li>'}).join("")+'</ul>';
 function rows(t,a){if(!a.length)return"";return '<tr class="grp"><td colspan="'+(N>1?3:2)+'">'+t+'</td></tr>'+a.map(function(r){var o=M.on(r);return '<tr class="'+(o?"":"off")+'"><td>'+(r[3]?'<label class="opt"><input type="checkbox" data-o="'+r[0]+'"'+(o?" checked":"")+'><span>'+esc(r[1])+'</span></label>':esc(r[1]))+'</td><td>'+(r[2]?eur(r[2]):(r[0]==="al"?"—":"gratis"))+'</td>'+(N>1?'<td>'+(r[2]?eur(r[2]*N):(r[0]==="al"?"—":"gratis"))+'</td>':'')+'</tr>'}).join("")}
-$("#ctab").innerHTML='<tr><th>Voce</th><th>A persona</th>'+(N>1?'<th>In '+N+'</th>':'')+'</tr>'+rows("Trasporti",M.T)+rows("Attrazioni",M.AT)+rows("Cibo",M.F)+rows("Alloggio",M.AL)+'<tr class="tot"><td>Totale</td><td>'+eur(tot)+'</td>'+(N>1?'<td>'+eur(tot*N)+'</td>':'')+'</tr>';
+$("#ctab").innerHTML='<tr><th>Voce</th><th>A persona</th>'+(N>1?'<th>In '+N+'</th>':'')+'</tr>'+rows("Voli",M.V)+rows("Trasporti",M.T)+rows("Attrazioni",M.AT)+rows("Cibo",M.F)+rows("Alloggio",M.AL)+'<tr class="tot"><td>Totale</td><td>'+eur(tot)+'</td>'+(N>1?'<td>'+eur(tot*N)+'</td>':'')+'</tr>';
 $$("#ctab input[data-o]").forEach(function(x){x.addEventListener("change",function(){COPT[x.dataset.o]=x.checked?1:0;ls("via-copt",JSON.stringify(COPT));renderCosti(false);renderSpese()})});
-var nt="Voli esclusi. Tutte le attrazioni sono facoltative: togli la spunta a quelle che non ti interessano e il totale si aggiorna. ";
+var nt=(M.V.length?"Voli inclusi come li hai inseriti. ":"Voli esclusi: puoi aggiungerne il costo nella sezione Voli. ")+"Tutte le attrazioni sono facoltative: togli la spunta a quelle che non ti interessano e il totale si aggiorna. ";
 if(PD.fx.costNote)nt+=PD.fx.costNote(E,M);else{nt+=(M.bn?M.bn+" ":M.best==="single"?"Con poche corse i biglietti singoli costano meno degli abbonamenti. ":"")+(M.alt.length?"Alternative: "+M.alt.join(", ")+". ":"")+PD.TR.note+(PD.T.foodNote?" "+PD.T.foodNote:"");if(TRIP.multi&&PD.T.taxNote)nt+=" "+PD.T.taxNote}
 $("#cnote").textContent=nt;
 window.PAREST=tot*N}

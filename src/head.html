@@ -307,6 +307,19 @@ li.closed{opacity:.62}
 .vbar small{color:var(--mute);font-size:.72rem;font-weight:600}
 .vbtn{font:800 .8rem Manrope,system-ui,sans-serif;color:#fff;border:0;border-radius:999px;padding:8px 14px;background:var(--gradb);cursor:pointer;white-space:nowrap;flex:none}
 .vbtn:active{transform:scale(.96)}.vbtn:disabled{opacity:.55}
+.vcost{margin-top:12px}
+.vcost .vcm{display:grid;grid-template-columns:repeat(2,1fr);gap:4px;padding:3px;margin:2px 0 10px;border-radius:999px;background:color-mix(in srgb,var(--ink) 8%,transparent)}
+.vcost .vcm button{height:38px;border:0;border-radius:999px;background:transparent;color:var(--ink);font:800 .82rem Manrope,system-ui,sans-serif;cursor:pointer;transition:background .25s,color .25s}
+.vcost .vcm button.on{background:var(--gradb);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.vcost .vcf{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:5px 0;font-weight:700;font-size:.9rem}
+.vcost .vcf span small{display:block;color:var(--mute);font-weight:600;font-size:.74rem}
+.vcost .vcin{display:flex;align-items:center;gap:6px;flex:none}
+.vcost .vcin input{width:96px;height:44px;padding:0 10px;border-radius:11px;border:1px solid var(--edge);background:color-mix(in srgb,var(--paper) 60%,transparent);color:var(--ink);font:800 1rem Manrope,system-ui,sans-serif;text-align:right;-moz-appearance:textfield}
+.vcost .vcin input:focus-visible{outline:2px solid var(--c2);outline-offset:2px}
+.vcost .vcin i{font-style:normal;font-weight:800;color:var(--mute)}
+.vcost .vct{display:flex;justify-content:space-between;gap:8px;margin-top:8px;padding-top:10px;border-top:1px solid color-mix(in srgb,var(--ink) 9%,transparent);font-weight:800}
+.vcost .vcn{margin:8px 0 0;color:var(--mute);font-size:.76rem;line-height:1.4}
+.ccpdf{width:100%;justify-content:center;margin:4px 0 14px;min-height:46px}
 .vkey{margin-top:10px;border-radius:14px;border:1px solid color-mix(in srgb,var(--ink) 9%,transparent);overflow:hidden}
 .vkey summary{cursor:pointer;list-style:none;padding:10px 12px;font-weight:800;font-size:.86rem;display:flex;justify-content:space-between;align-items:center;gap:8px}
 .vkey summary::-webkit-details-marker{display:none}
