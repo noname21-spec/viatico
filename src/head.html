@@ -534,20 +534,31 @@ button:active .i3,.dcity:active .i3,label:active .i3,.row:active .i3{animation:i
 .xchk{font-size:.82rem;font-weight:700;color:var(--mute);margin-top:2px}.xchk.ok{color:#1f9d55}.xchk.bad{color:var(--c2)}
 .btn.danger{color:var(--c2)!important}
 /* ===== consigli ===== */
-.checklist{margin:0 0 14px;padding:9px 12px}
-.checklist h3{margin:0 0 4px;font-size:.94rem;display:flex;justify-content:space-between;align-items:center}
+.checklist{margin:0 0 16px;padding:12px 14px}
+.checklist h3{margin:0 0 6px;font-size:1rem;display:flex;justify-content:space-between;align-items:center}
 .checklist h3 small{font-weight:700;color:var(--c3)}
 .checklist ul{list-style:none;margin:0;padding:0}
 .checklist li{border-top:1px solid color-mix(in srgb,var(--ink) 7%,transparent)}.checklist li:first-child{border-top:0}
-.checklist label{position:relative;display:flex;gap:10px;align-items:center;padding:5px 0;font-size:.9rem;line-height:1.25;cursor:pointer}
+.checklist label{position:relative;display:flex;gap:12px;align-items:center;padding:9px 0;cursor:pointer}
+.checklist h3{padding:9px 0;margin:-8px 0 -2px;min-height:44px;box-sizing:border-box;cursor:pointer;-webkit-user-select:none;user-select:none;gap:8px;-webkit-tap-highlight-color:transparent}
+.checklist h3 .ckt{flex:1;min-width:0;text-align:left}
+.checklist h3 .ckch{flex:none;width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:color-mix(in srgb,var(--ink) 8%,transparent);transition:transform .35s cubic-bezier(.22,1,.36,1)}
+.checklist h3 .ckch svg{width:14px;height:14px;fill:none;stroke:var(--c3);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.checklist h3:focus-visible{outline:2px solid var(--c2);outline-offset:3px;border-radius:8px}
+.checklist:not(.fold) h3 .ckch{transform:rotate(180deg)}
+.checklist .ckw{display:grid;grid-template-rows:1fr;transition:grid-template-rows .4s cubic-bezier(.22,1,.36,1),visibility 0s}
+.checklist .ckw>ul{min-height:0;overflow:hidden}
+.checklist.fold .ckw{grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .4s cubic-bezier(.22,1,.36,1),visibility 0s linear .4s}
+.checklist.fold .ckbar{margin-bottom:2px}
+@media (prefers-reduced-motion:reduce){.checklist .ckw,.checklist h3 .ckch{transition:none!important}}
 .checklist input.ckin{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
-.checklist .bx{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid color-mix(in srgb,var(--ink) 22%,transparent);display:grid;place-items:center;transition:background .25s,border-color .25s}
-.checklist .bx svg{width:15px;height:15px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:20;stroke-dashoffset:20;transition:stroke-dashoffset .35s ease .05s}
+.checklist .bx{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid color-mix(in srgb,var(--ink) 22%,transparent);display:grid;place-items:center;transition:background .25s,border-color .25s}
+.checklist .bx svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:20;stroke-dashoffset:20;transition:stroke-dashoffset .35s ease .05s}
 .checklist input.ckin:checked+.bx{background:var(--gradb);border-color:transparent;animation:jelly .5s cubic-bezier(.22,1,.36,1)}
 .checklist input.ckin:checked+.bx svg{stroke-dashoffset:0}
 .checklist input.ckin:focus-visible+.bx{outline:2px solid var(--c2);outline-offset:2px}
 .checklist input.ckin:checked~.tx{color:var(--mute);text-decoration:line-through;text-decoration-color:var(--c2)}
-.ckbar{height:5px;border-radius:3px;background:color-mix(in srgb,var(--ink) 8%,transparent);overflow:hidden;margin:2px 0 5px}
+.ckbar{height:6px;border-radius:3px;background:color-mix(in srgb,var(--ink) 8%,transparent);overflow:hidden;margin:2px 0 8px}
 .ckbar i{display:block;height:100%;width:0;border-radius:3px;background:var(--grad);transition:width .45s cubic-bezier(.22,1,.36,1)}
 .zones{display:flex;flex-direction:column;gap:10px}
 .zones details{overflow:hidden;transition:background .3s}
