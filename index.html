@@ -913,6 +913,7 @@ html.hold .ahome{visibility:hidden}
 .dmhr{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 2px 8px}.dmhr .dmh{margin:0}.dnew{border:0;border-radius:999px;padding:7px 13px;background:color-mix(in srgb,var(--c3) 12%,transparent);color:var(--c3);font:800 .8rem Manrope,system-ui,sans-serif;cursor:pointer}.dnew:active{transform:scale(.95)}
 #ask .qrc h3{margin-bottom:6px}
 .lact{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.lb{display:inline-flex;align-items:center;min-height:34px;padding:0 13px;border-radius:999px;border:1px solid var(--edge);background:color-mix(in srgb,var(--c3) 12%,transparent);color:var(--c3);font:800 .8rem Manrope,system-ui,sans-serif;text-decoration:none;cursor:pointer}.lb2{background:linear-gradient(135deg,var(--pin),var(--blue));color:var(--bg);border-color:transparent}.lb:active{transform:scale(.96)}
+.offl:not([hidden])+.wx{margin-left:0}.offl{pointer-events:auto;margin-left:auto;margin-right:8px;padding:5px 10px;border-radius:999px;font:800 .74rem Manrope,system-ui,sans-serif;white-space:nowrap;color:var(--on,#fff);background:linear-gradient(135deg,#6b7280,#374151);flex:none}.offl[hidden]{display:none}
 button,label,summary,a{touch-action:manipulation}
 </style>
 </head>
@@ -1024,7 +1025,7 @@ button,label,summary,a{touch-action:manipulation}
 </section>
 </main>
 
-<div class="appbar"><button type="button" class="ahome" id="ahome" aria-label="Tutti i viaggi: torna alla pagina principale"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/></svg></button><span class="appt" id="appt">Parigi</span><span class="wx" id="wx" aria-live="polite"><i class="wxi" aria-hidden="true">🌤️</i><b id="wxt">--°</b></span></div>
+<div class="appbar"><button type="button" class="ahome" id="ahome" aria-label="Tutti i viaggi: torna alla pagina principale"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/></svg></button><span class="appt" id="appt">Parigi</span><span class="offl" id="offl" hidden>📴 Offline</span><span class="wx" id="wx" aria-live="polite"><i class="wxi" aria-hidden="true">🌤️</i><b id="wxt">--°</b></span></div>
 <button type="button" class="gear" id="gear" aria-label="Impostazioni">⚙️</button>
 <label for="dm" class="iosw" title="Modalità chiara/scura"><span class="trk"><b class="ic sun" aria-hidden="true">☀️</b><b class="ic moon" aria-hidden="true">🌙</b><i class="knob"></i></span><span class="vh">Modalità scura</span></label>
 <nav class="tabbar" aria-label="Sezioni"><i class="tbind" aria-hidden="true"></i><label for="t-itinerario"><b class="em em-spin" aria-hidden="true">🕗</b><span>Tappe</span></label><label for="t-voli"><b class="em em-fly" aria-hidden="true">✈️</b><span>Voli</span></label><label for="t-mappa"><b class="em em-unfold" aria-hidden="true">🗺️</b><span>Mappa</span></label><label for="t-mangiare"><b class="em em-bob" aria-hidden="true">🥐</b><span>Pasti</span></label><label for="t-costi"><b class="em em-flip" aria-hidden="true">💶</b><span>Costi</span></label><label for="t-consigli"><b class="em em-glow" aria-hidden="true">💡</b><span>Consigli</span></label><img class="tbicon" src="icon-192.png" alt="" aria-hidden="true" draggable="false"><i class="tbdots" aria-hidden="true">🕗</i></nav>
@@ -1038,6 +1039,7 @@ button,label,summary,a{touch-action:manipulation}
 <button type="button" class="row" id="shsit"><span>📤</span><span>Condividi l'itinerario<small>Invia il PDF a chi viaggia con te</small></span></button>
 <button type="button" class="row" id="shcal"><span>📅</span><span>Aggiungi al calendario<small id="shcals">Tappe e voli con promemoria (file .ics)</small></span></button>
 <button type="button" class="row" id="shlink"><span>🔗</span><span>Invia il viaggio<small>Un link che apre lo stesso viaggio su un altro telefono</small></span></button>
+<button type="button" class="row" id="shoff"><span>🗺️</span><span>Mappa offline<small id="shoffs">Salva le tessere dell'area dei tuoi spostamenti, per usarla senza rete</small></span></button>
 <button type="button" class="row" id="shapp"><span>🔗</span><span>Condividi Viatico<small>QR code e link per far scaricare l'app</small></span></button>
 <button type="button" class="row" id="shacct" hidden><span>👤</span><span><b class="at">Accedi o registrati</b><small class="as"></small></span></button>
 <button type="button" class="row" id="shvoli"><span>📡</span><span>Stato live dei voli<small>Collega o scollega la chiave AeroDataBox</small></span></button>
@@ -3950,7 +3952,7 @@ var CK=lj("via-check",{});
 function renderConsigli(){var c=CFG,A=TRIP.A,N=c.ppl,acts=allActs(),has=function(id){return acts.indexOf(id)>=0},M=TRIP.multi,okIf=function(x){return !x||(typeof x==="function"?x(E):x.some(has))};
 var items=[["doc",PD.T.doc||"Carta d'identità o passaporto"],["bp","Carte d'imbarco di andata e ritorno"]].concat((PD.CHECK||[]).filter(function(x){return okIf(x[2])}).map(function(x){return[x[0],typeof x[1]==="function"?x[1](E):x[1]]}));
 if(M)items=items.concat([["st","Conferma e indirizzo dell'alloggio salvati sul telefono"],["ch","Caricabatterie"],["pl",PD.T.plug||"Adattatore, se hai caricatori con la spina italiana a tre poli in linea"]]);
-items=items.concat([["bor",PD.T.bottle],["pb","Power bank e cavo"],["sc2","Scarpe comode: si cammina tanto"],["fe",window.PARRAIN?"Ombrello o k-way":"Giacca leggera per la sera"],["off","Aprire l'app con internet prima di partire, per averla offline"]]);
+items=items.concat([["bor",PD.T.bottle],["pb","Power bank e cavo"],["sc2","Scarpe comode: si cammina tanto"],["fe",window.PARRAIN?"Ombrello o k-way":"Giacca leggera per la sera"],["off","Scaricare la mappa offline (impostazioni) e aprire l'app con internet prima di partire"]]);
 $("#ckbox").innerHTML='<h3>✅ Prima di partire <small id="ckn"></small></h3><div class="ckbar"><i id="ckbar"></i></div><ul>'+items.map(function(x){return '<li><label><input class="ckin" type="checkbox" data-k="'+x[0]+'"'+(CK[x[0]]?" checked":"")+'><span class="bx" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6.5 12.5l3.6 3.6L17.5 8.5"/></svg></span><span class="tx">'+esc(x[1])+'</span></label></li>'}).join("")+'</ul>';
 var cks=$$("#ckbox input");function cnt(){var n=cks.filter(function(x){return x.checked}).length;$("#ckn").textContent=n+"/"+cks.length+(n===cks.length?" 🎉":"");$("#ckbar").style.width=(n/cks.length*100)+"%"}
 cks.forEach(function(x){x.addEventListener("change",function(){CK[x.dataset.k]=x.checked;ls("via-check",JSON.stringify(CK));cnt()})});cnt();
@@ -4716,6 +4718,49 @@ var has=false;try{for(var i=0;i<localStorage.length;i++)if(/^sb-.*-auth-token/.t
 if(has||/[?&]code=|access_token=/.test(location.search+location.hash)){client().then(function(c){c.auth.onAuthStateChange(function(ev,s){if(ev==="SIGNED_OUT"){setSess(null)}else if(s&&(!UID||s.user.id!==UID)){setSess(s);pull()}});return c.auth.getSession()}).then(function(r){if(r&&r.data&&r.data.session&&!UID){setSess(r.data.session);pull()}}).catch(function(){})}
 document.addEventListener("visibilitychange",function(){if(!document.hidden&&UID&&Date.now()-lastPull>20000)pull()})}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+})();
+
+</script>
+<script>
+/* ===== uso offline: mappa scaricabile, avviso senza rete ===== */
+(function(){
+var $=function(s){return document.querySelector(s)};
+function toast(t){var el=$("#toast");if(!el)return;el.textContent=t;el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove("on")},2600)}
+/* avviso offline */
+var chip=$("#offl");function net(first){if(chip)chip.hidden=navigator.onLine;if(!first)toast(navigator.onLine?"Di nuovo online":"Sei offline: l'app funziona, mappe solo nelle zone scaricate")}
+window.addEventListener("online",function(){net()});window.addEventListener("offline",function(){net()});net(true);
+/* tessere */
+var LIB=["https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js","https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"],MAXT=320,Z0=12,Z1=16,CN="via-tiles-v1";
+function tx(lng,z){return Math.floor((lng+180)/360*Math.pow(2,z))}
+function ty(lat,z){var r=lat*Math.PI/180;return Math.floor((1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*Math.pow(2,z))}
+function points(){var P=window.PAR,T=P&&P.trip,pts=[];if(!T||!window.PD)return pts;if(PD.START)pts.push(PD.START);
+try{var h=P.home&&P.home();if(h&&h.pos)pts.push(h.pos)}catch(e){}
+T.days.forEach(function(d){d.items.forEach(function(it){if(it.k==="act"&&PD.STOPS[it.id])pts.push(PD.STOPS[it.id].pos)})});return pts}
+function plan(){var pts=points();if(!pts.length)return null;var la=pts.map(function(p){return p[0]}),lo=pts.map(function(p){return p[1]});
+var pad=.006,a=Math.min.apply(0,la)-pad,b=Math.max.apply(0,la)+pad,c=Math.min.apply(0,lo)-pad*1.4,d=Math.max.apply(0,lo)+pad*1.4,zs=[],tiles=[];
+for(var z=Z0;z<=Z1;z++){var x0=tx(c,z),x1=tx(d,z),y0=ty(b,z),y1=ty(a,z),cnt=(x1-x0+1)*(y1-y0+1);zs.push({z:z,x0:x0,x1:x1,y0:y0,y1:y1,n:cnt})}
+var tot=0,use=[];zs.forEach(function(q){if(tot+q.n<=MAXT){tot+=q.n;use.push(q)}});
+use.forEach(function(q){for(var x=q.x0;x<=q.x1;x++)for(var y=q.y0;y<=q.y1;y++)tiles.push("https://tile.openstreetmap.org/"+q.z+"/"+x+"/"+y+".png")});return tiles}
+function key(){var c=window.PAR&&PAR.cfg;return c?"via-off:"+(c.tid||c.dest+c.date):null}
+function stat(){var k=key(),s=$("#shoffs");if(!s)return;var v=null;try{v=JSON.parse(localStorage.getItem(k)||"null")}catch(e){}
+s.textContent=v?"Scaricata il "+new Date(v.at).toLocaleDateString("it-IT",{day:"numeric",month:"short"})+" · "+v.n+" tessere. Tocca per aggiornare.":"Salva le tessere dell'area dei tuoi spostamenti, per usarla senza rete"}
+var btn=$("#shoff"),run=false;
+function put(c,u){return fetch(u,{mode:"cors"}).then(function(r){if(!r.ok)throw 0;return c.put(u,r)})}
+if(btn){var g=$("#gear");g&&g.addEventListener("click",stat);
+btn.addEventListener("click",function(){
+ if(run)return;if(!window.PAR||!PAR.cfg||!PAR.trip){toast("Imposta prima il tuo viaggio");return}
+ if(!navigator.onLine){toast("Serve una connessione per scaricare la mappa");return}
+ if(!window.caches){toast("Questo browser non supporta il salvataggio offline");return}
+ var tiles=plan();if(!tiles||!tiles.length){toast("Nessuna area da scaricare");return}
+ run=true;btn.disabled=true;btn.style.opacity=".6";var s=$("#shoffs"),done=0,fail=0,i=0,total=tiles.length+LIB.length;s.textContent="Scarico la mappa… 0%";
+ caches.open(CN).then(function(c){
+  var q=LIB.concat(tiles);
+  function worker(){if(i>=q.length)return Promise.resolve();var u=q[i++];return put(c,u).catch(function(){fail++}).then(function(){done++;s.textContent="Scarico la mappa… "+Math.round(done/total*100)+"%";return worker()})}
+  return Promise.all([worker(),worker(),worker(),worker()])})
+ .then(function(){var ok=tiles.length-Math.max(0,fail-0);try{localStorage.setItem(key(),JSON.stringify({n:Math.max(0,tiles.length-fail),at:Date.now()}))}catch(e){}stat();toast(fail?"Mappa scaricata, qualche tessera è mancata":"Mappa pronta per l'uso offline")})
+ .catch(function(){s.textContent="Download non riuscito, riprova con la rete";toast("Download non riuscito")})
+ .then(function(){run=false;btn.disabled=false;btn.style.opacity=""})})}
+window.VIATICO_OFFLINE={plan:plan};
 })();
 
 </script>
