@@ -94,7 +94,7 @@
 <div class="spese"><h3>💳 Spese reali <small id="sppl"></small></h3>
 <div class="who" id="who"></div>
 <div class="stot"><div><b id="stot">0 €</b><span>spesi finora</span></div><div class="sbar"><i id="sbar"></i></div><span id="sdiff"></span></div>
-<button type="button" class="btn sadd" id="sadd">➕ Aggiungi spesa</button>
+<button type="button" class="btn sadd" id="sadd">＋ Aggiungi spesa</button>
 <div class="scat" id="scat"></div>
 <div class="slist" id="slist"></div>
 <div class="sbal" id="sbal"></div>
@@ -142,12 +142,14 @@
 <label class="dsearch"><span aria-hidden="true">🔎</span><input type="search" id="dfind" placeholder="Cerca una città" autocomplete="off" autocapitalize="words" spellcheck="false" aria-label="Cerca una destinazione"></label>
 <div class="dreg" id="dreg" role="group" aria-label="Filtra per area"></div>
 <div class="dgrid" id="dgrid"></div>
+<button type="button" class="dmore" id="dmore" hidden aria-expanded="false"></button>
 <p class="dnone" id="dnone" hidden></p>
 <p class="snote">Per ogni città con la guida completa: tappe ordinate per orario, trasporti dagli aeroporti, locali verificati, costi e consigli. Le altre arrivano presto.</p>
 </div></div>
 <div id="setup" aria-hidden="true"><form class="scard" id="sform" novalidate autocomplete="off">
 <div class="stop"><button type="button" class="sback" id="sback">‹ Destinazioni</button><button type="button" class="sback" id="scancel" hidden>Annulla</button></div>
 <div class="shead"><span class="sem" id="sem">🗼</span><div><small>La tua destinazione</small><h2 id="sdest">Parigi</h2><p id="sdsub">Francia · guida completa</p></div></div>
+<p class="reqnote" id="reqn"><b>*</b> Campi obbligatori: <span>data di andata, orario di atterraggio e orario di partenza del ritorno</span>. Il resto è facoltativo.</p>
 <fieldset class="sgrp"><div class="sglg">📅 Date e persone</div>
 <label class="f"><span>Andata</span><input type="date" name="date" required></label>
 <label class="f"><span id="rlab">Ritorno</span><input type="date" name="date_r"></label>

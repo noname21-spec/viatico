@@ -445,7 +445,7 @@ list.forEach(function(r){var d=dayTxt(r.t);if(d!==last){h+='<div class="sday">'+
 if(r.x){var x=r.x,p=Math.min(N-1,x.p||0),w=(x.w&&x.w.length?x.w:allIdx(N)).filter(function(i){return i<N}),who2=N<2?catName(x.c):(x.s?"importi diversi":(w.length>=N?"tra tutti":"tra "+w.map(function(i){return nm[i]}).join(", ")));
 h+='<button type="button" class="xr" data-id="'+esc(x.id)+'"><i>'+(CI[x.c]||"💶")+'</i><span class="xd"><b>'+esc(x.d||catName(x.c))+'</b>'+(N>1?'<small>Ha pagato '+esc(nm[p])+' · '+esc(who2)+'</small>':'<small>'+esc(catName(x.c))+'</small>')+'</span><span class="xa">'+eur(x.a)+(x.o?'<small>'+esc(Number(x.o.v).toLocaleString("it-IT"))+' '+esc(x.o.s||x.o.c)+'</small>':'')+'</span></button>'}
 else{var q=r.q;h+='<button type="button" class="xr xq" data-q="'+esc(q.id)+'"><i>🤝</i><span class="xd"><b>'+esc(nm[Math.min(N-1,q.f)])+' ha dato '+eur(q.a)+' a '+esc(nm[Math.min(N-1,q.to)])+'</b><small>Rimborso</small></span><span class="xa">'+eur(q.a)+'</span></button>'}});
-$("#slist").innerHTML=h||'<p class="sem">Ancora nessuna spesa: tocca «Aggiungi spesa» appena paghi qualcosa.</p>';
+$("#slist").innerHTML=h||'<p class="sxe">Ancora nessuna spesa: tocca «Aggiungi spesa» appena paghi qualcosa.</p>';
 $$("#slist .xr[data-id]").forEach(function(b){b.addEventListener("click",function(){openExp(b.dataset.id)})});
 $$("#slist .xr[data-q]").forEach(function(b){b.addEventListener("click",function(){var q=SP.q.filter(function(z){return z.id===b.dataset.q})[0];if(!q)return;ask("Eliminare il rimborso?",nm[Math.min(N-1,q.f)]+" ha dato "+eur(q.a)+" a "+nm[Math.min(N-1,q.to)]+". Il saldo tornerà com'era prima.",[{t:"Elimina il rimborso",fn:function(){SP.q=SP.q.filter(function(z){return z.id!==q.id});saveSP();renderSpeseBody()}}])})});
 /* saldi e rimborsi (solo con più persone) */
@@ -576,21 +576,23 @@ function goCity(id,open){ss("via-pick",id);if(open)ss("via-open",open);location.
 function rangeOf(c){var a=dateObj(c.date),b=dateObj(c.date_r||c.date);if((c.date_r||c.date)===c.date)return dateShort(c.date);return a.getUTCMonth()===b.getUTCMonth()?a.getUTCDate()+"–"+b.getUTCDate()+" "+MESI[b.getUTCMonth()]:dateShort(c.date)+" – "+dateShort(c.date_r)}
 var destEl=$("#dest"),dgrid=$("#dgrid"),dfind=$("#dfind");
 function sw(d){return '--a:'+d.col[0]+';--b:'+d.col[1]+';--c:'+d.col[2]}
-var DREG="";
+var DREG="",DEXP=false,DLIM=12;
 (function(){var el=$("#dreg");if(!el)return;var R=window.REGN||{};el.innerHTML='<button type="button" class="on" data-r="">Tutte</button>'+Object.keys(R).map(function(k){return '<button type="button" data-r="'+k+'">'+R[k]+'</button>'}).join("");
-el.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;DREG=b.dataset.r;$$("button",el).forEach(function(x){x.classList.toggle("on",x===b)});renderDest()})})();
+el.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;DREG=b.dataset.r;DEXP=false;$$("button",el).forEach(function(x){x.classList.toggle("on",x===b)});renderDest()})})();
 function renderDest(){var q=(dfind.value||"").trim().toLowerCase(),list=DEST.filter(function(d){return(!DREG||d.r===DREG)&&(!q||d.k.indexOf(q)>=0||d.n.toLowerCase().indexOf(q)>=0)});
-dgrid.innerHTML=list.map(function(d){return '<button type="button" class="dcity'+(d.ok?" ok":"")+'" data-city="'+d.id+'" style="'+sw(d)+'"><i class="dsw"></i><span class="dem">'+d.e+'</span><b>'+esc(d.n)+'</b><small>'+esc(d.c)+'</small><em>'+(d.ok?"Guida completa":"In arrivo")+'</em></button>'}).join("");
+var lim=(!q&&!DEXP)?DLIM:1e9,more=$("#dmore");more.hidden=!!q||list.length<=DLIM;more.textContent=DEXP?"Mostra meno ▴":"Mostra tutte le città ("+(list.length-DLIM)+" altre) ▾";more.setAttribute("aria-expanded",DEXP?"true":"false");
+dgrid.innerHTML=list.slice(0,lim).map(function(d){return '<button type="button" class="dcity'+(d.ok?" ok":"")+'" data-city="'+d.id+'" style="'+sw(d)+'"><i class="dsw"></i><span class="dem">'+d.e+'</span><b>'+esc(d.n)+'</b><small>'+esc(d.c)+'</small><em>'+(d.ok?"Guida completa":"In arrivo")+'</em></button>'}).join("");
 var none=$("#dnone");none.hidden=list.length>0;if(!list.length)none.textContent=q?"Nessuna città per «"+dfind.value.trim()+"», per ora. Ne aggiungiamo di nuove di continuo.":"Nessuna città in questa area, per ora.";
 var mine=$("#dmine"),all=[],hasCur=SAVED&&SAVED.date&&CITIES[SAVED.dest];if(hasCur)all.push({cur:1,cfg:SAVED});trips().forEach(function(t,k){all.push({i:k,cfg:t.cfg})});
 if(all.length){mine.hidden=false;mine.innerHTML='<div class="dmhr"><div class="dmh">'+(all.length>1?"I miei viaggi":"Il tuo viaggio")+'</div><button type="button" class="dnew" id="dnew">＋ Nuovo viaggio</button></div>'+all.map(function(t,k){var d=dOf(t.cfg.dest);return '<div class="dtw"><button type="button" class="dtrip" data-k="'+k+'" style="'+sw(d)+'"><span>'+d.e+'</span><div><small>'+(t.cur?"In corso":"Salvato")+'</small><b>'+esc(d.n)+' · '+esc(rangeOf(t.cfg))+'</b></div><i>›</i></button><button type="button" class="dtx" data-k="'+k+'" aria-label="Elimina il viaggio a '+esc(d.n)+'">✕</button></div>'}).join("");
 $$(".dtrip",mine).forEach(function(b){b.addEventListener("click",function(){var t=all[+b.dataset.k];if(t.cur){if(SAVED.dest===PD.id&&CFG){closeDest();setCity(PD.id)}else goCity(SAVED.dest)}else switchTrip(t.i)})});
 $("#dnew",mine).addEventListener("click",function(){var g=$("#dreg")||dgrid;g.scrollIntoView({behavior:"smooth",block:"start"});setTimeout(function(){dfind.focus()},450)});
 $$(".dtx",mine).forEach(function(b){b.addEventListener("click",function(){var t=all[+b.dataset.k],d=dOf(t.cfg.dest);if(!confirm("Eliminare il viaggio a "+d.n+" ("+rangeOf(t.cfg)+")? Spese e lista di questo viaggio andranno perse."))return;if(t.cur)dropCur();else{var a=trips();a.splice(t.i,1);putTrips(a)}renderDest()})})}else{mine.hidden=true;mine.innerHTML=""}}
-function openDest(){closeSetup();closeSheet();setCity(null);dfind.value="";renderDest();destEl.classList.add("on");destEl.setAttribute("aria-hidden","false");destEl.scrollTop=0;setTimeout(function(){document.documentElement.classList.remove("hold")},600)}
+function openDest(){DEXP=false;closeSetup();closeSheet();setCity(null);dfind.value="";renderDest();destEl.classList.add("on");destEl.setAttribute("aria-hidden","false");destEl.scrollTop=0;setTimeout(function(){document.documentElement.classList.remove("hold")},600)}
 function closeDest(){destEl.classList.remove("on");destEl.setAttribute("aria-hidden","true")}
 PAR.openDest=openDest;
 dfind.addEventListener("input",renderDest);
+$("#dmore").addEventListener("click",function(){DEXP=!DEXP;renderDest();if(!DEXP){var g=$("#dreg")||dgrid;g.scrollIntoView({behavior:"smooth",block:"start"})}});
 /* zoom sulla card scelta: la card si espande a schermo intero con i colori della città */
 var zbusy=false;
 var askEl=$("#ask");function closeAsk(){askEl.classList.remove("on");askEl.setAttribute("aria-hidden","true")}
@@ -629,6 +631,14 @@ $("#ahome").addEventListener("click",function(){openDest()});
 PAR.openSetup=openSetup;
 $$("[data-st]",form).forEach(function(b){b.addEventListener("click",function(){var o=$("#ppl"),v=Math.max(1,Math.min(10,(+o.textContent||2)+ +b.dataset.st));o.textContent=v})});
 $("#scancel").addEventListener("click",function(){closeSetup();if(CFG)setCity(PD.id)});
+/* campi obbligatori: asterisco sempre visibile e riquadro evidenziato finché sono vuoti */
+function paintReq(){var multi=!!form.date_r.value&&form.date_r.value>form.date.value,adr=multi&&form.sz.value==="altro";
+[["date",1],["a_arr",1],["r_dep",1],["saddr",adr]].forEach(function(r){var el=form[r[0]];if(!el)return;var lab=el.closest("label"),need=!!r[1]&&!el.value.trim();lab.classList.toggle("req",!!r[1]);lab.classList.toggle("need",need);if(!need)el.classList.remove("bad")});
+var sl=form.saddr.closest("label").firstElementChild;sl.textContent=adr?"Indirizzo dell'alloggio":"Indirizzo (facoltativo)";
+var left=[["date","la data di andata"],["a_arr","l'atterraggio"],["r_dep","la partenza del ritorno"]].filter(function(r){return !form[r[0]].value}).length+(adr&&!form.saddr.value.trim()?1:0);
+var rn=$("#reqn");if(rn)rn.classList.toggle("done",!left)}
+form.addEventListener("input",paintReq);form.addEventListener("change",paintReq);
+var _os=openSetup;openSetup=function(){_os.apply(this,arguments);paintReq()};PAR.openSetup=openSetup;
 form.addEventListener("submit",function(e){e.preventDefault();var bad=[],msg="";
 function req(k,t){if(!form[k].value){bad.push(k);msg=msg||t}}
 req("date","Scegli la data di andata.");req("a_arr","Inserisci l'orario di atterraggio a "+PD.n+".");req("r_dep","Inserisci l'orario di partenza del volo di ritorno.");
@@ -641,7 +651,7 @@ if(!msg&&ri!=null&&ri>=rd){bad.push("r_imb");msg="L'apertura dell'imbarco deve e
 if(!msg&&ad!=null&&ad>=la){bad.push("a_dep");msg="La partenza dell'andata deve essere prima dell'atterraggio."}
 if(!msg&&multi&&form.sz.value==="altro"&&!form.saddr.value.trim()){bad.push("saddr");msg="Scrivi l'indirizzo dell'alloggio, oppure scegli una zona."}
 $$("input,select",form).forEach(function(x){x.classList.toggle("bad",bad.indexOf(x.name)>=0)});
-if(msg){serr.textContent=msg;var f=form[bad[0]];if(f)try{f.focus()}catch(x){}return}
+if(msg){serr.textContent=msg;paintReq();var f=form[bad[0]];if(f)try{f.scrollIntoView({block:"center",behavior:"smooth"});f.focus({preventScroll:true})}catch(x){}return}
 var to=($('input[name=to]:checked',form)||{}).value||APK[0],old=(CFG&&CFG.stay)||{};
 var c={dest:PD.id,date:d0,date_r:d1,ppl:+$("#ppl").textContent||2,from:form.from.value.trim(),fromCode:fromCode(form.from.value),to:to,a_num:form.a_num.value.replace(/\s+/g,"").toUpperCase(),a_dep:form.a_dep.value,a_arr:form.a_arr.value,r_num:form.r_num.value.replace(/\s+/g,"").toUpperCase(),r_imb:form.r_imb.value,r_dep:form.r_dep.value};
 if(multi){var addr=form.saddr.value.trim();c.stay={zone:form.sz.value,addr:addr,cin:form.sin.value||"15:00",cout:form.sout.value||"11:00",price:parseFloat(String(form.sprice.value).replace(",","."))||0,type:form.stype.value};
