@@ -442,6 +442,9 @@ tr.off td{opacity:.45;text-decoration:line-through}
 .split:empty{display:none}.split div+div{margin-top:4px}
 
 .sadd{width:100%;justify-content:center;margin-top:12px}
+/* icone disegnate (sostituiscono le emoji) */
+.ic{width:1.2em;height:1.2em;vertical-align:-.26em;flex:none;overflow:visible}
+.dem .ic{width:1.1em;height:1.1em;vertical-align:-.12em}.tabbar .em .ic{width:1.12em;height:1.12em;vertical-align:-.1em}
 /* preferenze di cibo */
 .hbt{display:flex;align-items:center;gap:12px;margin:12px 0 0;padding:12px 14px;border:1px solid var(--edge);border-radius:var(--r3);background:linear-gradient(180deg,var(--hi2),transparent 45%),var(--gl2);cursor:pointer;position:relative}.hbt[hidden]{display:none}
 .hbk{flex:1;min-width:0}.hbk b{display:block;font-size:.95rem}.hbk small{display:block;color:var(--mute);font-weight:600;font-size:.78rem;margin-top:2px}
@@ -609,7 +612,7 @@ html.sa #sheet{bottom:auto;height:var(--apph)}
 .dp:active{transform:scale(.94)}
 .dp small{font-size:.66rem;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
 .dp span{font-weight:800;font-size:.95rem;white-space:nowrap}
-.dp em{font-style:normal;font-size:1.05rem;line-height:1.2}
+.dp em{font-style:normal;font-size:1.05rem;line-height:1.2}.dp em .ic{width:1.3em;height:1.3em;vertical-align:-.3em}
 .dp.on{background:var(--gradb);border-color:transparent;color:#fff;animation:jelly .5s ease both}
 .dp.on small{color:rgba(255,255,255,.85)}
 .dp.today::after{content:"oggi";position:absolute;top:-6px;right:-4px;padding:0 6px;border-radius:999px;background:var(--c2);color:#fff;font:800 .6rem/1.5 Manrope,system-ui,sans-serif}

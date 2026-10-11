@@ -31,21 +31,34 @@ for _k,_v in CITY_PAL.items():T[_k]=mk(**_v)
 
 def css_for(cid):
     t=T[cid];L=t['L'];D=t['D'];S=':root[data-city="%s"]'%cid
+    def calm(V,dark):
+        V=dict(V);c1=V['c1'];bg=V['bg'];ink=V['ink']
+        V['c2']=c1 if dark else mix(c1,ink,.18)
+        V['c4']=mix(c1,bg,.30 if not dark else .45)
+        V['c5']=mix(c1,bg,.55 if not dark else .62)
+        V['gold']=mix(c1,bg,.62 if not dark else .55)
+        V['sand']=mix(c1,bg,.84 if not dark else .8)
+        V['food']=V['c2']
+        return V
     def base(V,dark):
+        V=calm(V,dark)
         sh=V.get('shadow') or V.get('shade')
         out=';'.join('--%s:%s'%(k,V[k]) for k in ['c1','c2','c3','c4','c5','gold','sand','cream','pin','blue','food','bg','land','ink','mute','line','paper'])
         out+=';--surf:%s;--surf2:%s'%(V.get('surf',V['paper']),V['surf2'])
         if dark: out+=';'+GLASS_D+';--gl:rgba(%s,.4);--gltb:rgba(%s,.32)'%(sh,sh)
         else: out+=';'+GLASS_L+';--glsh:rgba(%s,.15)'%sh
-        g=t['Dgrad'] if dark else t['grad'];gx=t['Dgradx'] if dark else t['gradx'];gf=t['Dgradf'] if dark else t['gradf']
+        c3=V['c3'];c1=V['c1']
+        g=[c3,c1,c1] if not dark else [V['c4'],c1,c1];gx=[c3,c1] if not dark else [V['c4'],c1];gf=[c3,c1,c3]
+        tb_=dict(t,gradb=[c3,c1] if not dark else [V['c4'],c1])
         on='#ffffff' if contrast('#ffffff',g[1])>=contrast(V['ink'] if not dark else '#0a1a33',g[1]) else '#0a1a33'
-        out+=';--grad:%s;--gradb:%s;--gradx:%s;--gradf:%s;--on:%s'%(grad(g),grad(t['gradb']),grad(gx,95),'linear-gradient(90deg,%s)'%','.join(gf),on)
+        out+=';--grad:%s;--gradb:%s;--gradx:%s;--gradf:%s;--on:%s'%(grad(g),grad(tb_['gradb']),grad(gx,95),'linear-gradient(90deg,%s)'%','.join(gf),on)
         if not dark: out+=';--ons:0 1px 2px rgba(%s,.45);--bink:%s'%(sh,t['tc'])
         out+=';--tc:%s'%(t['dtc'] if dark else t['tc'])
         return out
-    lb=','.join('radial-gradient(%s,color-mix(in srgb,%s %d%%,transparent),transparent 70%%)'%(pos,c,p) for pos,(c,p) in zip(['58% 44% at 4% 2%','46% 38% at 96% 10%','44% 36% at 6% 56%','58% 46% at 98% 98%'],t['lights']))
-    db=','.join('radial-gradient(%s,color-mix(in srgb,%s %d%%,transparent),transparent 70%%)'%(pos,c,p) for pos,(c,p) in zip(['58% 44% at 4% 2%','46% 38% at 96% 10%','44% 36% at 6% 56%','58% 46% at 98% 98%'],t['dlights']))
-    tabs=['itinerario','voli','mappa','mangiare','costi','consigli'];tb=t['tabs']
+    c1l=t['L']['c1'];c1d=t['D']['c1']
+    lb='radial-gradient(60%% 42%% at 8%% 0%%,color-mix(in srgb,%s 20%%,transparent),transparent 72%%),radial-gradient(52%% 38%% at 100%% 100%%,color-mix(in srgb,%s 12%%,transparent),transparent 72%%)'%(c1l,c1l)
+    db='radial-gradient(60%% 42%% at 8%% 0%%,color-mix(in srgb,%s 26%%,transparent),transparent 72%%),radial-gradient(52%% 38%% at 100%% 100%%,color-mix(in srgb,%s 12%%,transparent),transparent 72%%)'%(t['D']['c1'],t['D']['c1'])
+    tabs=['itinerario','voli','mappa','mangiare','costi','consigli'];tb=[t['L']['c3']]*7
     css=S+'{'+base(L,0)+'}\n'
     css+='@media (prefers-color-scheme:dark){'+S+':not([data-theme="light"]){'+base(D,1)+'}}\n'
     css+=S+'[data-theme="dark"],'+S+':has(#dm:checked){'+base(D,1)+'}\n'
