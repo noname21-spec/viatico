@@ -36,11 +36,11 @@ imgs={os.path.basename(f)[:-5]:base64.b64encode(open(f,'rb').read()).decode() fo
 used=set(re.findall(r'm\("(\w+)"',r('icons.js')))
 mono={'check','arrow','back','up','refresh','close','dl'}
 assert not (used-set(imgs)-mono),'icone senza immagine: %s'%sorted(used-set(imgs)-mono)
-icss='<style id="ic3">'+''.join('.i3[data-n="%s"]{background-image:url(data:image/webp;base64,%s)}'%(k,v) for k,v in imgs.items())+'</style>\n'
+icons_js=r('icons.js').replace('__IMG__',json.dumps(imgs,separators=(',',':')))
 theme=''.join(css_for(c) for c in have if c!='paris')
 mark='html.pick #splash{display:none!important}'
 assert head.count(mark)==1
 head=head.replace(mark,theme+mark)
-html=head.replace('</head>',icss+'</head>',1)+body+'<script>\n'+r('icons.js')+'\n</script>\n<script>\n'+r('globe.js').replace('__LANDMASK__',r('landmask.txt').strip())+'\n</script>\n<script>\n'+cities+boot+'\n</script>\n<script>\n'+r('app1.js')+'\n</script>\n<script>\n'+r('app2.js')+'\n</script>\n<script>\n'+r('pdf.js')+'\n</script>\n<script>\n'+SYNC+'\n</script>\n<script>\n'+r('offline.js')+'\n</script>\n<script>\n'+r('help.js')+'\n</script>\n</body>\n</html>\n'
+html=head+body+'<script>\n'+icons_js+'\n</script>\n<script>\n'+r('globe.js').replace('__LANDMASK__',r('landmask.txt').strip())+'\n</script>\n<script>\n'+cities+boot+'\n</script>\n<script>\n'+r('app1.js')+'\n</script>\n<script>\n'+r('app2.js')+'\n</script>\n<script>\n'+r('pdf.js')+'\n</script>\n<script>\n'+SYNC+'\n</script>\n<script>\n'+r('offline.js')+'\n</script>\n<script>\n'+r('help.js')+'\n</script>\n</body>\n</html>\n'
 open('/home/claude/viatico/index.html','w').write(html)
 print(len(html),have)

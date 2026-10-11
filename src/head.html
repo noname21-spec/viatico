@@ -442,8 +442,14 @@ tr.off td{opacity:.45;text-decoration:line-through}
 .split:empty{display:none}.split div+div{margin-top:4px}
 
 .sadd{width:100%;justify-content:center;margin-top:12px}
+/* dissolvenza tra le finestre e la barra di selezione: il contenuto sfuma prima di arrivare alla barra */
+@property --fz{syntax:"<length>";inherits:false;initial-value:0px}
+.blk{--fz:calc(var(--tb) + 40px);-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - var(--fz)),transparent calc(100% - var(--fz) + 56px));mask-image:linear-gradient(to bottom,#000 calc(100% - var(--fz)),transparent calc(100% - var(--fz) + 56px))}
+body.tbmin .blk{--fz:calc(var(--tb)*.55 + 4px)}
+#mappa.blk{-webkit-mask-image:none;mask-image:none}
+@media print{.blk{-webkit-mask-image:none!important;mask-image:none!important}}
 /* icone 3D (Fluent Emoji): immagine nel CSS #ic3, qui misure e movimento */
-.i3{display:inline-block;width:1.28em;height:1.28em;vertical-align:-.3em;flex:none;background:center/contain no-repeat;filter:drop-shadow(0 1px 1.4px rgba(40,25,50,.28));transform-origin:50% 72%}
+.i3{display:inline-block;width:1.28em;height:1.28em;vertical-align:-.3em;flex:none;object-fit:contain;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;pointer-events:none;filter:drop-shadow(0 1px 1.4px rgba(40,25,50,.28));transform-origin:50% 72%}
 svg.ic{width:1.2em;height:1.2em;vertical-align:-.26em;flex:none;overflow:visible}
 .dem .i3{width:1.3em;height:1.3em;vertical-align:-.1em}.tabbar .em .i3{width:1.22em;height:1.22em;vertical-align:-.16em}
 .i3[data-n=doc],.i3[data-n=gear],.i3[data-n=cloud],.i3[data-n=fog],.i3[data-n=snow],.i3[data-n=mail],.i3[data-n=link],.i3[data-n=speech],.i3[data-n=trash],.i3[data-n=suncloud]{filter:drop-shadow(0 1px 1.6px rgba(40,25,60,.5))}
@@ -860,7 +866,7 @@ html.pick #splash{display:none!important}
 body.tbmin .tabbar{width:58px;height:58px;right:calc(50% - 29px);padding:5px;border-radius:50%!important;-webkit-tap-highlight-color:transparent}
 body.tbmin .tabbar label{display:none!important}
 body.tbmin .tbind{left:5px!important;top:5px;bottom:5px;width:calc(100% - 10px)!important}
-.tbicon{position:absolute;z-index:2;left:50%;top:50%;width:42px;height:42px;margin:-21px 0 0 -21px;border-radius:50%;object-fit:cover;pointer-events:none;opacity:0;transform:scale(.4) rotate(-40deg);transition:opacity .25s ease,transform .5s cubic-bezier(.22,1,.36,1);box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.tbicon{position:absolute;z-index:2;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;object-fit:cover;pointer-events:none;opacity:0;transform:scale(.4) rotate(-40deg);transition:opacity .25s ease,transform .5s cubic-bezier(.22,1,.36,1);box-shadow:0 1px 3px rgba(0,0,0,.25)}
 body.tbmin .tbicon{opacity:1;transform:none;transition-delay:.12s}
 .tbdots{z-index:3;top:-5px!important;right:-5px!important;width:26px!important;height:26px!important;line-height:24px!important;font-size:.85rem!important;border:1px solid var(--edge)}
 html.sa body.tbmin .tabbar{top:calc(var(--apph) - 58px - 10px - env(safe-area-inset-bottom,0px)*.45)}
@@ -920,7 +926,7 @@ body:has(#dest.on,#setup.on) :is(.blk,.tabbar,.appbar,.gear){visibility:hidden!i
 .hero::before{display:none}
 .hero .sub{display:block;margin:14px 0 18px;padding:12px 14px;text-align:left;font-size:.9rem;font-weight:600;line-height:1.5;color:var(--ink);opacity:1;max-width:none;border:1px solid var(--edge);border-radius:var(--r3);background:color-mix(in srgb,var(--hi) 22%,transparent)}
 /* cambio scheda più rapido e pulito */
-.blk{transition:opacity .16s ease,visibility 0s linear .16s}
+.blk{transition:opacity .16s ease,visibility 0s linear .16s,--fz .45s cubic-bezier(.22,1,.36,1)}
 body:has(#t-itinerario:checked) #itinerario,body:has(#t-voli:checked) #voli,body:has(#t-mappa:checked) #mappa,body:has(#t-mangiare:checked) #mangiare,body:has(#t-costi:checked) #costi,body:has(#t-consigli:checked) #consigli{transition:opacity .2s ease .04s,visibility 0s}
 .blk.on>*{animation-duration:.42s}
 .blk>*:nth-child(2){animation-delay:.03s!important}.blk>*:nth-child(3){animation-delay:.06s!important}.blk>*:nth-child(4){animation-delay:.09s!important}.blk>*:nth-child(5){animation-delay:.12s!important}.blk>*:nth-child(n+6){animation-delay:.15s!important}

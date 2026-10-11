@@ -1,7 +1,10 @@
 /* ===== icone di Viatico: sostituiscono le emoji di sistema =====
    Immagini 3D: Fluent Emoji di Microsoft (licenza MIT, vedi privacy.html). Dentro il testo ogni emoji
-   viene sostituita da <i class="ic i3" data-n="nome">, l'immagine è nel CSS generato in fase di build. */
+   viene sostituita da <img class="ic i3" data-n="nome">. Le immagini (WebP in base64) sono create in fase di build e
+   trasformate in blob alla prima richiesta: così Safari le disegna sempre, a differenza degli sfondi CSS enormi. */
 (function(){
+var IMG=__IMG__,BL={};
+function src(n){if(BL[n])return BL[n];var b64=IMG[n];if(!b64)return"";var u="data:image/webp;base64,"+b64;try{var bin=atob(b64),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);u=URL.createObjectURL(new Blob([a],{type:"image/webp"}))}catch(e){}return BL[n]=u}
 /* corrispondenze emoji → icona */
 var M={};
 function m(n,s){s.split(/\s+/).forEach(function(c){if(c)M[c]=n})}
@@ -23,7 +26,7 @@ var SKIP={SCRIPT:1,STYLE:1,TEXTAREA:1,OPTION:1,TITLE:1,INPUT:1,SELECT:1,CODE:1,N
 function ok(n){for(var p=n.parentNode;p&&p!==document.body;p=p.parentNode){if(p.nodeType!==1)continue;if(SKIP[p.tagName]||p.hasAttribute("data-noicon")||p.namespaceURI==="http://www.w3.org/2000/svg")return false}return true}
 function icon(name){
   if(D[name]){var s=document.createElementNS("http://www.w3.org/2000/svg","svg");s.setAttribute("class","ic ic-"+name);s.setAttribute("viewBox","0 0 24 24");s.setAttribute("aria-hidden","true");var u=document.createElementNS("http://www.w3.org/2000/svg","use");u.setAttribute("href","#i-"+name);s.appendChild(u);return s}
-  var e=document.createElement("i");e.className="ic i3";e.setAttribute("data-n",name);e.setAttribute("aria-hidden","true");return e}
+  var e=document.createElement("img");e.className="ic i3";e.setAttribute("data-n",name);e.alt="";e.setAttribute("aria-hidden","true");e.draggable=false;e.src=src(name);return e}
 function fix(t){var s=t.nodeValue;if(!s||!RE.test(s)){RE.lastIndex=0;return}RE.lastIndex=0;if(!ok(t))return;
 var f=document.createDocumentFragment(),last=0,mm;while((mm=RE.exec(s))){if(mm.index>last)f.appendChild(document.createTextNode(s.slice(last,mm.index)));f.appendChild(icon(M[mm[1]]));last=mm.index+mm[0].length}
 if(last<s.length)f.appendChild(document.createTextNode(s.slice(last)));t.parentNode.replaceChild(f,t)}
