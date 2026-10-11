@@ -93,8 +93,13 @@
 <p class="meta" id="cnote"></p>
 <div class="spese"><h3>💳 Spese reali <small id="sppl"></small></h3>
 <div class="who" id="who"></div>
-<div class="sgrid" id="sgrid"></div>
-<div class="stot"><div><b id="stot">0 €</b><span>spesi finora</span></div><div class="sbar"><i id="sbar"></i></div><span id="sdiff"></span><div id="split" class="split"></div></div>
+<div class="stot"><div><b id="stot">0 €</b><span>spesi finora</span></div><div class="sbar"><i id="sbar"></i></div><span id="sdiff"></span></div>
+<button type="button" class="btn sadd" id="sadd">➕ Aggiungi spesa</button>
+<div class="scat" id="scat"></div>
+<div class="slist" id="slist"></div>
+<div class="sbal" id="sbal"></div>
+<div class="split" id="split"></div>
+<button type="button" class="btn ghost sshare" id="sshare" hidden>📤 Condividi il riepilogo</button>
 </div>
 </section>
 
@@ -179,6 +184,7 @@
 <div class="sact"><button type="submit" class="btn">✨ Crea il mio viaggio</button></div>
 <p class="snote" id="sfuso"></p>
 </form></div>
+<div id="exp" aria-hidden="true"><div class="qrc xcard" role="dialog" aria-label="Spesa"><div id="xbody"></div></div></div>
 <div id="ask" aria-hidden="true"><div class="qrc" role="dialog" aria-labelledby="asktt"><h3 id="asktt"></h3><p class="qrp" id="asktx"></p><div class="qrb" id="askb"></div></div></div>
 <div id="acct" aria-hidden="true"><div class="qrc" role="dialog" aria-label="Account"><h3>👤 Il tuo account</h3><div id="acbody"></div><button type="button" class="btn ghost cls" id="acclose">Chiudi</button></div></div>
 <div id="qrbox" aria-hidden="true"><div class="qrc" role="dialog" aria-label="Condividi Viatico"><h3>🔗 Condividi Viatico</h3><div class="qrimg" id="qrimg" role="img" aria-label="Codice QR per aprire Viatico"></div><p class="qrp">Fai inquadrare il codice con la fotocamera: si apre Viatico, pronta da aggiungere alla schermata Home.</p><p class="qru" id="qru"></p><div class="qrb"><button type="button" class="btn" id="qrshare">Condividi il link</button><button type="button" class="btn ghost" id="qrcopy">Copia il link</button></div><button type="button" class="btn ghost cls" id="qrclose">Chiudi</button></div></div>

@@ -299,7 +299,7 @@ return meta}
 Object.assign(C,{id:"londra",n:"Londra",cn:"Regno Unito",e:"🎡",flag:"🇬🇧",col:["#14306f","#c8102e","#e0b22e"],k:"londra london uk regno unito inghilterra england",
 TZ:"Europe/London",LL:[51.5074,-0.1278],CC:"gb",QN:"London",BK:"London",ARE:/london|londra|\b(?:ec|wc|nw|se|sw|e|n|w)\d{1,2}[a-z]?\s*\d[a-z]{2}\b/i,VER:"10 ottobre 2026",
 Z0:"B",LANG:"en-GB",LANGN:"inglese",WATER:"osm",TAXDEF:"h3",TAXMAXN:99,RETC:1,LUNCHO:0,DINO:0,
-hub:{n:"Tottenham Court Road",q:"Tottenham Court Road station, London"},
+CUR:{c:"GBP",s:"£",e:1.18},hub:{n:"Tottenham Court Road",q:"Tottenham Court Road station, London"},
 SINGLE:{acts:["covent","trafalgar","westminster","buckingham","stpaul","southbank","borough","towerbridge"],ins:[]},
 EXCL:[["abbeyins","westminster","L'Abbazia e il Big Ben li vedi con calma in un'altra giornata del viaggio: qui rimane la passeggiata sul Westminster Bridge."],["stpaulins","stpaul","La cattedrale la visiti dentro in un'altra giornata del viaggio: qui rimane il Millennium Bridge."]],
 DICON:{toweroflondon:"🏰",abbeyins:"👑",stpaulins:"⛪",british:"🏺",museums:"🦕",kensington:"🌳",notting:"🎨",camden:"🎸",greenwich:"🧭"},

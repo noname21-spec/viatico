@@ -174,7 +174,7 @@ return meta}
 Object.assign(C,{id:"praga",n:"Praga",cn:"Repubblica Ceca",e:"🏰",flag:"🇨🇿",col:["#11457e","#c8102e","#d4a017"],k:"praga prague repubblica ceca cechia",
 TZ:"Europe/Prague",LL:[50.0875,14.4213],CC:"cz",QN:"Prague",BK:"Prague",ARE:/praha|prague|praga|\b1[1-9]\d ?\d{2}\b/i,VER:"11 ottobre 2026",
 Z0:"A",LANG:"cs-CZ",LANGN:"ceco",WATER:"osm",TAXDEF:"h3",TAXMAXN:99,RETC:1,LUNCHO:0,DINO:0,
-hub:{n:"Můstek",q:"Můstek metro station, Praha"},
+CUR:{c:"CZK",s:"Kč",e:1/24.4},hub:{n:"Můstek",q:"Můstek metro station, Praha"},
 SINGLE:{acts:["starom","karlov","hrad","josef","vaclav"],ins:[]},
 EXCL:[],
 DICON:{karlov:"🌉",hrad:"🏰",josef:"✡️",vaclav:"🐴",petrin:"🗼",vysehrad:"⛪",letna:"🌳",zizkov:"📡"},
