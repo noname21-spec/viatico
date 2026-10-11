@@ -1045,6 +1045,25 @@ button,label,summary,a{touch-action:manipulation}
 .dgear{margin-left:auto;align-self:flex-start;flex:none;width:42px;height:42px;border:1px solid var(--edge);border-radius:50%;display:grid;place-items:center;font-size:1.25rem;line-height:1;cursor:pointer;color:var(--ink);background:color-mix(in srgb,var(--paper) 55%,transparent);box-shadow:inset 0 1px 0 var(--hi),0 6px 16px var(--glsh);transition:transform .25s}.dgear:active{transform:rotate(60deg) scale(.9)}
 body:has(#dest.on) #sheet{z-index:165}
 #sheet.home [data-trip]{display:none}
+.nbox{margin:0 0 8px;padding:6px 12px 12px;border:1px solid var(--edge);border-radius:var(--r3);background:color-mix(in srgb,var(--paper) 40%,transparent)}
+.nbox[hidden]{display:none}
+.nrow{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:6px 0;border-top:1px solid color-mix(in srgb,var(--ink) 7%,transparent);font:700 .92rem Manrope,system-ui,sans-serif;color:var(--ink);cursor:pointer}
+.nrow:first-child{border-top:0}
+.nrow small{display:block;margin-top:1px;color:var(--mute);font-weight:600;font-size:.74rem;line-height:1.3}
+.nrow>span{min-width:0}
+.nsw{-webkit-appearance:none;appearance:none;flex:none;position:relative;width:50px;height:30px;margin:0;border-radius:15px;border:0;background:color-mix(in srgb,var(--ink) 16%,transparent);transition:background .3s;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.nsw::after{content:"";position:absolute;top:2px;left:2px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .35s cubic-bezier(.22,1,.36,1)}
+.nsw:checked{background:var(--c3)}
+.nsw:checked::after{transform:translateX(20px)}
+.nsw:focus-visible{outline:2px solid var(--c2);outline-offset:2px}
+.nmain{font-size:1rem}
+#nopts.off{opacity:.45;pointer-events:none}
+.nlead{border-top:1px solid color-mix(in srgb,var(--ink) 7%,transparent);padding-top:10px;margin-top:2px}
+.nlead .shl{margin-bottom:6px;font:700 .92rem Manrope,system-ui,sans-serif;color:var(--ink)}
+.nbtns{display:grid;gap:8px;margin-top:10px}
+.nbtns .btn{width:100%;min-height:44px}
+.nnote{margin:10px 2px 0;color:var(--mute);font-size:.74rem;line-height:1.4}
+@media (prefers-reduced-motion:reduce){.nsw,.nsw::after{transition:none}}
 .shlang select{width:100%;height:44px;padding:0 34px 0 12px;border-radius:11px;border:1px solid var(--edge);background-color:color-mix(in srgb,var(--paper) 60%,transparent);color:var(--ink);font:700 1rem Manrope,system-ui,sans-serif;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:12px 8px}
 .qrc.hcard{text-align:left;width:min(440px,100%)}.qrc.hcard h3{text-align:center}
 .hfaq{margin-bottom:12px}.hfaq details{border:1px solid var(--edge);border-radius:12px;margin-bottom:8px;background:color-mix(in srgb,var(--paper) 40%,transparent)}
@@ -1256,6 +1275,21 @@ document.addEventListener("visibilitychange",function(){if(document.hidden){if(r
 <button type="button" class="row" data-trip id="shpdf"><span>📄</span><span>Scarica l'itinerario in PDF<small id="shpdfs">Tutti i giorni e i costi, da salvare o stampare</small></span></button>
 <button type="button" class="row" data-trip id="shsit"><span>📤</span><span>Condividi l'itinerario<small>Invia il PDF a chi viaggia con te</small></span></button>
 <button type="button" class="row" data-trip id="shcal"><span>📅</span><span>Aggiungi al calendario<small id="shcals">Tappe e voli con promemoria (file .ics)</small></span></button>
+<button type="button" class="row" data-trip id="shnot" aria-expanded="false" aria-controls="nbox"><span>🔔</span><span>Notifiche e promemoria<small id="shnots">Voli, tappe, pasti, alloggio e lista</small></span></button>
+<div class="nbox" id="nbox" data-trip hidden>
+<label class="nrow nmain"><span>Attiva i promemoria<small id="nst">Disattivati</small></span><input type="checkbox" class="nsw" id="non" role="switch"></label>
+<div id="nopts">
+<label class="nrow"><span>Voli<small>Qualche ora prima della partenza</small></span><input type="checkbox" class="nsw" data-k="vol" role="switch"></label>
+<label class="nrow"><span>Tappe del giorno<small>Poco prima di ogni tappa</small></span><input type="checkbox" class="nsw" data-k="tappe" role="switch"></label>
+<label class="nrow"><span>Colazione, pranzo e cena<small>Poco prima di ogni pasto</small></span><input type="checkbox" class="nsw" data-k="pasti" role="switch"></label>
+<label class="nrow"><span>Alloggio<small>Check-in e check-out</small></span><input type="checkbox" class="nsw" data-k="alloggio" role="switch"></label>
+<label class="nrow"><span>Riepilogo del mattino<small>Cosa c'è oggi, alle 8:30</small></span><input type="checkbox" class="nsw" data-k="riep" role="switch"></label>
+<label class="nrow"><span>Lista «Prima di partire»<small>Tre giorni e un giorno prima, se manca qualcosa</small></span><input type="checkbox" class="nsw" data-k="lista" role="switch"></label>
+<div class="shlang nlead"><div class="shl"><span>Quanto prima di tappe e pasti</span></div><select id="nlead" aria-label="Anticipo dei promemoria"><option value="10">10 minuti</option><option value="15">15 minuti</option><option value="30">30 minuti</option><option value="60">1 ora</option></select></div>
+</div>
+<div class="nbtns"><button type="button" class="btn ghost" id="ntest">Prova una notifica</button><button type="button" class="btn ghost" id="ncal">Aggiungi anche al calendario</button></div>
+<p class="nnote" id="nnote">I promemoria suonano quando l'app è aperta o appena usata. Per avere gli avvisi anche con l'app chiusa, aggiungi il viaggio al calendario del telefono.</p>
+</div>
 <button type="button" class="row" data-trip id="shlink"><span>🔗</span><span>Invia il viaggio<small>Un link che apre lo stesso viaggio su un altro telefono</small></span></button>
 <button type="button" class="row" data-trip id="shoff"><span>🗺️</span><span>Mappa offline<small id="shoffs">Salva le tessere dell'area dei tuoi spostamenti, per usarla senza rete</small></span></button>
 <button type="button" class="row" id="shapp"><span>🔗</span><span>Condividi Viatico<small>QR code e link per far scaricare l'app</small></span></button>
@@ -4451,7 +4485,7 @@ function fpWords(){var q=[];FP.d.forEach(function(d){if(d==="veg"&&FP.d.indexOf(
 
 /* ===== rendering ===== */
 var TRIP=null,P=null,WD=0,SEL=0;
-window.PAR={get cfg(){return CFG},get plan(){return P},get trip(){return TRIP},get sel(){return SEL},home:home,fmt:fmt,fdur:fdur,esc:esc,toMin:toMin,paris:paris,gdir:gdir,eur:eur,ls:ls,lj:lj,dateShort:dateShort,dateLong:dateLong,wd:function(){return WD},DAYS:DAYS,mealIds:mealIds,vSorted:vSorted,vq:vq,toast:toast,cap:cap,fromInfo:function(){return fromInfo(CFG)},
+window.PAR={get S(){return S},get MN(){return MN},get cfg(){return CFG},get plan(){return P},get trip(){return TRIP},get sel(){return SEL},home:home,fmt:fmt,fdur:fdur,esc:esc,toMin:toMin,paris:paris,gdir:gdir,eur:eur,ls:ls,lj:lj,dateShort:dateShort,dateLong:dateLong,wd:function(){return WD},DAYS:DAYS,mealIds:mealIds,vSorted:vSorted,vq:vq,toast:toast,cap:cap,fromInfo:function(){return fromInfo(CFG)},
  L:{},on:function(fn){(this.L.f=this.L.f||[]).push(fn)},emit:function(){(this.L.f||[]).forEach(function(f){try{f()}catch(e){console.error(e)}})}};
 
 var E={get S(){return S},get V(){return V},get cfg(){return CFG},get trip(){return TRIP},get plan(){return P},get wd(){return WD},home:home,legOf:legOf,posOf:posOf,access:access,hav:hav,est:estMin,fmt:fmt,fdur:fdur,eur:eur,esc:esc,toMin:toMin,sunset:sunset,dateObj:dateObj,lc:lc,allActs:function(){return allActs()},has:function(id){return allActs().indexOf(id)>=0},get copt(){return COPT}};
@@ -4804,6 +4838,7 @@ function renderConsigli(){var c=CFG,A=TRIP.A,N=c.ppl,acts=allActs(),has=function
 var items=[["doc",PD.T.doc||"Carta d'identità o passaporto"],["bp","Carte d'imbarco di andata e ritorno"]].concat((PD.CHECK||[]).filter(function(x){return okIf(x[2])}).map(function(x){return[x[0],typeof x[1]==="function"?x[1](E):x[1]]}));
 if(M)items=items.concat([["st","Conferma e indirizzo dell'alloggio salvati sul telefono"],["ch","Caricabatterie"],["pl",PD.T.plug||"Adattatore, se hai caricatori con la spina italiana a tre poli in linea"]]);
 items=items.concat([["bor",PD.T.bottle],["pb","Power bank e cavo"],["sc2","Scarpe comode: si cammina tanto"],["fe",window.PARRAIN?"Ombrello o k-way":"Giacca leggera per la sera"],["off","Scaricare la mappa offline (impostazioni) e aprire l'app con internet prima di partire"]]);
+window.PARCKN=function(){var n=0;items.forEach(function(x){if(CK[x[0]])n++});return{done:n,total:items.length}};
 var ckb=$("#ckbox"),CF=ls("via-ckfold")!=="0";ckb.classList.toggle("fold",CF);
 ckb.innerHTML='<h3 role="button" tabindex="0" id="ckh" aria-controls="ckw" aria-expanded="'+(!CF)+'"><span class="ckt">✅ Prima di partire</span> <small id="ckn"></small><span class="ckch" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></h3><div class="ckbar"><i id="ckbar"></i></div><div class="ckw" id="ckw"><ul>'+items.map(function(x){return '<li><label><input class="ckin" type="checkbox" data-k="'+x[0]+'"'+(CK[x[0]]?" checked":"")+'><span class="bx" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6.5 12.5l3.6 3.6L17.5 8.5"/></svg></span><span class="tx">'+esc(x[1])+'</span></label></li>'}).join("")+'</ul></div>';
 var ckh=$("#ckh");function ckTog(){var f=ckb.classList.toggle("fold");ckh.setAttribute("aria-expanded",String(!f));ls("via-ckfold",f?"1":"0")}
@@ -4974,7 +5009,7 @@ sheet.addEventListener("click",function(e){if(e.target===sheet)closeSheet()});
 $$("[data-edit]").forEach(function(b){b.addEventListener("click",function(){openSetup(false)})});
 $("#shvoli").addEventListener("click",function(){closeSheet();var r=$("#t-voli");r.checked=true;r.dispatchEvent(new Event("change",{bubbles:true}));setTimeout(function(){var k=$("#vkey");k.open=true;k.scrollIntoView({behavior:"smooth",block:"center"})},350)});
 $("#shreset").addEventListener("click",function(){if(!confirm("Cancellare TUTTI i viaggi, spese, liste e la chiave salvati su questo telefono?"))return;
-["via-trip","via-trips","via-spese","via-check","via-copt","via-adb-key","via-vlive","via-vlive-n","via-water","via-fp"].forEach(function(k){ls(k,null)});FP.d=[];FP.p=0;FP.k=[];if(PAR.fpPaint)PAR.fpPaint();CFG=null;SAVED=null;TRIP=null;SP={};CK={};COPT={};closeSheet();openDest()});
+["via-trip","via-trips","via-spese","via-check","via-copt","via-adb-key","via-vlive","via-vlive-n","via-water","via-fp","via-notif","via-nfired","via-ckfold"].forEach(function(k){ls(k,null)});FP.d=[];FP.p=0;FP.k=[];if(PAR.fpPaint)PAR.fpPaint();CFG=null;SAVED=null;TRIP=null;SP={};CK={};COPT={};closeSheet();openDest()});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeSheet();if(CFG){closeSetup();closeDest();setCity(PD.id)}}});
 
 /* invio e importazione di un viaggio tramite link */
@@ -5680,6 +5715,114 @@ document.getElementById("shhelp").addEventListener("click",openHelp);
 document.getElementById("hlclose").addEventListener("click",closeHelp);
 help.addEventListener("click",function(e){if(e.target===help)closeHelp()});
 document.getElementById("hlcopy").addEventListener("click",function(){var t=info();if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){toast("Dettagli copiati")},function(){toast("Non sono riuscito a copiare")});else toast("Copia non disponibile")});
+})();
+
+</script>
+<script>
+/* ===== notifiche e promemoria =====
+   Gli avvisi partono mentre l'app è aperta (o appena riaperta): non c'è un server che possa
+   svegliare il telefono a app chiusa. Per quello resta il calendario (.ics) con i suoi allarmi. */
+(function(){
+var $=function(s){return document.querySelector(s)},KEY="via-notif",FK="via-nfired";
+var DEF={on:false,vol:1,tappe:1,pasti:1,alloggio:1,riep:1,lista:1,lead:15};
+function lj(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v&&typeof v==="object"?v:d}catch(e){return d}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+var ST=Object.assign({},DEF,lj(KEY,{}));
+function toast(t){var el=$("#toast");if(!el)return;el.textContent=t;el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove("on")},3200)}
+var supported="Notification" in window;
+var ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+var standalone=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
+function perm(){return supported?Notification.permission:"unsupported"}
+/* fuso orario della città */
+function tzOff(ms,tz){var p={};new Intl.DateTimeFormat("en-US",{timeZone:tz,hourCycle:"h23",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit"}).formatToParts(new Date(ms)).forEach(function(x){p[x.type]=+x.value});return(Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute,p.second)-ms)/6e4}
+function utcOf(date,min,tz){var a=date.split("-").map(Number),g=Date.UTC(a[0],a[1]-1,a[2],0,min),o=tzOff(g,tz);o=tzOff(g-o*6e4,tz);return g-o*6e4}
+function tm(s){var m=/(\d{1,2}):(\d{2})/.exec(s||"");return m?+m[1]*60+ +m[2]:null}
+function hhmm(m){m=((m%1440)+1440)%1440;return Math.floor(m/60)+":"+("0"+m%60).slice(-2)}
+function short(t){t=String(t).replace(/\s+/g," ").trim();if(t.length<=80)return t;var c=t.slice(0,80),i=c.lastIndexOf(" ");return c.slice(0,i>40?i:80).replace(/[,;:]$/,"")+"…"}
+/* elenco dei promemoria del viaggio */
+function build(){
+ var P=window.PAR,trip=P&&P.trip,cfg=P&&P.cfg;if(!trip||!cfg||!trip.days||!trip.days.length||!window.PD)return[];
+ var tz=PD.TZ||"Europe/Rome",city="",out=[],sig=(cfg.dest||"")+(cfg.date||""),S=P.S||{},MN=P.MN||{},lead=+ST.lead||15;
+ var h1=$("#itinerario h1");city=h1?(h1.textContent.split(/\s+in\s+/)[0]||"").trim():"";
+ function add(type,id,date,min,title,body,extra){if(!date||min==null)return;out.push(Object.assign({type:type,id:sig+":"+id,at:utcOf(date,min,tz),title:title,body:body||"",grace:6*36e5},extra||{}))}
+ var d0=trip.days[0].date,dN=trip.days[trip.days.length-1].date;
+ if(cfg.a_dep&&tm(cfg.a_dep)!=null){var a=tm(cfg.a_dep);add("vol","va",cfg.date,a-180,"✈️ Si parte tra 3 ore","Volo"+(cfg.a_num?" "+cfg.a_num:"")+" alle "+cfg.a_dep+": documenti, carte d'imbarco e bagagli.")}
+ if(cfg.r_dep&&tm(cfg.r_dep)!=null){var r=tm(cfg.r_dep);add("vol","vr",dN,r-240,"✈️ Volo di ritorno tra 4 ore","Partenza alle "+cfg.r_dep+(cfg.r_imb?" · imbarco "+cfg.r_imb:"")+". Controlla di non aver dimenticato nulla.")}
+ var h=null;try{h=trip.multi?P.home():null}catch(e){}
+ if(h&&h.cin&&tm(h.cin)!=null)add("alloggio","cin",d0,tm(h.cin),"🏨 Check-in dall'alloggio","Da adesso puoi fare il check-in (dalle "+h.cin+").",{grace:3*36e5});
+ if(h&&h.cout&&tm(h.cout)!=null)add("alloggio","cout",dN,tm(h.cout)-60,"🏨 Check-out tra un'ora","Lascia la camera entro le "+h.cout+". Puoi chiedere di tenere i bagagli in deposito.",{grace:2*36e5});
+ trip.days.forEach(function(d,i){
+  var acts=[];
+  (d.items||[]).forEach(function(it,j){
+   if(it.k==="act"&&S[it.id]){acts.push(S[it.id].t);add("tappe","t"+i+"_"+j,d.date,it.t-lead,"📍 Tra "+lead+" minuti: "+S[it.id].t,"Alle "+hhmm(it.t)+"."+(it.leg&&it.leg.txt?" "+short(it.leg.txt):""),{grace:25*6e4})}
+   else if(it.k==="meal"&&MN[it.m]){add("pasti","p"+i+"_"+j,d.date,it.t-lead,"🍽️ "+MN[it.m]+" tra "+lead+" minuti","Alle "+hhmm(it.t)+": apri la sezione Pasti per i posti consigliati.",{grace:25*6e4})}
+  });
+  var first=(d.items||[]).filter(function(x){return x.k==="act"})[0];
+  var body=acts.length?"Oggi: "+acts.slice(0,acts.length>4?3:4).join(", ")+(acts.length>4?" e altre "+(acts.length-3):acts.length===4?" e "+acts[3]:"")+".":"Oggi niente di fisso: goditi la città.";
+  if(!(i===0&&cfg.a_dep))add("riep","r"+i,d.date,8*60+30,"☀️ Buongiorno! Giorno "+(i+1)+" a "+city,body,{grace:4*36e5});
+  if(i===0){var prev=new Date(utcOf(d.date,12*60,tz)-864e5),pd=new Intl.DateTimeFormat("en-CA",{timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit"}).format(prev);
+   add("riep","go1",pd,20*60,"🧳 Domani si parte","Ultimo controllo: documenti, caricabatterie e lista «Prima di partire».",{grace:5*36e5});
+   [3,1].forEach(function(n){var dd=new Intl.DateTimeFormat("en-CA",{timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(utcOf(d.date,12*60,tz)-n*864e5));
+    add("lista","l"+n,dd,18*60,"✅ Lista «Prima di partire»","",{grace:6*36e5,dyn:function(){var f=window.PARCKN&&PARCKN();if(!f||f.done>=f.total)return null;return"Hai spuntato "+f.done+" cose su "+f.total+". Controlla cosa manca."}})})}
+ });
+ return out.filter(function(e){return ST[e.type]})
+}
+/* consegna */
+function fired(){return lj(FK,{})}
+function mark(id){var f=fired(),now=Date.now();Object.keys(f).forEach(function(k){if(now-f[k]>40*864e5)delete f[k]});f[id]=now;sv(FK,f)}
+function show(title,body,tag){
+ var opt={body:body,tag:tag||"viatico",icon:"icon-192.png",badge:"icon-192.png",lang:"it",data:{url:"./"}};
+ var vis=document.visibilityState==="visible";
+ var inApp=function(){toast(title.replace(/^\S+\s/,"")+(body?" · "+body:""))};
+ if(perm()!=="granted"){inApp();return Promise.resolve(false)}
+ if(vis)inApp();
+ var p=navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration():Promise.resolve(null);
+ return p.then(function(reg){if(reg&&reg.showNotification)return reg.showNotification(title,opt).then(function(){return true});new Notification(title,opt);return true}).catch(function(){try{new Notification(title,opt);return true}catch(e){return false}})
+}
+var list=[],sigNow="";
+function refresh(){var s=JSON.stringify([window.PAR&&PAR.cfg,ST]);if(s===sigNow&&list.length)return;sigNow=s;try{list=build()}catch(e){list=[];console.error(e)}}
+function tick(){
+ if(!ST.on)return;refresh();var now=Date.now(),f=fired();
+ list.forEach(function(e){if(f[e.id]||e.at>now||now-e.at>e.grace)return;
+  var b=e.body;if(e.dyn){b=e.dyn();if(!b){mark(e.id);return}}
+  mark(e.id);show(e.title,b,e.id)})
+}
+var timer=0;function start(){stop();if(!ST.on)return;tick();timer=setInterval(tick,20000)}function stop(){clearInterval(timer);timer=0}
+document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")tick()});
+window.addEventListener("focus",tick);window.addEventListener("pageshow",tick);
+if(window.PAR&&PAR.on)PAR.on(function(){sigNow="";if(ST.on)tick()});
+/* impostazioni */
+var btn=$("#shnot"),box=$("#nbox");if(!btn||!box)return;
+var on=$("#non"),opts=$("#nopts"),st=$("#nst"),sub=$("#shnots"),note=$("#nnote"),lead=$("#nlead");
+function label(){
+ var p=perm(),t;
+ if(!ST.on)t="Disattivati";
+ else if(p==="granted")t="Attivi";
+ else if(p==="denied")t="Attivi nell'app (notifiche bloccate dal telefono)";
+ else if(p==="unsupported")t="Attivi solo dentro l'app";
+ else t="Attivi nell'app (permesso non concesso)";
+ st.textContent=t;sub.textContent=ST.on?t:"Voli, tappe, pasti, alloggio e lista";
+ opts.classList.toggle("off",!ST.on);
+ var m="I promemoria suonano quando l'app è aperta o appena usata. Per avere gli avvisi anche con l'app chiusa, aggiungi il viaggio al calendario del telefono.";
+ if(ios&&!standalone)m="Su iPhone le notifiche funzionano solo se Viatico è sulla schermata Home: apri la condivisione di Safari e scegli «Aggiungi alla schermata Home». "+m;
+ if(p==="denied")m="Le notifiche sono bloccate per Viatico: puoi riattivarle dalle impostazioni del telefono o del browser. Nel frattempo i promemoria compaiono dentro l'app. "+m;
+ note.textContent=m}
+function sync(){on.checked=!!ST.on;[].forEach.call(box.querySelectorAll(".nsw[data-k]"),function(c){c.checked=!!ST[c.dataset.k]});lead.value=String(ST.lead);label()}
+function save(){sv(KEY,ST);sigNow="";label()}
+btn.addEventListener("click",function(){var o=box.hidden;box.hidden=!o;btn.setAttribute("aria-expanded",String(o));if(o)setTimeout(function(){try{box.scrollIntoView({block:"nearest",behavior:"smooth"})}catch(e){}},60)});
+function ask(){if(!supported||Notification.permission!=="default")return Promise.resolve(perm());
+ try{var r=Notification.requestPermission(function(){});return Promise.resolve(r).then(function(){return perm()})}catch(e){return Promise.resolve(perm())}}
+on.addEventListener("change",function(){
+ ST.on=on.checked;save();
+ if(ST.on){ask().then(function(p){label();if(p==="granted")toast("Promemoria attivati");else if(p==="denied")toast("Notifiche bloccate dal telefono: i promemoria restano dentro l'app");else if(ios&&!standalone)toast("Aggiungi Viatico alla schermata Home per le notifiche");else toast("Promemoria attivi dentro l'app");start()})}
+ else{stop();toast("Promemoria disattivati")}});
+[].forEach.call(box.querySelectorAll(".nsw[data-k]"),function(c){c.addEventListener("change",function(){ST[c.dataset.k]=c.checked?1:0;save();tick()})});
+lead.addEventListener("change",function(){ST.lead=+lead.value||15;save();tick()});
+$("#ntest").addEventListener("click",function(){
+ ask().then(function(p){label();show("🔔 Viatico","Funziona! I promemoria arriveranno così.","test").then(function(ok){if(!ok&&p!=="granted")toast("Per le notifiche del telefono concedi il permesso")})})});
+$("#ncal").addEventListener("click",function(){var c=$("#shcal");if(c)c.click()});
+sync();if(ST.on)start();
+window.VNOT={list:function(){refresh();return list},state:function(){return ST},tick:tick,build:build,reset:function(){sv(FK,{})}};
 })();
 
 </script>

@@ -135,6 +135,21 @@
 <button type="button" class="row" data-trip id="shpdf"><span>📄</span><span>Scarica l'itinerario in PDF<small id="shpdfs">Tutti i giorni e i costi, da salvare o stampare</small></span></button>
 <button type="button" class="row" data-trip id="shsit"><span>📤</span><span>Condividi l'itinerario<small>Invia il PDF a chi viaggia con te</small></span></button>
 <button type="button" class="row" data-trip id="shcal"><span>📅</span><span>Aggiungi al calendario<small id="shcals">Tappe e voli con promemoria (file .ics)</small></span></button>
+<button type="button" class="row" data-trip id="shnot" aria-expanded="false" aria-controls="nbox"><span>🔔</span><span>Notifiche e promemoria<small id="shnots">Voli, tappe, pasti, alloggio e lista</small></span></button>
+<div class="nbox" id="nbox" data-trip hidden>
+<label class="nrow nmain"><span>Attiva i promemoria<small id="nst">Disattivati</small></span><input type="checkbox" class="nsw" id="non" role="switch"></label>
+<div id="nopts">
+<label class="nrow"><span>Voli<small>Qualche ora prima della partenza</small></span><input type="checkbox" class="nsw" data-k="vol" role="switch"></label>
+<label class="nrow"><span>Tappe del giorno<small>Poco prima di ogni tappa</small></span><input type="checkbox" class="nsw" data-k="tappe" role="switch"></label>
+<label class="nrow"><span>Colazione, pranzo e cena<small>Poco prima di ogni pasto</small></span><input type="checkbox" class="nsw" data-k="pasti" role="switch"></label>
+<label class="nrow"><span>Alloggio<small>Check-in e check-out</small></span><input type="checkbox" class="nsw" data-k="alloggio" role="switch"></label>
+<label class="nrow"><span>Riepilogo del mattino<small>Cosa c'è oggi, alle 8:30</small></span><input type="checkbox" class="nsw" data-k="riep" role="switch"></label>
+<label class="nrow"><span>Lista «Prima di partire»<small>Tre giorni e un giorno prima, se manca qualcosa</small></span><input type="checkbox" class="nsw" data-k="lista" role="switch"></label>
+<div class="shlang nlead"><div class="shl"><span>Quanto prima di tappe e pasti</span></div><select id="nlead" aria-label="Anticipo dei promemoria"><option value="10">10 minuti</option><option value="15">15 minuti</option><option value="30">30 minuti</option><option value="60">1 ora</option></select></div>
+</div>
+<div class="nbtns"><button type="button" class="btn ghost" id="ntest">Prova una notifica</button><button type="button" class="btn ghost" id="ncal">Aggiungi anche al calendario</button></div>
+<p class="nnote" id="nnote">I promemoria suonano quando l'app è aperta o appena usata. Per avere gli avvisi anche con l'app chiusa, aggiungi il viaggio al calendario del telefono.</p>
+</div>
 <button type="button" class="row" data-trip id="shlink"><span>🔗</span><span>Invia il viaggio<small>Un link che apre lo stesso viaggio su un altro telefono</small></span></button>
 <button type="button" class="row" data-trip id="shoff"><span>🗺️</span><span>Mappa offline<small id="shoffs">Salva le tessere dell'area dei tuoi spostamenti, per usarla senza rete</small></span></button>
 <button type="button" class="row" id="shapp"><span>🔗</span><span>Condividi Viatico<small>QR code e link per far scaricare l'app</small></span></button>

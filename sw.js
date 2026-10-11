@@ -1,4 +1,4 @@
-var C="via-v34",T="via-tiles-v1",F=["./","icon-192.png","icon-512.png","icon-maskable-512.png","apple-touch-icon.png","manifest.webmanifest"];
+var C="via-v35",T="via-tiles-v1",F=["./","icon-192.png","icon-512.png","icon-maskable-512.png","apple-touch-icon.png","manifest.webmanifest"];
 self.addEventListener("install",function(e){e.waitUntil(caches.open(C).then(function(c){return c.addAll(F.map(function(u){return new Request(u,{cache:"reload"})}))}).catch(function(){}));self.skipWaiting()});
 self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(k){return Promise.all(k.filter(function(n){return /^via-/.test(n)&&n!==C&&n!==T}).map(function(n){return caches.delete(n)}))}).then(function(){return self.clients.claim()}))});
 self.addEventListener("fetch",function(e){
@@ -11,3 +11,4 @@ if(!same)return;
 var req=new Request(e.request,{cache:"no-store"});
 e.respondWith(fetch(req).then(function(r){if(r.ok){var cp=r.clone();caches.open(C).then(function(c){c.put(e.request,cp)}).catch(function(){})}return r}).catch(function(){return caches.match(e.request,{ignoreSearch:true}).then(function(m){return m||caches.match("./")})}));
 });
+self.addEventListener("notificationclick",function(e){e.notification.close();e.waitUntil(self.clients.matchAll({type:"window",includeUncontrolled:true}).then(function(l){for(var i=0;i<l.length;i++){if("focus" in l[i])return l[i].focus()}return self.clients.openWindow((e.notification.data&&e.notification.data.url)||"./")}))});
