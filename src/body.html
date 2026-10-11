@@ -119,22 +119,24 @@
 <div id="sheet" aria-hidden="true"><div class="shc" role="dialog" aria-label="Impostazioni">
 <h3>⚙️ Impostazioni</h3>
 <div class="shtheme"><div class="shl"><span>🌗</span><span>Aspetto<small>"Sistema" segue le impostazioni del telefono</small></span></div><div class="seg3" role="radiogroup" aria-label="Aspetto"><button type="button" role="radio" data-t="auto" aria-checked="true" class="on">Sistema</button><button type="button" role="radio" data-t="light" aria-checked="false">Chiaro</button><button type="button" role="radio" data-t="dark" aria-checked="false">Scuro</button></div></div>
-<button type="button" class="row" data-edit><span>✏️</span><span>Modifica il tuo viaggio<small>Date, persone, volo e hotel</small></span></button>
-<button type="button" class="row" id="shdest"><span>🧭</span><span>Tutti i viaggi<small>Torna alla pagina principale e organizza un altro viaggio</small></span></button>
-<button type="button" class="row" id="shpdf"><span>📄</span><span>Scarica l'itinerario in PDF<small id="shpdfs">Tutti i giorni e i costi, da salvare o stampare</small></span></button>
-<button type="button" class="row" id="shsit"><span>📤</span><span>Condividi l'itinerario<small>Invia il PDF a chi viaggia con te</small></span></button>
-<button type="button" class="row" id="shcal"><span>📅</span><span>Aggiungi al calendario<small id="shcals">Tappe e voli con promemoria (file .ics)</small></span></button>
-<button type="button" class="row" id="shlink"><span>🔗</span><span>Invia il viaggio<small>Un link che apre lo stesso viaggio su un altro telefono</small></span></button>
-<button type="button" class="row" id="shoff"><span>🗺️</span><span>Mappa offline<small id="shoffs">Salva le tessere dell'area dei tuoi spostamenti, per usarla senza rete</small></span></button>
+<div class="shtheme shlang"><div class="shl"><span>🌍</span><span>Lingua dell'app<small>Traduzione automatica con Google Traduttore: serve internet</small></span></div><select id="shlang" translate="no" aria-label="Lingua dell'app"><option value="it">Italiano</option><option value="en">English</option><option value="fr">Français</option><option value="es">Español</option><option value="de">Deutsch</option><option value="pt">Português</option></select></div>
+<button type="button" class="row" data-trip data-edit><span>✏️</span><span>Modifica il tuo viaggio<small>Date, persone, volo e hotel</small></span></button>
+<button type="button" class="row" data-trip id="shdest"><span>🧭</span><span>Tutti i viaggi<small>Torna alla pagina principale e organizza un altro viaggio</small></span></button>
+<button type="button" class="row" data-trip id="shpdf"><span>📄</span><span>Scarica l'itinerario in PDF<small id="shpdfs">Tutti i giorni e i costi, da salvare o stampare</small></span></button>
+<button type="button" class="row" data-trip id="shsit"><span>📤</span><span>Condividi l'itinerario<small>Invia il PDF a chi viaggia con te</small></span></button>
+<button type="button" class="row" data-trip id="shcal"><span>📅</span><span>Aggiungi al calendario<small id="shcals">Tappe e voli con promemoria (file .ics)</small></span></button>
+<button type="button" class="row" data-trip id="shlink"><span>🔗</span><span>Invia il viaggio<small>Un link che apre lo stesso viaggio su un altro telefono</small></span></button>
+<button type="button" class="row" data-trip id="shoff"><span>🗺️</span><span>Mappa offline<small id="shoffs">Salva le tessere dell'area dei tuoi spostamenti, per usarla senza rete</small></span></button>
 <button type="button" class="row" id="shapp"><span>🔗</span><span>Condividi Viatico<small>QR code e link per far scaricare l'app</small></span></button>
 <button type="button" class="row" id="shacct" hidden><span>👤</span><span><b class="at">Accedi o registrati</b><small class="as"></small></span></button>
 <button type="button" class="row" id="shvoli"><span>📡</span><span>Stato live dei voli<small>Collega o scollega la chiave AeroDataBox</small></span></button>
+<button type="button" class="row" id="shhelp"><span>🛟</span><span>Supporto e assistenza<small>Domande frequenti, contatti e privacy</small></span></button>
 <button type="button" class="row danger" id="shreset"><span>🗑️</span><span>Cancella tutti i dati<small>Tutti i viaggi, spese, liste e chiave salvati su questo telefono</small></span></button>
 <button type="button" class="btn ghost cls" id="shclose">Chiudi</button>
 </div></div>
 
 <div id="dest" aria-hidden="true"><div class="dcard">
-<div class="dbrand"><svg class="dlogo" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="vlg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3ec"/><stop offset=".55" stop-color="#16b6cf"/><stop offset="1" stop-color="#7fd6b4"/></linearGradient></defs><rect width="64" height="64" rx="18" fill="url(#vlg)"/><path d="M15 17 L32 47 L49 17" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="49" cy="17" r="6.5" fill="#ffd23f" stroke="#fff" stroke-width="2.5"/></svg><div><h1 class="dname">Viatico</h1><p class="dtag">Il necessario per il viaggio</p></div></div>
+<div class="dbrand"><svg class="dlogo" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="vlg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3ec"/><stop offset=".55" stop-color="#16b6cf"/><stop offset="1" stop-color="#7fd6b4"/></linearGradient></defs><rect width="64" height="64" rx="18" fill="url(#vlg)"/><path d="M15 17 L32 47 L49 17" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="49" cy="17" r="6.5" fill="#ffd23f" stroke="#fff" stroke-width="2.5"/></svg><div><h1 class="dname" translate="no">Viatico</h1><p class="dtag">Il necessario per il viaggio</p></div><button type="button" class="dgear" id="dgear" aria-label="Impostazioni, lingua e assistenza">⚙️</button></div>
 <p class="dlatin">Dal latino <i>viaticum</i>: ciò che si porta con sé quando si parte. Qui trovi itinerario, voli, mappa, pasti e costi, già pronti.</p>
 <button type="button" class="dacct" id="dacct" hidden><span aria-hidden="true">👤</span><span class="atx"><b class="at">Accedi o registrati</b><small class="as"></small></span><i aria-hidden="true">›</i></button>
 <div id="dmine" hidden></div>
@@ -186,6 +188,20 @@
 <div class="sact"><button type="submit" class="btn">✨ Crea il mio viaggio</button></div>
 <p class="snote" id="sfuso"></p>
 </form></div>
+<div id="help" aria-hidden="true"><div class="qrc hcard" role="dialog" aria-labelledby="hltt"><h3 id="hltt">🛟 Supporto e assistenza</h3>
+<div class="hfaq">
+<details><summary>Come uso Viatico senza internet?</summary><p>Apri l'app con internet almeno una volta prima di partire: l'itinerario resta salvato. Dalle impostazioni puoi scaricare anche la mappa offline della zona dei tuoi spostamenti. Meteo, voli live e traduzione hanno bisogno della rete.</p></details>
+<details><summary>Come ritrovo i miei viaggi su un altro telefono?</summary><p>Accedi con Google dalle impostazioni: viaggi, spese e liste si sincronizzano. In alternativa usa «Invia il viaggio» per mandare un link che apre lo stesso viaggio.</p></details>
+<details><summary>Come divido le spese con chi viaggia con me?</summary><p>Nella sezione Costi, in «Spese reali», dai un nome a ciascuno, tocca «Aggiungi spesa» e scegli chi ha pagato e come dividere. Sotto trovi i saldi e i rimborsi suggeriti, e puoi condividere il riepilogo.</p></details>
+<details><summary>Ho sbagliato un orario o una data: come correggo?</summary><p>Apri le impostazioni e tocca «Modifica il tuo viaggio»: l'itinerario si ricalcola da solo.</p></details>
+<details><summary>Orari e prezzi sono sicuri?</summary><p>Sono verificati alla data indicata in fondo a ogni guida, ma possono cambiare: controlla sempre i siti ufficiali prima di partire. Dove un dato non è stato letto sul sito, il testo lo dice.</p></details>
+<details><summary>Come installo l'app sul telefono?</summary><p>Su iPhone apri Viatico in Safari, tocca Condividi e «Aggiungi alla schermata Home». Su Android apri il menu del browser e scegli «Installa app» o «Aggiungi a schermata Home».</p></details>
+<details><summary>Come cancello i miei dati?</summary><p>Dalle impostazioni, «Cancella tutti i dati» elimina viaggi, spese e liste da questo telefono. Per cancellare anche i dati dell'account scrivi all'assistenza.</p></details>
+</div>
+<div class="qrb"><a class="btn" id="hlmail" href="mailto:__SUPPORT__" translate="no">✉️ Scrivi all'assistenza</a><button type="button" class="btn ghost" id="hlcopy">📋 Copia i dettagli tecnici</button><a class="btn ghost" href="privacy.html" target="_blank" rel="noopener">🔒 Privacy e condizioni</a></div>
+<p class="hlver" id="hlver" translate="no">Viatico · versione __BUILD__</p>
+<button type="button" class="btn ghost cls" id="hlclose">Chiudi</button></div></div>
+<div id="gtx" translate="no" aria-hidden="true"></div>
 <div id="exp" aria-hidden="true"><div class="qrc xcard" role="dialog" aria-label="Spesa"><div id="xbody"></div></div></div>
 <div id="ask" aria-hidden="true"><div class="qrc" role="dialog" aria-labelledby="asktt"><h3 id="asktt"></h3><p class="qrp" id="asktx"></p><div class="qrb" id="askb"></div></div></div>
 <div id="acct" aria-hidden="true"><div class="qrc" role="dialog" aria-label="Account"><h3>👤 Il tuo account</h3><div id="acbody"></div><button type="button" class="btn ghost cls" id="acclose">Chiudi</button></div></div>

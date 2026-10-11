@@ -1,4 +1,4 @@
-import os,json
+import os,json,datetime
 from themes import css_for
 from world import W,REG as REGN
 d=os.path.dirname(os.path.abspath(__file__))
@@ -27,11 +27,13 @@ if(PD.SKY)[].forEach.call(document.querySelectorAll("svg.sky,svg.spsky"),functio
 cfgp=os.path.join(d,'supabase.json')
 SBC=json.load(open(cfgp)) if os.path.exists(cfgp) else {}
 SYNC=r('sync.js').replace('__SB_URL__',SBC.get('url','')).replace('__SB_KEY__',SBC.get('key',''))
+supp=json.load(open(os.path.join(d,'support.json'))) if os.path.exists(os.path.join(d,'support.json')) else {}
+body=r('body.html').replace('__SUPPORT__',supp.get('email','')).replace('__BUILD__',datetime.date.today().strftime('%d/%m/%Y'))
 head=r('head.html')
 theme=''.join(css_for(c) for c in have if c!='paris')
 mark='html.pick #splash{display:none!important}'
 assert head.count(mark)==1
 head=head.replace(mark,theme+mark)
-html=head+r('body.html')+'<script>\n'+r('globe.js').replace('__LANDMASK__',r('landmask.txt').strip())+'\n</script>\n<script>\n'+cities+boot+'\n</script>\n<script>\n'+r('app1.js')+'\n</script>\n<script>\n'+r('app2.js')+'\n</script>\n<script>\n'+r('pdf.js')+'\n</script>\n<script>\n'+SYNC+'\n</script>\n<script>\n'+r('offline.js')+'\n</script>\n</body>\n</html>\n'
+html=head+body+'<script>\n'+r('globe.js').replace('__LANDMASK__',r('landmask.txt').strip())+'\n</script>\n<script>\n'+cities+boot+'\n</script>\n<script>\n'+r('app1.js')+'\n</script>\n<script>\n'+r('app2.js')+'\n</script>\n<script>\n'+r('pdf.js')+'\n</script>\n<script>\n'+SYNC+'\n</script>\n<script>\n'+r('offline.js')+'\n</script>\n<script>\n'+r('help.js')+'\n</script>\n</body>\n</html>\n'
 open('/home/claude/viatico/index.html','w').write(html)
 print(len(html),have)
