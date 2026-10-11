@@ -18,7 +18,7 @@ function same(a,b){return JSON.stringify(a)===JSON.stringify(b)}
 /* unione al primo accesso: i viaggi presenti da una sola parte si tengono tutti */
 function merge(a,b){var cur=a.cur||b.cur,all={},order=[];function add(t){if(!t||!t.cfg)return;var id=t.cfg.tid;if(!all[id]){all[id]=t;order.push(id)}}
 if(a.cur)add(a.cur);a.trips.forEach(add);if(b.cur)add(b.cur);b.trips.forEach(add);
-var cid=cur?cur.cfg.tid:null;return{v:1,cur:cid?all[cid]:null,trips:order.filter(function(i){return i!==cid}).map(function(i){return all[i]}).slice(0,12)}}
+var cid=cur&&cur.cfg?cur.cfg.tid:null;return{v:1,cur:cid?all[cid]:null,trips:order.filter(function(i){return i!==cid}).map(function(i){return all[i]}).slice(0,12)}}
 /* libreria caricata solo quando serve */
 function lib(){return new Promise(function(res,rej){if(window.supabase)return res();var s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.100.0/dist/umd/supabase.js";s.onload=res;s.onerror=function(){rej(new Error("offline"))};document.head.appendChild(s)})}
 function client(){return lib().then(function(){if(!CL)CL=window.supabase.createClient(SB.url,SB.key,{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});return CL})}

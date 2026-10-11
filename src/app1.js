@@ -35,6 +35,7 @@ var tzs=new Date(Date.UTC(o.getUTCFullYear(),o.getUTCMonth(),o.getUTCDate(),12))
 /* ===== configurazione ===== */
 var SAVED=lj("via-trip",null);if(SAVED&&SAVED.date&&!SAVED.dest)SAVED.dest="paris";
 var CFG=SAVED&&SAVED.date&&SAVED.dest===PD.id?SAVED:null;
+if(CFG&&(typeof CFG!=="object"||!PD.RET[CFG.to])){if(CFG&&typeof CFG==="object"&&PD.RET&&Object.keys(PD.RET).length)CFG.to=Object.keys(PD.RET)[0];else{CFG=null;SAVED=null}}
 function ss(k,v){try{if(v===undefined)return sessionStorage.getItem(k);if(v===null)sessionStorage.removeItem(k);else sessionStorage.setItem(k,v)}catch(e){return null}}
 var PICK=ss("via-pick"),OPEN=ss("via-open");ss("via-pick",null);ss("via-open",null);
 function nDays(c){if(!c||!c.date_r||c.date_r<=c.date)return 1;return Math.round((dateObj(c.date_r)-dateObj(c.date))/864e5)+1}
@@ -299,7 +300,8 @@ WH={wheel:wheel,items:items,go:function(i){wheel.scrollTop=i*H;upd()}};upd()}
 /* banner dal vivo */
 var lastNow=-2;
 function todayIdx(){if(!TRIP)return -1;var d=paris().d;for(var i=0;i<TRIP.days.length;i++)if(TRIP.days[i].date===d)return i;return -1}
-function liveTick(){var live=$("#live");if(!TRIP||!CFG){live.hidden=true;return}
+var lastDay=null;
+function liveTick(){var live=$("#live");if(!TRIP||!CFG){live.hidden=true;return}var dd=paris().d;if(lastDay&&dd!==lastDay){lastDay=dd;try{renderAll()}catch(e){console.error(e)}return}lastDay=dd;
 var n=paris(),c=CFG,A=TRIP.A,D0=TRIP.days[0],DN=TRIP.days[TRIP.n-1];
 function set(cls,b,sp){live.className="live "+cls;live.innerHTML='<i class="dot"></i><div class="lt"><b></b><span></span></div>';$("b",live).textContent=b;$("span",live).textContent=sp;live.hidden=false}
 var steps=$$("#steps .step");steps.forEach(function(li){li.classList.remove("now")});if(WH.items)WH.items.forEach(function(w){w.classList.remove("now")});
@@ -446,6 +448,7 @@ window.PAREST=tot*N}
 
 /* spese reali: elenco di spese condivise, saldi e rimborsi (come Splitwise) */
 var SP=lj("via-spese",{});
+(function(){if(!SP||typeof SP!=="object"||Array.isArray(SP))SP={};["n","x","q"].forEach(function(k){if(!Array.isArray(SP[k]))SP[k]=[]});if(typeof SP.lp!=="number")delete SP.lp;if(typeof SP.lc!=="string")delete SP.lc})();
 function cats(){var a=[["tr","Trasporti"],["co","Colazioni"],["pr","Pranzi"],["ce","Cene"],["sp","Spuntini"],["ex","Extra"]];if(TRIP&&TRIP.multi){a.splice(5,0,["mu","Musei"]);a.push(["al","Alloggio"])}else a[1][1]="Colazione",a[2][1]="Pranzo",a[3][1]="Cena";return a}
 var CI={tr:"🚇",co:"🥐",pr:"🥙",ce:"🍽️",sp:"🍦",ex:"🛍️",mu:"🏛️",al:"🏨"};
 function catName(k){var a=[["tr","Trasporti"],["co","Colazione"],["pr","Pranzo"],["ce","Cena"],["sp","Spuntini"],["ex","Extra"],["mu","Musei"],["al","Alloggio"]].filter(function(c){return c[0]===k})[0];return a?a[1]:"Spesa"}
@@ -586,7 +589,7 @@ $("#foot").textContent="Itinerario per "+(N===1?"una persona":N+" persone")+", "
 function renderAll(){if(!CFG)return;TRIP=buildTrip(CFG);var ti=todayIdx();SEL=ti>=0?ti:Math.min(SEL,TRIP.n-1);if(SEL<0)SEL=0;P=TRIP.days[SEL];WD=P.wd;lastNow=-2;
 renderHero();renderDays();renderBar();renderStay();renderShort();renderItin();renderAvv();PREADY=false;meteo();PREADY=true;renderVoli();renderPasti();renderCosti(false);renderSpese();renderConsigli();liveTick();PAR.emit()}
 PAR.render=renderAll;
-setInterval(liveTick,30000);window.addEventListener("vlive",liveTick);
+setInterval(liveTick,30000);document.addEventListener("visibilitychange",function(){if(!document.hidden)liveTick()});window.addEventListener("pageshow",function(e){if(e.persisted)liveTick()});window.addEventListener("vlive",liveTick);
 document.getElementById("t-costi").addEventListener("change",function(){if(this.checked&&CFG)renderCosti(true)});
 
 /* ===== schermata «Il tuo viaggio» ===== */
@@ -635,7 +638,7 @@ dgrid.innerHTML=list.slice(0,lim).map(function(d){return '<button type="button" 
 var none=$("#dnone");none.hidden=list.length>0;if(!list.length)none.textContent=q?"Nessuna città per «"+dfind.value.trim()+"», per ora. Ne aggiungiamo di nuove di continuo.":"Nessuna città in questa area, per ora.";
 var mine=$("#dmine"),all=[],hasCur=SAVED&&SAVED.date&&CITIES[SAVED.dest];if(hasCur)all.push({cur:1,cfg:SAVED});trips().forEach(function(t,k){all.push({i:k,cfg:t.cfg})});
 if(all.length){mine.hidden=false;mine.innerHTML='<div class="dmhr"><div class="dmh">'+(all.length>1?"I miei viaggi":"Il tuo viaggio")+'</div><button type="button" class="dnew" id="dnew">＋ Nuovo viaggio</button></div>'+all.map(function(t,k){var d=dOf(t.cfg.dest);return '<div class="dtw"><button type="button" class="dtrip" data-k="'+k+'" style="'+sw(d)+'"><span>'+d.e+'</span><div><small>'+(t.cur?"In corso":"Salvato")+'</small><b>'+esc(d.n)+' · '+esc(rangeOf(t.cfg))+'</b></div><i>›</i></button><button type="button" class="dtx" data-k="'+k+'" aria-label="Elimina il viaggio a '+esc(d.n)+'">✕</button></div>'}).join("");
-$$(".dtrip",mine).forEach(function(b){b.addEventListener("click",function(){var t=all[+b.dataset.k];if(t.cur){if(SAVED.dest===PD.id&&CFG){closeDest();setCity(PD.id)}else goCity(SAVED.dest)}else switchTrip(t.i)})});
+$$(".dtrip",mine).forEach(function(b){b.addEventListener("click",function(){var t=all[+b.dataset.k];if(!t)return;if(t.cur){if(!SAVED||!SAVED.dest){closeDest();return}if(SAVED.dest===PD.id&&CFG){closeDest();setCity(PD.id)}else goCity(SAVED.dest)}else switchTrip(t.i)})});
 $("#dnew",mine).addEventListener("click",function(){var g=$("#dreg")||dgrid;g.scrollIntoView({behavior:"smooth",block:"start"});setTimeout(function(){dfind.focus()},450)});
 $$(".dtx",mine).forEach(function(b){b.addEventListener("click",function(){var t=all[+b.dataset.k],d=dOf(t.cfg.dest);if(!confirm("Eliminare il viaggio a "+d.n+" ("+rangeOf(t.cfg)+")? Spese e lista di questo viaggio andranno perse."))return;if(t.cur)dropCur();else{var a=trips();a.splice(t.i,1);putTrips(a)}renderDest()})})}else{mine.hidden=true;mine.innerHTML=""}}
 function openDest(){DEXP=false;closeSetup();closeSheet();setCity(null);dfind.value="";renderDest();destEl.classList.add("on");destEl.setAttribute("aria-hidden","false");destEl.scrollTop=0;setTimeout(function(){document.documentElement.classList.remove("hold")},600)}
