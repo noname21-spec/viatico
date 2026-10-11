@@ -827,7 +827,8 @@ html.sa body.tbmin .tabbar{top:calc(var(--apph) - 58px - 10px - env(safe-area-in
 @keyframes dshBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
 @media (prefers-reduced-motion:reduce){.dshare::before{display:none}.dshare>span{animation:none}}
 body:has(#dest.on,#setup.on) :is(.blk,.tabbar,.appbar,.gear){visibility:hidden!important;transition:visibility 0s linear .4s!important}
-.shc,.qrc{background:linear-gradient(180deg,var(--hi2),transparent 38%),color-mix(in srgb,var(--bg) 93%,transparent)!important}
+.shc,.qrc{background:linear-gradient(180deg,var(--hi2),transparent 38%),var(--bg)!important}
+.shc button.row{background:color-mix(in srgb,var(--c3) 7%,var(--bg))!important}
 #dest,#setup{background:color-mix(in srgb,var(--bg) 40%,transparent)!important}
 .ssub{margin:10px 0 0;padding:9px 12px;border-radius:12px;border:1px solid var(--edge);background:color-mix(in srgb,var(--hi) 20%,transparent);display:flex;align-items:center;gap:6px}
 .dnote:not(:empty),.sgrp .snote{margin:0;padding:10px 12px;border-radius:12px;border:1px solid var(--edge);background:color-mix(in srgb,var(--hi) 16%,transparent);line-height:1.45}
@@ -854,6 +855,7 @@ html.hold .ahome{visibility:hidden}
 .authb span{font-weight:900;font-size:1.05rem;width:1.2em;text-align:center}.authb.apple{background:#111;color:#fff!important;text-shadow:none!important}
 .dacct{display:flex;align-items:center;gap:12px;width:100%;margin:16px 0 0;padding:10px 14px;border-radius:var(--r2);border:1px solid var(--edge);background:color-mix(in srgb,var(--c3) 9%,var(--gl2));color:var(--ink);font:inherit;text-align:left;cursor:pointer}.dacct[hidden]{display:none}
 .dacct>span:first-child{font-size:1.3rem}.dacct .atx{flex:1;min-width:0}.dacct .at{display:block;font-size:.95rem}.dacct .as{display:block;color:var(--mute);font-size:.76rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dacct i{font-style:normal;font-weight:800;color:var(--c3);font-size:1.3rem}
+.dreg{padding-right:30px;-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent);mask-image:linear-gradient(90deg,#000 92%,transparent)}
 button,label,summary,a{touch-action:manipulation}
 </style>
 </head>

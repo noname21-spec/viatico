@@ -25,7 +25,7 @@ function client(){return lib().then(function(){if(!CL)CL=window.supabase.createC
 function setSess(s){SESS=s;UID=s&&s.user?s.user.id:null;paint()}
 function mail(){return SESS&&SESS.user?(SESS.user.email||"account collegato"):""}
 function paint(){var on=!!UID;[["#dacct",1],["#shacct",0]].forEach(function(x){var el=$(x[0]);if(!el)return;el.hidden=!ok;var t=el.querySelector(".at"),s=el.querySelector(".as");if(!t)return;
-t.textContent=on?"Sincronizzazione attiva":"Accedi o registrati";s.textContent=on?mail():"Ritrovi viaggi, spese e liste su ogni dispositivo"})
+t.textContent=on?"Sincronizzazione attiva":"Accedi o registrati";s.textContent=on?mail():"Ritrovi i viaggi su ogni dispositivo"})
 var m=$("#acct");if(m&&m.classList.contains("on"))modal()}
 /* sincronizzazione */
 function dirtyKey(){return"via-sync-dirty"}
