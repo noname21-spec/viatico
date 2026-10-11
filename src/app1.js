@@ -574,7 +574,13 @@ else if(z[2]===3)body='<ul>'+PD.NUMS+'</ul>';
 else if(z[2]===4)body='<ul>'+(avv.length?avv.map(function(a){return "<li><b>⚠️ "+esc(a.t)+".</b> "+esc(a.x)+"</li>"}).join(""):"<li>Per "+(TRIP.n===1?esc(dateLong(c.date)):"i giorni del viaggio")+" non risultano scioperi o lavori che riguardano il tuo percorso (verifica del "+esc(PD.VER)+").</li>")+'<li>'+PD.STRK+' Il calendario degli scioperi in Italia è su <a href="https://scioperi.mit.gov.it/" target="_blank" rel="noopener">scioperi.mit.gov.it</a>.</li></ul>';
 else body='<ul>'+z[1].map(function(x){return "<li>"+esc(x)+"</li>"}).join("")+'</ul>';
 return '<details'+((z[1]&&z[2]===1)||(z[2]===4&&avv.length)?" open":"")+'><summary>'+z[0]+(z[2]===4&&avv.length?' <span class="st ko">'+avv.length+'</span>':'')+'</summary>'+body+'</details>'}).join("");
-$$(".say").forEach(function(b){b.addEventListener("click",function(){try{var u=new SpeechSynthesisUtterance(b.dataset.t);u.lang=PD.LANG;u.rate=.9;speechSynthesis.cancel();speechSynthesis.speak(u);b.classList.add("on");u.onend=function(){b.classList.remove("on")};setTimeout(function(){b.classList.remove("on")},3000)}catch(e){}})});
+/* pronuncia: funziona anche con l'interruttore silenzioso dell'iPhone (sessione audio «playback» + traccia muta in loop) */
+var QA=null;function quietAudio(){try{if(navigator.audioSession)navigator.audioSession.type="playback"}catch(e){}
+try{if(!QA){var n=4000,b=new Uint8Array(44+n),v=new DataView(b.buffer),w=function(o,t){for(var i=0;i<t.length;i++)b[o+i]=t.charCodeAt(i)};w(0,"RIFF");v.setUint32(4,36+n,true);w(8,"WAVEfmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,8000,true);v.setUint32(28,8000,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,"data");v.setUint32(40,n,true);for(var i=0;i<n;i++)b[44+i]=128;
+QA=new Audio(URL.createObjectURL(new Blob([b],{type:"audio/wav"})));QA.loop=true;QA.setAttribute("playsinline","");QA.volume=.01}
+var pr=QA.play();if(pr&&pr.catch)pr.catch(function(){})}catch(e){}}
+function quietOff(){try{if(QA)QA.pause()}catch(e){}}
+$$(".say").forEach(function(b){b.addEventListener("click",function(){if(!b.dataset.t)return;try{quietAudio();var u=new SpeechSynthesisUtterance(b.dataset.t);u.lang=PD.LANG;u.rate=.9;speechSynthesis.cancel();speechSynthesis.speak(u);b.classList.add("on");var fin=function(){b.classList.remove("on");setTimeout(quietOff,250)};u.onend=fin;u.onerror=fin;setTimeout(function(){b.classList.remove("on")},3000);setTimeout(quietOff,15000)}catch(e){quietOff()}})});
 $("#foot").textContent="Itinerario per "+(N===1?"una persona":N+" persone")+", "+rangeTxt()+" "+dateObj(c.date).getUTCFullYear()+". Dati verificati il "+PD.VER+"."}
 
 function renderAll(){if(!CFG)return;TRIP=buildTrip(CFG);var ti=todayIdx();SEL=ti>=0?ti:Math.min(SEL,TRIP.n-1);if(SEL<0)SEL=0;P=TRIP.days[SEL];WD=P.wd;lastNow=-2;
