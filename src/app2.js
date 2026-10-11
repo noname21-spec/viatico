@@ -92,7 +92,7 @@ var dm=document.getElementById("dm");if(dm)dm.addEventListener("change",function
 var tab=document.getElementById("t-mappa");tab.addEventListener("change",function(){if(tab.checked)setTimeout(function(){map.invalidateSize();if(bnds)map.fitBounds(bnds,{paddingTopLeft:[16,24],paddingBottomRight:[48,24],maxZoom:15});anim()},150)});
 PAR.on(function(){waterLoaded=false;gWater.clearLayers();draw()});draw();
 setTimeout(function(){if(!ok&&!navigator.onLine)off.textContent="Sei offline: la mappa mostra solo le zone già viste."},5000)}
-function load(){var sc=document.createElement("script");sc.src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";sc.onload=init;sc.onerror=function(){off.textContent="La mappa non si è caricata: serve una connessione."};document.head.appendChild(sc)}
+function load(){var sc=document.createElement("script");sc.src="lib/leaflet.js";sc.onload=init;sc.onerror=function(){off.textContent="La mappa non si è caricata: serve una connessione."};document.head.appendChild(sc)}
 if(document.readyState==="complete")load();else addEventListener("load",load);
 /* legenda e schermo intero */
 var lg=document.getElementById("lg");
@@ -147,7 +147,7 @@ var dl=Math.round((ut(d.revisedTime,d.actualTimeUtc)-ut(d.scheduledTime,d.schedu
 return{st:f.status||"Unknown",dS:hm(d.scheduledTime||d.scheduledTimeLocal),dR:hm(d.revisedTime||d.actualTimeLocal),dW:hm(d.runwayTime),aS:hm(a.scheduledTime||a.scheduledTimeLocal),aR:hm(a.revisedTime||a.actualTimeLocal),aW:hm(a.runwayTime),dl:isFinite(dl)?dl:0,al:isFinite(al)?al:0,dT:d.terminal||"",gate:d.gate||"",desk:d.checkInDesk||"",aT:a.terminal||"",belt:a.baggageBelt||"",air:(f.airline&&f.airline.name)||"",ac:(f.aircraft&&f.aircraft.model)||"",dIata:(d.airport&&d.airport.iata)||"",aIata:(a.airport&&a.airport.iata)||"",sDep:ut(d.scheduledTime,d.scheduledTimeUtc),sArr:ut(a.scheduledTime,a.scheduledTimeUtc)}}
 function esc(x){return PAR.esc(x)}
 function ago(t){var m=Math.round((Date.now()-t)/6e4);return m<1?"adesso":m<60?m+" min fa":Math.round(m/60)+" h fa"}
-function trow(lbl,s,r,w,dl){var now=w||r;var h=now&&now!==s?"<s>"+esc(s)+"</s>"+esc(now):esc(s||now||"—");if(dl>=5)h+='<span class="vdl">+'+dl+"′</span>";return'<div class="vrow"><span>'+lbl+"</span><b>"+h+"</b></div>"}
+function trow(lbl,s,r,w,dl){var now=w||r;var h=now&&now!==s?"<s>"+esc(s)+"</s>"+esc(now):esc(s||now||"—");if(dl>=5)h+='<span class="vdl">+'+dl+"′</span>";return'<div class="vrow"><span>'+esc(lbl)+"</span><b>"+h+"</b></div>"}
 function ck(n,side){return n+"@"+DAY(side)}
 function render(){var LIVE={};
 ["a","r"].forEach(function(side){var el=document.querySelector('.vlive[data-l="'+side+'"]');if(!el)return;var n=num(side),c=C[ck(n,side)];

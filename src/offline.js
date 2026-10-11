@@ -6,7 +6,7 @@ function toast(t){var el=$("#toast");if(!el)return;el.textContent=t;el.classList
 var chip=$("#offl");function net(first){if(chip)chip.hidden=navigator.onLine;if(!first)toast(navigator.onLine?"Di nuovo online":"Sei offline: l'app funziona, mappe solo nelle zone scaricate")}
 window.addEventListener("online",function(){net()});window.addEventListener("offline",function(){net()});net(true);
 /* tessere */
-var LIB=["https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js","https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"],MAXT=320,Z0=12,Z1=16,CN="via-tiles-v1";
+var LIB=["lib/leaflet.js","lib/leaflet.css","lib/images/marker-icon.png","lib/images/marker-icon-2x.png","lib/images/marker-shadow.png","lib/images/layers.png","lib/images/layers-2x.png"],MAXT=320,Z0=12,Z1=16,CN="via-tiles-v1";
 function tx(lng,z){return Math.floor((lng+180)/360*Math.pow(2,z))}
 function ty(lat,z){var r=lat*Math.PI/180;return Math.floor((1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*Math.pow(2,z))}
 function points(){var P=window.PAR,T=P&&P.trip,pts=[];if(!T||!window.PD)return pts;if(PD.START)pts.push(PD.START);

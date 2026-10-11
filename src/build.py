@@ -45,5 +45,26 @@ globe_js=r('globe.js').replace('__LANDMASK__',r('landmask.txt').strip())
 assert '<!--GLOBE-->' in body
 body=body.replace('<!--GLOBE-->','<script>\n'+globe_js+'\n</script>',1)
 html=head+body+'<script>\n'+icons_js+'\n</script>\n<script>\n'+cities+boot+'\n</script>\n<script>\n'+r('app1.js')+'\n</script>\n<script>\n'+r('app2.js')+'\n</script>\n<script>\n'+r('pdf.js')+'\n</script>\n<script>\n'+SYNC+'\n</script>\n<script>\n'+r('offline.js')+'\n</script>\n<script>\n'+r('help.js')+'\n</script>\n<script>\n'+r('notify.js')+'\n</script>\n</body>\n</html>\n'
+# Content-Security-Policy: hash di ogni script inline, niente 'unsafe-inline' per gli script
+import hashlib
+def b64h(t): return base64.b64encode(hashlib.sha256(t.encode('utf-8')).digest()).decode()
+assert not re.search(r'<script\b[^>]*\bsrc=',html), 'script esterno nel markup'
+assert not re.search(r'<script\b[^>]+>',html), 'script con attributi: non coperto dalla CSP'
+shs=sorted(set(b64h(m) for m in re.findall(r'<script>(.*?)</script>',html,re.S)))
+sbu=SBC.get('url','')
+sbh=re.sub(r'^https?://','',sbu)
+CONN=["'self'","https://api.open-meteo.com","https://nominatim.openstreetmap.org","https://overpass-api.de","https://routing.openstreetmap.de","https://opendata.paris.fr","https://aerodatabox.p.rapidapi.com","https://tile.openstreetmap.org","https://*.tile.openstreetmap.org","https://translate.googleapis.com"]+([sbu,'wss://'+sbh] if sbu else [])
+CSP="; ".join([
+ "default-src 'self'",
+ "script-src 'self' "+" ".join("'sha256-%s'"%h for h in shs)+" https://translate.google.com https://translate.googleapis.com https://www.gstatic.com",
+ "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.gstatic.com https://translate.googleapis.com",
+ "font-src 'self' data: https://fonts.gstatic.com",
+ "img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://www.gstatic.com https://translate.google.com https://translate.googleapis.com https://www.google.com",
+ "connect-src "+" ".join(CONN),
+ "frame-src https://translate.google.com",
+ "worker-src 'self'","manifest-src 'self'","object-src 'none'","base-uri 'self'","form-action 'self'"])
+mk='<meta name="color-scheme" content="light dark">'
+assert html.count(mk)==1
+html=html.replace(mk,'<meta http-equiv="Content-Security-Policy" content="'+CSP+'">\n'+mk,1)
 open('/home/claude/viatico/index.html','w').write(html)
 print(len(html),have)
