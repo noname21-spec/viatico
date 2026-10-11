@@ -70,7 +70,7 @@ return{min:(l?l.min:0)+15+HA.min,txt:(l?"Torna all'alloggio a ritirare i bagagli
 function win(id,wd,date){var w=S[id].win;return w?w(wd,date,sunset(date)):null}
 function sim(acts,dur,ctx){
 var t=ctx.c0,prev=ctx.start,items=[],B=false,L=false,D=false,late=0,lastEnd=0,LO=PD.LUNCHO||0;
-function meal(k,d){var w=prev==="start"||prev==="home"?3:8;t+=w;items.push({k:"meal",m:k,t:t,d:d,z:zoneOf(prev),walk:w,near:prev==="home"});t+=d}
+function meal(k,d){var w=prev==="start"||prev==="home"?3:8;t+=w;items.push({k:"meal",m:k,t:t,d:d,z:zoneOf(prev),walk:w,near:prev==="home",hotel:k==="col"&&prev==="home"&&!!ctx.multi&&COPT.hb===1});t+=d}
 if(ctx.wantB){meal("col",30);B=true}
 acts.forEach(function(id){
 var lg=legOf(prev,id);
@@ -204,8 +204,9 @@ function vLi(o,wd){var v=o.v,q=vq(v);
 return '<li class="'+(o.s.c==="ko"?"closed":"")+'"><b><a target="_blank" rel="noopener" href="'+esc(PD.G(q))+'">'+esc(v.n)+'</a></b> <span class="st '+o.s.c+'">'+(o.s.c==="ok"?"✓ ":o.s.c==="ko"?"⚠️ ":"⏱ ")+esc(o.s.t)+'</span> <a class="go sm" href="'+esc(gdir(q))+'" target="_blank" rel="noopener">↗︎ Portami lì</a> – '+v.r+' ★ · '+esc(v.a)+'. '+esc(v.d)+' <i style="font-style:normal;color:var(--mute)">'+esc(v.pr)+'</i>'+fbadge(o.id,o.extra)+'<span class="hrs">🕐 '+esc(hrsTxt(v,wd))+'</span></li>'}
 var MN={col:"Colazione",pra:"Pranzo",cen:"Cena"},ZN=Object.assign({X:"vicino all'alloggio"},PD.ZN);
 function mealIds(m,z){var M=PD.MEAL[m];if(z==="X")return null;return M[z]||M.A||M[Object.keys(M)[0]]}
-function mealTitle(it){var where=it.near?"vicino all'alloggio":ZN[it.z]||"";if(it.m==="cen"&&it.t<18*60+30)return "Cena anticipata "+where;return MN[it.m]+" "+where}
+function mealTitle(it){if(it.hotel)return "Colazione in hotel";var where=it.near?"vicino all'alloggio":ZN[it.z]||"";if(it.m==="cen"&&it.t<18*60+30)return "Cena anticipata "+where;return MN[it.m]+" "+where}
 function ordBox(m){return '<div class="ord"><b>🍽️ Cosa ordinare</b>'+PD.ORD[m].map(function(o){return "<p><i>"+esc(o[0])+"</i> – "+esc(o[1])+"</p>"}).join("")+"</div>"}
+function hotelBf(){return '<p>La colazione è inclusa nel tuo hotel: scendi con calma nella sala colazioni.</p><p class="meta">Controlla gli orari del servizio (di solito dalle 7 alle 10:30) e, se hai fretta, chiedi alla reception se prepara un cestino da portare via.</p>'}
 function nearBox(m){var h=home(),k=PD.NEAR[m]||PD.NEAR.col;
 return '<div class="eat"><h3>Dove mangiare</h3><p class="meta" style="margin:4px 0 8px">In questa zona non ho locali verificati: cerca una '+k+' con almeno 4 stelle vicino all\'alloggio.</p><a class="go sm" target="_blank" rel="noopener" href="'+esc("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(fpWords()+k+" near "+(h.geo?h.pos.join(","):h.q)))+'">🔎 '+cap(k)+(fpWords()?" ("+esc(fpWords().trim())+")":"")+' vicino all\'alloggio</a></div>'}
 function fpWords(){var q=[];FP.d.forEach(function(d){if(d==="veg"&&FP.d.indexOf("vegan")>=0)return;q.push(d==="gf"?"gluten free":d==="vegan"?"vegan":"vegetarian")});return q.length?q.join(" ")+" ":""}
@@ -225,7 +226,8 @@ if(it.arr){ti="Arrivo all'alloggio";var early=toMin(h.cin)>it.t+15;body='<div cl
 else if(it.co){ti="Check-out e bagagli";body='<p>Lascia la camera entro le '+esc(h.cout)+'. '+(P.acts.length||P.items.some(function(x){return x.k==="free"})?'Chiedi di tenere i bagagli fino '+(P.leave>=13*60?'al pomeriggio':'a fine mattinata')+': '+esc(P.leave>=13*60?PD.T.bagsPM:PD.T.bagsAM)+'. Se non si può, ci sono depositi bagagli a pagamento come Nannybag o Bounce.':'Dopo colazione si parte per l\'aeroporto.')+'</p>'+(P.acts.length?'<p class="meta">Oggi: '+esc(P.acts.map(function(id){return S[id].t}).join(", "))+'.</p>':'')}
 else{ti="Si parte dall'alloggio";body='<p>Giorno '+(P.i+1)+(P.themes&&P.themes.length?': '+esc(P.themes.join(" e ")):'')+'.</p>'+(P.acts.length?'<p class="meta">Le tappe: '+esc(P.acts.map(function(id){return S[id].t}).join(", "))+'.</p>':'<p class="meta">Giornata libera: nessuna tappa in programma.</p>')}}
 else if(it.k==="meal"){cls="food";ti=mealTitle(it);var ids=mealIds(it.m,it.z);
-if(!ids)body='<p>'+(it.m==="col"?"Prima di partire, qualcosa al volo vicino all'alloggio.":"Vicino all'alloggio, per non riattraversare la città.")+'</p>'+nearBox(it.m);
+if(it.hotel)body=hotelBf();
+else if(!ids)body='<p>'+(it.m==="col"?"Prima di partire, qualcosa al volo vicino all'alloggio.":"Vicino all'alloggio, per non riattraversare la città.")+'</p>'+nearBox(it.m);
 else{var pl=prefList(ids,WD,it.t,it.m,it.z),L=pl.main,first=L.filter(function(o){return o.s.c==="ok"})[0]||L[0];
 body='<p>'+(it.m==="col"?(it.near?"A pochi passi dall'alloggio.":"Appena usciti dalla stazione, a pochi passi."):it.m==="pra"?((PD.T.praZ||{})[it.z]||PD.T.pra+": "+(it.d>=60?"un'ora a tavola, con calma.":"un pranzo veloce.")):(TRIP.multi&&P.kind!=="last"?"La cena della giornata, senza fretta.":"Mangia qui e non in aeroporto: si spende meno e si mangia meglio. Tieni d'occhio l'orologio."))+'</p><div class="eat"><h3>Dove mangiare</h3>'+eatUL(pl,WD,it.m,it.z)+fpNote()+'</div>'+(first?goBtn(vq(first.v),"walking","Portami lì","🚶"):"")}}
 else if(it.k==="snk"){cls="food";ti="Ultimo assaggio prima di partire";var sids=PD.MEAL.snk[it.z]||(it.z==="X"?null:PD.MEAL.snk.A);
@@ -370,7 +372,7 @@ $("#vgrid").innerHTML=card("a")+card("r");
 $("#vtips").innerHTML='<details><summary>🛬 Dall\'aeroporto di '+esc(A.n)+(TRIP.multi?' all\'alloggio':' al centro')+'</summary><ul><li>'+esc(A.arr)+'</li><li>'+esc(A.tk)+'</li>'+(PD.fx.voliTip?PD.fx.voliTip(E):(A.vt?'<li>'+esc(A.vt)+'</li>':''))+'</ul></details><details><summary>🛫 Ritorno in aeroporto</summary><ul><li>'+(TRIP.multi?"L'ultimo giorno parti alle "+fmt(DL.leave)+". ":"Parti dall'ultima tappa alle "+fmt(DL.leave)+". ")+esc(DL.items[DL.items.length-1].ret.txt)+'</li><li>Calcolo l\'arrivo in aeroporto almeno '+fdur(A.buf)+' prima del decollo'+(DL.imb!=null?' e 45 minuti prima dell\'apertura dell\'imbarco':'')+'.</li></ul></details>'}
 
 /* ===== pasti ===== */
-function renderPasti(){if(PD.T.mcrit)$("#mcrit").textContent=PD.T.mcrit;var it=P.items,meals=it.filter(function(x){return x.k==="meal"||x.k==="snk"}),h="";
+function renderPasti(){var hb=$("#hbt");if(hb){hb.hidden=!(TRIP&&TRIP.multi);$("#hbc").checked=COPT.hb===1}if(PD.T.mcrit)$("#mcrit").textContent=PD.T.mcrit;var it=P.items,meals=it.filter(function(x){return x.k==="meal"||x.k==="snk"}),h="";
 $("#mlead").textContent=TRIP.multi?"Giorno "+(P.i+1)+", "+dateLong(P.date)+": i pasti in ordine e, nel mezzo, cosa assaggiare lungo il percorso.":"La giornata a tavola, in ordine: i pasti e, nel mezzo, cosa assaggiare lungo il percorso.";
 if(!meals.length){$("#mgrid").innerHTML='<p class="meta">Con questi orari non ci sono pasti in città.</p>';return}
 var acts=function(a,b){return it.filter(function(x){return x.k==="act"&&x.t>a&&x.t<b})};
@@ -378,7 +380,8 @@ var prevT=P.c0;
 meals.forEach(function(m,mi){var between=acts(prevT,m.t);
 if(mi>0||(!P.B&&between.length)){h+=btw(between,meals[mi-1],m)}
 var ids=m.k==="snk"?(PD.MEAL.snk[m.z]||(m.z==="X"?null:PD.MEAL.snk.A)):mealIds(m.m,m.z),ttl=m.k==="snk"?"Ultimo assaggio":mealTitle(m);
-if(!ids)h+='<div class="eat"><h3>'+fmt(m.t)+' · '+esc(ttl)+'</h3></div>'+nearBox(m.m||"snk");
+if(m.hotel)h+='<div class="eat"><h3>'+fmt(m.t)+' · '+esc(ttl)+'</h3>'+hotelBf()+'</div>';
+else if(!ids)h+='<div class="eat"><h3>'+fmt(m.t)+' · '+esc(ttl)+'</h3></div>'+nearBox(m.m||"snk");
 else h+='<div class="eat"><h3>'+fmt(m.t)+' · '+esc(ttl)+'</h3>'+eatUL(prefList(ids,WD,m.t,m.k==="snk"?"snk":m.m,m.z),WD,m.k==="snk"?"snk":m.m,m.z)+(m.k==="meal"?ordBox(m.m):"")+'</div>';
 prevT=m.t});
 var tail=acts(prevT,1e9);if(tail.length)h+=btw(tail,meals[meals.length-1],null);
@@ -407,6 +410,7 @@ else if(g==="p")FP.p=+v;else{var k=FP.k.indexOf(v);if(k>=0)FP.k.splice(k,1);else
 $("#fpx").addEventListener("click",function(){FP.d=[];FP.p=0;FP.k=[];save()});
 document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest(".fplink");if(!a)return;e.preventDefault();var t=$("#t-mangiare");if(t){t.checked=true;t.dispatchEvent(new Event("change",{bubbles:true}))}box.open=true;setTimeout(function(){try{box.scrollIntoView({behavior:"smooth",block:"start"})}catch(x){}},80)});
 PAR.fpPaint=paint;paint()})();
+$("#hbc").addEventListener("change",function(){COPT.hb=this.checked?1:0;ls("via-copt",JSON.stringify(COPT));if(CFG)renderAll()});
 
 function allActs(){var a=[];TRIP.days.forEach(function(d){d.acts.forEach(function(x){if(a.indexOf(x)<0)a.push(x)})});return a}
 /* modello dei costi generico: prezzi in euro nei dati della città */
@@ -424,7 +428,7 @@ var c=CFG,N=c.ppl,acts=allActs(),tr=transport(),T=tr.T.slice(),AT=[],F=[],AL=[],
 if(PD.TR.card)T.push(["card",PD.TR.card[1],PD.TR.card[0],1]);
 acts.forEach(function(id){var t=S[id].tk;if(t)AT.push([id,t[1],t[0],t[2]?1:0,t[3]?1:0])});
 (PD.XTK||[]).forEach(function(x){if(!x[3]||acts.indexOf(x[3])>=0)AT.push([x[0],x[1],x[2],1,x[4]?1:0])});
-var nb=0,nl=0,nd=0;TRIP.days.forEach(function(d){if(d.B)nb++;if(d.L)nl++;if(d.D)nd++});
+var nb=0,nl=0,nd=0;TRIP.days.forEach(function(d){if(d.B&&!(d.items||[]).some(function(i){return i.k==="meal"&&i.m==="col"&&i.hotel}))nb++;if(d.L)nl++;if(d.D)nd++});
 var x=function(k){return TRIP.n>1&&k>1?" (× "+k+")":""};
 if(nb)F.push(["co",FD.co[1]+x(nb),FD.co[0]*nb]);if(nl)F.push(["pr",FD.pr[1]+x(nl),FD.pr[0]*nl]);if(nd)F.push(["ce",FD.ce[1]+x(nd),FD.ce[0]*nd]);
 F.push(["sp",FD.sp[1]+x(TRIP.n),FD.sp[0]*TRIP.n]);
