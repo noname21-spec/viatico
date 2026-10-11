@@ -30,10 +30,17 @@ SYNC=r('sync.js').replace('__SB_URL__',SBC.get('url','')).replace('__SB_KEY__',S
 supp=json.load(open(os.path.join(d,'support.json'))) if os.path.exists(os.path.join(d,'support.json')) else {}
 body=r('body.html').replace('__SUPPORT__',supp.get('email','')).replace('__BUILD__',datetime.date.today().strftime('%d/%m/%Y'))
 head=r('head.html')
+# icone 3D (Fluent Emoji, MIT): un'immagine WebP per nome, incorporata nel CSS
+import re,base64,glob
+imgs={os.path.basename(f)[:-5]:base64.b64encode(open(f,'rb').read()).decode() for f in sorted(glob.glob(os.path.join(d,'icons3d','*.webp')))}
+used=set(re.findall(r'm\("(\w+)"',r('icons.js')))
+mono={'check','arrow','back','up','refresh','close','dl'}
+assert not (used-set(imgs)-mono),'icone senza immagine: %s'%sorted(used-set(imgs)-mono)
+icss='<style id="ic3">'+''.join('.i3[data-n="%s"]{background-image:url(data:image/webp;base64,%s)}'%(k,v) for k,v in imgs.items())+'</style>\n'
 theme=''.join(css_for(c) for c in have if c!='paris')
 mark='html.pick #splash{display:none!important}'
 assert head.count(mark)==1
 head=head.replace(mark,theme+mark)
-html=head+body+'<script>\n'+r('icons.js')+'\n</script>\n<script>\n'+r('globe.js').replace('__LANDMASK__',r('landmask.txt').strip())+'\n</script>\n<script>\n'+cities+boot+'\n</script>\n<script>\n'+r('app1.js')+'\n</script>\n<script>\n'+r('app2.js')+'\n</script>\n<script>\n'+r('pdf.js')+'\n</script>\n<script>\n'+SYNC+'\n</script>\n<script>\n'+r('offline.js')+'\n</script>\n<script>\n'+r('help.js')+'\n</script>\n</body>\n</html>\n'
+html=head.replace('</head>',icss+'</head>',1)+body+'<script>\n'+r('icons.js')+'\n</script>\n<script>\n'+r('globe.js').replace('__LANDMASK__',r('landmask.txt').strip())+'\n</script>\n<script>\n'+cities+boot+'\n</script>\n<script>\n'+r('app1.js')+'\n</script>\n<script>\n'+r('app2.js')+'\n</script>\n<script>\n'+r('pdf.js')+'\n</script>\n<script>\n'+SYNC+'\n</script>\n<script>\n'+r('offline.js')+'\n</script>\n<script>\n'+r('help.js')+'\n</script>\n</body>\n</html>\n'
 open('/home/claude/viatico/index.html','w').write(html)
 print(len(html),have)

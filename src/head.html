@@ -147,7 +147,7 @@ html.sa .tabbar{bottom:auto!important;top:calc(var(--apph) - var(--tb) - 10px - 
 .tabbar label:active{transform:scale(.92)}
 .tabbar label span{position:relative;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .tabbar label::after{content:"";position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:transparent;opacity:0;pointer-events:none;box-shadow:0 -24px 0 var(--c3),21px -12px 0 #fff,21px 12px 0 var(--c2),0 24px 0 var(--c3),-21px 12px 0 #fff,-21px -12px 0 var(--c2),12px -21px 0 #ffd56b,-12px 21px 0 #ffd56b}
-.tabbar .em{position:relative;display:block;font-size:1.42rem;line-height:1;font-weight:400;font-style:normal;filter:grayscale(.35) opacity(.85);transition:transform .4s ease,filter .4s ease}
+.tabbar .em{position:relative;display:block;font-size:1.42rem;line-height:1;font-weight:400;font-style:normal;filter:grayscale(.2) opacity(.92);transition:transform .4s ease,filter .4s ease}
 .tabbar label:hover .em{transform:translateY(-2px)}
 body:has(#t-itinerario:checked) label[for=t-itinerario],body:has(#t-voli:checked) label[for=t-voli],body:has(#t-mappa:checked) label[for=t-mappa],body:has(#t-mangiare:checked) label[for=t-mangiare],body:has(#t-costi:checked) label[for=t-costi],body:has(#t-consigli:checked) label[for=t-consigli]{color:#fff!important;text-shadow:none}
 body:has(#t-itinerario:checked) label[for=t-itinerario] .em,body:has(#t-voli:checked) label[for=t-voli] .em,body:has(#t-mappa:checked) label[for=t-mappa] .em,body:has(#t-mangiare:checked) label[for=t-mangiare] .em,body:has(#t-costi:checked) label[for=t-costi] .em,body:has(#t-consigli:checked) label[for=t-consigli] .em{filter:none;animation:var(--emA) .9s cubic-bezier(.22,1,.36,1) both,idleWiggle 4.5s 1.2s ease-in-out infinite}
@@ -442,9 +442,35 @@ tr.off td{opacity:.45;text-decoration:line-through}
 .split:empty{display:none}.split div+div{margin-top:4px}
 
 .sadd{width:100%;justify-content:center;margin-top:12px}
-/* icone disegnate (sostituiscono le emoji) */
-.ic{width:1.2em;height:1.2em;vertical-align:-.26em;flex:none;overflow:visible}
-.dem .ic{width:1.1em;height:1.1em;vertical-align:-.12em}.tabbar .em .ic{width:1.12em;height:1.12em;vertical-align:-.1em}
+/* icone 3D (Fluent Emoji): immagine nel CSS #ic3, qui misure e movimento */
+.i3{display:inline-block;width:1.28em;height:1.28em;vertical-align:-.3em;flex:none;background:center/contain no-repeat;filter:drop-shadow(0 1px 1.4px rgba(40,25,50,.28));transform-origin:50% 72%}
+svg.ic{width:1.2em;height:1.2em;vertical-align:-.26em;flex:none;overflow:visible}
+.dem .i3{width:1.3em;height:1.3em;vertical-align:-.1em}.tabbar .em .i3{width:1.22em;height:1.22em;vertical-align:-.16em}
+.i3[data-n=doc],.i3[data-n=gear],.i3[data-n=cloud],.i3[data-n=fog],.i3[data-n=snow],.i3[data-n=mail],.i3[data-n=link],.i3[data-n=speech],.i3[data-n=trash],.i3[data-n=suncloud]{filter:drop-shadow(0 1px 1.6px rgba(40,25,60,.5))}
+/* piccole animazioni: solo dove l'icona è protagonista (giorno scelto, città pronte, tocco) */
+@keyframes ibob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-2px) scale(1.04)}}
+@keyframes ifly{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(2px,-2px) rotate(7deg)}}
+@keyframes ispin{to{transform:rotate(360deg)}}
+@keyframes iswing{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(9deg)}}
+@keyframes ipulse{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
+@keyframes irock{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+@keyframes ipin{0%,100%{transform:translateY(0)}35%{transform:translateY(-3px)}55%{transform:translateY(0) scale(1.06,.94)}}
+@keyframes idrip{0%,100%{transform:translateY(-1px) scale(1,1)}50%{transform:translateY(2px) scale(.94,1.07)}}
+@keyframes ijig{0%{transform:scale(1)}25%{transform:rotate(-12deg) scale(1.16)}60%{transform:rotate(9deg) scale(1.12)}100%{transform:scale(1)}}
+@keyframes ipop{0%{transform:scale(.6) translateY(4px);opacity:.4}60%{transform:scale(1.18) translateY(-2px);opacity:1}100%{transform:scale(1)}}
+.dp.on .i3,.dcity.ok .i3{animation:ibob 3.2s ease-in-out infinite}
+.dp.on .i3{animation:ipop .6s cubic-bezier(.2,1.4,.4,1) 1,ibob 3.2s ease-in-out .6s infinite}
+.dcity.ok:nth-child(3n+2) .i3{animation-delay:-1s}.dcity.ok:nth-child(3n) .i3{animation-delay:-2s}
+.dp.on .i3[data-n=plane],.dcity.ok .i3[data-n=plane]{animation:ifly 3.6s ease-in-out infinite}
+.dp.on .i3[data-n=gear],.dp.on .i3[data-n=sun]{animation:ispin 14s linear infinite}
+.dp.on .i3[data-n=clock],.dp.on .i3[data-n=hourglass],.dcity.ok .i3[data-n=anchor]{animation:iswing 2.8s ease-in-out infinite}
+.dp.on .i3[data-n=bulb]{animation:ipulse 2.4s ease-in-out infinite}
+.dp.on .i3[data-n=pin]{animation:ipin 2.2s ease-in-out infinite}
+.dcity.ok .i3[data-n=bike],.dcity.ok .i3[data-n=train],.dp.on .i3[data-n=train],.dp.on .i3[data-n=bike]{animation:irock 2.8s ease-in-out infinite}
+.dp.on .i3[data-n=drop]{animation:idrip 2.6s ease-in-out infinite}
+button:active .i3,.dcity:active .i3,label:active .i3,.row:active .i3{animation:ijig .55s ease-in-out 1}
+@media (hover:hover){button:hover .i3,.dcity:hover .i3,label:hover .i3{animation:ijig .6s ease-in-out 1}}
+@media (prefers-reduced-motion:reduce){.i3{animation:none!important}}
 /* preferenze di cibo */
 .hbt{display:flex;align-items:center;gap:12px;margin:12px 0 0;padding:12px 14px;border:1px solid var(--edge);border-radius:var(--r3);background:linear-gradient(180deg,var(--hi2),transparent 45%),var(--gl2);cursor:pointer;position:relative}.hbt[hidden]{display:none}
 .hbk{flex:1;min-width:0}.hbk b{display:block;font-size:.95rem}.hbk small{display:block;color:var(--mute);font-weight:600;font-size:.78rem;margin-top:2px}
