@@ -4898,6 +4898,23 @@ function icon(cls,txt,sz){return L.divIcon({className:"lmk "+cls,html:"<span>"+t
 function pop(t,d,q){return '<div class="lpop"><b>'+esc(t)+'</b><p>'+esc(d)+'</p><div class="lpa"><a class="go sm" target="_blank" rel="noopener" href="'+esc(PAR.gdir(q))+'">↗︎ Portami lì</a><a class="lpm" target="_blank" rel="noopener" href="'+esc(PD.G(q))+'">Apri in Google Maps</a></div></div>'}
 function show(t,d,q){info.innerHTML='<h3></h3><p></p>'+(q?'<a target="_blank" rel="noopener">Apri in Google Maps</a>':'');info.querySelector("h3").textContent=t;info.querySelector("p").textContent=d;if(q)info.querySelector("a").href=PD.G(q)}
 function bind(mk,t,d,q){mk.bindPopup(pop(t,d,q),{className:"lglass",maxWidth:240,minWidth:180,autoPanPaddingTopLeft:[12,124],autoPanPaddingBottomRight:[64,64]});mk.on("click",function(){show(t,d,q)})}
+/* ===== tratti a piedi lungo le strade (percorsi pedonali OpenStreetMap, con memoria locale) ===== */
+var RC=(function(){try{return JSON.parse(localStorage.getItem("via-rc")||"{}")||{}}catch(e){return{}}})(),RQ=[],RB=0,RURL="https://routing.openstreetmap.de/routed-foot/route/v1/foot/";
+function rcSave(){try{var k=Object.keys(RC);if(k.length>70){k.slice(0,k.length-70).forEach(function(x){delete RC[x]})}localStorage.setItem("via-rc",JSON.stringify(RC))}catch(e){}}
+function rkey(pts){return pts.map(function(q){return q[0].toFixed(5)+","+q[1].toFixed(5)}).join(";")}
+function hv(a,b){var R=6371000,r=Math.PI/180,dl=(b[0]-a[0])*r,dg=(b[1]-a[1])*r,x=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dg/2)*Math.sin(dg/2);return 2*R*Math.asin(Math.sqrt(x))}
+function snapWalk(ch,pl,halo,done){var pts=ch.p.map(function(q){return[q[0],q[1]]});if(pts.length<2)return;
+var len=0;for(var i=1;i<pts.length;i++)len+=hv(pts[i-1],pts[i]);if(len<40)return;
+if(pts.length>20){var st=(pts.length-1)/19,np=[];for(i=0;i<20;i++)np.push(pts[Math.round(i*st)]);pts=np}
+var k=rkey(pts),hit=RC[k];if(hit){apply(hit);return}
+RQ.push({k:k,pts:pts,len:len,apply:apply});pump();
+function apply(g){try{pl.setLatLngs(g);halo.setLatLngs(g);done&&done()}catch(e){}}}
+function pump(){if(RB>=2||!RQ.length)return;var j=RQ.shift();RB++;
+var ctl=window.AbortController?new AbortController():null,tm=setTimeout(function(){ctl&&ctl.abort()},9000);
+fetch(RURL+j.pts.map(function(q){return q[1].toFixed(5)+","+q[0].toFixed(5)}).join(";")+"?overview=full&geometries=geojson",ctl?{signal:ctl.signal}:{}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){
+var rt=d&&d.routes&&d.routes[0];if(!rt||!rt.geometry||!rt.geometry.coordinates||rt.geometry.coordinates.length<2)throw 0;
+if(rt.distance>j.len*3+300)throw 0;var g=rt.geometry.coordinates.map(function(c){return[+c[1].toFixed(5),+c[0].toFixed(5)]});
+RC[j.k]=g;rcSave();j.apply(g)}).catch(function(){}).then(function(){clearTimeout(tm);RB--;pump()})}
 function draw(){try{draw0()}catch(e){console.error("draw",e&&e.stack)}}
 function vq(v){return PAR.vq(v)}
 function draw0(){var P=PAR.plan,c=PAR.cfg,T=PAR.trip;if(!map||!P)return;var multi=!!(T&&T.multi),H=multi?PAR.home():null,ends=P.kind==="single"||P.kind==="first"||P.kind==="last";
@@ -4909,8 +4926,8 @@ all.forEach(function(ch){var walk=ch.k==="walk",col=walk?getComputedStyle(docume
 var ll=ch.p.map(function(q){return[q[0],q[1]]});var halo=L.polyline(ll,{color:d?"#060d20":"#ffffff",weight:walk?7:9,opacity:.75,interactive:false}).addTo(gRoute);
 var pl=L.polyline(ll,{color:col,weight:walk?4:6,opacity:.95,dashArray:walk||ch.dash?"1 10":null,lineCap:"round",lineJoin:"round"}).addTo(gRoute);
 var a=ch.p[0],b=ch.p[ch.p.length-1],tt=walk?"A piedi":ch.n+(a[2]&&b[2]?" · "+a[2]+" → "+b[2]:"");
-pl.bindTooltip("<b>"+esc(walk?"A piedi":ch.n)+"</b>"+(walk?"":"<br>"+esc((a[2]||"")+" → "+(b[2]||""))),{sticky:true,className:"ltip"});pl.on("click",function(e){pl.openTooltip(e.latlng);show(walk?"A piedi":ch.n,walk?"Tratto a piedi (indicativo).":(a[2]||"")+" → "+(b[2]||"")+" (tracciato indicativo).")});
-lines.push({pl:pl,halo:halo,walk:walk,k:ch.k});
+pl.bindTooltip("<b>"+esc(walk?"A piedi":ch.n)+"</b>"+(walk?"":"<br>"+esc((a[2]||"")+" → "+(b[2]||""))),{sticky:true,className:"ltip"});pl.on("click",function(e){pl.openTooltip(e.latlng);show(walk?"A piedi":ch.n,walk?(ch.snapped?"Percorso a piedi lungo le strade (dati OpenStreetMap).":"Tratto a piedi (indicativo)."):(a[2]||"")+" → "+(b[2]||"")+" (tracciato indicativo).")});
+lines.push({pl:pl,halo:halo,walk:walk,k:ch.k});if(walk)snapWalk(ch,pl,halo,function(){ch.snapped=1});
 if(!walk)ch.p.forEach(function(s){if(s[2]&&!stn[s[2]])stn[s[2]]=s})});
 Object.keys(stn).forEach(function(n){var s=stn[n],key=s[3]||0,m=L.circleMarker([s[0],s[1]],{radius:key?5:3.5,color:d?"#eef0ff":"#0f1430",weight:2,fillColor:d?"#141832":"#ffffff",fillOpacity:1}).addTo(gRoute);
 m.bindTooltip(n,{permanent:key>=1,direction:"right",offset:[6,0],className:"lst"+(key===2?" key":"")});if(!key)m.on("click",function(){m.openTooltip()})});
