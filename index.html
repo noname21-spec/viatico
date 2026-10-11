@@ -442,12 +442,6 @@ tr.off td{opacity:.45;text-decoration:line-through}
 .split:empty{display:none}.split div+div{margin-top:4px}
 
 .sadd{width:100%;justify-content:center;margin-top:12px}
-/* dissolvenza tra le finestre e la barra di selezione: uno strato sfumato sopra il contenuto, sotto la barra */
-.tbfade{position:fixed;z-index:49;left:0;right:0;bottom:0;height:calc(var(--tb) + 46px + env(safe-area-inset-bottom,0px)*.3);pointer-events:none;background:linear-gradient(to top,color-mix(in srgb,var(--bg) 96%,transparent) 0,color-mix(in srgb,var(--bg) 82%,transparent) 38%,color-mix(in srgb,var(--bg) 0%,transparent) 100%);transition:opacity .35s ease,height .45s cubic-bezier(.22,1,.36,1)}
-html.sa .tbfade{bottom:auto;top:calc(var(--apph) - var(--tb) - 46px - 10px - env(safe-area-inset-bottom,0px)*.45)}
-body.tbmin .tbfade{height:44px}html.sa body.tbmin .tbfade{top:calc(var(--apph) - 44px - 10px)}
-body:has(#t-mappa:checked) .tbfade,html.hold .tbfade{opacity:0}
-@media print{.tbfade{display:none}}
 /* bersagli tocco più comodi su telefono: l'area sensibile si allarga senza spostare nulla */
 @media (pointer:coarse){
 .ahome,.vch,.dnew,.fpc button,.dreg button,.opt,.go.sm{position:relative}
@@ -1177,7 +1171,7 @@ body:has(#dest.on) #sheet{z-index:165}
 <div class="appbar"><button type="button" class="ahome" id="ahome" aria-label="Tutti i viaggi: torna alla pagina principale"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/></svg></button><span class="appt" id="appt">Parigi</span><span class="offl" id="offl" hidden>📴 Offline</span><span class="wx" id="wx" aria-live="polite"><i class="wxi" aria-hidden="true">🌤️</i><b id="wxt">--°</b></span></div>
 <button type="button" class="gear" id="gear" aria-label="Impostazioni">⚙️</button>
 <label for="dm" class="iosw" title="Modalità chiara/scura"><span class="trk"><b class="ic sun" aria-hidden="true">☀️</b><b class="ic moon" aria-hidden="true">🌙</b><i class="knob"></i></span><span class="vh">Modalità scura</span></label>
-<i class="tbfade" aria-hidden="true"></i><nav class="tabbar" aria-label="Sezioni"><i class="tbind" aria-hidden="true"></i><label for="t-itinerario"><b class="em em-spin" aria-hidden="true">🕗</b><span>Tappe</span></label><label for="t-voli"><b class="em em-fly" aria-hidden="true">✈️</b><span>Voli</span></label><label for="t-mappa"><b class="em em-unfold" aria-hidden="true">🗺️</b><span>Mappa</span></label><label for="t-mangiare"><b class="em em-bob" aria-hidden="true">🥐</b><span>Pasti</span></label><label for="t-costi"><b class="em em-flip" aria-hidden="true">💶</b><span>Costi</span></label><label for="t-consigli"><b class="em em-glow" aria-hidden="true">💡</b><span>Consigli</span></label><img class="tbicon" src="icon-192.png" alt="" aria-hidden="true" draggable="false"><i class="tbdots" aria-hidden="true">🕗</i></nav>
+<nav class="tabbar" aria-label="Sezioni"><i class="tbind" aria-hidden="true"></i><label for="t-itinerario"><b class="em em-spin" aria-hidden="true">🕗</b><span>Tappe</span></label><label for="t-voli"><b class="em em-fly" aria-hidden="true">✈️</b><span>Voli</span></label><label for="t-mappa"><b class="em em-unfold" aria-hidden="true">🗺️</b><span>Mappa</span></label><label for="t-mangiare"><b class="em em-bob" aria-hidden="true">🥐</b><span>Pasti</span></label><label for="t-costi"><b class="em em-flip" aria-hidden="true">💶</b><span>Costi</span></label><label for="t-consigli"><b class="em em-glow" aria-hidden="true">💡</b><span>Consigli</span></label><img class="tbicon" src="icon-192.png" alt="" aria-hidden="true" draggable="false"><i class="tbdots" aria-hidden="true">🕗</i></nav>
 
 <div id="sheet" aria-hidden="true"><div class="shc" role="dialog" aria-label="Impostazioni">
 <h3>⚙️ Impostazioni</h3>
@@ -5199,7 +5193,8 @@ bar.classList.remove("moving");requestAnimationFrame(function(){bar.classList.ad
 /* barra che si riduce a un pulsante tondo mentre scorri */
 function isMap(){var a=document.querySelector(".tabr:checked");return !!a&&a.id==="t-mappa"}
 function badge(r){var l=r&&document.querySelector('label[for="'+r.id+'"] .em'),d=bar.querySelector(".tbdots");if(l&&d)d.textContent=l.textContent}
-var last={},lockT=0;function setMin(on){if(on===body.classList.contains("tbmin"))return;body.classList.toggle("tbmin",on);lockT=Date.now();bar.setAttribute("aria-label",on?"Apri le sezioni":"Sezioni")}
+var last={},lockT=0;/* la barra delle sezioni resta sempre fissa e aperta: niente più condensazione */
+function setMin(on){if(body.classList.contains("tbmin")){body.classList.remove("tbmin");bar.setAttribute("aria-label","Sezioni")}}
 blks.forEach(function(b){b.addEventListener("scroll",function(){var y=Math.max(0,Math.min(b.scrollTop,b.scrollHeight-b.clientHeight)),d=y-(last[b.id]||0);last[b.id]=y;if(body.classList.contains("nomin")||Date.now()-lockT<700)return;var mn=body.classList.contains("tbmin");if(!mn&&d>4&&y>24)setMin(true);else if(mn&&y<=8&&!isMap())setMin(false)},{passive:true})});
 bar.addEventListener("click",function(e){if(body.classList.contains("tbmin")){e.preventDefault();e.stopPropagation();setMin(false)}},true);
 var wasMin=false;new MutationObserver(function(){var m=body.classList.contains("tbmin");if(m===wasMin)return;wasMin=m;if(!m){bar.classList.remove("opening");requestAnimationFrame(function(){bar.classList.add("opening")});clearTimeout(t2);t2=setTimeout(function(){bar.classList.remove("opening")},600)}}).observe(body,{attributes:true,attributeFilter:["class"]});

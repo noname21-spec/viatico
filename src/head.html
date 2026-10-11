@@ -442,12 +442,6 @@ tr.off td{opacity:.45;text-decoration:line-through}
 .split:empty{display:none}.split div+div{margin-top:4px}
 
 .sadd{width:100%;justify-content:center;margin-top:12px}
-/* dissolvenza tra le finestre e la barra di selezione: uno strato sfumato sopra il contenuto, sotto la barra */
-.tbfade{position:fixed;z-index:49;left:0;right:0;bottom:0;height:calc(var(--tb) + 46px + env(safe-area-inset-bottom,0px)*.3);pointer-events:none;background:linear-gradient(to top,color-mix(in srgb,var(--bg) 96%,transparent) 0,color-mix(in srgb,var(--bg) 82%,transparent) 38%,color-mix(in srgb,var(--bg) 0%,transparent) 100%);transition:opacity .35s ease,height .45s cubic-bezier(.22,1,.36,1)}
-html.sa .tbfade{bottom:auto;top:calc(var(--apph) - var(--tb) - 46px - 10px - env(safe-area-inset-bottom,0px)*.45)}
-body.tbmin .tbfade{height:44px}html.sa body.tbmin .tbfade{top:calc(var(--apph) - 44px - 10px)}
-body:has(#t-mappa:checked) .tbfade,html.hold .tbfade{opacity:0}
-@media print{.tbfade{display:none}}
 /* bersagli tocco più comodi su telefono: l'area sensibile si allarga senza spostare nulla */
 @media (pointer:coarse){
 .ahome,.vch,.dnew,.fpc button,.dreg button,.opt,.go.sm{position:relative}

@@ -199,7 +199,8 @@ bar.classList.remove("moving");requestAnimationFrame(function(){bar.classList.ad
 /* barra che si riduce a un pulsante tondo mentre scorri */
 function isMap(){var a=document.querySelector(".tabr:checked");return !!a&&a.id==="t-mappa"}
 function badge(r){var l=r&&document.querySelector('label[for="'+r.id+'"] .em'),d=bar.querySelector(".tbdots");if(l&&d)d.textContent=l.textContent}
-var last={},lockT=0;function setMin(on){if(on===body.classList.contains("tbmin"))return;body.classList.toggle("tbmin",on);lockT=Date.now();bar.setAttribute("aria-label",on?"Apri le sezioni":"Sezioni")}
+var last={},lockT=0;/* la barra delle sezioni resta sempre fissa e aperta: niente più condensazione */
+function setMin(on){if(body.classList.contains("tbmin")){body.classList.remove("tbmin");bar.setAttribute("aria-label","Sezioni")}}
 blks.forEach(function(b){b.addEventListener("scroll",function(){var y=Math.max(0,Math.min(b.scrollTop,b.scrollHeight-b.clientHeight)),d=y-(last[b.id]||0);last[b.id]=y;if(body.classList.contains("nomin")||Date.now()-lockT<700)return;var mn=body.classList.contains("tbmin");if(!mn&&d>4&&y>24)setMin(true);else if(mn&&y<=8&&!isMap())setMin(false)},{passive:true})});
 bar.addEventListener("click",function(e){if(body.classList.contains("tbmin")){e.preventDefault();e.stopPropagation();setMin(false)}},true);
 var wasMin=false;new MutationObserver(function(){var m=body.classList.contains("tbmin");if(m===wasMin)return;wasMin=m;if(!m){bar.classList.remove("opening");requestAnimationFrame(function(){bar.classList.add("opening")});clearTimeout(t2);t2=setTimeout(function(){bar.classList.remove("opening")},600)}}).observe(body,{attributes:true,attributeFilter:["class"]});
