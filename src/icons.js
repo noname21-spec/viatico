@@ -26,7 +26,7 @@ var SKIP={SCRIPT:1,STYLE:1,TEXTAREA:1,OPTION:1,TITLE:1,INPUT:1,SELECT:1,CODE:1,N
 function ok(n){for(var p=n.parentNode;p&&p!==document.body;p=p.parentNode){if(p.nodeType!==1)continue;if(SKIP[p.tagName]||p.hasAttribute("data-noicon")||p.namespaceURI==="http://www.w3.org/2000/svg")return false}return true}
 function icon(name){
   if(D[name]){var s=document.createElementNS("http://www.w3.org/2000/svg","svg");s.setAttribute("class","ic ic-"+name);s.setAttribute("viewBox","0 0 24 24");s.setAttribute("aria-hidden","true");var u=document.createElementNS("http://www.w3.org/2000/svg","use");u.setAttribute("href","#i-"+name);s.appendChild(u);return s}
-  var e=document.createElement("img");e.className="ic i3";e.setAttribute("data-n",name);e.alt="";e.setAttribute("aria-hidden","true");e.draggable=false;e.src=src(name);return e}
+  var e=document.createElement("img");e.className="ic i3";e.setAttribute("data-n",name);e.alt="";e.setAttribute("aria-hidden","true");e.draggable=false;e.decoding="sync";e.onerror=function(){this.onerror=null;this.src="data:image/webp;base64,"+IMG[name]};e.src=src(name);return e}
 function fix(t){var s=t.nodeValue;if(!s||!RE.test(s)){RE.lastIndex=0;return}RE.lastIndex=0;if(!ok(t))return;
 var f=document.createDocumentFragment(),last=0,mm;while((mm=RE.exec(s))){if(mm.index>last)f.appendChild(document.createTextNode(s.slice(last,mm.index)));f.appendChild(icon(M[mm[1]]));last=mm.index+mm[0].length}
 if(last<s.length)f.appendChild(document.createTextNode(s.slice(last)));t.parentNode.replaceChild(f,t)}
@@ -36,6 +36,13 @@ function sched(n){q.push(n);if(!raf)raf=requestAnimationFrame(flush)}
 function start(){mount();scan(document.body);
 var mo=new MutationObserver(function(rs){rs.forEach(function(r){if(r.type==="childList")r.addedNodes.forEach(function(n){if(n.nodeType===1||n.nodeType===3)sched(n)});else if(r.type==="characterData")sched(r.target)})});
 mo.observe(document.body,{childList:true,subtree:true,characterData:true})}
+/* controllo di sicurezza: se un'icona non si è disegnata (immagine non decodificata o blob perso), la ricarica */
+function repair(){var l=document.querySelectorAll("img.i3"),i,e,n;for(i=0;i<l.length;i++){e=l[i];if(e.complete&&e.naturalWidth===0){n=e.getAttribute("data-n");if(IMG[n]){e.onerror=null;e.src="data:image/webp;base64,"+IMG[n]}}}}
+var rt=0;function repairSoon(d){clearTimeout(rt);rt=setTimeout(repair,d||250)}
+document.addEventListener("visibilitychange",function(){if(!document.hidden)repairSoon(120)});
+window.addEventListener("pageshow",function(){repairSoon(120)});window.addEventListener("online",function(){repairSoon(200)});
+window.addEventListener("resize",function(){repairSoon(400)});window.addEventListener("orientationchange",function(){repairSoon(500)});
+document.addEventListener("change",function(){repairSoon(350)},true);window.addEventListener("load",function(){repairSoon(900);setTimeout(repair,3500)});
 var NAMES={};Object.keys(M).forEach(function(k){NAMES[M[k]]=1});window.VIC={icon:icon,scan:scan,names:Object.keys(NAMES),map:M};
 if(document.body)start();else document.addEventListener("DOMContentLoaded",start)
 })();

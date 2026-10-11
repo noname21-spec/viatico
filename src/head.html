@@ -147,10 +147,10 @@ html.sa .tabbar{bottom:auto!important;top:calc(var(--apph) - var(--tb) - 10px - 
 .tabbar label:active{transform:scale(.92)}
 .tabbar label span{position:relative;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .tabbar label::after{content:"";position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:transparent;opacity:0;pointer-events:none;box-shadow:0 -24px 0 var(--c3),21px -12px 0 #fff,21px 12px 0 var(--c2),0 24px 0 var(--c3),-21px 12px 0 #fff,-21px -12px 0 var(--c2),12px -21px 0 #ffd56b,-12px 21px 0 #ffd56b}
-.tabbar .em{position:relative;display:block;font-size:1.42rem;line-height:1;font-weight:400;font-style:normal;filter:grayscale(.2) opacity(.92);transition:transform .4s ease,filter .4s ease}
+.tabbar .em{position:relative;display:block;font-size:1.42rem;line-height:1;font-weight:400;font-style:normal;opacity:.85;transition:transform .4s ease,opacity .4s ease}
 .tabbar label:hover .em{transform:translateY(-2px)}
 body:has(#t-itinerario:checked) label[for=t-itinerario],body:has(#t-voli:checked) label[for=t-voli],body:has(#t-mappa:checked) label[for=t-mappa],body:has(#t-mangiare:checked) label[for=t-mangiare],body:has(#t-costi:checked) label[for=t-costi],body:has(#t-consigli:checked) label[for=t-consigli]{color:#fff!important;text-shadow:none}
-body:has(#t-itinerario:checked) label[for=t-itinerario] .em,body:has(#t-voli:checked) label[for=t-voli] .em,body:has(#t-mappa:checked) label[for=t-mappa] .em,body:has(#t-mangiare:checked) label[for=t-mangiare] .em,body:has(#t-costi:checked) label[for=t-costi] .em,body:has(#t-consigli:checked) label[for=t-consigli] .em{filter:none;animation:var(--emA) .9s cubic-bezier(.22,1,.36,1) both,idleWiggle 4.5s 1.2s ease-in-out infinite}
+body:has(#t-itinerario:checked) label[for=t-itinerario] .em,body:has(#t-voli:checked) label[for=t-voli] .em,body:has(#t-mappa:checked) label[for=t-mappa] .em,body:has(#t-mangiare:checked) label[for=t-mangiare] .em,body:has(#t-costi:checked) label[for=t-costi] .em,body:has(#t-consigli:checked) label[for=t-consigli] .em{opacity:1;animation:var(--emA) .9s cubic-bezier(.22,1,.36,1) both,idleWiggle 4.5s 1.2s ease-in-out infinite}
 body:has(#t-itinerario:checked) label[for=t-itinerario] span,body:has(#t-voli:checked) label[for=t-voli] span,body:has(#t-mappa:checked) label[for=t-mappa] span,body:has(#t-mangiare:checked) label[for=t-mangiare] span,body:has(#t-costi:checked) label[for=t-costi] span,body:has(#t-consigli:checked) label[for=t-consigli] span{animation:lblPop .5s cubic-bezier(.22,1,.36,1) both}
 body:has(#t-itinerario:checked) label[for=t-itinerario]::after,body:has(#t-voli:checked) label[for=t-voli]::after,body:has(#t-mappa:checked) label[for=t-mappa]::after,body:has(#t-mangiare:checked) label[for=t-mangiare]::after,body:has(#t-costi:checked) label[for=t-costi]::after,body:has(#t-consigli:checked) label[for=t-consigli]::after{animation:sparkle .7s ease-out both}
 .em-spin{--emA:emSpin}.em-unfold{--emA:emUnfold}.em-bob{--emA:emBob}.em-flip{--emA:emFlip}.em-glow{--emA:emGlow}.em-fly{--emA:emFly}
@@ -442,17 +442,26 @@ tr.off td{opacity:.45;text-decoration:line-through}
 .split:empty{display:none}.split div+div{margin-top:4px}
 
 .sadd{width:100%;justify-content:center;margin-top:12px}
-/* dissolvenza tra le finestre e la barra di selezione: il contenuto sfuma prima di arrivare alla barra */
-@property --fz{syntax:"<length>";inherits:false;initial-value:0px}
-.blk{--fz:calc(var(--tb) + 40px);-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - var(--fz)),transparent calc(100% - var(--fz) + 56px));mask-image:linear-gradient(to bottom,#000 calc(100% - var(--fz)),transparent calc(100% - var(--fz) + 56px))}
-body.tbmin .blk{--fz:calc(var(--tb)*.55 + 4px)}
-#mappa.blk{-webkit-mask-image:none;mask-image:none}
-@media print{.blk{-webkit-mask-image:none!important;mask-image:none!important}}
+/* dissolvenza tra le finestre e la barra di selezione: uno strato sfumato sopra il contenuto, sotto la barra */
+.tbfade{position:fixed;z-index:49;left:0;right:0;bottom:0;height:calc(var(--tb) + 46px + env(safe-area-inset-bottom,0px)*.3);pointer-events:none;background:linear-gradient(to top,color-mix(in srgb,var(--bg) 96%,transparent) 0,color-mix(in srgb,var(--bg) 82%,transparent) 38%,color-mix(in srgb,var(--bg) 0%,transparent) 100%);transition:opacity .35s ease,height .45s cubic-bezier(.22,1,.36,1)}
+html.sa .tbfade{bottom:auto;top:calc(var(--apph) - var(--tb) - 46px - 10px - env(safe-area-inset-bottom,0px)*.45)}
+body.tbmin .tbfade{height:44px}html.sa body.tbmin .tbfade{top:calc(var(--apph) - 44px - 10px)}
+body:has(#t-mappa:checked) .tbfade,html.hold .tbfade{opacity:0}
+@media print{.tbfade{display:none}}
+/* bersagli tocco più comodi su telefono: l'area sensibile si allarga senza spostare nulla */
+@media (pointer:coarse){
+.ahome,.vch,.dnew,.fpc button,.dreg button,.opt,.go.sm{position:relative}
+.ahome::after,.vch::after,.dtx::after,.dnew::after,.fpc button::after,.dreg button::after,.opt::after,.go.sm::after{content:"";position:absolute;inset:-6px}
+.dtx{position:absolute}
+.fpc button,.dreg button{min-height:38px}
+.opt{min-height:32px}
+button,.tabbar,.dp,.dcity,.row,summary,label[for]{-webkit-touch-callout:none}
+.tabbar,.dp,.dcity,.row,.appbar,.sw,.lg,.dreg button,.fpc button,.vbtn,.btn,.go{-webkit-user-select:none;user-select:none}
+}
 /* icone 3D (Fluent Emoji): immagine nel CSS #ic3, qui misure e movimento */
-.i3{display:inline-block;width:1.28em;height:1.28em;vertical-align:-.3em;flex:none;object-fit:contain;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;pointer-events:none;filter:drop-shadow(0 1px 1.4px rgba(40,25,50,.28));transform-origin:50% 72%}
+.i3{display:inline-block;width:1.28em;height:1.28em;vertical-align:-.3em;flex:none;object-fit:contain;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;pointer-events:none}
 svg.ic{width:1.2em;height:1.2em;vertical-align:-.26em;flex:none;overflow:visible}
 .dem .i3{width:1.3em;height:1.3em;vertical-align:-.1em}.tabbar .em .i3{width:1.22em;height:1.22em;vertical-align:-.16em}
-.i3[data-n=doc],.i3[data-n=gear],.i3[data-n=cloud],.i3[data-n=fog],.i3[data-n=snow],.i3[data-n=mail],.i3[data-n=link],.i3[data-n=speech],.i3[data-n=trash],.i3[data-n=suncloud]{filter:drop-shadow(0 1px 1.6px rgba(40,25,60,.5))}
 /* piccole animazioni: solo dove l'icona è protagonista (giorno scelto, città pronte, tocco) */
 @keyframes ibob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-2px) scale(1.04)}}
 @keyframes ifly{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(2px,-2px) rotate(7deg)}}
@@ -681,7 +690,7 @@ button.go{border:0;cursor:pointer}
 @keyframes emUnfold{0%{opacity:.4;transform:perspective(140px) rotateY(-75deg)}100%{opacity:1;transform:none}}
 @keyframes emBob{0%{opacity:.5;transform:translate3d(0,6px,0) scale(.9)}60%{opacity:1;transform:translate3d(0,-2px,0)}100%{transform:none}}
 @keyframes emFlip{0%{opacity:.5;transform:perspective(140px) rotateY(180deg)}100%{opacity:1;transform:perspective(140px) rotateY(360deg)}}
-@keyframes emGlow{0%{opacity:.5;transform:scale(.9);filter:drop-shadow(0 0 0 transparent)}50%{opacity:1;filter:drop-shadow(0 0 10px #ffd23f)}100%{transform:none;filter:drop-shadow(0 0 4px #ffcf2a)}}
+@keyframes emGlow{0%{opacity:.5;transform:scale(.9)}50%{opacity:1;transform:scale(1.14)}100%{transform:none}}
 @keyframes emFly{0%{opacity:0;transform:translate3d(-12px,9px,0) rotate(-12deg) scale(.85)}100%{opacity:1;transform:none}}
 @keyframes idleWiggle{0%,100%{transform:none}50%{transform:translate3d(0,-2px,0)}}
 @keyframes titleIn{0%{opacity:0;filter:blur(8px);transform:translate3d(0,6px,0)}100%{opacity:1;filter:none;transform:none}}
@@ -739,7 +748,7 @@ body.tbmin .tbind{border-radius:50%!important}
 body:has(#t-itinerario:checked) label[for=t-itinerario],body:has(#t-voli:checked) label[for=t-voli],body:has(#t-mappa:checked) label[for=t-mappa]{color:#0b2a36!important;text-shadow:0 1px 1px rgba(255,255,255,.45)!important}
 body:has(#t-mangiare:checked) label[for=t-mangiare],body:has(#t-costi:checked) label[for=t-costi],body:has(#t-consigli:checked) label[for=t-consigli]{color:#0b2a36!important;text-shadow:0 1px 1px rgba(255,255,255,.45)!important}
 body.tbmin .tabbar label span{color:inherit!important}
-body:has(#t-itinerario:checked) label[for=t-itinerario] .em,body:has(#t-voli:checked) label[for=t-voli] .em,body:has(#t-mappa:checked) label[for=t-mappa] .em,body:has(#t-mangiare:checked) label[for=t-mangiare] .em,body:has(#t-costi:checked) label[for=t-costi] .em,body:has(#t-consigli:checked) label[for=t-consigli] .em{filter:drop-shadow(0 2px 4px rgba(2,40,55,.3));animation:var(--emA) .9s var(--ease) both,idleWiggle 3.2s 1s ease-in-out infinite}
+body:has(#t-itinerario:checked) label[for=t-itinerario] .em,body:has(#t-voli:checked) label[for=t-voli] .em,body:has(#t-mappa:checked) label[for=t-mappa] .em,body:has(#t-mangiare:checked) label[for=t-mangiare] .em,body:has(#t-costi:checked) label[for=t-costi] .em,body:has(#t-consigli:checked) label[for=t-consigli] .em{opacity:1;animation:var(--emA) .9s var(--ease) both,idleWiggle 3.2s 1s ease-in-out infinite}
 body:has(#t-itinerario:checked) label[for=t-itinerario] span,body:has(#t-voli:checked) label[for=t-voli] span,body:has(#t-mappa:checked) label[for=t-mappa] span,body:has(#t-mangiare:checked) label[for=t-mangiare] span,body:has(#t-costi:checked) label[for=t-costi] span,body:has(#t-consigli:checked) label[for=t-consigli] span{animation:lblPop .5s var(--ease) both}
 body:has(#t-itinerario:checked) .tabbar.moving label[for=t-itinerario],body:has(#t-voli:checked) .tabbar.moving label[for=t-voli],body:has(#t-mappa:checked) .tabbar.moving label[for=t-mappa],body:has(#t-mangiare:checked) .tabbar.moving label[for=t-mangiare],body:has(#t-costi:checked) .tabbar.moving label[for=t-costi],body:has(#t-consigli:checked) .tabbar.moving label[for=t-consigli]{animation:tbFloatL 1s cubic-bezier(.37,0,.25,1) both!important}
 body.tbmin .tabbar label .em{animation:hop .5s var(--ease) both!important}
@@ -811,7 +820,7 @@ html.sa #dest{bottom:auto;height:var(--apph)}
 .dcity em{justify-self:start;margin-top:4px;white-space:nowrap;font-style:normal;font-size:.64rem;font-weight:800;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--ink) 9%,transparent);color:var(--mute)}
 .dcity.ok em{background:linear-gradient(90deg,var(--a),var(--b));color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35)}
 .dcity:not(.ok){opacity:.72}
-.dcity:not(.ok) .dem{filter:grayscale(.4)}
+.dcity:not(.ok) .dem{opacity:.72}
 .dnone{color:var(--mute);font-size:.88rem;text-align:center;margin:14px 0}
 #dmine{margin:18px 0 0}#dmine[hidden]{display:none}
 .dtrip{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border-radius:var(--r2);border:1px solid var(--edge);background:linear-gradient(135deg,color-mix(in srgb,var(--a) 22%,transparent),color-mix(in srgb,var(--c) 18%,transparent)),var(--gl2);box-shadow:inset 0 1px 0 var(--hi),0 10px 26px var(--glsh);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
@@ -896,7 +905,7 @@ html.sa body.tbmin .tabbar{top:calc(var(--apph) - 58px - 10px - env(safe-area-in
 .zcl .zwash,#zin{background:linear-gradient(160deg,var(--a,var(--za)),var(--b,var(--zb)) 60%,var(--c,var(--zc)))}
 .zcl .zwash{position:absolute;inset:0;opacity:0}
 .zcl .zc{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:8px;opacity:0}
-.zem{font-size:4rem;line-height:1;filter:drop-shadow(0 6px 14px rgba(0,0,0,.3))}
+.zem{font-size:4rem;line-height:1}
 .zn{font:800 2rem/1.1 Manrope,system-ui,sans-serif;color:#fff;letter-spacing:-.02em;text-shadow:0 2px 10px rgba(0,0,0,.4)}
 #zin{display:none}
 #zin.on,#zin.out{position:fixed;inset:0;z-index:400;display:grid;place-content:center;justify-items:center;gap:8px;pointer-events:none}
