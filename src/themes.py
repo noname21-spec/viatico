@@ -1,6 +1,6 @@
 from themes_base import *
-GLASS_L="--glass:rgba(255,255,255,.55);--glassb:rgba(255,255,255,.8);--gl:rgba(255,255,255,.3);--gl2:rgba(255,255,255,.4);--edge:rgba(255,255,255,.62);--hi:rgba(255,255,255,.95);--hi2:rgba(255,255,255,.42);--gltb:rgba(255,255,255,.18)"
-GLASS_D="--glass:rgba(255,255,255,.06);--glassb:rgba(255,255,255,.12);--gl2:rgba(255,255,255,.06);--edge:rgba(255,255,255,.14);--hi:rgba(255,255,255,.34);--hi2:rgba(255,255,255,.09);--glsh:rgba(0,0,0,.45)"
+GLASS_L="--glass:var(--surf);--glassb:var(--surf);--gl:var(--surf);--gl2:var(--surf);--edge:var(--line);--hi:color-mix(in srgb,var(--ink) 5%,transparent);--hi2:transparent;--gltb:var(--surf)"
+GLASS_D="--glass:var(--surf);--glassb:var(--surf);--gl:var(--surf);--gl2:var(--surf);--edge:var(--line);--hi:color-mix(in srgb,var(--ink) 5%,transparent);--hi2:transparent;--gltb:var(--surf);--glsh:rgba(0,0,0,.45)"
 
 def grad(stops,ang=135):
     n=len(stops);return 'linear-gradient(%ddeg,%s)'%(ang,','.join('%s %d%%'%(c,round(i*100/(n-1))) for i,c in enumerate(stops)))
@@ -45,7 +45,7 @@ def css_for(cid):
         sh=V.get('shadow') or V.get('shade')
         out=';'.join('--%s:%s'%(k,V[k]) for k in ['c1','c2','c3','c4','c5','gold','sand','cream','pin','blue','food','bg','land','ink','mute','line','paper'])
         out+=';--surf:%s;--surf2:%s'%(V.get('surf',V['paper']),V['surf2'])
-        if dark: out+=';'+GLASS_D+';--gl:rgba(%s,.4);--gltb:rgba(%s,.32)'%(sh,sh)
+        if dark: out+=';'+GLASS_D
         else: out+=';'+GLASS_L+';--glsh:rgba(%s,.15)'%sh
         c3=V['c3'];c1=V['c1']
         g=[c3,c1,c1] if not dark else [V['c4'],c1,c1];gx=[c3,c1] if not dark else [V['c4'],c1];gf=[c3,c1,c3]
@@ -65,7 +65,6 @@ def css_for(cid):
     css+=S+' body::before{background:'+lb+'!important;background-size:100% 100%!important}\n'
     for i,k in enumerate(tabs):
         m=mix(tb[i],tb[i+1],.5);white=contrast('#ffffff',m)>=contrast(L['ink'],m)
-        css+=S+' body:has(#t-%s:checked) label[for=t-%s]{color:%s!important;text-shadow:%s!important}'%(k,k,'#fff' if white else L['ink'],'0 1px 2px rgba(0,0,0,.45)' if white else '0 1px 1px rgba(255,255,255,.35)')
         css+=S+' body:has(#t-%s:checked) .tbind{--g1:%s;--g2:%s}'%(k,tb[i],tb[i+1])
     css+='\n'+S+' .sk-spark circle{fill:%s}\n'%t['spark']
     css+=''.join(S+' .sp-flag i:nth-child(%d){background:%s}'%(i+1,c) for i,c in enumerate(t['flag']))+'\n'
