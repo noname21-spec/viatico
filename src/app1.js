@@ -167,14 +167,47 @@ return{c:"ko",t:"A quell'ora è chiuso"}}
 function hrsTxt(v,wd){var h=v.h[wd];return cap(DAYS[wd])+": "+(h?h.split(",").map(function(s){return s.replace("-","–").replace(/^0/,"").replace(/–0/,"–")}).join(" e "):"chiuso")}
 function vSorted(ids,wd,t){return ids.map(function(id){var v=V[id];return{id:id,v:v,s:vStat(v,wd,t)}}).sort(function(a,b){var o={ok:0,mid:1,ko:2};return o[a.s.c]-o[b.s.c]})}
 function vq(v){return v.q||(v.n+" "+v.a+(PD.QSKIP&&PD.QSKIP.test(v.a)?"":" "+PD.QN))}
+/* ===== preferenze di cibo (alimentazione, prezzo, gusti) ===== */
+var FP=(function(){var o=lj("via-fp",null)||{};return{d:Array.isArray(o.d)?o.d:[],p:+o.p||0,k:Array.isArray(o.k)?o.k:[]}})();
+var FDK={veg:"V",vegan:"N",gf:"F"},FDN={veg:"Vegetariano",vegan:"Vegano",gf:"Senza glutine"},FDE={veg:"🥦",vegan:"🌱",gf:"🌾"},
+FKN={c:"Colazione e forno",d:"Dolci e gelato",t:"Cucina tipica",p:"Pizza e pasta",m:"Pesce",r:"Carne",s:"Street food",w:"Internazionale"},
+FKE={c:"🥐",d:"🍦",t:"🍲",p:"🍕",m:"🐟",r:"🥩",s:"🌭",w:"🌏"},FPN=["","€ Economico","€€ Medio o meno"];
+function fprefOn(){return FP.d.length>0||FP.p>0||FP.k.length>0}
+function fpSum(){var a=[];FP.d.forEach(function(d){a.push(FDN[d])});if(FP.p)a.push(FP.p===1?"solo economici":"fino a prezzo medio");FP.k.forEach(function(k){a.push(FKN[k])});return a.join(" · ")}
+function ftag(id){var s=PD.FT&&PD.FT[id];if(!s)return null;var f=s.slice(2),lv=function(U){return f.indexOf(U)>=0?2:f.indexOf(U.toLowerCase())>=0?1:0},t={k:s[0],p:+s[1]||2,V:lv("V"),N:lv("N"),F:lv("F")};if(t.N>t.V)t.V=t.N;return t}
+function ffit(id){var t=ftag(id);if(!t)return{ok:!FP.d.length&&!FP.p,lv:0,k:0};var ok=true,lv=2;FP.d.forEach(function(d){var x=t[FDK[d]];if(x<1)ok=false;else if(x<lv)lv=x});if(FP.p&&t.p>FP.p)ok=false;return{ok:ok,lv:ok?lv:0,k:FP.k.indexOf(t.k)>=0?1:0}}
+function fpool(m,z){var M=PD.MEAL,zz=z==="X"?"A":z,nm=(m==="pra"||m==="cen")?["pra","cen"]:["col","snk"],o=[];nm.forEach(function(n){var L=(M[n]&&(M[n][zz]||M[n].A))||[];L.forEach(function(id){if(o.indexOf(id)<0)o.push(id)})});
+if(m==="pra"||m==="cen")o=o.filter(function(id){var t=ftag(id);return t&&t.k!=="c"&&t.k!=="d"});return o}
+function prefList(ids,wd,t,m,z){var base=vSorted(ids,wd,t);if(!fprefOn())return{main:base,rest:[]};
+var main=[],rest=[],ord={ok:0,mid:1,ko:2};base.forEach(function(o,i){o.i=i;o.f=ffit(o.id);(o.f.ok?main:rest).push(o)});
+if((FP.d.length||FP.p)&&main.filter(function(o){return o.s.c!=="ko"}).length<2)fpool(m,z).forEach(function(id){if(ids.indexOf(id)>=0)return;var o=vSorted([id],wd,t)[0];o.f=ffit(id);if(o.f.ok){o.extra=1;o.i=99;main.push(o)}});
+main.sort(function(a,b){return ord[a.s.c]-ord[b.s.c]||b.f.lv-a.f.lv||b.f.k-a.f.k||a.i-b.i});
+return{main:main.slice(0,4),rest:rest.concat(main.slice(4))}}
+function fbadge(id,extra){var t=ftag(id);if(!t&&!extra)return"";var a=[];if(extra)a.push('<span class="fb x">📍 Altro locale della zona</span>');
+if(t){a.push('<span class="fb">'+FKE[t.k]+" "+FKN[t.k]+'</span>','<span class="fb" title="Fascia di prezzo rispetto alla città">'+"€€€".slice(0,t.p)+'</span>');
+var q=function(lv){return lv<2?" · da chiedere":""};
+if(t.N)a.push('<span class="fb g'+(t.N<2?" q":"")+'">🌱 Vegano'+q(t.N)+'</span>');else if(t.V)a.push('<span class="fb g'+(t.V<2?" q":"")+'">🥦 Vegetariano'+q(t.V)+'</span>');
+if(t.F)a.push('<span class="fb g'+(t.F<2?" q":"")+'">🌾 Senza glutine'+q(t.F)+'</span>')}
+return '<span class="fbs">'+a.join("")+'</span>'}
+function fpMapsLink(m,z){var q=[];FP.d.forEach(function(d){if(d==="veg"&&FP.d.indexOf("vegan")>=0)return;q.push(d==="gf"?"gluten free":d==="vegan"?"vegan":"vegetarian")});if(!q.length&&!FP.p)return"";
+if(FP.p===1)q.push("cheap");q.push(m==="col"?"breakfast cafe":m==="snk"?"snack":"restaurant");var h=null;try{h=TRIP&&TRIP.multi?home():null}catch(e){}
+var loc=h&&h.q?(h.geo?h.pos.join(","):h.q):(PD.hub.n+" "+PD.n);
+return '<a class="go sm" target="_blank" rel="noopener" href="'+esc("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q.join(" ")+" near "+loc))+'">🔎 Cerca su Maps: '+esc(q.join(" "))+'</a>'}
+function eatUL(pl,wd,m,z){var h="";
+if(pl.main.length)h='<ul>'+pl.main.map(function(o){return vLi(o,wd)}).join("")+'</ul>';
+else h='<p class="meta fpnone">Nessun locale della mia lista, in questa zona, risponde alle tue preferenze ('+esc(fpSum())+').</p>'+fpMapsLink(m,z);
+if(pl.rest.length)h+='<details class="fprest"><summary>Altri '+pl.rest.length+' locali della zona (non adatti o da verificare)</summary><ul>'+pl.rest.map(function(o){return vLi(o,wd)}).join("")+'</ul></details>';
+return h}
+function fpNote(){return fprefOn()?'<p class="fpnote">🥗 Filtrato per le tue preferenze: '+esc(fpSum())+'. <a class="fplink" href="#">Modifica</a></p>':'<p class="fpnote"><a class="fplink" href="#">🥗 Imposta le tue preferenze di cibo</a> (vegetariano, vegano, prezzo, gusti)</p>'}
 function vLi(o,wd){var v=o.v,q=vq(v);
-return '<li class="'+(o.s.c==="ko"?"closed":"")+'"><b><a target="_blank" rel="noopener" href="'+esc(PD.G(q))+'">'+esc(v.n)+'</a></b> <span class="st '+o.s.c+'">'+(o.s.c==="ok"?"✓ ":o.s.c==="ko"?"⚠️ ":"⏱ ")+esc(o.s.t)+'</span> <a class="go sm" href="'+esc(gdir(q))+'" target="_blank" rel="noopener">↗︎ Portami lì</a> – '+v.r+' ★ · '+esc(v.a)+'. '+esc(v.d)+' <i style="font-style:normal;color:var(--mute)">'+esc(v.pr)+'</i><span class="hrs">🕐 '+esc(hrsTxt(v,wd))+'</span></li>'}
+return '<li class="'+(o.s.c==="ko"?"closed":"")+'"><b><a target="_blank" rel="noopener" href="'+esc(PD.G(q))+'">'+esc(v.n)+'</a></b> <span class="st '+o.s.c+'">'+(o.s.c==="ok"?"✓ ":o.s.c==="ko"?"⚠️ ":"⏱ ")+esc(o.s.t)+'</span> <a class="go sm" href="'+esc(gdir(q))+'" target="_blank" rel="noopener">↗︎ Portami lì</a> – '+v.r+' ★ · '+esc(v.a)+'. '+esc(v.d)+' <i style="font-style:normal;color:var(--mute)">'+esc(v.pr)+'</i>'+fbadge(o.id,o.extra)+'<span class="hrs">🕐 '+esc(hrsTxt(v,wd))+'</span></li>'}
 var MN={col:"Colazione",pra:"Pranzo",cen:"Cena"},ZN=Object.assign({X:"vicino all'alloggio"},PD.ZN);
 function mealIds(m,z){var M=PD.MEAL[m];if(z==="X")return null;return M[z]||M.A||M[Object.keys(M)[0]]}
 function mealTitle(it){var where=it.near?"vicino all'alloggio":ZN[it.z]||"";if(it.m==="cen"&&it.t<18*60+30)return "Cena anticipata "+where;return MN[it.m]+" "+where}
 function ordBox(m){return '<div class="ord"><b>🍽️ Cosa ordinare</b>'+PD.ORD[m].map(function(o){return "<p><i>"+esc(o[0])+"</i> – "+esc(o[1])+"</p>"}).join("")+"</div>"}
 function nearBox(m){var h=home(),k=PD.NEAR[m]||PD.NEAR.col;
-return '<div class="eat"><h3>Dove mangiare</h3><p class="meta" style="margin:4px 0 8px">In questa zona non ho locali verificati: cerca una '+k+' con almeno 4 stelle vicino all\'alloggio.</p><a class="go sm" target="_blank" rel="noopener" href="'+esc("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(k+" near "+(h.geo?h.pos.join(","):h.q)))+'">🔎 '+cap(k)+' vicino all\'alloggio</a></div>'}
+return '<div class="eat"><h3>Dove mangiare</h3><p class="meta" style="margin:4px 0 8px">In questa zona non ho locali verificati: cerca una '+k+' con almeno 4 stelle vicino all\'alloggio.</p><a class="go sm" target="_blank" rel="noopener" href="'+esc("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(fpWords()+k+" near "+(h.geo?h.pos.join(","):h.q)))+'">🔎 '+cap(k)+(fpWords()?" ("+esc(fpWords().trim())+")":"")+' vicino all\'alloggio</a></div>'}
+function fpWords(){var q=[];FP.d.forEach(function(d){if(d==="veg"&&FP.d.indexOf("vegan")>=0)return;q.push(d==="gf"?"gluten free":d==="vegan"?"vegan":"vegetarian")});return q.length?q.join(" ")+" ":""}
 
 /* ===== rendering ===== */
 var TRIP=null,P=null,WD=0,SEL=0;
@@ -192,10 +225,10 @@ else if(it.co){ti="Check-out e bagagli";body='<p>Lascia la camera entro le '+esc
 else{ti="Si parte dall'alloggio";body='<p>Giorno '+(P.i+1)+(P.themes&&P.themes.length?': '+esc(P.themes.join(" e ")):'')+'.</p>'+(P.acts.length?'<p class="meta">Le tappe: '+esc(P.acts.map(function(id){return S[id].t}).join(", "))+'.</p>':'<p class="meta">Giornata libera: nessuna tappa in programma.</p>')}}
 else if(it.k==="meal"){cls="food";ti=mealTitle(it);var ids=mealIds(it.m,it.z);
 if(!ids)body='<p>'+(it.m==="col"?"Prima di partire, qualcosa al volo vicino all'alloggio.":"Vicino all'alloggio, per non riattraversare la città.")+'</p>'+nearBox(it.m);
-else{var L=vSorted(ids,WD,it.t),first=L.filter(function(o){return o.s.c==="ok"})[0]||L[0];
-body='<p>'+(it.m==="col"?(it.near?"A pochi passi dall'alloggio.":"Appena usciti dalla stazione, a pochi passi."):it.m==="pra"?((PD.T.praZ||{})[it.z]||PD.T.pra+": "+(it.d>=60?"un'ora a tavola, con calma.":"un pranzo veloce.")):(TRIP.multi&&P.kind!=="last"?"La cena della giornata, senza fretta.":"Mangia qui e non in aeroporto: si spende meno e si mangia meglio. Tieni d'occhio l'orologio."))+'</p><div class="eat"><h3>Dove mangiare</h3><ul>'+L.map(function(o){return vLi(o,WD)}).join("")+'</ul></div>'+goBtn(vq(first.v),"walking","Portami lì","🚶")}}
+else{var pl=prefList(ids,WD,it.t,it.m,it.z),L=pl.main,first=L.filter(function(o){return o.s.c==="ok"})[0]||L[0];
+body='<p>'+(it.m==="col"?(it.near?"A pochi passi dall'alloggio.":"Appena usciti dalla stazione, a pochi passi."):it.m==="pra"?((PD.T.praZ||{})[it.z]||PD.T.pra+": "+(it.d>=60?"un'ora a tavola, con calma.":"un pranzo veloce.")):(TRIP.multi&&P.kind!=="last"?"La cena della giornata, senza fretta.":"Mangia qui e non in aeroporto: si spende meno e si mangia meglio. Tieni d'occhio l'orologio."))+'</p><div class="eat"><h3>Dove mangiare</h3>'+eatUL(pl,WD,it.m,it.z)+fpNote()+'</div>'+(first?goBtn(vq(first.v),"walking","Portami lì","🚶"):"")}}
 else if(it.k==="snk"){cls="food";ti="Ultimo assaggio prima di partire";var sids=PD.MEAL.snk[it.z]||(it.z==="X"?null:PD.MEAL.snk.A);
-body='<p>Non c\'è tempo per una cena seduti: prendete qualcosa da mangiare in viaggio o in aeroporto prima dei controlli.</p>'+(sids?'<div class="eat"><h3>Dove prenderlo</h3><ul>'+vSorted(sids,WD,it.t).map(function(o){return vLi(o,WD)}).join("")+'</ul></div>':nearBox("snk"))}
+body='<p>Non c\'è tempo per una cena seduti: prendete qualcosa da mangiare in viaggio o in aeroporto prima dei controlli.</p>'+(sids?'<div class="eat"><h3>Dove prenderlo</h3>'+eatUL(prefList(sids,WD,it.t,"snk",it.z),WD,"snk",it.z)+fpNote()+'</div>':nearBox("snk"))}
 else if(it.k==="act"){var s=S[it.id];cls=s.cls;ti=s.t;var meta=s.m,lg=it.leg;
 if(PD.fx.meta)meta=PD.fx.meta(it,meta,E);
 if(s.sun){var ss=sunset(P.date);if(Math.abs(it.t+it.d/2-ss)<120)meta+=" Il sole tramonta alle "+fmt(ss)+": "+(it.t+it.d>ss?"sei qui al momento giusto per la luce del tramonto.":"goditi l'ultima luce.")}
@@ -344,7 +377,7 @@ meals.forEach(function(m,mi){var between=acts(prevT,m.t);
 if(mi>0||(!P.B&&between.length)){h+=btw(between,meals[mi-1],m)}
 var ids=m.k==="snk"?(PD.MEAL.snk[m.z]||(m.z==="X"?null:PD.MEAL.snk.A)):mealIds(m.m,m.z),ttl=m.k==="snk"?"Ultimo assaggio":mealTitle(m);
 if(!ids)h+='<div class="eat"><h3>'+fmt(m.t)+' · '+esc(ttl)+'</h3></div>'+nearBox(m.m||"snk");
-else h+='<div class="eat"><h3>'+fmt(m.t)+' · '+esc(ttl)+'</h3><ul>'+vSorted(ids,WD,m.t).map(function(o){return vLi(o,WD)}).join("")+'</ul>'+(m.k==="meal"?ordBox(m.m):"")+'</div>';
+else h+='<div class="eat"><h3>'+fmt(m.t)+' · '+esc(ttl)+'</h3>'+eatUL(prefList(ids,WD,m.t,m.k==="snk"?"snk":m.m,m.z),WD,m.k==="snk"?"snk":m.m,m.z)+(m.k==="meal"?ordBox(m.m):"")+'</div>';
 prevT=m.t});
 var tail=acts(prevT,1e9);if(tail.length)h+=btw(tail,meals[meals.length-1],null);
 if(P.kind==="single"||P.kind==="last")h+='<div class="btw"><div class="btwh"><span class="btwi">⏳</span><div><small>'+fmt(P.leave)+' · Ritorno</small><b>Prima dell\'aeroporto</b></div></div><ul class="btwt"><li><span>🛫</span><p>In aeroporto si spende di più: se volete qualcosa per il volo, prendetelo in città.</p></li><li><span>🧴</span><p>Ai controlli non passano liquidi oltre i 100 ml: portate la borraccia vuota e riempitela dopo.</p></li></ul></div>';
@@ -357,11 +390,22 @@ tips.push(["💧",PD.T.water]);
 if(a&&a.m==="col"&&b&&b.m==="pra")tips.push(["🚫","Evitate i caffè con vista sui monumenti: un caffè o un'acqua costano il doppio che nelle vie laterali."]);
 if(b&&b.m==="cen"&&PD.T.kitchen)tips.push(["🕓",PD.T.kitchen]);
 if(b&&b.m==="pra")tips.push(["🥖","Tenetevi leggeri: al massimo un dolce da dividere, il pranzo arriva presto."]);
-var sn=vSorted(ids,WD,mid).slice(0,4);
+var sn=(fprefOn()?prefList(ids,WD,mid,"snk",zs[0]||"A").main:vSorted(ids,WD,mid)).slice(0,4);
 return '<div class="btw"><div class="btwh"><span class="btwi">⏳</span><div><small>'+fmt(t0)+' – '+fmt(t1)+(between.length?' · '+esc(between.map(function(x){return S[x.id].t.split(" e ")[0]}).join(", ")):'')+'</small><b>'+(a?(b?"Tra "+(a.m?MN[a.m].toLowerCase():"un pasto")+" e "+(b.m?MN[b.m].toLowerCase():"l'assaggio"):"Dopo "+(a.m?MN[a.m].toLowerCase():"l'assaggio")):"Prima di "+(b&&b.m?MN[b.m].toLowerCase():"mangiare"))+'</b></div></div><ul class="btwt">'+tips.map(function(t){return '<li><span>'+t[0]+'</span><p>'+esc(t[1])+'</p></li>'}).join("")+'</ul>'+(sn.length?'<div class="snacks">'+sn.map(function(o){var v=o.v,q=vq(v);return '<div class="snk'+(o.s.c==="ko"?" closed":"")+'"><span class="se">'+(v.e||(PD.SE||{})[o.id]||"🥐")+'</span><div><b><a target="_blank" rel="noopener" href="'+esc(PD.G(q))+'">'+esc(v.n)+'</a></b> <span class="st '+o.s.c+'">'+esc(o.s.t)+'</span><small class="sz">'+esc(v.a)+'</small><p>'+esc(v.d)+'</p><small>'+v.r+' ★ · '+esc(hrsTxt(v,WD))+' · '+esc(v.pr)+'</small> <a class="go sm" href="'+esc(gdir(q))+'" target="_blank" rel="noopener">↗︎ Portami lì</a></div></div>'}).join("")+'</div>':'')+'</div>'}}
 
 /* ===== costi ===== */
 var COPT=lj("via-copt",{});
+(function(){var box=$("#fp");if(!box)return;
+function paint(){$$("#fp .fpc").forEach(function(c){var g=c.dataset.g;[].forEach.call(c.children,function(b){var v=b.dataset.v,on=g==="d"?FP.d.indexOf(v)>=0:g==="p"?FP.p===+v:FP.k.indexOf(v)>=0;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on?"true":"false")})});
+$("#fpsum").textContent=fprefOn()?fpSum():"Nessuna: mostro tutti i locali";box.classList.toggle("act",fprefOn());$("#fpwarn").hidden=FP.d.indexOf("gf")<0}
+function save(){ls("via-fp",fprefOn()?JSON.stringify(FP):null);paint();if(CFG&&P){renderItin();renderPasti()}}
+box.addEventListener("click",function(e){var b=e.target.closest(".fpc button");if(!b)return;var g=b.parentNode.dataset.g,v=b.dataset.v;
+if(g==="d"){var i=FP.d.indexOf(v);if(i>=0)FP.d.splice(i,1);else FP.d.push(v)}
+else if(g==="p")FP.p=+v;else{var k=FP.k.indexOf(v);if(k>=0)FP.k.splice(k,1);else FP.k.push(v)}save()});
+$("#fpx").addEventListener("click",function(){FP.d=[];FP.p=0;FP.k=[];save()});
+document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest(".fplink");if(!a)return;e.preventDefault();var t=$("#t-mangiare");if(t){t.checked=true;t.dispatchEvent(new Event("change",{bubbles:true}))}box.open=true;setTimeout(function(){try{box.scrollIntoView({behavior:"smooth",block:"start"})}catch(x){}},80)});
+PAR.fpPaint=paint;paint()})();
+
 function allActs(){var a=[];TRIP.days.forEach(function(d){d.acts.forEach(function(x){if(a.indexOf(x)<0)a.push(x)})});return a}
 /* modello dei costi generico: prezzi in euro nei dati della città */
 function transport(){var c=CFG,n=TRIP.n,TR=PD.TR,alt=[],rides=TRIP.days.reduce(function(s,d){return s+d.rides},0);
@@ -676,7 +720,7 @@ sheet.addEventListener("click",function(e){if(e.target===sheet)closeSheet()});
 $$("[data-edit]").forEach(function(b){b.addEventListener("click",function(){openSetup(false)})});
 $("#shvoli").addEventListener("click",function(){closeSheet();var r=$("#t-voli");r.checked=true;r.dispatchEvent(new Event("change",{bubbles:true}));setTimeout(function(){var k=$("#vkey");k.open=true;k.scrollIntoView({behavior:"smooth",block:"center"})},350)});
 $("#shreset").addEventListener("click",function(){if(!confirm("Cancellare TUTTI i viaggi, spese, liste e la chiave salvati su questo telefono?"))return;
-["via-trip","via-trips","via-spese","via-check","via-copt","via-adb-key","via-vlive","via-vlive-n","via-water"].forEach(function(k){ls(k,null)});CFG=null;SAVED=null;TRIP=null;SP={};CK={};COPT={};closeSheet();openDest()});
+["via-trip","via-trips","via-spese","via-check","via-copt","via-adb-key","via-vlive","via-vlive-n","via-water","via-fp"].forEach(function(k){ls(k,null)});FP.d=[];FP.p=0;FP.k=[];if(PAR.fpPaint)PAR.fpPaint();CFG=null;SAVED=null;TRIP=null;SP={};CK={};COPT={};closeSheet();openDest()});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeSheet();if(CFG){closeSetup();closeDest();setCity(PD.id)}}});
 
 /* invio e importazione di un viaggio tramite link */
