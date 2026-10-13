@@ -601,3 +601,29 @@ fieldset.sgrp.sl{animation:stepL .38s cubic-bezier(.22,1,.36,1) both}
 .zov .zdot{position:absolute;border-radius:50%;background:color-mix(in srgb,var(--a) 86%,#000);transform:scale(0);will-change:transform}
 .zov .zbg{opacity:0;will-change:opacity}
 .zov .zcol{will-change:transform,opacity}
+
+/* tutorial */
+.tour{--tbg:var(--bg);--tpin:#ffd23a;position:fixed;inset:0;z-index:230;display:flex;flex-direction:column;background:radial-gradient(70% 40% at 50% 28%,color-mix(in srgb,var(--ga) 18%,transparent),transparent 72%),var(--bg);color:var(--ink);opacity:0;transition:opacity .35s ease;padding-top:env(safe-area-inset-top,0px)}
+.tour.on{opacity:1}.tour.bye{opacity:0}
+.tskip{align-self:flex-end;margin:14px 16px 0;height:40px;padding:0 16px;border:0;border-radius:20px;background:var(--surf);color:var(--mute);font:500 .9rem Outfit,system-ui,sans-serif;cursor:pointer}
+.tt{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior:contain}.tt::-webkit-scrollbar{display:none}
+.ts2{flex:0 0 100%;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:12px;padding:12vh 32px 0;text-align:center}
+.ta{width:min(300px,78vw);margin-bottom:14px}.ta svg{width:100%;height:auto;display:block;overflow:visible}
+.ts2 h2{margin:0;font:600 1.9rem/1.1 Outfit,system-ui,sans-serif;letter-spacing:-.03em;text-wrap:balance}
+.ts2 p{margin:0;max-width:34ch;color:var(--mute);font-size:1.02rem;line-height:1.5}
+.tf{display:flex;flex-direction:column;align-items:center;gap:18px;padding:8px 20px calc(24px + env(safe-area-inset-bottom,0px))}
+.tdots{display:flex;gap:8px}.td3{width:8px;height:8px;border-radius:4px;background:color-mix(in srgb,var(--ink) 18%,transparent);transition:width .3s ease,background .3s ease}.td3.on{width:24px;background:var(--ga)}
+.tbt{display:flex;gap:10px;width:min(360px,100%)}
+.tbt button{flex:1;height:54px;border:0;border-radius:27px;font:600 1.02rem Outfit,system-ui,sans-serif;cursor:pointer}
+.tn{background:var(--ga);color:var(--gon)}.tp{background:var(--surf);color:var(--ink);flex:.6!important}
+.tbt button:focus-visible,.tskip:focus-visible{outline:3px solid var(--ga);outline-offset:2px}
+.tour .tr{fill:none;stroke:var(--ga);stroke-width:7;stroke-linecap:round;stroke-dasharray:1 14}.tour .tr2{fill:none;stroke:var(--ga);stroke-width:6;stroke-linecap:round;stroke-dasharray:1 12}
+.tour .td{fill:var(--bg);stroke:var(--ga);stroke-width:5}.tour .ts{fill:var(--ga);opacity:.5}
+.tour .tc rect{fill:var(--surf)}.tour .tc rect.on{fill:var(--gsoft);stroke:var(--ga);stroke-width:2}
+.tour .tl path{fill:none;stroke:color-mix(in srgb,var(--ink) 30%,transparent);stroke-width:6;stroke-linecap:round}
+.tour .td2 circle{fill:var(--ga)}.tour .tm{fill:var(--surf)}.tour .tw{fill:none;stroke:color-mix(in srgb,var(--ga) 35%,var(--surf));stroke-width:12;stroke-linecap:round}
+.tour .tg{fill:color-mix(in srgb,var(--ga) 28%,transparent)}.tour .tb{fill:var(--ga);stroke:var(--bg);stroke-width:3}
+.tour .tk rect{fill:none;stroke:var(--ga);stroke-width:3}.tour .tk rect.on{fill:var(--ga)}.tour .tcheck{fill:none;stroke:var(--gon);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.tour .tcheck2{fill:none;stroke:var(--ga);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-reduced-motion:reduce){.tour,.td3{transition:none}}
+.tour:focus{outline:0}
