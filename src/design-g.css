@@ -643,3 +643,10 @@ html.lite *,html.lite *::before,html.lite *::after{animation-iteration-count:1!i
 html.lite .blk,html.lite .scard,html.lite .shc,html.lite .dcard,html.lite .qrc,html.lite .tabbar,html.lite .appbar::before,html.lite .gear,html.lite .vcard,html.lite .wheelwrap,html.lite .live,html.lite .meteo,html.lite .eat,html.lite .stay{box-shadow:none!important}
 html.lite body{background-attachment:scroll!important}
 html.lite .sky{display:none!important}
+
+/* costi: importi sempre su una riga, cifre di larghezza fissa, nessun salto di riga */
+.chero .ch-t b{white-space:nowrap;font-variant-numeric:tabular-nums;font-size:clamp(2.2rem,min(17vw,calc(105vw / var(--n,5))),4.25rem)}
+.cbrk .dleg b,#ctab td,#ctab th{white-space:nowrap;font-variant-numeric:tabular-nums}
+.cbrk .dleg span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#ctab td:first-child{white-space:normal}
+.cbrk.dec .dleg{grid-template-columns:1fr}
