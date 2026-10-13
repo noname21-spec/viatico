@@ -14,7 +14,7 @@ function build(){
   var defs=el("defs",{},svg);
   var gf=el("linearGradient",{id:"gFace",x1:0,y1:0,x2:.35,y2:1},defs);el("stop",{offset:0,style:"stop-color:var(--f1)"},gf);el("stop",{offset:1,style:"stop-color:var(--f2)"},gf);
   var gs=el("radialGradient",{id:"gSun"},defs);el("stop",{offset:0,style:"stop-color:var(--sunHalo);stop-opacity:.75"},gs);el("stop",{offset:1,style:"stop-color:var(--sunHalo);stop-opacity:0"},gs);
-  var gg=el("linearGradient",{id:"gGround",x1:0,y1:0,x2:0,y2:1},defs);el("stop",{offset:0,style:"stop-color:var(--g1)"},gg);el("stop",{offset:1,style:"stop-color:var(--g1);stop-opacity:0"},gg);
+  var gg=el("linearGradient",{id:"gGround",x1:0,y1:0,x2:0,y2:1},defs);el("stop",{offset:0,style:"stop-color:var(--skg)"},gg);el("stop",{offset:1,style:"stop-color:var(--skg);stop-opacity:0"},gg);
   var gw=el("linearGradient",{id:"gSweep",x1:0,y1:0,x2:1,y2:0},defs);el("stop",{offset:0,style:"stop-color:#fff;stop-opacity:0"},gw);el("stop",{offset:.5,style:"stop-color:#fff;stop-opacity:var(--swo)"},gw);el("stop",{offset:1,style:"stop-color:#fff;stop-opacity:0"},gw);
   var fb=el("filter",{id:"fBlur",x:"-20%",y:"-50%",width:"140%",height:"200%"},defs);el("feGaussianBlur",{stdDeviation:1.4},fb);
   var cp=el("clipPath",{id:"cpF"},defs);

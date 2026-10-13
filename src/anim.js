@@ -16,6 +16,20 @@ if(window.ResizeObserver){var ro=new ResizeObserver(sched);[].forEach.call(docum
 [].forEach.call(document.querySelectorAll(".tabr"),function(r){r.addEventListener("change",function(){setTimeout(sched,60)})});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(sched);
 sched();
+/* pillola della barra: segue l'etichetta attiva, con le icone che scorrono al loro posto */
+var bar=document.querySelector(".tabbar"),labs=bar?[].slice.call(bar.querySelectorAll("label")):[],prev=[];
+function active(){var r=document.querySelector(".tabr:checked");return r&&bar.querySelector('label[for="'+r.id+'"]')}
+function pill(animate){
+  var a=active();if(!a||!a.offsetWidth)return;
+  var now=labs.map(function(l){return l.offsetLeft});
+  if(animate&&prev.length&&!reduce.matches)labs.forEach(function(l,k){var dx=prev[k]-now[k];if(Math.abs(dx)>.5)try{l.animate([{transform:"translateX("+dx+"px)"},{transform:"none"}],{duration:420,easing:getComputedStyle(document.documentElement).getPropertyValue("--spring").trim()||"cubic-bezier(.2,1.3,.35,1)"})}catch(e){}});
+  bar.style.setProperty("--tbl",a.offsetLeft+"px");bar.style.setProperty("--tbw",a.offsetWidth+"px");prev=now}
+if(bar){
+  [].forEach.call(document.querySelectorAll(".tabr"),function(r){r.addEventListener("change",function(){pill(true)})});
+  if(window.ResizeObserver)new ResizeObserver(function(){pill(false)}).observe(bar);
+  addEventListener("resize",function(){pill(false)});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){pill(false)});
+  pill(false)}
 /* il totale dei costi sale fino al valore */
 var cd=document.getElementById("cdonut"),lastT=0;
 function count(){
