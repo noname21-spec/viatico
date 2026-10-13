@@ -45,7 +45,7 @@ lines.push({pl:pl,halo:halo,walk:walk,k:ch.k});if(walk)snapWalk(ch,pl,halo,funct
 if(!walk)ch.p.forEach(function(s){if(s[2]&&!stn[s[2]])stn[s[2]]=s})});
 Object.keys(stn).forEach(function(n){var s=stn[n],key=s[3]||0,m=L.circleMarker([s[0],s[1]],{radius:key?5:3.5,color:d?"#eef0ff":"#0f1430",weight:2,fillColor:d?"#141832":"#ffffff",fillOpacity:1}).addTo(gRoute);
 m.bindTooltip(n,{permanent:key>=1,direction:"right",offset:[6,0],className:"lst"+(key===2?" key":"")});if(!key)m.on("click",function(){m.openTooltip()})});
-var A=P.A,Rr=P.R||A;function apm(X){var am=L.marker(X.pos,{icon:icon("lap","✈️",30),zIndexOffset:900}).addTo(gStops);bind(am,"Aeroporto di "+X.n,X.arr,X.gm)}
+var A=P.A,Rr=P.R||A;function apm(X){var am=L.marker(X.pos,{icon:icon("lap","✈️",30),zIndexOffset:900,title:"Aeroporto di "+X.n}).addTo(gStops);bind(am,"Aeroporto di "+X.n,X.arr,X.gm)}
 if(P.kind==="single"||P.kind==="first")apm(A);if((P.kind==="single"&&Rr!==A)||P.kind==="last")apm(Rr);
 if(multi){var hm=L.marker(H.pos,{icon:icon("lap lhm","🏨",32),zIndexOffset:950,title:"Alloggio"}).addTo(gStops);bind(hm,"🏨 "+H.name,"Zona "+H.zn+". Check-in dalle "+H.cin+", check-out entro le "+H.cout+"."+(H.geo?"":" Posizione indicativa."),H.q)}
 P.items.forEach(function(it){if(it.k!=="act")return;var s=PD.STOPS[it.id],mk=L.marker(s.pos,{icon:icon("lpin",it.n,30),zIndexOffset:1000,title:"Tappa "+it.n}).addTo(gStops);bind(mk,it.n+" · "+PAR.fmt(it.t)+" · "+s.t,s.d,s.q)});
