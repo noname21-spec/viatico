@@ -18,7 +18,7 @@
 /* --- sfondo piatto, niente luci sfumate --- */
 body::before{display:none!important}
 body{font-weight:400;letter-spacing:0}
-html{background:var(--bg)!important}
+html{background:var(--bg)}
 
 /* --- pannelli: i contenuti poggiano direttamente sullo sfondo --- */
 .blk{background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border-radius:0;left:0;right:0;padding:6px max(18px,calc((100% - 724px)/2)) 24px;top:calc(66px + env(safe-area-inset-top,0px))}
@@ -42,14 +42,6 @@ html.sa .blk{height:calc(var(--apph) - 66px - env(safe-area-inset-top,0px) - var
 .hero .bar{height:12px;margin-top:2px}
 .hero .bar i{border-radius:6px}.hero .bar i:nth-child(odd){background:var(--gon)!important;opacity:.92}.hero .bar i:nth-child(even){background:var(--gon)!important;opacity:.38}
 .hero .ends{font-weight:500;font-size:.9rem;opacity:.92;margin-top:8px;color:var(--gon)}
-.hero .sky{margin:14px auto 0;max-width:none;width:calc(100% + 8px)}
-.hero .sky .sk-main *,.hero .sky .sk-ground{fill:var(--gon)!important;opacity:.5}
-.hero .sky .sk-lines path{stroke:var(--ga)!important;opacity:.9}
-.hero .sky .sk-back *{fill:var(--gon)!important;opacity:.16}
-.hero .sky .sk-back circle{opacity:.28}
-.hero .sky .sk-sea path{stroke:var(--gon)!important;opacity:.4}
-.hero .sk-spark circle{fill:var(--gon)!important}
-
 h2.sec{font-size:2rem;font-weight:600;letter-spacing:-.03em;margin:4px 2px 14px;color:var(--ink)}
 h2.sec::after{display:none}
 h3,.subh{font-weight:600;letter-spacing:-.01em}
@@ -247,3 +239,114 @@ svg.ic{stroke-width:1.75}
 .apt:has(input:checked) small,.apt:has(input:checked) em{color:var(--gon)!important}
 .go,.vch,.go.sm,.lb,.dnew,.dmore,.btn.ghost,.dcity.ok em{color:color-mix(in srgb,var(--ga) 72%,var(--ink))!important}
 .lb2{color:var(--gon)!important}
+
+
+/* ===== Profondità (stile «marcato») ===== */
+:root{--gz:var(--gold);--spring:cubic-bezier(.2,1.3,.35,1);
+ --dotc:rgba(38,34,31,.055);--bgT:color-mix(in srgb,var(--bg) 82%,#fff);--bgB:color-mix(in srgb,var(--bg) 93%,#000);
+ --gsh:inset 0 1px 0 rgba(255,255,255,.95),0 2px 4px rgba(38,34,31,.07),0 18px 40px color-mix(in srgb,var(--c1) 15%,transparent);
+ --gsm:inset 0 1px 0 rgba(255,255,255,.95),0 1px 3px rgba(38,34,31,.08),0 8px 20px color-mix(in srgb,var(--c1) 12%,transparent);
+ --gpr:inset 0 1px 0 rgba(255,255,255,.9),0 1px 2px rgba(38,34,31,.08),0 4px 10px color-mix(in srgb,var(--c1) 12%,transparent);
+ --gnav:inset 0 1px 0 #fff,0 16px 40px rgba(38,34,31,.22);--gnb:rgba(255,255,255,.85);--gnbg:color-mix(in srgb,var(--surf) 62%,transparent)}
+@supports (transition-timing-function:linear(0,1)){:root{--spring:linear(0,.009,.035 2.1%,.141 4.4%,.723 12.9%,.938 16.7%,1.017,1.077 22.4%,1.121 25.4%,1.13 28.1%,1.12 30.8%,1.042 39.5%,1.007 44.5%,.989 50.5%,.995 63.4%,1)}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--dotc:rgba(255,255,255,.035);--bgT:color-mix(in srgb,var(--bg) 93%,#fff);--bgB:color-mix(in srgb,var(--bg) 82%,#000);
+ --gsh:inset 0 1px 0 rgba(255,255,255,.06),0 1px 2px rgba(0,0,0,.4),0 10px 26px rgba(0,0,0,.35);--gsm:inset 0 1px 0 rgba(255,255,255,.07),0 8px 20px rgba(0,0,0,.35);--gpr:inset 0 1px 0 rgba(255,255,255,.05),0 4px 10px rgba(0,0,0,.3);
+ --gnav:0 14px 34px rgba(0,0,0,.5);--gnb:rgba(255,255,255,.08);--gnbg:color-mix(in srgb,var(--surf) 72%,transparent)}}
+:root[data-theme="dark"],:root:has(#dm:checked){--dotc:rgba(255,255,255,.035);--bgT:color-mix(in srgb,var(--bg) 93%,#fff);--bgB:color-mix(in srgb,var(--bg) 82%,#000);
+ --gsh:inset 0 1px 0 rgba(255,255,255,.06),0 1px 2px rgba(0,0,0,.4),0 10px 26px rgba(0,0,0,.35);--gsm:inset 0 1px 0 rgba(255,255,255,.07),0 8px 20px rgba(0,0,0,.35);--gpr:inset 0 1px 0 rgba(255,255,255,.05),0 4px 10px rgba(0,0,0,.3);
+ --gnav:0 14px 34px rgba(0,0,0,.5);--gnb:rgba(255,255,255,.08);--gnbg:color-mix(in srgb,var(--surf) 72%,transparent)}
+html{background:radial-gradient(var(--dotc) 1px,transparent 1.3px) 0 0/12px 12px,radial-gradient(130% 60% at 50% 0%,var(--bgT) 0%,var(--bgB) 100%) fixed,var(--bg)!important}
+.appbar::before{background:color-mix(in srgb,var(--bg) 72%,transparent)!important;-webkit-backdrop-filter:blur(12px)!important;backdrop-filter:blur(12px)!important}
+.ahome,.gear,.wx{box-shadow:var(--gsm)!important}
+.eat,.btwc,.checklist,.spese,.voli,.live,.meteo,.stay,.shots,.snk,.tips,.zones details,.avv,.golink,.sgrp,.lgp,.short,.wheelwrap,#costi table,.nbox,.shtheme,.hfaq details,.dacct,.ssub,.hbt,.fp,.dtrip,.dcity,.dlatin,.dsearch,#cdonut,ol.steps,.dsel{box-shadow:var(--gsh)!important}
+.dp.on{box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 6px 14px rgba(38,34,31,.28)!important}
+.btn,.vbtn,.wbox .ctl button,.lb2,.dshare,.call{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 8px 18px color-mix(in srgb,var(--ga) 38%,transparent)!important}
+.btn.ghost,.go,.vch,.dnew,.dmore{box-shadow:var(--gpr)!important}
+.tabbar{background:var(--gnbg)!important;-webkit-backdrop-filter:blur(22px) saturate(1.6)!important;backdrop-filter:blur(22px) saturate(1.6)!important;border:1px solid var(--gnb)!important;box-shadow:var(--gnav)!important}
+.tbind{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 8px 18px color-mix(in srgb,var(--ga) 45%,transparent)!important;transition:left .62s var(--spring),width .5s var(--spring),border-radius .4s ease,top .4s ease,bottom .4s ease}
+.shc,.qrc{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 24px 60px rgba(0,0,0,.28)!important}
+.tbdots{box-shadow:var(--gsm)}
+
+/* --- blocco della città: sfumato, con la luce dell'orizzonte --- */
+.hero{--on:#fff;--glo:.3;--hsh:color-mix(in srgb,var(--ga) 42%,transparent);
+ --h1:color-mix(in srgb,var(--ga) 76%,#fff);--h2:color-mix(in srgb,var(--ga) 94%,#000);
+ --hz:color-mix(in srgb,var(--gz) 95%,transparent);--hz2:color-mix(in srgb,var(--gz) 45%,transparent);
+ --far:#fff;--farOp:.16;--sun:color-mix(in srgb,var(--gz) 45%,#fff);--sunHalo:color-mix(in srgb,var(--gz) 65%,#fff);--cloud:rgba(255,255,255,.22);--moonc:transparent;
+ --f1:#fff;--f2:color-mix(in srgb,#fff 78%,var(--gz));--side:color-mix(in srgb,var(--gz) 72%,var(--ga));--rim:rgba(255,255,255,.9);
+ --shadow:color-mix(in srgb,color-mix(in srgb,var(--ga) 55%,#000) 45%,transparent);--lineC:color-mix(in srgb,var(--ga) 90%,#000);--g1:rgba(255,255,255,.22);--swo:.6;
+ --gon:var(--on);padding-bottom:0!important;
+ background:radial-gradient(120% 90% at 12% 0%,rgba(255,255,255,var(--glo)),transparent 55%),radial-gradient(95% 62% at 72% 104%,var(--hz) 0%,var(--hz2) 45%,transparent 78%),linear-gradient(160deg,var(--h1),var(--h2))!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 22px 44px var(--hsh);touch-action:pan-y}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hero{--on:#F6EFE6;--glo:.08;--hsh:rgba(0,0,0,.55);--h1:color-mix(in srgb,var(--ga) 26%,#0d0b0a);--h2:color-mix(in srgb,var(--ga) 10%,#060505);
+ --hz:color-mix(in srgb,var(--gz) 34%,transparent);--hz2:color-mix(in srgb,var(--gz) 12%,transparent);--farOp:.07;--sun:#F3EBD8;--sunHalo:#F3EBD8;--cloud:rgba(255,255,255,.06);--moonc:var(--h1);
+ --f1:#3A3430;--f2:#24201D;--side:color-mix(in srgb,var(--gz) 26%,#000);--rim:color-mix(in srgb,var(--gz) 35%,transparent);--shadow:rgba(0,0,0,.45);--lineC:color-mix(in srgb,var(--gz) 75%,#fff);--g1:color-mix(in srgb,var(--gz) 14%,transparent);--swo:.18}}
+:root[data-theme="dark"] .hero,:root:has(#dm:checked) .hero{--on:#F6EFE6;--glo:.08;--hsh:rgba(0,0,0,.55);--h1:color-mix(in srgb,var(--ga) 26%,#0d0b0a);--h2:color-mix(in srgb,var(--ga) 10%,#060505);
+ --hz:color-mix(in srgb,var(--gz) 34%,transparent);--hz2:color-mix(in srgb,var(--gz) 12%,transparent);--farOp:.07;--sun:#F3EBD8;--sunHalo:#F3EBD8;--cloud:rgba(255,255,255,.06);--moonc:var(--h1);
+ --f1:#3A3430;--f2:#24201D;--side:color-mix(in srgb,var(--gz) 26%,#000);--rim:color-mix(in srgb,var(--gz) 35%,transparent);--shadow:rgba(0,0,0,.45);--lineC:color-mix(in srgb,var(--gz) 75%,#fff);--g1:color-mix(in srgb,var(--gz) 14%,transparent);--swo:.18}
+.hero h1{text-shadow:0 2px 14px rgba(0,0,0,.14)}
+.hero .bar i:nth-child(odd){background:var(--on)!important}.hero .bar i:nth-child(even){background:var(--on)!important}
+
+/* --- la città in rilievo --- */
+.hero .sky{display:block;width:calc(100% + 48px);max-width:none;margin:8px -24px 0;height:auto;overflow:visible;animation:none}
+.sky .hill{fill:var(--far);opacity:var(--farOp)}
+.sky .sun{fill:var(--sun)}.sky .halo{fill:url(#gSun)}.sky .moonc{fill:var(--moonc)}
+.sky .cloud{fill:var(--cloud)}
+.sky .ext{fill:var(--side)}
+.sky .face,.sky .face *{fill:url(#gFace);stroke:var(--rim);stroke-width:.5;opacity:1}
+.sky .shd use{fill:var(--shadow)}
+.sky .ln,.sky .ln path{fill:none;stroke:var(--lineC);stroke-width:1.1;stroke-linecap:round;opacity:1}
+.sky .spk{fill:var(--on)}.sky .spk circle{fill:var(--on)}
+.sky .gnd{fill:url(#gGround)}.sky .gl{fill:var(--on);opacity:.55}
+.sky .sea path{fill:none;stroke:var(--on);stroke-width:1.5;opacity:.4;stroke-linecap:round}
+.sky .bird{fill:none;stroke:var(--on);stroke-width:1.1;stroke-linecap:round;opacity:.7}
+.sky .mon{transform-box:fill-box;transform-origin:50% 100%;animation:skRise .95s cubic-bezier(.22,1.45,.4,1) both;animation-delay:calc(var(--k)*120ms + 250ms)}
+.sky .shd{animation:skFade 1.2s ease both;animation-delay:1.1s}
+.sky .sunG{animation:skSun 1.8s cubic-bezier(.2,.9,.3,1) both}
+.sky .halo{transform-box:fill-box;transform-origin:center;animation:skPulse 5s ease-in-out 1.8s infinite}
+.sky .hills{animation:skFade 1s ease both}
+.sky .ln{animation:skFade .8s ease both;animation-delay:calc(1.1s + var(--i)*90ms)}
+.sky .spk circle{transform-box:fill-box;transform-origin:center;animation:skTw 2.6s ease-in-out infinite;animation-delay:calc(var(--i)*.43s + 1.4s)}
+.sky .cl1{animation:skDrift 46s linear infinite}.sky .cl2{animation:skDrift 70s linear -30s infinite}
+.sky .sweep{animation:skSweep 7s ease-in-out 2.4s infinite}
+.sky .flock{animation:skFly 16s linear 3s infinite;opacity:0}
+.sky .bird{transform-box:fill-box;transform-origin:center;animation:skFlap .5s ease-in-out infinite alternate}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sky .ln{animation:skFade .8s ease both,skGlow 4s ease-in-out infinite;animation-delay:calc(1.1s + var(--i)*90ms),calc(2s + var(--i)*.7s)}}
+:root[data-theme="dark"] .sky .ln,:root:has(#dm:checked) .sky .ln{animation:skFade .8s ease both,skGlow 4s ease-in-out infinite;animation-delay:calc(1.1s + var(--i)*90ms),calc(2s + var(--i)*.7s)}
+@keyframes skRise{0%{transform:scaleY(0);opacity:0}30%{opacity:1}100%{transform:none;opacity:1}}
+@keyframes skFade{from{opacity:0}}
+@keyframes skSun{from{transform:translateY(38px);opacity:0}}
+@keyframes skPulse{50%{transform:scale(1.12);opacity:.75}}
+@keyframes skTw{0%,100%{opacity:.25;transform:scale(.6)}50%{opacity:1;transform:scale(1.25)}}
+@keyframes skDrift{from{transform:translateX(-140px)}to{transform:translateX(460px)}}
+@keyframes skSweep{0%{transform:translateX(0)}55%,100%{transform:translateX(560px)}}
+@keyframes skFly{0%{transform:translate(-40px,30px);opacity:0}6%{opacity:.9}60%{opacity:.9}70%,100%{transform:translate(440px,-8px);opacity:0}}
+@keyframes skFlap{to{transform:scaleY(.4)}}
+@keyframes skGlow{0%,100%{opacity:1}45%{opacity:.55}55%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.sky *{animation:none!important}.sky .flock{opacity:0}}
+
+/* ===== Movimento ===== */
+.blk.on>*{animation:riseIn .62s var(--spring) both;animation-delay:calc(var(--n,0)*55ms)}
+.blk.on>*:nth-child(1){--n:0}.blk.on>*:nth-child(2){--n:1}.blk.on>*:nth-child(3){--n:2}.blk.on>*:nth-child(4){--n:3}.blk.on>*:nth-child(5){--n:4}.blk.on>*:nth-child(6){--n:5}.blk.on>*:nth-child(7){--n:6}.blk.on>*:nth-child(8){--n:7}.blk.on>*:nth-child(n+9){--n:8}
+body.dir-r .blk.on,body.dir-l .blk.on{animation:none}
+body.dir-r .blk.on>*,body.dir-r .blk>h2.sec{animation-name:riseR!important}
+body.dir-l .blk.on>*,body.dir-l .blk>h2.sec{animation-name:riseL!important}
+@keyframes riseR{from{opacity:0;transform:translate3d(36px,10px,0) scale(.98)}to{opacity:1;transform:none}}
+@keyframes riseL{from{opacity:0;transform:translate3d(-36px,10px,0) scale(.98)}to{opacity:1;transform:none}}
+@keyframes stretch{0%{transform:none}35%{transform:scale(1.22,.9)}70%{transform:scale(.97,1.04)}100%{transform:none}}
+.step{animation:stepIn .55s var(--spring) both}
+.step:nth-child(2){animation-delay:45ms}.step:nth-child(3){animation-delay:90ms}.step:nth-child(4){animation-delay:135ms}.step:nth-child(5){animation-delay:180ms}.step:nth-child(n+6){animation-delay:220ms}
+@keyframes stepIn{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+/* indicatore dei giorni */
+.dsel{position:relative}
+.dsel::before{content:"";position:absolute;top:5px;bottom:5px;left:var(--dl,5px);width:var(--dw,0);border-radius:23px;background:var(--ink);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 6px 14px rgba(38,34,31,.28);opacity:0;pointer-events:none;transition:left .55s var(--spring),width .5s var(--spring),opacity .2s}
+.dsel.ind::before{opacity:1}
+.dsel .dp{position:relative;z-index:1}
+.dsel.ind .dp.on{background:transparent!important;box-shadow:none!important}
+/* tasti che si premono */
+.dcity,.dtrip,.golink,.dacct,.hbt,.btn,.vbtn,.go,.dshare,.ahome,.gear,.dp,.shc button.row,.dreg button{transition:transform .5s var(--spring),box-shadow .45s ease,background-color .25s,color .25s}
+.dcity:active,.dtrip:active,.golink:active,.dacct:active,.hbt:active,.shc button.row:active{transform:scale(.97);transition-duration:.12s}
+.btn:active,.vbtn:active,.go:active,.dshare:active,.dreg button:active,.dp:active{transform:scale(.95);transition-duration:.12s}
+.ahome:active,.gear:active{transform:scale(.9);transition-duration:.12s}
+/* foglio delle impostazioni: sale con una molla */
+.shc{transition:transform .62s var(--spring),opacity .3s ease!important}
+@media (prefers-reduced-motion:reduce){.step,.blk.on>*{animation:none!important}.dsel::before,.tbind{transition:none!important}}
