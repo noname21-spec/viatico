@@ -650,3 +650,5 @@ html.lite .sky{display:none!important}
 .cbrk .dleg span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #ctab td:first-child{white-space:normal}
 .cbrk.dec .dleg{grid-template-columns:1fr}
+
+.blk{-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 var(--mt,0px),#000 calc(100% - var(--mb,0px)),transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 var(--mt,0px),#000 calc(100% - var(--mb,0px)),transparent 100%)}

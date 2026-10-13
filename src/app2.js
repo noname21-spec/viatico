@@ -256,3 +256,11 @@ var body=document.createElement("div");body.className="wxpb meteo";body.innerHTM
 requestAnimationFrame(function(){if(pop)pop.classList.add("on")});wx.setAttribute("aria-expanded","true");document.addEventListener("pointerdown",out,true);document.addEventListener("keydown",key)}
 function tg(){pop?close():open()}
 wx.addEventListener("click",tg);wx.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();tg()}})})();
+
+/* la finestra si dissolve in alto e in basso mentre scorre */
+(function(){var bl=[].slice.call(document.querySelectorAll(".blk")),tk=0;
+function fade(b){var y=b.scrollTop,mx=b.scrollHeight-b.clientHeight,t=y>4?Math.min(30,y*2):0,m=mx-y>4?Math.min(44,(mx-y)*2):0;b.style.setProperty("--mt",t+"px");b.style.setProperty("--mb",m+"px")}
+bl.forEach(function(b){b.addEventListener("scroll",function(){if(tk)return;tk=requestAnimationFrame(function(){tk=0;bl.forEach(function(x){if(x.offsetParent!==null)fade(x)})})},{passive:true});fade(b)});
+document.addEventListener("change",function(e){if(e.target.classList&&e.target.classList.contains("tabr"))setTimeout(function(){bl.forEach(fade)},60)});
+addEventListener("resize",function(){bl.forEach(fade)});
+if(window.ResizeObserver){var ro=new ResizeObserver(function(){bl.forEach(fade)});bl.forEach(function(b){ro.observe(b);if(b.firstElementChild)ro.observe(b.firstElementChild)})}})();
