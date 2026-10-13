@@ -652,3 +652,11 @@ html.lite .sky{display:none!important}
 .cbrk.dec .dleg{grid-template-columns:1fr}
 
 .blk{-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 var(--mt,0px),#000 calc(100% - var(--mb,0px)),transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 var(--mt,0px),#000 calc(100% - var(--mb,0px)),transparent 100%)}
+
+/* testo di sistema grande: la barra e i comandi non crescono con il testo, il contenuto sì */
+html.bigtext .tabbar label{font-size:calc(.8125rem * 1.1 / var(--fsc,1))}
+html.bigtext .tabbar .em{font-size:calc(1.3rem * 1.1 / var(--fsc,1))}
+html.bigtext .appt,html.bigtext .wx,html.bigtext .offl{font-size:calc(1em * 1.3 / var(--fsc,1))}
+html.bigtext .vsw button,html.bigtext .dp,html.bigtext .ch-pdf{font-size:calc(1em * 1.15 / var(--fsc,1))}
+html.bigtext .cbrk .dleg{grid-template-columns:1fr}
+html.bigtext .tabbar label span{overflow:visible;max-width:none}
