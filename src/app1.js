@@ -60,16 +60,19 @@ return{pos:geo?s.pos:z[2],geo:geo,addr:s.addr||"",q:s.addr?(s.addr+(PD.ARE.test(
 /* ===== spostamenti ===== */
 function posOf(id){return id==="start"?PD.START:id==="home"?home().pos:S[id].pos}
 function zoneOf(id){return id==="start"?(PD.Z0||"A"):id==="home"?home().vz:S[id].z}
-function estMin(pa,pb){var d=hav(pa,pb);return d<1.6?Math.round(d*1.3/4.5*60)+3:Math.round(12+d*2.8)}
-function legOf(a,b){var L=PD.LEGS&&PD.LEGS[a+">"+b];if(L)return L;
+function estMin(pa,pb){var d=hav(pa,pb);return d<WALKD?Math.round(d*1.3/4.5*60)+3:Math.round(12+d*2.8)}
+var WALKD=.95;/* oltre ~20 minuti a piedi si prende un mezzo */
+function legOf(a,b){var L=PD.LEGS&&PD.LEGS[a+">"+b];if(L)return L.mode==="walk"&&L.min>20?modeFix(L,a,b):L;
 if(PD.fx.leg){L=PD.fx.leg(a,b,E);if(L)return L}
 var pa=posOf(a),pb=posOf(b),d=hav(pa,pb),hb=b==="home";
 if(d<0.25)return{min:3,mode:"walk",txt:hb?"L'alloggio è a due passi.":"A pochi passi.",g:[{w:[pa,pb]}]};
-if(d<1.6){var w=Math.round(d*1.3/4.5*60)+3;return{min:w,mode:"walk",txt:"A piedi"+(hb?" fino all'alloggio":"")+", circa "+w+" minuti.",g:[{w:[pa,pb]}]}}
-var m=Math.round(12+d*2.8);return{min:m,mode:"metro",txt:(PD.T.ride||"In metro")+(hb?" fino all'alloggio":"")+", circa "+m+" minuti: Google Maps ti indica la linea migliore.",g:[{w:[pa,pb],dash:1}]}}
+if(d<WALKD){var w=Math.round(d*1.3/4.5*60)+3;return{min:w,mode:"walk",txt:"A piedi"+(hb?" fino all'alloggio":"")+", circa "+w+" minuti.",g:[{w:[pa,pb]}]}}
+var m=Math.round(12+d*2.8);return{min:m,mode:"metro",txt:(d<2.6?"In bus, tram o metro":(PD.T.ride||"In metro"))+(hb?" fino all'alloggio":"")+", circa "+m+" minuti: Google Maps ti indica la linea migliore.",g:[{w:[pa,pb],dash:1}]}}
+/* un tratto a piedi troppo lungo diventa un giro in mezzo pubblico, se conviene davvero */
+function modeFix(L,a,b){var pa=posOf(a),pb=posOf(b),d=hav(pa,pb),m=Math.round(12+d*2.8);if(m>L.min-6)return L;return{min:m,mode:"metro",txt:(d<2.6?"In bus, tram o metro":(PD.T.ride||"In metro"))+(b==="home"?" fino all'alloggio":"")+", circa "+m+" minuti (a piedi ne servirebbero "+L.min+"): Google Maps ti indica la linea migliore.",g:[{w:[pa,pb],dash:1}]}}
 function lc(t){return t.charAt(0).toLowerCase()+t.slice(1)}
 function retOf(ap,id){var R=PD.RET[ap];if(R[id])return R[id];if(!PD.RETC||id==="start")return R.A;var l=legOf(id,"start"),A=R.A;return{min:l.min+A.min,txt:"Verso "+PD.hub.n+": "+lc(l.txt)+" Poi "+lc(A.txt),g:l.g.concat(A.g||[]),rides:l.mode==="metro"?1:0}}
-function access(pos,to){var d=hav(pos,to);if(d<0.25)return{min:3,mode:"walk",d:d};if(d<1.6)return{min:Math.round(d*1.3/4.5*60)+3,mode:"walk",d:d};return{min:Math.round(12+d*2.8),mode:"metro",d:d}}
+function access(pos,to){var d=hav(pos,to);if(d<0.25)return{min:3,mode:"walk",d:d};if(d<WALKD)return{min:Math.round(d*1.3/4.5*60)+3,mode:"walk",d:d};return{min:Math.round(12+d*2.8),mode:"metro",d:d}}
 /* dall'alloggio all'aeroporto, e dall'arrivo all'alloggio */
 function homeAir(){if(PD.fx.homeAir)return PD.fx.homeAir(E);var l=legOf("home","start"),A=PD.RET[CFG.rt||CFG.to].A;return{min:l.min+A.min,txt:(l.mode==="walk"?"A piedi fino a ":(PD.T.ride||"In metro")+" fino a ")+PD.hub.n+" ("+l.min+" minuti), poi "+lc(A.txt),g:l.g.concat(A.g||[])}}
 function arrLeg(){if(PD.fx.arrLeg)return PD.fx.arrLeg(E);var l=legOf("start","home");return{min:Math.max(3,l.min),mode:l.mode,txt:"Da "+PD.hub.n+": "+lc(l.txt),g:l.g}}
@@ -658,9 +661,14 @@ var ul=x.closest("ul"),hd=ul&&ul.previousElementSibling;if(hd){var sm=hd.querySe
 [].forEach.call(document.querySelectorAll(".tabr"),function(r){r.addEventListener("change",function(){if(this.id!=="t-consigli"&&CS.back)CS.back()})})}
 $("#foot").textContent="Itinerario per "+(N===1?"una persona":N+" persone")+", "+rangeTxt()+" "+dateObj(c.date).getUTCFullYear()+". Dati verificati il "+PD.VER+"."}
 
-function renderAll(){if(!CFG)return;TRIP=buildTrip(CFG);var ti=todayIdx();SEL=ti>=0?ti:Math.min(SEL,TRIP.n-1);if(SEL<0)SEL=0;P=TRIP.days[SEL];WD=P.wd;lastNow=-2;
-renderHero();renderDays();renderBar();renderStay();renderShort();renderItin();renderAvv();PREADY=false;meteo();PREADY=true;renderVoli();renderPasti();renderCosti(false);renderSpese();renderConsigli();liveTick();PAR.emit()}
-PAR.render=renderAll;
+var BOOT=true;
+function renderAll(){if(!CFG)return;if(PAR.flush)PAR.flush();TRIP=buildTrip(CFG);var ti=todayIdx();SEL=ti>=0?ti:Math.min(SEL,TRIP.n-1);if(SEL<0)SEL=0;P=TRIP.days[SEL];WD=P.wd;lastNow=-2;
+renderHero();renderDays();renderBar();renderStay();renderShort();renderItin();renderAvv();liveTick();
+function rest(){PREADY=false;meteo();PREADY=true;renderVoli();renderPasti();renderCosti(false);renderSpese();renderConsigli()}
+/* all'avvio le schede non visibili si preparano dopo la prima schermata, quando l'intro è finita; al primo tocco subito */
+if(BOOT){BOOT=false;var bt=setTimeout(function(){PAR.flush&&PAR.flush()},3600);PAR.flush=function(){clearTimeout(bt);PAR.flush=null;rest();PAR.emit()}}else rest();
+PAR.emit()}
+PAR.render=renderAll;["pointerdown","keydown","change"].forEach(function(t){document.addEventListener(t,function(){if(PAR.flush)PAR.flush()},{capture:true,passive:true})});
 setInterval(liveTick,30000);document.addEventListener("visibilitychange",function(){if(!document.hidden)liveTick()});window.addEventListener("pageshow",function(e){if(e.persisted)liveTick()});
 document.getElementById("t-costi").addEventListener("change",function(){if(this.checked&&CFG)renderCosti(true)});
 
@@ -739,20 +747,22 @@ zbusy=true;
 var r=btn.getBoundingClientRect(),x=Math.round(r.left+r.width/2),y=Math.round(r.top+r.height/2),W=innerWidth,H=innerHeight,R=Math.ceil(Math.hypot(Math.max(x,W-x),Math.max(y,H-y)))+6,
  zc=(window.SKYZ&&SKYZ[d.id])||d.col[1],ov=document.createElement("div");
 ov.className="zov";ov.setAttribute("aria-hidden","true");ov.style.cssText="--a:"+d.col[0]+";--z:"+zc;
-ov.innerHTML='<div class="zbg"></div><div class="zcol"><span class="zchip">'+esc(d.c||"")+'</span><b class="zn">'+esc(d.n)+'</b></div>';
+ov.innerHTML='<div class="zdot"></div><div class="zbg"></div><div class="zcol"><span class="zchip">'+esc(d.c||"")+'</span><b class="zn">'+esc(d.n)+'</b></div>';
 var sk=window.zSky?zSky(d.id):null;if(sk)ov.querySelector(".zcol").appendChild(sk);
 document.body.appendChild(ov);
 var done=function(){zbusy=false;if(ov.parentNode)ov.remove()};
 try{
 btn.animate([{transform:"scale(1)"},{transform:"scale(.95)"},{transform:"scale(1)"}],{duration:280,easing:"ease-out"});
-ov.querySelector(".zbg").animate([{clipPath:"circle(0px at "+x+"px "+y+"px)"},{clipPath:"circle("+R+"px at "+x+"px "+y+"px)"}],{duration:480,easing:"cubic-bezier(.65,0,.15,1)",fill:"forwards"});
+var dt=ov.querySelector(".zdot");dt.style.cssText="left:"+(x-R)+"px;top:"+(y-R)+"px;width:"+2*R+"px;height:"+2*R+"px";
+dt.animate([{transform:"scale(0)"},{transform:"scale(1)"}],{duration:480,easing:"cubic-bezier(.65,0,.15,1)",fill:"forwards"});
+ov.querySelector(".zbg").animate([{opacity:0},{opacity:0,offset:.35},{opacity:1}],{duration:560,easing:"ease-out",fill:"forwards"});
 ov.querySelector(".zcol").animate([{opacity:0,transform:"translateY(14px) scale(.96)"},{opacity:1,transform:"none"}],{duration:440,delay:240,easing:"cubic-bezier(.2,1.2,.4,1)",fill:"backwards"});
 }catch(e){}
 setTimeout(function(){
  try{ss("via-zoom",JSON.stringify({a:d.col[0],z:zc,c:d.c||"",n:d.n,id:d.id}))}catch(x){}
  fn();
  var out=ov.animate?ov.animate([{opacity:1,transform:"scale(1)"},{opacity:0,transform:"scale(1.04)"}],{duration:380,delay:60,easing:"ease-in",fill:"forwards"}):null;
- if(out)out.onfinish=done;else done()},1080);
+ if(out)out.onfinish=done;else done()},1180);
 setTimeout(done,3200)}
 dgrid.addEventListener("click",function(e){var b=e.target.closest(".dcity");if(!b)return;var d=dOf(b.dataset.city);
 if(!d.ok){b.animate&&b.animate([{transform:"translateX(0)"},{transform:"translateX(-4px)"},{transform:"translateX(4px)"},{transform:"none"}],{duration:300,easing:"ease-out"});toast("La guida di "+d.n+" arriva presto ✨");return}
@@ -812,11 +822,27 @@ var to=($('input[name=to]:checked',form)||{}).value||APK[0],rt=($('input[name=rt
 var c={dest:PD.id,date:d0,date_r:d1,ppl:+$("#ppl").textContent||2,from:form.from.value.trim(),fromCode:fromCode(form.from.value),to:to,rt:rt,a_num:form.a_num.value.replace(/\s+/g,"").toUpperCase(),a_dep:form.a_dep.value,a_arr:form.a_arr.value,r_num:form.r_num.value.replace(/\s+/g,"").toUpperCase(),r_imb:form.r_imb.value,r_dep:form.r_dep.value,th:styVals().th,pc:styVals().pc};
 if(multi){var addr=form.saddr.value.trim();c.stay={zone:form.sz.value,addr:addr,cin:form.sin.value||"15:00",cout:form.sout.value||"11:00",price:parseFloat(String(form.sprice.value).replace(",","."))||0,type:form.stype.value};
 if(addr&&addr===old.addr&&old.geo){c.stay.pos=old.pos;c.stay.geo=1}}
-var first=!CFG;if(SAVED&&SAVED.dest!==PD.id){parkCur();SP={};CK={};COPT={}}c.tid=(CFG&&CFG.tid)||newTid();CFG=c;SAVED=c;ls("via-trip",JSON.stringify(c));closeSetup();SEL=0;renderAll();window.dispatchEvent(new Event("voli"));
+var first=!CFG;if(SAVED&&SAVED.dest!==PD.id){parkCur();SP={};CK={};COPT={}}c.tid=(CFG&&CFG.tid)||newTid();CFG=c;SAVED=c;ls("via-trip",JSON.stringify(c));
+waitFun(c,first,function(){closeSetup();SEL=0;renderAll();window.dispatchEvent(new Event("voli"));
 var t0=$("#t-itinerario");if(!t0.checked){t0.checked=true;t0.dispatchEvent(new Event("change",{bubbles:true}))}
-var blk=$("#itinerario");try{blk.scrollTo({top:0,behavior:"smooth"})}catch(x){blk.scrollTop=0}
-toast(first?"Itinerario pronto ✨":"Viaggio aggiornato ✓");
-if(multi&&c.stay.addr&&!c.stay.geo)geocode()});
+var blk=$("#itinerario");blk.scrollTop=0},function(){toast(first?"Itinerario pronto ✨":"Viaggio aggiornato ✓");
+if(multi&&c.stay.addr&&!c.stay.geo)geocode()})});
+/* attesa giocosa dopo la creazione: l'aereo gira intorno alla bandiera, le frasi cambiano, i passaggi si spuntano */
+function waitFun(c,first,work,done){var red=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches,ms=red?700:first?4200:2400,
+L=["Spiego la mappa di "+PD.n+"…","Cerco il caffè giusto per la colazione ☕","Metto in fila i monumenti, senza fretta","Controllo orari… e anche le code 👀","Scelgo dove pranzare (la parte più seria)","Controllo se serve l'ombrello ☂️"],v=styVals();
+L.splice(2,0,v.th==="eno"?"Faccio spazio per un buon calice 🍷":v.th==="cul"?"Non perdiamo nemmeno un museo 🏛️":"Un po' di storia, un po' di buon cibo 🍝");
+L.splice(4,0,v.pc==="rel"?"Aggiungo le pause gelato 🍦":v.pc==="int"?"Allaccio le scarpe da corsa 👟":"Bilancio camminate e pause ⚖️");
+if(!first)L=["Rimetto a posto le tappe…","Ricalcolo orari e spostamenti ⏱️","Ultimi ritocchi ✨"];
+var ST4=["Voli","Tappe","Pasti","Mappa"],el=document.createElement("div");el.className="mw"+(first?"":" mu");el.setAttribute("role","status");el.setAttribute("aria-live","polite");
+el.style.setProperty("--mwd",ms+"ms");
+el.innerHTML='<div class="mwc"><div class="mwo"><i class="mwr"></i><b class="mwp"><span>✈︎</span></b><div class="mwf">'+esc(PD.flag||"🧳")+'</div></div><h3 class="mwt">'+esc(first?"Preparo il tuo viaggio":"Aggiorno il tuo viaggio")+'</h3><p class="mwm" id="mwm">'+esc(L[0])+'</p>'+(first?'<ul class="mws">'+ST4.map(function(t){return '<li>'+t+'</li>'}).join("")+'</ul>':'')+'<div class="mwb"><i></i></div></div>';
+document.body.appendChild(el);var m=el.querySelector("#mwm"),lis=el.querySelectorAll(".mws li"),k=0,tk=[];
+requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add("on");setTimeout(function(){try{work()}catch(e){console.error(e)}},380)})});
+if(!red){var per=Math.max(650,(ms-900)/L.length);L.forEach(function(t,i){if(!i)return;tk.push(setTimeout(function(){m.classList.add("out");setTimeout(function(){m.textContent=t;m.classList.remove("out")},200)},i*per+500))});
+[].forEach.call(lis,function(li,i){tk.push(setTimeout(function(){li.classList.add("ok")},900+i*((ms-1900)/lis.length)))})}
+else[].forEach.call(lis,function(li){li.classList.add("ok")});
+tk.push(setTimeout(function(){m.textContent=first?"Pronto! Buon viaggio ✨":"Fatto ✓";el.classList.add("fin");[].forEach.call(lis,function(li){li.classList.add("ok")})},ms-650));
+tk.push(setTimeout(function(){el.classList.remove("on");el.classList.add("bye");setTimeout(function(){el.remove();try{done()}catch(e){console.error(e)}},420)},ms))}
 /* posizione dell'alloggio dall'indirizzo (OpenStreetMap Nominatim) */
 function geocode(){var s=CFG&&CFG.stay;if(!s||!s.addr||!window.fetch)return;var q=s.addr+(PD.ARE.test(s.addr)?"":", "+PD.QN);
 fetch("https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes="+PD.CC+"&accept-language="+PD.CC+"&q="+encodeURIComponent(q)).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){var x=j&&j[0];if(!x)throw 0;var p=[+(+x.lat).toFixed(5),+(+x.lon).toFixed(5)];if(hav(p,PD.LL)>45)throw 0;

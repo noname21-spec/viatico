@@ -88,16 +88,16 @@ footer{text-align:center;margin:26px 0 8px;opacity:.7;color:var(--mute);font-siz
 body:not(:has(#t-itinerario:checked)) .sky *,body:not(:has(#t-itinerario:checked)) .live .dot{animation-play-state:paused!important}
 /* ===== splash: la mappa di carta che diventa l'icona ===== */
 #splash{--m:min(70vw,280px);--paper:#F7EEDA;--paperB:#EADDC2;--sea:#BFDCE2;--coast:#7DB0BC;--topo:#DCCBA4;--road:#E3B887;--red:#C8452F;--spl:rgba(120,95,55,.12);--spt:#1cc0d6;
-position:fixed;inset:0;z-index:200;overflow:hidden;perspective:1000px;pointer-events:none;background:radial-gradient(70% 50% at 50% 42%,color-mix(in srgb,#1cc0d6 11%,transparent),transparent 70%),var(--bg);animation:spOut .5s 2.9s ease forwards}
+position:fixed;inset:0;z-index:200;overflow:hidden;perspective:1000px;pointer-events:none;background:radial-gradient(70% 50% at 50% 42%,color-mix(in srgb,#1cc0d6 11%,transparent),transparent 70%),var(--bg);will-change:opacity;animation:spOut .5s 2.9s ease forwards}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #splash{--paper:#D9CFB8;--paperB:#B8AD93;--sea:#6F9AA5;--coast:#4F7F8B;--topo:#B8A77F;--road:#C79A68;--red:#D95A42;--spl:rgba(140,210,225,.09)}}
 :root[data-theme="dark"] #splash,:root:has(#dm:checked) #splash{--paper:#D9CFB8;--paperB:#B8AD93;--sea:#6F9AA5;--coast:#4F7F8B;--topo:#B8A77F;--road:#C79A68;--red:#D95A42;--spl:rgba(140,210,225,.09)}
 html.sa body::before,html.sa #splash{bottom:auto!important;height:var(--apph)}
 .sptopo{position:absolute;inset:0}.sptopo svg{width:100%;height:100%;stroke:var(--spl);stroke-width:1.4}
-.spshd{position:absolute;left:50%;top:42%;width:var(--m);height:30px;margin:calc(var(--m)/2 + 6px) 0 0 calc(var(--m)/-2);border-radius:50%;background:radial-gradient(closest-side,rgba(19,48,58,.32),transparent);filter:blur(4px);animation:spShd 2.1s cubic-bezier(.2,.8,.25,1) both}
-.spshr{position:absolute;left:50%;top:42%;width:var(--m);height:var(--m);margin:calc(var(--m)/-2) 0 0 calc(var(--m)/-2);transform-style:preserve-3d;animation:spShrink .65s 1.5s cubic-bezier(.6,0,.2,1) both}
-.spfade{position:absolute;inset:0;animation:spPf .45s 1.55s ease both}
-.spmap{position:absolute;inset:0;transform-style:preserve-3d;animation:spDrop 1s cubic-bezier(.18,.8,.25,1) both}
-.pan{position:absolute;top:0;width:33.334%;height:100%;transform-style:preserve-3d}
+.spshd{position:absolute;left:50%;top:42%;width:var(--m);height:30px;margin:calc(var(--m)/2 + 6px) 0 0 calc(var(--m)/-2);border-radius:50%;background:radial-gradient(closest-side,rgba(19,48,58,.32),transparent);will-change:transform,opacity;animation:spShd 2.1s cubic-bezier(.2,.8,.25,1) both}
+.spshr{position:absolute;left:50%;top:42%;width:var(--m);height:var(--m);margin:calc(var(--m)/-2) 0 0 calc(var(--m)/-2);transform-style:preserve-3d;will-change:transform;animation:spShrink .65s 1.5s cubic-bezier(.6,0,.2,1) both}
+.spfade{position:absolute;inset:0;will-change:opacity;animation:spPf .45s 1.55s ease both}
+.spmap{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;animation:spDrop 1s cubic-bezier(.18,.8,.25,1) both}
+.pan{position:absolute;top:0;width:33.334%;height:100%;transform-style:preserve-3d;will-change:transform}
 .pan .f,.pan .b{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
 .pan .b{transform:rotateY(180deg);background:linear-gradient(90deg,var(--paperB),color-mix(in srgb,var(--paperB) 88%,#000))}
 .pan .f svg{position:absolute;top:0;width:var(--m);height:var(--m);display:block}
@@ -119,7 +119,7 @@ html.sa body::before,html.sa #splash{bottom:auto!important;height:var(--apph)}
 #splash .rt{fill:none;stroke:var(--red);stroke-width:9;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:14 10;animation:spDash .6s 1.05s ease both}
 #splash .st{fill:var(--paper);stroke:var(--red);stroke-width:6}
 #splash .mpin{transform-box:fill-box;transform-origin:50% 100%;animation:spPop .4s 1.25s cubic-bezier(.2,1.6,.4,1) both}
-.spico{position:absolute;inset:0;border-radius:22%;overflow:hidden;opacity:0;box-shadow:0 30px 60px rgba(5,105,143,.45);animation:spIf .45s 1.55s ease both}
+.spico{position:absolute;inset:0;border-radius:22%;overflow:hidden;opacity:0;box-shadow:0 22px 44px rgba(5,105,143,.4);will-change:opacity;animation:spIf .45s 1.55s ease both}
 .spico svg{width:100%;height:100%;display:block}
 .spico .ipin{transform-box:fill-box;transform-origin:50% 100%;animation:spPin .6s 1.85s cubic-bezier(.25,1.6,.45,1) both}
 .spico .shine{animation:spShine .9s 2.15s ease both}
@@ -132,7 +132,7 @@ html.sa body::before,html.sa #splash{bottom:auto!important;height:var(--apph)}
 @keyframes spShd{0%,21%{opacity:0;transform:scale(.4)}44%{opacity:1;transform:scale(1.05)}70%{opacity:.8;transform:scale(1)}92%,100%{opacity:0;transform:scale(.3)}}
 @keyframes spUnL{from{transform:rotateY(178deg)}to{transform:rotateY(0)}}
 @keyframes spUnR{from{transform:rotateY(-178deg)}to{transform:rotateY(0)}}
-@keyframes spDash{from{stroke-dashoffset:520;opacity:0}20%{opacity:1}to{stroke-dashoffset:0}}
+@keyframes spDash{from{opacity:0}to{opacity:1}}
 @keyframes spPop{from{transform:scale(0) translateY(-20px);opacity:0}to{transform:none;opacity:1}}
 @keyframes spShrink{to{transform:scale(.33)}}
 @keyframes spPf{to{opacity:0}}

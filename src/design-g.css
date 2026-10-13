@@ -492,7 +492,7 @@ body:has(#t-itinerario:checked) label[for=t-itinerario] span,body:has(#t-voli:ch
 .zsk .gnd{fill:url(#zgGround)}
 .zsk .mon{animation-duration:.5s;animation-delay:calc(var(--k)*50ms + 220ms)}
 .zsk .shd{animation-delay:.7s}.zsk .ln{animation-delay:calc(.65s + var(--i)*40ms)}
-.zsk .sunG{animation-duration:1.1s}
+.zsk .sunG{animation-duration:.85s}
 .zsk .halo,.zsk .spk circle,.zsk .bird{animation:none}
 #zin .zsk *{animation:none!important}
 @media (prefers-reduced-motion:reduce){.zov{display:none!important}}
@@ -565,3 +565,39 @@ fieldset.sgrp.sl{animation:stepL .38s cubic-bezier(.22,1,.36,1) both}
 .scard .sgrp[data-s="3"] .sop span{font-size:.72rem}
 .scard .sgrp[data-s="3"]{gap:8px}
 .sact{position:sticky;bottom:0;z-index:2;margin:6px -6px 0;padding:10px 6px calc(2px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--bg) 72%,transparent)}
+
+/* attesa dopo la creazione dell'itinerario */
+.mw{position:fixed;inset:0;z-index:205;display:grid;place-items:center;padding:24px;text-align:center;background:radial-gradient(70% 46% at 50% 40%,color-mix(in srgb,var(--ga) 20%,transparent),transparent 72%),var(--bg);color:var(--ink);opacity:0;transition:opacity .38s ease;will-change:opacity}
+.mw.on{opacity:1}
+.mw.bye{opacity:0;transition:opacity .4s ease;pointer-events:none}
+.mwc{display:flex;flex-direction:column;align-items:center;gap:14px;width:min(320px,100%);transform:translateY(14px);transition:transform .6s cubic-bezier(.22,1,.36,1);will-change:transform}
+.mw.on .mwc{transform:none}
+.mw.bye .mwc{transform:scale(1.05);transition:transform .4s ease}
+.mwo{position:relative;width:168px;height:168px;display:grid;place-items:center;margin-bottom:6px}
+.mwr{position:absolute;inset:6px;border-radius:50%;border:2px dashed color-mix(in srgb,var(--ga) 55%,transparent)}
+.mwp{position:absolute;inset:0;animation:mwo calc(var(--mwd,4s)/2.4) linear infinite;will-change:transform}
+.mwp span{position:absolute;left:50%;top:6px;margin:-14px 0 0 -14px;width:28px;height:28px;display:grid;place-items:center;font-size:1.5rem;color:var(--ga);transform:rotate(45deg)}
+.mwf{width:104px;height:104px;border-radius:50%;display:grid;place-items:center;font-size:3.2rem;background:var(--gsoft);box-shadow:0 14px 34px color-mix(in srgb,var(--ga) 32%,transparent);animation:mwb 1.1s ease-in-out infinite;will-change:transform}
+.mw.fin .mwf{animation:mwpop .55s cubic-bezier(.34,1.56,.64,1) both}
+.mw.fin .mwp{animation-play-state:paused}
+.mwt{margin:0;font:600 1.5rem/1.15 Outfit,system-ui,sans-serif;letter-spacing:-.02em}
+.mwm{margin:0;min-height:2.6em;display:flex;align-items:center;justify-content:center;font-size:.98rem;color:var(--mute);transition:opacity .2s ease,transform .2s ease}
+.mwm.out{opacity:0;transform:translateY(6px)}
+.mw.fin .mwm{color:var(--ink);font-weight:600}
+.mws{list-style:none;margin:2px 0 0;padding:0;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.mws li{padding:6px 11px;border-radius:999px;background:var(--surf);color:var(--mute);font-size:.8rem;font-weight:500;transition:background .3s ease,color .3s ease,transform .4s cubic-bezier(.34,1.56,.64,1)}
+.mws li.ok{background:var(--ga);color:var(--gon);transform:scale(1.06)}
+.mws li.ok::before{content:"✓ "}
+.mwb{width:190px;height:5px;border-radius:5px;background:var(--surf2,var(--surf));overflow:hidden;margin-top:6px}
+.mwb i{display:block;height:100%;border-radius:5px;background:var(--ga);transform:scaleX(0);transform-origin:left;will-change:transform}
+.mw.on .mwb i{animation:mwbar var(--mwd,4s) cubic-bezier(.45,.05,.3,1) forwards}
+@keyframes mwo{to{transform:rotate(360deg)}}
+@keyframes mwb{50%{transform:translateY(-6px) scale(1.03)}}
+@keyframes mwpop{0%{transform:scale(.9)}60%{transform:scale(1.14)}100%{transform:scale(1)}}
+@keyframes mwbar{to{transform:scaleX(1)}}
+@media (prefers-reduced-motion:reduce){.mwp,.mwf,.mwb i{animation:none!important}.mwb i{transform:scaleX(1)}.mwc,.mw{transition:none}}
+
+/* selezione città: il colore si allarga con una trasformazione (sul compositor), poi sfuma il gradiente */
+.zov .zdot{position:absolute;border-radius:50%;background:color-mix(in srgb,var(--a) 86%,#000);transform:scale(0);will-change:transform}
+.zov .zbg{opacity:0;will-change:opacity}
+.zov .zcol{will-change:transform,opacity}

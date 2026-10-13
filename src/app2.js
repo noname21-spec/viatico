@@ -150,10 +150,13 @@ document.querySelector(".mc-tr").addEventListener("click",function(e){var b=e.ta
 if(b.id==="zi")map.zoomIn();else if(b.id==="zo")map.zoomOut();else if(b.id==="zr"&&bnds)map.flyToBounds(bnds,{paddingTopLeft:[16,24],paddingBottomRight:[48,24],maxZoom:15,duration:.8});else if(b.id==="fs"){setTimeout(function(){map.invalidateSize()},350);setTimeout(function(){map.invalidateSize()},800)}});
 var dm=document.getElementById("dm");if(dm)dm.addEventListener("change",function(){setTimeout(function(){restyle();draw()},50)});try{mq.addEventListener("change",function(){restyle();draw()})}catch(e){}
 var tab=document.getElementById("t-mappa");tab.addEventListener("change",function(){if(tab.checked)setTimeout(function(){map.invalidateSize();if(bnds)map.fitBounds(bnds,{paddingTopLeft:[16,24],paddingBottomRight:[48,24],maxZoom:15});anim()},150)});
-PAR.on(function(){waterLoaded=false;gWater.clearLayers();draw()});draw();try{locInit()}catch(e){console.error("loc",e&&e.stack)}
+PAR.on(function(){waterLoaded=false;gWater.clearLayers();draw()});draw();if(tab.checked)setTimeout(function(){map.invalidateSize();if(bnds)map.fitBounds(bnds,{paddingTopLeft:[16,24],paddingBottomRight:[48,24],maxZoom:15});anim()},150);try{locInit()}catch(e){console.error("loc",e&&e.stack)}
 setTimeout(function(){if(!ok&&!navigator.onLine)off.textContent="Sei offline: la mappa mostra solo le zone già viste."},5000)}
 function load(){var sc=document.createElement("script");sc.src="lib/leaflet.js";sc.onload=init;sc.onerror=function(){off.textContent="La mappa non si è caricata: serve una connessione."};document.head.appendChild(sc)}
-if(document.readyState==="complete")load();else addEventListener("load",load);
+/* la mappa si prepara solo quando serve (o a riposo, molto dopo l'intro): non pesa sull'avvio */
+var started=false,mtab=document.getElementById("t-mappa");function start(){if(started)return;started=true;load()}
+mtab.addEventListener("change",function(){if(mtab.checked)start()});
+if(mtab.checked)start();else addEventListener("load",function(){setTimeout(function(){if(window.requestIdleCallback)requestIdleCallback(start,{timeout:5000});else setTimeout(start,1500)},7000)});
 /* legenda e schermo intero */
 var lg=document.getElementById("lg");
 lg.addEventListener("click",function(e){e.stopPropagation();var open=lgp.hidden;lgp.hidden=!open;lg.setAttribute("aria-expanded",open)});
