@@ -45,7 +45,7 @@ var tc=document.getElementById("t-costi");
 if(tc)tc.addEventListener("change",function(){if(tc.checked)setTimeout(function(){if(Date.now()-lastT>600){lastT=Date.now();count()}},120)});
 /* arrivo da un'altra città: la scheda colorata resta un attimo con lo skyline, poi si dissolve */
 var zi=window.__zin;if(zi&&zi.parentNode){try{var zs=window.zSky&&zSky(zi.getAttribute("data-id"));if(zs)zi.querySelector(".zcol").appendChild(zs)}catch(e){}
-setTimeout(function(){if(zi.parentNode)zi.className="zov out"},400);setTimeout(function(){if(zi.parentNode)zi.remove()},1000)}
+setTimeout(function(){if(zi.parentNode)zi.className="zov out"},650);setTimeout(function(){if(zi.parentNode)zi.remove()},1200)}
 /* a schermo fermo da qualche secondo le animazioni senza fine (nuvole, scintille, icone) si fermano; tornano al primo tocco */
 var idleT=0,held=[],lastTouch=0;
 function holdAnims(){try{document.getAnimations().forEach(function(a){var t=a.effect&&a.effect.getComputedTiming?a.effect.getComputedTiming():null;if(t&&t.iterations===Infinity&&a.playState==="running"){a.pause();held.push(a)}})}catch(e){}}
