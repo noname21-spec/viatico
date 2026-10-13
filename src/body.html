@@ -170,16 +170,17 @@
 <div id="setup" aria-hidden="true"><form class="scard" id="sform" novalidate autocomplete="off">
 <div class="stop"><button type="button" class="sback" id="sback">‹ Destinazioni</button><button type="button" class="sback" id="scancel" hidden>Annulla</button></div>
 <div class="shead"><span class="sem" id="sem">🗼</span><div><small>La tua destinazione</small><h2 id="sdest">Parigi</h2><p id="sdsub">Francia · guida completa</p></div></div>
+<ol class="sstp" id="sstp" aria-label="Passi"></ol>
 <p class="reqnote" id="reqn"><b>*</b> Campi obbligatori: <span>data di andata, orario di atterraggio e orario di partenza del ritorno</span>. Il resto è facoltativo.</p>
-<fieldset class="sgrp"><div class="sglg">📅 Date e persone</div>
+<fieldset class="sgrp" data-s="0"><div class="sglg">📅 Date e partenza</div>
 <label class="f"><span>Andata</span><input type="date" name="date" required></label>
 <label class="f"><span id="rlab">Ritorno</span><input type="date" name="date_r"></label>
 <p class="dnote w" id="dnote"></p>
 <div class="f w prow"><span>Persone</span><div class="stepper"><button type="button" data-st="-1" aria-label="Una persona in meno">−</button><output name="ppl" id="ppl">2</output><button type="button" data-st="1" aria-label="Una persona in più">+</button></div></div>
-</fieldset>
-<fieldset class="sgrp"><div class="sglg">✈️ Volo</div>
 <label class="f w"><span>Aeroporto di partenza</span><input type="text" name="from" list="aplist" placeholder="es. Bologna (BLQ)" autocapitalize="words" spellcheck="false"></label>
 <datalist id="aplist"></datalist>
+</fieldset>
+<fieldset class="sgrp" data-s="1"><div class="sglg">✈️ Voli</div>
 <h3 class="ssub w">🛫 Andata</h3>
 <div class="f w"><span class="sub">Atterri a</span>
 <div class="apts" id="apts" role="radiogroup" aria-label="Aeroporto di arrivo"></div></div>
@@ -194,7 +195,7 @@
 <label class="f"><span>Apertura imbarco</span><input type="time" name="r_imb"></label>
 <label class="f"><span>Partenza</span><input type="time" name="r_dep" required></label>
 </fieldset>
-<fieldset class="sgrp" id="stayf"><div class="sglg">🏨 Hotel</div>
+<fieldset class="sgrp" id="stayf" data-s="2" hidden><div class="sglg">🏨 Hotel</div>
 <p class="snote w" id="stayno">Per una gita in giornata l'hotel non serve. Scegli una data di ritorno diversa dall'andata per aggiungerlo.</p>
 <div class="sgin w" id="stayin" hidden>
 <label class="f w"><span>Zona</span><select name="sz"></select></label>
@@ -206,8 +207,23 @@
 <p class="snote w">Non hai ancora prenotato? Scegli la zona: l'itinerario parte da lì e i rientri serali si calcolano da lì. Il tipo serve per la tassa di soggiorno.</p>
 </div>
 </fieldset>
+<fieldset class="sgrp sty" data-s="3" hidden><div class="sglg">🎯 Che viaggio vuoi?</div>
+<div class="f w"><span class="sub">Cosa ti interessa di più</span>
+<div class="sops" role="radiogroup" aria-label="Tema del viaggio">
+<label class="sop"><input type="radio" name="th" value="cul"><i>🏛️</i><b>Culturale</b><span>Musei e monumenti, visite più lunghe</span></label>
+<label class="sop"><input type="radio" name="th" value="mix" checked><i>🧭</i><b>Un po' di tutto</b><span>Il mix classico della città</span></label>
+<label class="sop"><input type="radio" name="th" value="eno"><i>🍷</i><b>Enogastronomico</b><span>Tavole lunghe, assaggi, meno monumenti</span></label>
+</div></div>
+<div class="f w"><span class="sub">Che ritmo preferisci</span>
+<div class="sops" role="radiogroup" aria-label="Ritmo del viaggio">
+<label class="sop"><input type="radio" name="pc" value="rel"><i>🌿</i><b>Tranquillo</b><span>Si parte più tardi, meno tappe, più pause</span></label>
+<label class="sop"><input type="radio" name="pc" value="mid" checked><i>⚖️</i><b>Equilibrato</b><span>Né di corsa né fermi</span></label>
+<label class="sop"><input type="radio" name="pc" value="int"><i>⚡</i><b>Intenso</b><span>Più tappe, giornate lunghe, pasti veloci</span></label>
+</div></div>
+<p class="snote w" id="sstyd"></p>
+</fieldset>
 <p class="serr" id="serr" role="alert"></p>
-<div class="sact"><button type="submit" class="btn">✨ Crea il mio viaggio</button></div>
+<div class="sact"><button type="button" class="btn ghost" id="sprev" hidden>‹ Indietro</button><button type="button" class="btn" id="snext">Avanti ›</button><button type="submit" class="btn" id="ssub" hidden>✨ Crea il mio viaggio</button></div>
 <p class="snote" id="sfuso"></p>
 </form></div>
 <div id="help" aria-hidden="true"><div class="qrc hcard" role="dialog" aria-labelledby="hltt"><h3 id="hltt">🛟 Supporto e assistenza</h3>

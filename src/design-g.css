@@ -507,3 +507,61 @@ body:has(#t-itinerario:checked) label[for=t-itinerario] span,body:has(#t-voli:ch
 .lme u{position:absolute;inset:0;display:none;transform:rotate(var(--hd,0deg))}.lme.hd u{display:block}
 .lme u::before{content:"";position:absolute;left:50%;top:-9px;margin-left:-5px;border:5px solid transparent;border-top:0;border-bottom:9px solid #2f7df6}
 @media (prefers-reduced-motion:reduce){.lme i,#loc.srch svg{animation:none}}
+#info .lrt{margin-top:8px;display:inline-flex;align-items:center;gap:6px;border:0;cursor:pointer;font:inherit}
+/* form a passi */
+.sstp{list-style:none;margin:0 0 12px;padding:0;display:flex;gap:6px}
+.sstp li{flex:1 1 0;min-width:0}
+.sstp button{width:100%;display:flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:6px 8px;border:0;border-radius:14px;background:var(--surf2);color:var(--mute);font:600 .76rem Outfit,system-ui,sans-serif;cursor:pointer;transition:background .25s,color .25s,transform .2s}
+.sstp button b{display:grid;place-items:center;flex:none;width:22px;height:22px;border-radius:50%;background:color-mix(in srgb,var(--ink) 10%,transparent);font-size:.72rem;font-weight:700}
+.sstp button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sstp button.on{background:var(--ga);color:var(--gon)}
+.sstp button.on b{background:color-mix(in srgb,var(--gon) 22%,transparent)}
+.sstp button.done b{background:var(--ga);color:var(--gon)}
+.sstp button:active{transform:scale(.97)}
+@media (max-width:380px){.sstp button span{display:none}.sstp button.on span{display:inline}}
+.scard[data-st="1"] .shead,.scard[data-st="2"] .shead,.scard[data-st="3"] .shead{margin-bottom:10px}
+.scard[data-st="1"] .shead p,.scard[data-st="2"] .shead p,.scard[data-st="3"] .shead p{display:none}
+.scard[data-st="1"] .shead .sem,.scard[data-st="2"] .shead .sem,.scard[data-st="3"] .shead .sem{font-size:1.5rem}
+.scard[data-st="1"] .shead h2,.scard[data-st="2"] .shead h2,.scard[data-st="3"] .shead h2{font-size:1.5rem}
+fieldset.sgrp.sr{animation:stepR .38s cubic-bezier(.22,1,.36,1) both}
+fieldset.sgrp.sl{animation:stepL .38s cubic-bezier(.22,1,.36,1) both}
+@keyframes stepR{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes stepL{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+.sact{display:flex;gap:10px;flex-wrap:nowrap}.sact .btn{flex:1 1 0;justify-content:center}.sact #sprev{flex:0 0 auto}
+.sact [hidden]{display:none!important}
+.sops{display:grid;grid-template-columns:1fr;gap:8px}
+.sop{position:relative;display:grid;grid-template-columns:34px 1fr;grid-template-rows:auto auto;column-gap:10px;align-items:center;padding:11px 12px;border-radius:16px;background:var(--surf2);color:var(--ink);cursor:pointer;transition:transform .2s,background .25s}
+.sop input{position:absolute;opacity:0;pointer-events:none}
+.sop i{grid-row:1/3;font-style:normal;font-size:1.5rem;text-align:center}
+.sop b{font:600 .98rem Outfit,system-ui,sans-serif}
+.sop span{font-size:.76rem;color:var(--mute);font-weight:500;line-height:1.3}
+.sop:active{transform:scale(.98)}
+.sop:has(input:checked){background:var(--ga);color:var(--gon)}
+.sop:has(input:checked) span{color:var(--gon);opacity:.85}
+.sop:has(input:focus-visible){outline:2px solid var(--c2);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){fieldset.sgrp.sr,fieldset.sgrp.sl{animation:none}}
+/* passi 2-4: più compatti, così tutto sta in una schermata */
+.scard[data-st="1"] .shead,.scard[data-st="2"] .shead,.scard[data-st="3"] .shead{gap:10px;margin:0 0 8px}
+.scard[data-st="1"] .shead small,.scard[data-st="2"] .shead small,.scard[data-st="3"] .shead small{display:none}
+.scard[data-st="1"] .shead .sem,.scard[data-st="2"] .shead .sem,.scard[data-st="3"] .shead .sem{width:38px!important;height:38px!important;min-width:38px;font-size:1.1rem!important}
+.scard[data-st="1"] .shead h2,.scard[data-st="2"] .shead h2,.scard[data-st="3"] .shead h2{font-size:1.35rem}
+.scard[data-st="1"] .reqnote,.scard[data-st="2"] .reqnote,.scard[data-st="3"] .reqnote{display:none}
+.scard[data-st="1"] .sgrp>.sglg,.scard[data-st="2"] .sgrp>.sglg,.scard[data-st="3"] .sgrp>.sglg{display:none}
+.scard .sgrp[data-s="1"]{gap:8px;padding:12px 14px}
+.scard .sgrp[data-s="1"] .ssub{margin:2px 0 0!important;padding:6px 12px!important;font-size:.8rem}
+.scard .sgrp[data-s="1"] .apt{padding:8px 10px 7px;border-radius:14px}
+.scard .sgrp[data-s="1"] .apt b{font-size:.95rem}
+.scard .sgrp[data-s="1"] .apt span{font-size:.66rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.scard .sgrp[data-s="1"] label.f{gap:2px}
+.scard .sgrp[data-s="1"] input[type=text],.scard .sgrp[data-s="1"] input[type=time]{height:40px!important;line-height:38px!important}
+.scard .sgrp[data-s="1"] .f>.sub{font-size:.72rem}
+.scard .sgrp[data-s="1"] #rapn{margin:4px 0 0!important;padding:6px 10px!important;font-size:.7rem!important}
+.scard .sgrp[data-s="1"] .f.w:has(.apts){gap:4px}
+.scard[data-st="1"] .shead,.scard[data-st="2"] .shead,.scard[data-st="3"] .shead{display:none}
+.scard .sgrp[data-s="1"]{gap:6px;padding:10px 12px}
+.scard .sgrp[data-s="1"] .ssub{padding:4px 12px!important}
+.scard .sgrp[data-s="1"] .apt span{-webkit-line-clamp:1}
+.scard .sgrp[data-s="3"] .sop{padding:8px 12px}
+.scard .sgrp[data-s="3"] .sop span{font-size:.72rem}
+.scard .sgrp[data-s="3"]{gap:8px}
+.sact{position:sticky;bottom:0;z-index:2;margin:6px -6px 0;padding:10px 6px calc(2px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--bg) 72%,transparent)}

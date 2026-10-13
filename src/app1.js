@@ -7,6 +7,15 @@ var DAYS=["lunedì","martedì","mercoledì","giovedì","venerdì","sabato","dome
 var DAB=["Lun","Mar","Mer","Gio","Ven","Sab","Dom"];
 var MESI=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
 var MAXD=10;
+/* stile del viaggio: tema (mix, cul, eno) e ritmo (rel, mid, int); mix+mid è il comportamento di base */
+var ST={th:"mix",pc:"mid"},THS=["mix","cul","eno"],PCS=["rel","mid","int"];
+function sty(c){return{th:THS.indexOf(c&&c.th)>=0?c.th:"mix",pc:PCS.indexOf(c&&c.pc)>=0?c.pc:"mid"}}
+function MD(){var d={col:30,pra:60,cen:55};if(ST.th==="eno"){d.col+=10;d.pra+=30;d.cen+=45}else if(ST.th==="cul"){d.pra-=10;d.cen-=5}
+if(ST.pc==="rel"){d.col+=5;d.pra+=15;d.cen+=15}else if(ST.pc==="int"){d.col-=10;d.pra-=15;d.cen-=10}
+d.col=Math.min(45,Math.max(20,d.col));d.pra=Math.min(95,Math.max(40,d.pra));d.cen=Math.min(100,Math.max(45,d.cen));return d}
+var PSH={rel:{c:45,e:-15},mid:{c:0,e:0},int:{c:-30,e:30}};
+function LF(){return({rel:.8,mid:1,int:1.25})[ST.pc]*({mix:1,cul:1.1,eno:.75})[ST.th]}
+function pri(id){var q=S[id],v=q.p;if(ST.th==="eno"&&q.tk)v+=1.5;else if(ST.th==="cul"&&!q.tk&&q.cls==="walk")v+=1.5;return v}
 function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){return null}if(window.viaSync)viaSync.dirty(k)}
 function lj(k,d){try{return JSON.parse(ls(k)||"null")||d}catch(e){return d}}
 function esc(x){return String(x==null?"":x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
@@ -72,29 +81,31 @@ function win(id,wd,date){var w=S[id].win;return w?w(wd,date,sunset(date)):null}
 function sim(acts,dur,ctx){
 var t=ctx.c0,prev=ctx.start,items=[],B=false,L=false,D=false,late=0,lastEnd=0,LO=PD.LUNCHO||0;
 function meal(k,d){var w=prev==="start"||prev==="home"?3:8;t+=w;items.push({k:"meal",m:k,t:t,d:d,z:zoneOf(prev),walk:w,near:prev==="home",hotel:k==="col"&&prev==="home"&&!!ctx.multi&&COPT.hb===1});t+=d}
-if(ctx.wantB){meal("col",30);B=true}
+var MX=MD();if(ctx.wantB){meal("col",MX.col);B=true}
 acts.forEach(function(id){
 var lg=legOf(prev,id);
-if(!L&&ctx.wantL&&(t>=11*60+50+LO||(t>=11*60+15+LO&&t+lg.min+dur[id]>13*60+50+LO)||(t>=11*60+LO&&t+lg.min+dur[id]>14*60+15+LO))){meal("pra",60);L=true}
-if(!D&&ctx.wantD&&t>=ctx.dinAt){meal("cen",55);D=true}
+if(!L&&ctx.wantL&&(t>=11*60+50+LO||(t>=11*60+15+LO&&t+lg.min+dur[id]>13*60+50+LO)||(t>=11*60+LO&&t+lg.min+dur[id]>14*60+15+LO))){meal("pra",MX.pra);L=true}
+if(!D&&ctx.wantD&&t>=ctx.dinAt){meal("cen",MX.cen);D=true}
 t+=lg.min;var w=win(id,ctx.wd,ctx.date);if(w&&t<w[0])t=w[0];
 if(D&&ctx.multi)late+=60;
 if(w&&t+dur[id]>w[1])late+=t+dur[id]-w[1];
 items.push({k:"act",id:id,t:t,d:dur[id],leg:lg});t+=dur[id];lastEnd=t;prev=id});
 var R=ctx.endOf(prev);
-if(!L&&ctx.wantL&&t<15*60+30+LO&&t>=11*60+15+LO){meal("pra",50);L=true}
+if(!L&&ctx.wantL&&t<15*60+30+LO&&t>=11*60+15+LO){meal("pra",MX.pra-10);L=true}
 if(ctx.multi&&lastEnd>ctx.dinAt+20)late+=lastEnd-ctx.dinAt-20;
+if(ctx.snx&&!D&&t>=15*60&&t<ctx.dinAt-40){t+=5;items.push({k:"snk",x:1,t:t,d:25,z:zoneOf(prev)});t+=25}
 if(!D&&ctx.wantD){
  if((ctx.free||(ctx.multi&&!acts.length))&&t<ctx.dinAt-45){var fl=legOf(prev,"home");items.push({k:"free",t:t+2,d:ctx.dinAt-t-2,leg:fl,from:prev});t=ctx.dinAt;prev="home";R=ctx.endOf(prev)}
- meal("cen",55);D=true}
+ meal("cen",MX.cen);D=true}
 if(ctx.snack&&!D&&t>=15*60+30&&t+25+R.min<=ctx.dl){t+=5;items.push({k:"snk",t:t,d:20,z:zoneOf(prev)});t+=20}
 var slack=ctx.dl-(t+R.min);if(late>0)slack=Math.min(slack,-late);
 return{items:items,end:t,prev:prev,ret:R,slack:slack,B:B,L:L,D:D}}
 function planDay(acts,ctx,opt){
-var dur={},dropped=[],r,g=0,minLen=ctx.single?1:0;
-acts=acts.slice();acts.forEach(function(id){dur[id]=S[id].id});
-while(g++<80){r=sim(acts,dur,ctx);if(r.slack>=0)break;
-var cand=acts.slice().sort(function(a,b){return S[b].p-S[a].p});
+var dur={},dropped=[],r,g=0,minLen=ctx.single?1:0,need=ST.pc==="rel"?30:0;
+acts=acts.slice();acts.forEach(function(id){dur[id]=ST.pc==="int"?Math.round((S[id].min+S[id].id)/10)*5:S[id].id;if(dur[id]<S[id].min)dur[id]=S[id].min});
+if(need){var b0=sim([],dur,ctx).slack;need=Math.max(0,Math.min(need,b0-10))}
+while(g++<80){r=sim(acts,dur,ctx);if(r.slack>=0&&(r.slack>=need||!(acts.length>minLen||acts.some(function(id){return dur[id]>S[id].min}))))break;
+var cand=acts.slice().sort(function(a,b){return pri(b)-pri(a)});
 var sh=cand.filter(function(id){return dur[id]>S[id].min})[0];
 if(sh){dur[sh]=S[sh].min;continue}
 if(acts.length>minLen){dropped.push(cand[0]);acts.splice(acts.indexOf(cand[0]),1);continue}
@@ -106,9 +117,9 @@ var none=false;
 if(r.slack<0){acts=[];ctx.wantB=false;ctx.wantL=false;ctx.wantD=false;r=sim(acts,dur,ctx);none=true}
 function tryIns(id,after){var i=acts.indexOf(after);if(i<0||r.slack<60||acts.indexOf(id)>=0)return;var a2=acts.slice();a2.splice(i+1,0,id);dur[id]=S[id].id;var r2=sim(a2,dur,ctx);if(r2.slack>=15){acts=a2;r=r2}}
 if(!none){
-(PD.SINGLE.ins||[]).forEach(function(x){if(x[3]&&!(opt&&opt.single))return;if(x[2]&&acts.indexOf(x[2])<0)return;tryIns(x[0],x[1])});
-var order=acts.slice().sort(function(a,b){return S[a].p-S[b].p}),ch=true,k=0;
-while(r.slack>=15&&ch&&k++<200){ch=false;for(var i=0;i<order.length;i++){var id=order[i];if(dur[id]+5<=S[id].max){dur[id]+=5;var r2=sim(acts,dur,ctx);if(r2.slack>=10){r=r2;ch=true}else dur[id]-=5}}}}
+(ST.pc==="rel"?[]:PD.SINGLE.ins||[]).forEach(function(x){if(x[3]&&!(opt&&opt.single))return;if(x[2]&&acts.indexOf(x[2])<0)return;tryIns(x[0],x[1])});
+var order=acts.slice().sort(function(a,b){return pri(a)-pri(b)}),ch=true,k=0;
+while(r.slack>=15&&ch&&k++<200){ch=false;for(var i=0;i<order.length;i++){var id=order[i];if(dur[id]+5<=(ST.pc==="int"?S[id].id:S[id].max)){dur[id]+=5;var r2=sim(acts,dur,ctx);if(r2.slack>=10){r=r2;ch=true}else dur[id]-=5}}}}
 var shrunk=acts.filter(function(id){return dur[id]<S[id].id-4});
 return{r:r,acts:acts,dropped:dropped,shrunk:shrunk,none:none}}
 function ridesOf(items){var n=0;items.forEach(function(x){var l=x.leg;if(x.k==="act"||x.k==="free"||x.k==="night"){if(l&&l.mode==="metro")n++}});return n}
@@ -126,11 +137,11 @@ return{kind:"single",i:0,date:c.date,wd:wd,items:items,acts:x.acts,dropped:x.dro
 
 /* viaggio di più giorni */
 function frame(c,i,n){var A=PD.PAR[c.to],R=PD.PAR[c.rt||c.to],date=addDays(c.date,i),wd=wdOf(date),kind=i===0?"first":i===n-1?"last":"mid",f={i:i,date:date,wd:wd,kind:kind,A:A,R:R,acts:[]};
-if(kind==="first"){var land=toMin(c.a_arr),tC=land+A.inMin,lh=arrLeg(),tH=tC+lh.min;f.land=land;f.tC=tC;f.tH=tH;f.lh=lh;f.c0=tH+15;f.dl=22*60+45}
-else{f.c0=8*60+45;f.dl=22*60+45}
+if(kind==="first"){var land=toMin(c.a_arr),tC=land+A.inMin,lh=arrLeg(),tH=tC+lh.min;f.land=land;f.tC=tC;f.tH=tH;f.lh=lh;f.c0=tH+15;f.dl=22*60+45+PSH[ST.pc].e}
+else{f.c0=8*60+45+PSH[ST.pc].c;f.dl=22*60+45+PSH[ST.pc].e}
 if(kind==="last"){var dep=toMin(c.r_dep),imb=toMin(c.r_imb);f.dep=dep;f.imb=imb;f.dl=Math.min(dep-R.buf,imb!=null?imb-45:1e9);f.cap=f.dl-homeAir().min-15-f.c0-30-(f.dl>14*60?60:0)-30}
 else f.cap=f.dl-f.c0-(f.c0<10*60+45?30:0)-(f.c0<14*60?60:0)-55-45-60;
-return f}
+f.cap=Math.round(f.cap*LF());return f}
 function assign(days,n){var cap=days.map(function(d){return d.cap}),left=[],pri=function(b){return b.full?(n>=4?0:2):b.core?1:2};
 PD.BUNDLES.map(function(b,i){return[b,i]}).sort(function(x,y){return pri(x[0])-pri(y[0])||x[1]-y[1]}).map(function(x){return x[0]}).forEach(function(b){var best=-1,bv=-1e9;
 days.forEach(function(d,i){if(b.cl&&b.cl.indexOf(d.wd)>=0)return;if(b.full&&d.kind!=="mid")return;var v=cap[i]-b.need;if(v>bv){bv=v;best=i}});
@@ -142,7 +153,7 @@ return left}
 function planMulti(f,c){var last=f.kind==="last";
 var ctx={multi:1,c0:f.c0,start:"home",dl:f.dl,wd:f.wd,date:f.date,
 endOf:last?lastRet:function(p){return legOf(p,"home")},
-wantB:f.c0<10*60+45,wantL:f.c0<14*60+(PD.LUNCHO||0)&&f.dl>13*60+30+(PD.LUNCHO||0),wantD:last?f.dl>=18*60+15:f.c0<21*60+30,dinAt:last?18*60+45:19*60+30+(PD.DINO||0),free:!last,snack:last};
+wantB:f.c0<10*60+45,wantL:f.c0<14*60+(PD.LUNCHO||0)&&f.dl>13*60+30+(PD.LUNCHO||0),wantD:last?f.dl>=18*60+15:f.c0<21*60+30,dinAt:last?18*60+45:19*60+30+(PD.DINO||0),free:!last,snack:last,snx:!last&&ST.th==="eno"};
 var x=planDay(f.acts,ctx,null),r=x.r,items=[];
 if(f.kind==="first"){items.push({k:"air",t:f.land,d:f.A.inMin,c0:f.tC,multi:1});items.push({k:"home",t:f.tH,d:15,arr:1,leg:f.lh})}
 else items.push({k:"home",t:f.c0,d:0,co:last?1:0,mor:last?0:1});
@@ -153,7 +164,7 @@ else if(r.prev!=="home"||items[items.length-1].k==="meal")items.push({k:"night",
 var n=0;items.forEach(function(it){if(it.k==="act")it.n=++n});
 var rides=ridesOf(items)+(last&&r.ret.rides?1:0)+(f.kind==="first"?(f.A.xrm||0):0)+(last?(f.R.xrm||0):0);
 return Object.assign(f,{items:items,acts:x.acts,dropped:x.dropped,shrunk:x.shrunk,none:x.none,leave:rt,prev:r.prev,B:r.B,L:r.L,D:r.D,rides:rides,end:rt+(last?0:r.ret.min)})}
-function buildTrip(c){if(!c.rt||!PD.PAR[c.rt])c.rt=c.to;var n=nDays(c),A=PD.PAR[c.to],R=PD.PAR[c.rt];
+function buildTrip(c){ST=sty(c);if(!c.rt||!PD.PAR[c.rt])c.rt=c.to;var n=nDays(c),A=PD.PAR[c.to],R=PD.PAR[c.rt];
 if(n===1)return{multi:false,n:1,A:A,R:R,days:[planSingle(c)],left:[]};
 var days=[];for(var i=0;i<n;i++)days.push(frame(c,i,n));
 var left=assign(days,n);
@@ -180,7 +191,9 @@ function ftag(id){var s=PD.FT&&PD.FT[id];if(!s)return null;var f=s.slice(2),lv=f
 function ffit(id){var t=ftag(id);if(!t)return{ok:!FP.d.length&&!FP.p,lv:0,k:0};var ok=true,lv=2;FP.d.forEach(function(d){var x=t[FDK[d]];if(x<1)ok=false;else if(x<lv)lv=x});if(FP.p&&t.p>FP.p)ok=false;return{ok:ok,lv:ok?lv:0,k:FP.k.indexOf(t.k)>=0?1:0}}
 function fpool(m,z){var M=PD.MEAL,zz=z==="X"?"A":z,nm=(m==="pra"||m==="cen")?["pra","cen"]:["col","snk"],o=[];nm.forEach(function(n){var L=(M[n]&&(M[n][zz]||M[n].A))||[];L.forEach(function(id){if(o.indexOf(id)<0)o.push(id)})});
 if(m==="pra"||m==="cen")o=o.filter(function(id){var t=ftag(id);return t&&t.k!=="c"&&t.k!=="d"});return o}
-function prefList(ids,wd,t,m,z){var base=vSorted(ids,wd,t);if(!fprefOn())return{main:base,rest:[]};
+function kindRk(id){var t=ftag(id);return t?({t:0,m:1,r:1,p:1,w:2,s:3,c:4,d:4})[t.k]:2}
+function prefList(ids,wd,t,m,z){var base=vSorted(ids,wd,t);
+if(ST.th==="eno"&&(m==="pra"||m==="cen")){var so={ok:0,mid:1,ko:2};base=base.map(function(o,i){o.i0=i;return o}).sort(function(a,b){return so[a.s.c]-so[b.s.c]||kindRk(a.id)-kindRk(b.id)||a.i0-b.i0})}if(!fprefOn())return{main:base,rest:[]};
 var main=[],rest=[],ord={ok:0,mid:1,ko:2};base.forEach(function(o,i){o.i=i;o.f=ffit(o.id);(o.f.ok?main:rest).push(o)});
 if((FP.d.length||FP.p)&&main.filter(function(o){return o.s.c!=="ko"}).length<2)fpool(m,z).forEach(function(id){if(ids.indexOf(id)>=0)return;var o=vSorted([id],wd,t)[0];o.f=ffit(id);if(o.f.ok){o.extra=1;o.i=99;main.push(o)}});
 main.sort(function(a,b){return ord[a.s.c]-ord[b.s.c]||b.f.lv-a.f.lv||b.f.k-a.f.k||a.i-b.i});
@@ -230,9 +243,9 @@ else if(it.k==="meal"){cls="food";ti=mealTitle(it);var ids=mealIds(it.m,it.z);
 if(it.hotel)body=hotelBf();
 else if(!ids)body='<p>'+(it.m==="col"?"Prima di partire, qualcosa al volo vicino all'alloggio.":"Vicino all'alloggio, per non riattraversare la città.")+'</p>'+nearBox(it.m);
 else{var pl=prefList(ids,WD,it.t,it.m,it.z),L=pl.main,first=L.filter(function(o){return o.s.c==="ok"})[0]||L[0];
-body='<p>'+(it.m==="col"?(it.near?"A pochi passi dall'alloggio.":"Appena usciti dalla stazione, a pochi passi."):it.m==="pra"?((PD.T.praZ||{})[it.z]||PD.T.pra+": "+(it.d>=60?"un'ora a tavola, con calma.":"un pranzo veloce.")):(TRIP.multi&&P.kind!=="last"?"La cena della giornata, senza fretta.":"Mangia qui e non in aeroporto: si spende meno e si mangia meglio. Tieni d'occhio l'orologio."))+'</p><div class="eat"><h3>Dove mangiare</h3>'+eatUL(pl,WD,it.m,it.z)+fpNote()+'</div>'+(first?goBtn(vq(first.v),"walking","Portami lì","🚶"):"")}}
-else if(it.k==="snk"){cls="food";ti="Ultimo assaggio prima di partire";var sids=PD.MEAL.snk[it.z]||(it.z==="X"?null:PD.MEAL.snk.A);
-body='<p>Non c\'è tempo per una cena seduti: prendete qualcosa da mangiare in viaggio o in aeroporto prima dei controlli.</p>'+(sids?'<div class="eat"><h3>Dove prenderlo</h3>'+eatUL(prefList(sids,WD,it.t,"snk",it.z),WD,"snk",it.z)+fpNote()+'</div>':nearBox("snk"))}
+body='<p>'+(it.m==="col"?(it.near?"A pochi passi dall'alloggio.":"Appena usciti dalla stazione, a pochi passi."):it.m==="pra"?((PD.T.praZ||{})[it.z]||PD.T.pra+": "+(it.d>=60?"un'ora a tavola, con calma.":"un pranzo veloce.")):(TRIP.multi&&P.kind!=="last"?"La cena della giornata, senza fretta.":"Mangia qui e non in aeroporto: si spende meno e si mangia meglio. Tieni d'occhio l'orologio."))+'</p>'+(ST.th==="eno"&&it.m!=="col"?'<p class="meta">🍷 Tavola lunga: piatti tipici e un calice di vino locale. Se puoi, prenota.</p>':'')+'<div class="eat"><h3>Dove mangiare</h3>'+eatUL(pl,WD,it.m,it.z)+fpNote()+'</div>'+(first?goBtn(vq(first.v),"walking","Portami lì","🚶"):"")}}
+else if(it.k==="snk"){cls="food";ti=it.x?"Aperitivo e assaggi":"Ultimo assaggio prima di partire";var sids=PD.MEAL.snk[it.z]||(it.z==="X"?null:PD.MEAL.snk.A);
+body=(it.x?'<p>Una pausa golosa prima di cena: stuzzichini, un calice o un dolce tipico, assaggiando senza fretta.</p>':'<p>Non c\'è tempo per una cena seduti: prendete qualcosa da mangiare in viaggio o in aeroporto prima dei controlli.</p>')+(sids?'<div class="eat"><h3>Dove prenderlo</h3>'+eatUL(prefList(sids,WD,it.t,"snk",it.z),WD,"snk",it.z)+fpNote()+'</div>':nearBox("snk"))}
 else if(it.k==="act"){var s=S[it.id];cls=s.cls;ti=s.t;var meta=s.m,lg=it.leg;
 if(PD.fx.meta)meta=PD.fx.meta(it,meta,E);
 if(s.sun){var ss=sunset(P.date);if(Math.abs(it.t+it.d/2-ss)<120)meta+=" Il sole tramonta alle "+fmt(ss)+": "+(it.t+it.d>ss?"sei qui al momento giusto per la luce del tramonto.":"goditi l'ultima luce.")}
@@ -249,7 +262,7 @@ function rangeTxt(){var c=CFG,a=dateObj(c.date),b=dateObj(c.date_r);if(TRIP.n===
 return a.getUTCMonth()===b.getUTCMonth()?a.getUTCDate()+"–"+b.getUTCDate()+" "+MESI[b.getUTCMonth()]:dateShort(c.date)+" – "+dateShort(c.date_r)}
 function renderHero(){var c=CFG,A=TRIP.A,n=TRIP.n,ttl=n===1?PD.n+" in un giorno":PD.n+" in "+n+" giorni";
 $("#hero h1").textContent=ttl;
-$("#hsub").textContent=(n===1?cap(dateLong(c.date))+".":"Da "+dateLong(c.date).replace(/ \d{4}$/,"")+" a "+dateLong(c.date_r)+": "+n+" giorni e "+(n-1)+(n===2?" notte.":" notti."))+" Atterraggio a "+A.n+" alle "+fmt(toMin(c.a_arr))+", volo di ritorno"+(TRIP.R&&TRIP.R!==A?" da "+TRIP.R.n:"")+" alle "+fmt(toMin(c.r_dep))+". "+(c.ppl===1?"Una persona":c.ppl+" persone")+(n>1?", alloggio in "+home().where+".":", "+PD.T.move+".");
+$("#hsub").textContent=(n===1?cap(dateLong(c.date))+".":"Da "+dateLong(c.date).replace(/ \d{4}$/,"")+" a "+dateLong(c.date_r)+": "+n+" giorni e "+(n-1)+(n===2?" notte.":" notti."))+" Atterraggio a "+A.n+" alle "+fmt(toMin(c.a_arr))+", volo di ritorno"+(TRIP.R&&TRIP.R!==A?" da "+TRIP.R.n:"")+" alle "+fmt(toMin(c.r_dep))+". "+(c.ppl===1?"Una persona":c.ppl+" persone")+(n>1?", alloggio in "+home().where+".":", "+PD.T.move+".")+styTxt(c);
 $("#appt").innerHTML=esc(PD.n)+" <b>· "+esc(rangeTxt())+"</b>";
 $("#sps").textContent=PD.n+" · "+rangeTxt();
 document.title="Viaticum · "+ttl}
@@ -664,15 +677,16 @@ $("#apts").addEventListener("change",function(){if(!form.dataset.rt){var t=($('i
 $("#rapts").addEventListener("change",function(){form.dataset.rt="1";rtSync()});
 $("#sfuso").textContent="Orari in ora locale ("+PD.T.fuso+"). I dati restano solo su questo telefono.";
 function dnote(){var a=form.date.value,b=form.date_r.value,n=1;if(a&&b&&b>a)n=Math.round((dateObj(b)-dateObj(a))/864e5)+1;
-$("#dnote").textContent=!a?"Scegli le date: per una gita in giornata lascia il ritorno uguale all'andata.":n===1?"Gita in giornata, senza hotel.":n+" giorni e "+(n-1)+(n===2?" notte: aggiungi l'hotel qui sotto.":" notti: aggiungi l'hotel qui sotto.");
+$("#dnote").textContent=!a?"Scegli le date: per una gita in giornata lascia il ritorno uguale all'andata.":n===1?"Gita in giornata, senza hotel.":n+" giorni e "+(n-1)+(n===2?" notte: dopo i voli aggiungerai l'hotel.":" notti: dopo i voli aggiungerai l'hotel.");
 var multi=n>1,si=$("#stayin");if(si.hidden===multi){si.hidden=!multi;$("#stayno").hidden=multi;if(multi){si.classList.remove("pop");void si.offsetWidth;si.classList.add("pop")}}
-$("#rlab").textContent=multi?"Ritorno":"Ritorno (stesso giorno)"}
+$("#rlab").textContent=multi?"Ritorno":"Ritorno (stesso giorno)";paintSteps()}
 form.date.addEventListener("change",function(){form.date_r.min=form.date.value;if(!form.date_r.value||form.date_r.value<form.date.value)form.date_r.value=form.date.value;dnote()});
 form.date_r.addEventListener("change",dnote);$$('input[type=date],input[type=time]',form).forEach(function(i){i.addEventListener("click",function(){try{if(i.showPicker)i.showPicker()}catch(e){}})});form.date.addEventListener("input",dnote);form.date_r.addEventListener("input",dnote);
 function openSetup(first){var c=CFG||{},s=c.stay||{};form.date.value=c.date||"";form.date.min=paris().d;form.date_r.value=c.date_r||c.date||"";form.date_r.min=c.date||paris().d;$("#ppl").textContent=c.ppl||2;form.from.value=c.from||"";
 var to0=c.to&&PD.PAR[c.to]?c.to:APK[0],rt0=c.rt&&PD.PAR[c.rt]?c.rt:to0;$$('input[name=to]',form).forEach(function(r){r.checked=r.value===to0});$$('input[name=rto]',form).forEach(function(r){r.checked=r.value===rt0});if(rt0!==to0)form.dataset.rt="1";else delete form.dataset.rt;rtSync();["a_num","a_dep","a_arr","r_num","r_imb","r_dep"].forEach(function(k){form[k].value=c[k]||""});
 form.sz.value=s.zone||PD.HZ[0][0];form.saddr.value=s.addr||"";form.sin.value=s.cin||"15:00";form.sout.value=s.cout||"11:00";form.sprice.value=s.price||"";form.stype.value=s.type||PD.TAXDEF||PD.TAX[0][0];
-$$("input,select",form).forEach(function(x){x.classList.remove("bad")});serr.textContent="";$("#scancel").hidden=!CFG;$("#stayin").hidden=true;$("#stayno").hidden=false;setHead();dnote();
+var sv=sty(c);$$("input[name=th]",form).forEach(function(r){r.checked=r.value===sv.th});$$("input[name=pc]",form).forEach(function(r){r.checked=r.value===sv.pc});
+$$("input,select",form).forEach(function(x){x.classList.remove("bad")});serr.textContent="";$("#scancel").hidden=!CFG;$("#stayin").hidden=true;$("#stayno").hidden=false;setHead();dnote();showStep(0);
 closeSheet();setup.classList.add("on");setup.setAttribute("aria-hidden","false");setup.scrollTop=0;setTimeout(function(){document.documentElement.classList.remove("hold")},600)}
 function closeSetup(){setup.classList.remove("on");setup.setAttribute("aria-hidden","true")}
 /* ===== destinazioni ===== */
@@ -754,25 +768,48 @@ $("#scancel").addEventListener("click",function(){closeSetup();if(CFG)setCity(PD
 function paintReq(){var multi=!!form.date_r.value&&form.date_r.value>form.date.value,adr=multi&&form.sz.value==="altro";
 [["date",1],["a_arr",1],["r_dep",1],["saddr",adr]].forEach(function(r){var el=form[r[0]];if(!el)return;var lab=el.closest("label"),need=!!r[1]&&!el.value.trim();lab.classList.toggle("req",!!r[1]);lab.classList.toggle("need",need);if(!need)el.classList.remove("bad")});
 var sl=form.saddr.closest("label").firstElementChild;sl.textContent=adr?"Indirizzo dell'alloggio":"Indirizzo (facoltativo)";
-var left=[["date","la data di andata"],["a_arr","l'atterraggio"],["r_dep","la partenza del ritorno"]].filter(function(r){return !form[r[0]].value}).length+(adr&&!form.saddr.value.trim()?1:0);
+var left=(STEP===0?[["date"]]:STEP===1?[["a_arr"],["r_dep"]]:[]).filter(function(r){return !form[r[0]].value}).length+(STEP===2&&adr&&!form.saddr.value.trim()?1:0);
 var rn=$("#reqn");if(rn)rn.classList.toggle("done",!left)}
 form.addEventListener("input",paintReq);form.addEventListener("change",paintReq);
 var _os=openSetup;openSetup=function(){_os.apply(this,arguments);paintReq()};PAR.openSetup=openSetup;
-form.addEventListener("submit",function(e){e.preventDefault();var bad=[],msg="";
-function req(k,t){if(!form[k].value){bad.push(k);msg=msg||t}}
-req("date","Scegli la data di andata.");req("a_arr","Inserisci l'orario di atterraggio a "+PD.n+".");req("r_dep","Inserisci l'orario di partenza del volo di ritorno.");
-var d0=form.date.value,d1=form.date_r.value||d0,multi=d1>d0,n=multi?Math.round((dateObj(d1)-dateObj(d0))/864e5)+1:1;
-var la=toMin(form.a_arr.value),rd=toMin(form.r_dep.value),ri=toMin(form.r_imb.value),ad=toMin(form.a_dep.value);
-if(!msg&&d1<d0){bad.push("date_r");msg="Il ritorno non può essere prima dell'andata."}
-if(!msg&&n>MAXD){bad.push("date_r");msg="L'app pianifica viaggi fino a "+MAXD+" giorni."}
-if(!msg&&!multi&&rd<=la){bad.push("r_dep");msg="Il volo di ritorno deve partire dopo l'atterraggio (gita in giornata)."}
-if(!msg&&ri!=null&&ri>=rd){bad.push("r_imb");msg="L'apertura dell'imbarco deve essere prima della partenza."}
-if(!msg&&ad!=null&&ad>=la){bad.push("a_dep");msg="La partenza dell'andata deve essere prima dell'atterraggio."}
-if(!msg&&multi&&form.sz.value==="altro"&&!form.saddr.value.trim()){bad.push("saddr");msg="Scrivi l'indirizzo dell'alloggio, oppure scegli una zona."}
-$$("input,select",form).forEach(function(x){x.classList.toggle("bad",bad.indexOf(x.name)>=0)});
-if(msg){serr.textContent=msg;paintReq();var f=form[bad[0]];if(f)try{f.scrollIntoView({block:"center",behavior:"smooth"});f.focus({preventScroll:true})}catch(x){}return}
+/* ===== form a passi: date e partenza → voli → hotel (solo più giorni) → stile ===== */
+var STEP=0,SN={0:"Date",1:"Voli",2:"Hotel",3:"Stile"};
+function isMulti(){var a=form.date.value,b=form.date_r.value;return !!a&&!!b&&b>a}
+function stepList(){return isMulti()?[0,1,2,3]:[0,1,3]}
+function paintSteps(){var L=stepList(),i=L.indexOf(STEP);if(i<0){STEP=1;i=1}
+$("#sstp").innerHTML=L.map(function(k,n){return '<li><button type="button" data-k="'+k+'" class="'+(k===STEP?"on":n<i?"done":"")+'"'+(k===STEP?' aria-current="step"':'')+'><b>'+(n<i?"✓":n+1)+'</b><span>'+SN[k]+'</span></button></li>'}).join("");
+var last=i===L.length-1;$("#sprev").hidden=i<=0;$("#snext").hidden=last;$("#ssub").hidden=!last}
+function showStep(k,dir){STEP=k;$$("fieldset[data-s]",form).forEach(function(f){var on=+f.dataset.s===k;if(f.hidden===on){f.hidden=!on;if(on&&dir){f.classList.remove("sl","sr");void f.offsetWidth;f.classList.add(dir>0?"sr":"sl")}}});
+form.dataset.st=k;paintSteps();serr.textContent="";
+var rn=$("#reqn");rn.hidden=k===3;rn.querySelector("span").textContent=k===0?"data di andata":k===1?"orario di atterraggio e di partenza del ritorno":"indirizzo, solo se scegli «Altra zona»";
+if(k===3)styDesc();paintReq();try{setup.scrollTo({top:0})}catch(e){setup.scrollTop=0}}
+function verr(upTo){var d0=form.date.value,d1=form.date_r.value||d0,multi=d1>d0,n=multi?Math.round((dateObj(d1)-dateObj(d0))/864e5)+1:1;
+var la=toMin(form.a_arr.value),rd=toMin(form.r_dep.value),ri=toMin(form.r_imb.value),ad=toMin(form.a_dep.value),E=function(s,b,m){return{s:s,bad:[b],msg:m}};
+if(upTo>=0){if(!d0)return E(0,"date","Scegli la data di andata.");if(d1<d0)return E(0,"date_r","Il ritorno non può essere prima dell'andata.");if(n>MAXD)return E(0,"date_r","L'app pianifica viaggi fino a "+MAXD+" giorni.")}
+if(upTo>=1){if(!form.a_arr.value)return E(1,"a_arr","Inserisci l'orario di atterraggio a "+PD.n+".");if(!form.r_dep.value)return E(1,"r_dep","Inserisci l'orario di partenza del volo di ritorno.");
+if(!multi&&rd<=la)return E(1,"r_dep","Il volo di ritorno deve partire dopo l'atterraggio (gita in giornata).");if(ri!=null&&ri>=rd)return E(1,"r_imb","L'apertura dell'imbarco deve essere prima della partenza.");if(ad!=null&&ad>=la)return E(1,"a_dep","La partenza dell'andata deve essere prima dell'atterraggio.")}
+if(upTo>=2&&multi&&form.sz.value==="altro"&&!form.saddr.value.trim())return E(2,"saddr","Scrivi l'indirizzo dell'alloggio, oppure scegli una zona.");
+return null}
+function showErr(e){if(e.s!==STEP)showStep(e.s,-1);$$("input,select",form).forEach(function(x){x.classList.toggle("bad",e.bad.indexOf(x.name)>=0)});serr.textContent=e.msg;paintReq();var f=form[e.bad[0]];if(f)try{f.focus({preventScroll:true})}catch(x){}}
+function goNext(){var e=verr(STEP);if(e){showErr(e);return}var L=stepList(),i=L.indexOf(STEP);if(i<L.length-1)showStep(L[i+1],1)}
+function goPrev(){var L=stepList(),i=L.indexOf(STEP);if(i>0)showStep(L[i-1],-1)}
+$("#snext").addEventListener("click",goNext);$("#sprev").addEventListener("click",goPrev);
+$("#sstp").addEventListener("click",function(e){var b=e.target.closest("button[data-k]");if(!b)return;var k=+b.dataset.k;if(k===STEP)return;if(k<STEP){showStep(k,-1);return}var L=stepList(),pv=L[L.indexOf(k)-1],er=verr(pv);if(er){showErr(er);return}showStep(k,1)});
+/* stile: scelta di tema e ritmo */
+var STYT={th:{cul:"culturale",eno:"enogastronomico",mix:""},pc:{rel:"tranquillo",int:"intenso",mid:""}};
+function styVals(){return{th:($('input[name=th]:checked',form)||{}).value||"mix",pc:($('input[name=pc]:checked',form)||{}).value||"mid"}}
+function styDesc(){var v=styVals(),a=[];
+a.push(v.pc==="rel"?"si parte più tardi, con meno tappe e più pause":v.pc==="int"?"giornate lunghe, più tappe e pasti veloci":"un ritmo equilibrato");
+a.push(v.th==="eno"?"tavole lunghe con piatti tipici, un aperitivo nel pomeriggio e meno monumenti":v.th==="cul"?"più musei e monumenti, visite più approfondite e pasti più rapidi":"il mix classico di monumenti, quartieri e buon cibo");
+$("#sstyd").textContent="Così: "+a.join("; ")+". Potrai cambiarlo quando vuoi."}
+form.addEventListener("change",function(e){if(e.target&&(e.target.name==="th"||e.target.name==="pc"))styDesc()});
+function styTxt(c){var v=sty(c),a=[STYT.th[v.th],STYT.pc[v.pc]].filter(Boolean);return a.length?" Stile: "+a.join(", ")+".":""}
+form.addEventListener("submit",function(e){e.preventDefault();var L=stepList();if(STEP!==L[L.length-1]){goNext();return}
+var er=verr(3);if(er){showErr(er);return}
+$$("input,select",form).forEach(function(x){x.classList.remove("bad")});
+var d0=form.date.value,d1=form.date_r.value||d0,multi=d1>d0;
 var to=($('input[name=to]:checked',form)||{}).value||APK[0],rt=($('input[name=rto]:checked',form)||{}).value||to,old=(CFG&&CFG.stay)||{};
-var c={dest:PD.id,date:d0,date_r:d1,ppl:+$("#ppl").textContent||2,from:form.from.value.trim(),fromCode:fromCode(form.from.value),to:to,rt:rt,a_num:form.a_num.value.replace(/\s+/g,"").toUpperCase(),a_dep:form.a_dep.value,a_arr:form.a_arr.value,r_num:form.r_num.value.replace(/\s+/g,"").toUpperCase(),r_imb:form.r_imb.value,r_dep:form.r_dep.value};
+var c={dest:PD.id,date:d0,date_r:d1,ppl:+$("#ppl").textContent||2,from:form.from.value.trim(),fromCode:fromCode(form.from.value),to:to,rt:rt,a_num:form.a_num.value.replace(/\s+/g,"").toUpperCase(),a_dep:form.a_dep.value,a_arr:form.a_arr.value,r_num:form.r_num.value.replace(/\s+/g,"").toUpperCase(),r_imb:form.r_imb.value,r_dep:form.r_dep.value,th:styVals().th,pc:styVals().pc};
 if(multi){var addr=form.saddr.value.trim();c.stay={zone:form.sz.value,addr:addr,cin:form.sin.value||"15:00",cout:form.sout.value||"11:00",price:parseFloat(String(form.sprice.value).replace(",","."))||0,type:form.stype.value};
 if(addr&&addr===old.addr&&old.geo){c.stay.pos=old.pos;c.stay.geo=1}}
 var first=!CFG;if(SAVED&&SAVED.dest!==PD.id){parkCur();SP={};CK={};COPT={}}c.tid=(CFG&&CFG.tid)||newTid();CFG=c;SAVED=c;ls("via-trip",JSON.stringify(c));closeSetup();SEL=0;renderAll();window.dispatchEvent(new Event("voli"));
@@ -799,10 +836,10 @@ $("#shreset").addEventListener("click",function(){if(!confirm("Cancellare TUTTI 
 document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeSheet();if(CFG){closeSetup();closeDest();setCity(PD.id)}}});
 
 /* invio e importazione di un viaggio tramite link */
-function tripLink(c){var k=["dest","date","date_r","ppl","from","fromCode","to","rt","a_num","a_dep","a_arr","r_num","r_imb","r_dep"],o={};k.forEach(function(x){if(c[x]!=null&&c[x]!=="")o[x]=c[x]});if(c.stay){o.stay={};["zone","addr","cin","cout","price","type","pos","geo"].forEach(function(x){if(c.stay[x]!=null)o.stay[x]=c.stay[x]})}
+function tripLink(c){var k=["dest","date","date_r","ppl","from","fromCode","to","rt","a_num","a_dep","a_arr","r_num","r_imb","r_dep","th","pc"],o={};k.forEach(function(x){if(c[x]!=null&&c[x]!=="")o[x]=c[x]});if(c.stay){o.stay={};["zone","addr","cin","cout","price","type","pos","geo"].forEach(function(x){if(c.stay[x]!=null)o.stay[x]=c.stay[x]})}
 return location.origin+location.pathname+"#t="+btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
 function readLink(){var m=/^#t=([\w-]+)/.exec(location.hash||"");if(!m)return null;try{var s=m[1].replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";var o=JSON.parse(decodeURIComponent(escape(atob(s))));
-if(!o||!CITIES[o.dest]||!/^\d{4}-\d\d-\d\d$/.test(o.date||"")||!o.a_arr||!o.r_dep)return null;var c={},str=function(v){return String(v).slice(0,140)};["dest","date","date_r","from","fromCode","to","rt","a_num","a_dep","a_arr","r_num","r_imb","r_dep"].forEach(function(x){if(o[x]!=null)c[x]=str(o[x])});c.ppl=Math.max(1,Math.min(10,+o.ppl||2));
+if(!o||!CITIES[o.dest]||!/^\d{4}-\d\d-\d\d$/.test(o.date||"")||!o.a_arr||!o.r_dep)return null;var c={},str=function(v){return String(v).slice(0,140)};["dest","date","date_r","from","fromCode","to","rt","a_num","a_dep","a_arr","r_num","r_imb","r_dep"].forEach(function(x){if(o[x]!=null)c[x]=str(o[x])});if(THS.indexOf(o.th)>=0)c.th=o.th;if(PCS.indexOf(o.pc)>=0)c.pc=o.pc;c.ppl=Math.max(1,Math.min(10,+o.ppl||2));
 if(o.stay&&typeof o.stay==="object"){c.stay={};["zone","addr","cin","cout","type"].forEach(function(x){if(o.stay[x]!=null)c.stay[x]=str(o.stay[x])});c.stay.price=+o.stay.price||0;if(Array.isArray(o.stay.pos)&&o.stay.pos.length===2&&isFinite(o.stay.pos[0])&&isFinite(o.stay.pos[1])){c.stay.pos=[+o.stay.pos[0],+o.stay.pos[1]];c.stay.geo=1}}return c}catch(e){return null}}
 $("#shlink").addEventListener("click",function(){if(!CFG){toast("Imposta prima il tuo viaggio");return}var u=tripLink(CFG),d=dOf(CFG.dest);closeSheet();
 if(navigator.share)navigator.share({title:"Viaggio a "+d.n+" con Viaticum",text:"Apri il mio viaggio a "+d.n+" ("+rangeOf(CFG)+") su Viaticum:",url:u}).catch(function(){});else{try{navigator.clipboard.writeText(u).then(function(){toast("Link copiato")},function(){prompt("Copia il link",u)})}catch(e){prompt("Copia il link",u)}}});
