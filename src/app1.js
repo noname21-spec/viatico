@@ -884,5 +884,5 @@ window.addEventListener("popstate",function(){if(pop){pop=false;return}if(!has)r
 window.viaNavTick=recon})();
 /* avvio */
 if(CFG&&CFG.date&&CFG.a_arr&&CFG.r_dep){if(!CFG.date_r)CFG.date_r=CFG.date;setCity(PD.id);renderAll();document.documentElement.classList.remove("hold");if(TRIP.multi&&CFG.stay&&CFG.stay.addr&&!CFG.stay.geo)geocode();if(OPEN==="setup")openSetup(false)}
-else{CFG=null;document.documentElement.classList.add("hold");if(PICK&&CITIES[PICK]){setCity(PD.id);openSetup(true)}else{setCity(null);setTimeout(function(){if(window.viaTour&&!viaTour.seen())viaTour.open(openDest);else openDest()},matchMedia("(prefers-reduced-motion: reduce)").matches?500:2600)}}
+else{CFG=null;document.documentElement.classList.add("hold");if(PICK&&CITIES[PICK]){setCity(PD.id);openSetup(true)}else{setCity(null);setTimeout(function(){if(window.viaTour&&!viaTour.seen())viaTour.open(openDest);else openDest()},matchMedia("(prefers-reduced-motion: reduce)").matches?500:2700)}}
 })();
