@@ -666,7 +666,7 @@ function renderAll(){if(!CFG)return;if(PAR.flush)PAR.flush();TRIP=buildTrip(CFG)
 renderHero();renderDays();renderBar();renderStay();renderShort();renderItin();renderAvv();liveTick();
 function rest(){PREADY=false;meteo();PREADY=true;renderVoli();renderPasti();renderCosti(false);renderSpese();renderConsigli()}
 /* all'avvio le schede non visibili si preparano dopo la prima schermata, quando l'intro è finita; al primo tocco subito */
-if(BOOT){BOOT=false;var bt=setTimeout(function(){PAR.flush&&PAR.flush()},3600);PAR.flush=function(){clearTimeout(bt);PAR.flush=null;rest();PAR.emit()}}else rest();
+if(BOOT){BOOT=false;var bt=setTimeout(function(){PAR.flush&&PAR.flush()},3900);PAR.flush=function(){clearTimeout(bt);PAR.flush=null;rest();PAR.emit()}}else rest();
 PAR.emit()}
 PAR.render=renderAll;["pointerdown","keydown","change"].forEach(function(t){document.addEventListener(t,function(){if(PAR.flush)PAR.flush()},{capture:true,passive:true})});
 setInterval(liveTick,30000);document.addEventListener("visibilitychange",function(){if(!document.hidden)liveTick()});window.addEventListener("pageshow",function(e){if(e.persisted)liveTick()});
@@ -884,5 +884,5 @@ window.addEventListener("popstate",function(){if(pop){pop=false;return}if(!has)r
 window.viaNavTick=recon})();
 /* avvio */
 if(CFG&&CFG.date&&CFG.a_arr&&CFG.r_dep){if(!CFG.date_r)CFG.date_r=CFG.date;setCity(PD.id);renderAll();document.documentElement.classList.remove("hold");if(TRIP.multi&&CFG.stay&&CFG.stay.addr&&!CFG.stay.geo)geocode();if(OPEN==="setup")openSetup(false)}
-else{CFG=null;document.documentElement.classList.add("hold");if(PICK&&CITIES[PICK]){setCity(PD.id);openSetup(true)}else{setCity(null);setTimeout(function(){if(window.viaTour&&!viaTour.seen())viaTour.open(openDest);else openDest()},matchMedia("(prefers-reduced-motion: reduce)").matches?500:2300)}}
+else{CFG=null;document.documentElement.classList.add("hold");if(PICK&&CITIES[PICK]){setCity(PD.id);openSetup(true)}else{setCity(null);setTimeout(function(){if(window.viaTour&&!viaTour.seen())viaTour.open(openDest);else openDest()},matchMedia("(prefers-reduced-motion: reduce)").matches?500:2600)}}
 })();
