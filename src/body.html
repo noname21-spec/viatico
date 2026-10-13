@@ -59,6 +59,7 @@
 <button id="zi" type="button" aria-label="Ingrandisci">+</button>
 <button id="zo" type="button" aria-label="Riduci">−</button>
 <button id="zr" type="button" aria-label="Vista iniziale"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></button>
+<button id="loc" type="button" aria-pressed="false" aria-label="Mostra la mia posizione"><svg viewBox="0 0 24 24"><path d="M20.5 3.5 3.8 10.6l6.4 2.6 2.6 6.4z"/></svg></button>
 <button id="fs" type="button" aria-label="Schermo intero"><svg class="ic1" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><svg class="ic2" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
 </div>
 <div class="mc mc-bl"><button id="lg" type="button" aria-expanded="false" aria-controls="lgp">Legenda</button><div id="lgp" class="lgp legend" hidden></div></div>
@@ -179,13 +180,16 @@
 <fieldset class="sgrp"><div class="sglg">✈️ Volo</div>
 <label class="f w"><span>Aeroporto di partenza</span><input type="text" name="from" list="aplist" placeholder="es. Bologna (BLQ)" autocapitalize="words" spellcheck="false"></label>
 <datalist id="aplist"></datalist>
+<h3 class="ssub w">🛫 Andata</h3>
 <div class="f w"><span class="sub">Atterri a</span>
 <div class="apts" id="apts" role="radiogroup" aria-label="Aeroporto di arrivo"></div></div>
-<h3 class="ssub w">🛫 Andata</h3>
 <label class="f w"><span>Numero del volo</span><input type="text" name="a_num" placeholder="es. FR1234" autocapitalize="characters" maxlength="10"></label>
 <label class="f"><span>Partenza</span><input type="time" name="a_dep"></label>
 <label class="f"><span id="alab">Atterraggio</span><input type="time" name="a_arr" required></label>
 <h3 class="ssub w">🛬 Ritorno</h3>
+<div class="f w" id="rapf"><span class="sub">Riparti da</span>
+<div class="apts" id="rapts" role="radiogroup" aria-label="Aeroporto di ritorno"></div>
+<p class="snote" id="rapn" hidden>Aeroporto diverso da quello di arrivo: orari e trasferimenti del ritorno useranno questo.</p></div>
 <label class="f w"><span>Numero del volo</span><input type="text" name="r_num" placeholder="es. FR1235" autocapitalize="characters" maxlength="10"></label>
 <label class="f"><span>Apertura imbarco</span><input type="time" name="r_imb"></label>
 <label class="f"><span>Partenza</span><input type="time" name="r_dep" required></label>

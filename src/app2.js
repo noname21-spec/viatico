@@ -45,7 +45,8 @@ lines.push({pl:pl,halo:halo,walk:walk,k:ch.k});if(walk)snapWalk(ch,pl,halo,funct
 if(!walk)ch.p.forEach(function(s){if(s[2]&&!stn[s[2]])stn[s[2]]=s})});
 Object.keys(stn).forEach(function(n){var s=stn[n],key=s[3]||0,m=L.circleMarker([s[0],s[1]],{radius:key?5:3.5,color:d?"#eef0ff":"#0f1430",weight:2,fillColor:d?"#141832":"#ffffff",fillOpacity:1}).addTo(gRoute);
 m.bindTooltip(n,{permanent:key>=1,direction:"right",offset:[6,0],className:"lst"+(key===2?" key":"")});if(!key)m.on("click",function(){m.openTooltip()})});
-var A=P.A;if(ends){var am=L.marker(A.pos,{icon:icon("lap","✈️",30),zIndexOffset:900}).addTo(gStops);bind(am,"Aeroporto di "+A.n,A.arr,A.gm)}
+var A=P.A,Rr=P.R||A;function apm(X){var am=L.marker(X.pos,{icon:icon("lap","✈️",30),zIndexOffset:900}).addTo(gStops);bind(am,"Aeroporto di "+X.n,X.arr,X.gm)}
+if(P.kind==="single"||P.kind==="first")apm(A);if((P.kind==="single"&&Rr!==A)||P.kind==="last")apm(Rr);
 if(multi){var hm=L.marker(H.pos,{icon:icon("lap lhm","🏨",32),zIndexOffset:950,title:"Alloggio"}).addTo(gStops);bind(hm,"🏨 "+H.name,"Zona "+H.zn+". Check-in dalle "+H.cin+", check-out entro le "+H.cout+"."+(H.geo?"":" Posizione indicativa."),H.q)}
 P.items.forEach(function(it){if(it.k!=="act")return;var s=PD.STOPS[it.id],mk=L.marker(s.pos,{icon:icon("lpin",it.n,30),zIndexOffset:1000,title:"Tappa "+it.n}).addTo(gStops);bind(mk,it.n+" · "+PAR.fmt(it.t)+" · "+s.t,s.d,s.q)});
 var wd=PAR.wd(),seen={};
@@ -81,6 +82,53 @@ function restyle(){var d=dark();lines.forEach(function(o){o.halo.setStyle({color
 function anim(){if(!map||matchMedia("(prefers-reduced-motion: reduce)").matches)return;lines.forEach(function(o,i){var p=o.pl._path;if(!p||!p.animate)return;var dl=150+i*120;
 if(o.walk){p.animate([{opacity:0},{opacity:1}],{duration:500,delay:dl,fill:"backwards"});return}
 var len=p.getTotalLength();p.style.strokeDasharray=len+" "+len;var a=p.animate([{strokeDashoffset:len},{strokeDashoffset:0}],{duration:700,delay:dl,fill:"backwards",easing:"cubic-bezier(.5,0,.3,1)"});a.onfinish=function(){p.style.strokeDasharray=""}})}
+/* ===== la mia posizione in tempo reale (resta sul telefono, non viene salvata né inviata) ===== */
+function locInit(){
+var b=document.getElementById("loc");if(!b)return;
+if(!navigator.geolocation){b.hidden=true;return}
+var wid=null,want=false,follow=false,far=false,fix=null,mk=null,ac=null,first=true,tm=0,lastMove=0,dragAt=0,gMe=L.layerGroup().addTo(map),tabs=document.querySelectorAll(".tabr"),mt=document.getElementById("t-mappa"),IDLE=30*60*1000;
+function state(){return !want?"off":fix?"on":"search"}
+function paintBtn(){var s=state();b.classList.toggle("on",s!=="off");b.classList.toggle("fol",s==="on"&&follow);b.classList.toggle("srch",s==="search");b.setAttribute("aria-pressed",s!=="off"?"true":"false");
+b.setAttribute("aria-label",s==="off"?"Mostra la mia posizione":s==="search"?"Cerco la tua posizione: tocca per annullare":follow||far?"Nascondi la mia posizione":"Torna alla mia posizione")}
+function running(){return want&&!document.hidden&&!!mt&&mt.checked}
+function sync(){if(running()){if(wid==null)try{wid=navigator.geolocation.watchPosition(ok,err,{enableHighAccuracy:true,maximumAge:4000,timeout:25000})}catch(e){wid=null}}
+else if(wid!=null){try{navigator.geolocation.clearWatch(wid)}catch(e){}wid=null}}
+function clear(){gMe.clearLayers();mk=null;ac=null;fix=null}
+function locOff(msg){want=false;follow=false;far=false;first=true;clearTimeout(tm);sync();clear();paintBtn();if(msg)show("La mia posizione",msg)}
+function arm(){clearTimeout(tm);tm=setTimeout(function(){locOff("Ho spento la posizione per risparmiare batteria. Tocca di nuovo il pulsante per riattivarla.")},IDLE)}
+function near(){var P=PAR.plan,T=PAR.trip,best=null;if(!P||!fix)return null;
+function c(n,pos,q){var d=hv(fix,pos);if(!best||d<best.d)best={n:n,d:d,q:q}}
+P.items.forEach(function(it){if(it.k==="act"){var x=PD.STOPS[it.id];if(x)c(it.n+" · "+x.t,x.pos,x.q)}});
+if(T&&T.multi){var H=PAR.home();if(H&&H.pos)c("l'alloggio",H.pos,H.q)}return best}
+function dist(m){return m<950?Math.max(10,Math.round(m/10)*10)+" m":(m/1000).toFixed(m<10000?1:0).replace(".",",")+" km"}
+function ok(p){var cc=p.coords,now=Date.now(),ll=[cc.latitude,cc.longitude];
+if(!isFinite(ll[0])||!isFinite(ll[1]))return;
+if(fix&&hv(fix,ll)<3&&Math.abs((ac?ac.getRadius():0)-cc.accuracy)<8)return;
+if(!fix||hv(fix,ll)>50)lastMove=now,arm();
+var wasFix=!!fix;fix=ll;
+if(!mk){var ic=L.divIcon({className:"lme",html:"<i></i><u></u><b></b>",iconSize:[22,22],iconAnchor:[11,11]});
+ac=L.circle(ll,{radius:Math.min(cc.accuracy||30,2000),color:"#2f7df6",weight:1,opacity:.5,fillColor:"#2f7df6",fillOpacity:.12,interactive:false}).addTo(gMe);
+mk=L.marker(ll,{icon:ic,interactive:false,keyboard:false,zIndexOffset:2000,title:"La mia posizione"}).addTo(gMe)}
+else{mk.setLatLng(ll);ac.setLatLng(ll);ac.setRadius(Math.min(cc.accuracy||30,2000))}
+var el=mk.getElement();if(el){var h=cc.heading,mv=h!=null&&isFinite(h)&&(cc.speed||0)>0.8;el.classList.toggle("hd",mv);if(mv)el.style.setProperty("--hd",Math.round(h)+"deg")}
+if(!wasFix||first){first=false;var d=hv(ll,PD.LL);far=d>40000;
+if(far){follow=false;show("La mia posizione","Sei a circa "+Math.round(d/1000)+" km da "+PD.n+": il punto blu è fuori dalla mappa della città. Tocca di nuovo il pulsante per nasconderlo.")}
+else{follow=true;try{map.flyTo(ll,Math.max(map.getZoom(),16),{duration:.9})}catch(e){}var n=near();if(n)show("Sei qui","Il punto più vicino dell'itinerario è «"+n.n+"», a "+dist(n.d)+(cc.accuracy>60?" (posizione approssimata, ±"+Math.round(cc.accuracy)+" m)":"")+".",n.q);else show("Sei qui","Il punto blu è la tua posizione in tempo reale.")}
+paintBtn();return}
+if(follow&&now-dragAt>4000)try{map.panTo(ll,{animate:true,duration:.6,easeLinearity:.5})}catch(e){}
+paintBtn()}
+var errAt=0;
+function err(e){var now=Date.now();if(e&&e.code===1){locOff("Posizione non consentita. Per usarla attiva la localizzazione per Viaticum dalle impostazioni del telefono o del browser, poi riprova.");return}
+if(now-errAt<20000)return;errAt=now;show("La mia posizione",e&&e.code===3?"Non riesco ancora a trovarti: se sei al chiuso prova vicino a una finestra. Continuo a cercare.":"Posizione non disponibile al momento: serve segnale GPS o rete. Continuo a cercare.")}
+b.addEventListener("click",function(){var s=state();
+if(s==="off"){want=true;follow=false;far=false;first=true;errAt=0;paintBtn();show("La mia posizione","Cerco la tua posizione… La posizione resta sul telefono e viene usata solo mentre guardi la mappa.");arm();sync()}
+else if(s==="on"&&!follow&&!far&&fix){follow=true;dragAt=0;try{map.flyTo(fix,Math.max(map.getZoom(),16),{duration:.6})}catch(e){}paintBtn();arm()}
+else locOff()});
+map.on("dragstart",function(){dragAt=Date.now();if(follow){follow=false;paintBtn()}arm&&want&&arm()});
+document.addEventListener("visibilitychange",sync);
+[].forEach.call(tabs,function(t){t.addEventListener("change",sync)});
+addEventListener("pagehide",function(){if(wid!=null)try{navigator.geolocation.clearWatch(wid)}catch(e){}wid=null});
+paintBtn()}
 function init(){if(!window.L){off.textContent="La mappa non si è caricata: serve una connessione. Riprova quando sei online.";return}
 el.hidden=false;map=L.map(el,{zoomControl:false,attributionControl:true,zoomSnap:.25});
 gRoute=L.layerGroup().addTo(map);gStops=L.layerGroup().addTo(map);gFood=L.layerGroup();gPh=L.layerGroup();gWater=L.layerGroup();
@@ -90,7 +138,7 @@ document.querySelector(".mc-tr").addEventListener("click",function(e){var b=e.ta
 if(b.id==="zi")map.zoomIn();else if(b.id==="zo")map.zoomOut();else if(b.id==="zr"&&bnds)map.flyToBounds(bnds,{paddingTopLeft:[16,24],paddingBottomRight:[48,24],maxZoom:15,duration:.8});else if(b.id==="fs"){setTimeout(function(){map.invalidateSize()},350);setTimeout(function(){map.invalidateSize()},800)}});
 var dm=document.getElementById("dm");if(dm)dm.addEventListener("change",function(){setTimeout(function(){restyle();draw()},50)});try{mq.addEventListener("change",function(){restyle();draw()})}catch(e){}
 var tab=document.getElementById("t-mappa");tab.addEventListener("change",function(){if(tab.checked)setTimeout(function(){map.invalidateSize();if(bnds)map.fitBounds(bnds,{paddingTopLeft:[16,24],paddingBottomRight:[48,24],maxZoom:15});anim()},150)});
-PAR.on(function(){waterLoaded=false;gWater.clearLayers();draw()});draw();
+PAR.on(function(){waterLoaded=false;gWater.clearLayers();draw()});draw();try{locInit()}catch(e){console.error("loc",e&&e.stack)}
 setTimeout(function(){if(!ok&&!navigator.onLine)off.textContent="Sei offline: la mappa mostra solo le zone già viste."},5000)}
 function load(){var sc=document.createElement("script");sc.src="lib/leaflet.js";sc.onload=init;sc.onerror=function(){off.textContent="La mappa non si è caricata: serve una connessione."};document.head.appendChild(sc)}
 if(document.readyState==="complete")load();else addEventListener("load",load);
@@ -119,7 +167,7 @@ else if(it.k==="home"&&it.arr){parts.push("Verso l'alloggio: "+lc(it.leg.txt));n
 else if(it.k==="act"){var s=PD.STOPS[it.id];parts.push("Verso "+s.t+": "+lc(it.leg.txt));node(s.q,s.t,it.leg.mode)}
 else if(it.k==="free"&&it.leg){parts.push("Pausa all'alloggio: "+lc(it.leg.txt));node(H.q,"Alloggio",it.leg.mode)}
 else if(it.k==="night"){parts.push("Rientro: "+lc(it.leg.txt));node(H.q,"Alloggio",it.leg.mode)}
-else if(it.k==="ret"){parts.push("Ritorno: "+lc(it.ret.txt));if(it.multi&&it.ret.toHome)node(H.q,"Alloggio",it.ret.toHome.mode);else if(it.multi)node(H.q,"Alloggio");node(P.A.gm,"Aeroporto di "+P.A.n,"transit")}});
+else if(it.k==="ret"){parts.push("Ritorno: "+lc(it.ret.txt));if(it.multi&&it.ret.toHome)node(H.q,"Alloggio",it.ret.toHome.mode);else if(it.multi)node(H.q,"Alloggio");node((P.R||P.A).gm,"Aeroporto di "+(P.R||P.A).n,"transit")}});
 document.getElementById("route").innerHTML=parts.length?"<b>I mezzi in ordine"+(multi?" (giorno "+(PAR.sel+1)+")":"")+":</b> "+esc(parts.join(" ")):"";
 var h="";for(var i=1;i<nodes.length;i++){h+='<li><a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(nodes[i-1].q)+'&destination='+encodeURIComponent(nodes[i].q)+'&travelmode='+(nodes[i].m==="walk"?"walking":"transit")+'">'+esc(nodes[i-1].t+" → "+nodes[i].t)+'</a></li>'}
 document.getElementById("gmroutes").innerHTML=h||'<li>Oggi nessuno spostamento da pianificare.</li>'}

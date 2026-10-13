@@ -36,6 +36,7 @@ var tzs=new Date(Date.UTC(o.getUTCFullYear(),o.getUTCMonth(),o.getUTCDate(),12))
 var SAVED=lj("via-trip",null);if(SAVED&&SAVED.date&&!SAVED.dest)SAVED.dest="paris";
 var CFG=SAVED&&SAVED.date&&SAVED.dest===PD.id?SAVED:null;
 if(CFG&&(typeof CFG!=="object"||!PD.RET[CFG.to])){if(CFG&&typeof CFG==="object"&&PD.RET&&Object.keys(PD.RET).length)CFG.to=Object.keys(PD.RET)[0];else{CFG=null;SAVED=null}}
+if(CFG&&!PD.RET[CFG.rt])CFG.rt=CFG.to;
 function ss(k,v){try{if(v===undefined)return sessionStorage.getItem(k);if(v===null)sessionStorage.removeItem(k);else sessionStorage.setItem(k,v)}catch(e){return null}}
 var PICK=ss("via-pick"),OPEN=ss("via-open");ss("via-pick",null);ss("via-open",null);
 function nDays(c){if(!c||!c.date_r||c.date_r<=c.date)return 1;return Math.round((dateObj(c.date_r)-dateObj(c.date))/864e5)+1}
@@ -61,7 +62,7 @@ function lc(t){return t.charAt(0).toLowerCase()+t.slice(1)}
 function retOf(ap,id){var R=PD.RET[ap];if(R[id])return R[id];if(!PD.RETC||id==="start")return R.A;var l=legOf(id,"start"),A=R.A;return{min:l.min+A.min,txt:"Verso "+PD.hub.n+": "+lc(l.txt)+" Poi "+lc(A.txt),g:l.g.concat(A.g||[]),rides:l.mode==="metro"?1:0}}
 function access(pos,to){var d=hav(pos,to);if(d<0.25)return{min:3,mode:"walk",d:d};if(d<1.6)return{min:Math.round(d*1.3/4.5*60)+3,mode:"walk",d:d};return{min:Math.round(12+d*2.8),mode:"metro",d:d}}
 /* dall'alloggio all'aeroporto, e dall'arrivo all'alloggio */
-function homeAir(){if(PD.fx.homeAir)return PD.fx.homeAir(E);var l=legOf("home","start"),A=PD.RET[CFG.to].A;return{min:l.min+A.min,txt:(l.mode==="walk"?"A piedi fino a ":(PD.T.ride||"In metro")+" fino a ")+PD.hub.n+" ("+l.min+" minuti), poi "+lc(A.txt),g:l.g.concat(A.g||[])}}
+function homeAir(){if(PD.fx.homeAir)return PD.fx.homeAir(E);var l=legOf("home","start"),A=PD.RET[CFG.rt||CFG.to].A;return{min:l.min+A.min,txt:(l.mode==="walk"?"A piedi fino a ":(PD.T.ride||"In metro")+" fino a ")+PD.hub.n+" ("+l.min+" minuti), poi "+lc(A.txt),g:l.g.concat(A.g||[])}}
 function arrLeg(){if(PD.fx.arrLeg)return PD.fx.arrLeg(E);var l=legOf("start","home");return{min:Math.max(3,l.min),mode:l.mode,txt:"Da "+PD.hub.n+": "+lc(l.txt),g:l.g}}
 function lastRet(prev){var HA=homeAir(),l=prev==="home"?null:legOf(prev,"home");
 return{min:(l?l.min:0)+15+HA.min,txt:(l?"Torna all'alloggio a ritirare i bagagli: "+l.txt.charAt(0).toLowerCase()+l.txt.slice(1)+" Poi: ":"Ritira i bagagli e parti: ")+HA.txt.charAt(0).toLowerCase()+HA.txt.slice(1),g:(l?l.g:[]).concat(HA.g),toHome:l,rides:l&&l.mode==="metro"?1:0}}
@@ -114,20 +115,20 @@ function ridesOf(items){var n=0;items.forEach(function(x){var l=x.leg;if(x.k==="
 
 /* gita in giornata: come la prima versione dell'app */
 function planSingle(c){
-var A=PD.PAR[c.to],land=toMin(c.a_arr),dep=toMin(c.r_dep),imb=toMin(c.r_imb),wd=wdOf(c.date);
-var c0=land+A.inMin,dl=Math.min(dep-A.buf,imb!=null?imb-45:1e9);
-var ctx={single:1,c0:c0,start:"start",dl:dl,wd:wd,date:c.date,endOf:function(p){return retOf(c.to,p)},wantB:c0<10*60+45,wantL:c0<14*60+(PD.LUNCHO||0)&&dl>13*60+30+(PD.LUNCHO||0),wantD:dl>=18*60+15,dinAt:18*60+45,snack:1};
+var A=PD.PAR[c.to],R=PD.PAR[c.rt||c.to],land=toMin(c.a_arr),dep=toMin(c.r_dep),imb=toMin(c.r_imb),wd=wdOf(c.date);
+var c0=land+A.inMin,dl=Math.min(dep-R.buf,imb!=null?imb-45:1e9);
+var ctx={single:1,c0:c0,start:"start",dl:dl,wd:wd,date:c.date,endOf:function(p){return retOf(c.rt||c.to,p)},wantB:c0<10*60+45,wantL:c0<14*60+(PD.LUNCHO||0)&&dl>13*60+30+(PD.LUNCHO||0),wantD:dl>=18*60+15,dinAt:18*60+45,snack:1};
 var x=planDay(PD.SINGLE.acts,ctx,{single:1}),r=x.r;
 var items=[{k:"air",t:land,d:A.inMin,c0:c0}].concat(r.items);
 items.push({k:"ret",t:r.end,d:r.ret.min,ret:r.ret,arr:r.end+r.ret.min,slack:r.slack,dl:dl});
 var n=0;items.forEach(function(it){if(it.k==="act")it.n=++n});
-return{kind:"single",i:0,date:c.date,wd:wd,items:items,acts:x.acts,dropped:x.dropped,shrunk:x.shrunk,none:x.none,c0:c0,dl:dl,land:land,dep:dep,imb:imb,leave:r.end,prev:r.prev,B:r.B,L:r.L,D:r.D,A:A,rides:ridesOf(items)+(A.xr||0)}}
+return{kind:"single",i:0,date:c.date,wd:wd,items:items,acts:x.acts,dropped:x.dropped,shrunk:x.shrunk,none:x.none,c0:c0,dl:dl,land:land,dep:dep,imb:imb,leave:r.end,prev:r.prev,B:r.B,L:r.L,D:r.D,A:A,R:R,rides:ridesOf(items)+((A.xr||0)+(R.xr||0))/2}}
 
 /* viaggio di più giorni */
-function frame(c,i,n){var A=PD.PAR[c.to],date=addDays(c.date,i),wd=wdOf(date),kind=i===0?"first":i===n-1?"last":"mid",f={i:i,date:date,wd:wd,kind:kind,A:A,acts:[]};
+function frame(c,i,n){var A=PD.PAR[c.to],R=PD.PAR[c.rt||c.to],date=addDays(c.date,i),wd=wdOf(date),kind=i===0?"first":i===n-1?"last":"mid",f={i:i,date:date,wd:wd,kind:kind,A:A,R:R,acts:[]};
 if(kind==="first"){var land=toMin(c.a_arr),tC=land+A.inMin,lh=arrLeg(),tH=tC+lh.min;f.land=land;f.tC=tC;f.tH=tH;f.lh=lh;f.c0=tH+15;f.dl=22*60+45}
 else{f.c0=8*60+45;f.dl=22*60+45}
-if(kind==="last"){var dep=toMin(c.r_dep),imb=toMin(c.r_imb);f.dep=dep;f.imb=imb;f.dl=Math.min(dep-A.buf,imb!=null?imb-45:1e9);f.cap=f.dl-homeAir().min-15-f.c0-30-(f.dl>14*60?60:0)-30}
+if(kind==="last"){var dep=toMin(c.r_dep),imb=toMin(c.r_imb);f.dep=dep;f.imb=imb;f.dl=Math.min(dep-R.buf,imb!=null?imb-45:1e9);f.cap=f.dl-homeAir().min-15-f.c0-30-(f.dl>14*60?60:0)-30}
 else f.cap=f.dl-f.c0-(f.c0<10*60+45?30:0)-(f.c0<14*60?60:0)-55-45-60;
 return f}
 function assign(days,n){var cap=days.map(function(d){return d.cap}),left=[],pri=function(b){return b.full?(n>=4?0:2):b.core?1:2};
@@ -150,13 +151,13 @@ var fr=last&&!x.none&&!x.acts.length&&r.slack>=75?{k:"free",t:r.end,d:Math.floor
 if(last)items.push({k:"ret",t:rt,d:r.ret.min,ret:r.ret,arr:rt+r.ret.min,slack:r.slack-(fr?fr.d:0),dl:f.dl,multi:1});
 else if(r.prev!=="home"||items[items.length-1].k==="meal")items.push({k:"night",t:r.end,d:r.ret.min,leg:r.ret});
 var n=0;items.forEach(function(it){if(it.k==="act")it.n=++n});
-var rides=ridesOf(items)+(last&&r.ret.rides?1:0)+((f.kind==="first"||last)?(f.A.xrm||0):0);
+var rides=ridesOf(items)+(last&&r.ret.rides?1:0)+(f.kind==="first"?(f.A.xrm||0):0)+(last?(f.R.xrm||0):0);
 return Object.assign(f,{items:items,acts:x.acts,dropped:x.dropped,shrunk:x.shrunk,none:x.none,leave:rt,prev:r.prev,B:r.B,L:r.L,D:r.D,rides:rides,end:rt+(last?0:r.ret.min)})}
-function buildTrip(c){var n=nDays(c),A=PD.PAR[c.to];
-if(n===1)return{multi:false,n:1,A:A,days:[planSingle(c)],left:[]};
+function buildTrip(c){if(!c.rt||!PD.PAR[c.rt])c.rt=c.to;var n=nDays(c),A=PD.PAR[c.to],R=PD.PAR[c.rt];
+if(n===1)return{multi:false,n:1,A:A,R:R,days:[planSingle(c)],left:[]};
 var days=[];for(var i=0;i<n;i++)days.push(frame(c,i,n));
 var left=assign(days,n);
-return{multi:true,n:n,A:A,days:days.map(function(f){return planMulti(f,c)}),left:left}}
+return{multi:true,n:n,A:A,R:R,days:days.map(function(f){return planMulti(f,c)}),left:left}}
 
 /* ===== stato dei locali nel giorno scelto ===== */
 function ivs(h){return h?h.split(",").map(function(s){var p=s.split("-"),a=toMin(p[0]),b=toMin(p[1]);if(b<=a)b+=1440;return[a,b]}):[]}
@@ -240,15 +241,15 @@ body='<div class="leg"><i>'+(lg.mode==="walk"?"🚶":"🚇")+'</i><span>'+esc(lg
 else if(it.k==="free"&&it.last){cls="home";ti="Mattinata libera";body='<p>Hai circa '+fdur(it.d)+' prima di partire: lascia i bagagli all\'alloggio e goditi il quartiere, con un caffè in terrazza, gli ultimi acquisti o una passeggiata. Alle '+fmt(it.t+it.d)+' si riparte per l\'aeroporto.</p>'}
 else if(it.k==="free"){cls="home";var lng=it.d>=150;ti=lng?"Pomeriggio libero":"Tempo libero";body='<div class="leg"><i>'+(it.leg.mode==="walk"?"🚶":"🚇")+'</i><span>'+esc(it.leg.txt)+'</span></div><p>'+(lng?"Hai circa "+fdur(it.d)+" senza tappe fisse. "+PD.T.freeLong:PD.T.freeShort)+' La cena è verso le '+fmt(it.t+it.d)+'.</p>'}
 else if(it.k==="night"){cls="home";ti="Rientro all'alloggio";var nx=TRIP.days[P.i+1];body='<div class="leg"><i>'+(it.leg.mode==="walk"?"🚶":"🚇")+'</i><span>'+esc(it.leg.txt)+'</span></div><p>Buonanotte! '+(nx?(nx.kind==="last"?"Domani è l'ultimo giorno: check-out entro le "+esc(h.cout)+".":"Domani si riparte alle "+fmt(nx.c0)+(nx.acts.length?" con "+esc(S[nx.acts[0]].t)+".":".")):"")+'</p>'+goBtn(h.q,it.leg.mode==="walk"?"walking":"transit","Portami all'alloggio","🏨")}
-else if(it.k==="ret"){cls="air";ti=it.multi?"Bagagli e aeroporto":"Ritorno all'aeroporto";var R=it.ret,imb=P.imb!=null?fmt(P.imb):null;
-body='<p>'+esc(R.txt)+'</p><p class="meta">Arrivo in aeroporto verso le '+fmt(it.arr)+(imb?", imbarco dalle "+imb:"")+", decollo alle "+fmt(P.dep)+"."+(it.slack>=20?" Hai circa "+fdur(it.slack)+" di margine in più.":"")+'</p>'+(it.multi&&R.toHome?goBtn(h.q,R.toHome.mode==="walk"?"walking":"transit","Portami all'alloggio","🏨")+' ':'')+goBtn(A.gm,"transit","Portami in aeroporto","🚆")}
+else if(it.k==="ret"){cls="air";var RA=P.R||A;ti=(it.multi?"Bagagli e aeroporto":"Ritorno all'aeroporto")+(RA!==A?" · "+RA.n:"");var R=it.ret,imb=P.imb!=null?fmt(P.imb):null;
+body='<p>'+esc(R.txt)+'</p><p class="meta">Arrivo in aeroporto verso le '+fmt(it.arr)+(imb?", imbarco dalle "+imb:"")+", decollo alle "+fmt(P.dep)+"."+(it.slack>=20?" Hai circa "+fdur(it.slack)+" di margine in più.":"")+'</p>'+(it.multi&&R.toHome?goBtn(h.q,R.toHome.mode==="walk"?"walking":"transit","Portami all'alloggio","🏨")+' ':'')+goBtn(RA.gm,"transit","Portami in aeroporto","🚆")}
 return '<li class="step '+cls+'" data-t="'+it.t+'"><div class="t">'+fmt(it.t)+'</div><div class="body"><h2>'+esc(ti)+'</h2>'+body+'</div></li>'}
 
 function rangeTxt(){var c=CFG,a=dateObj(c.date),b=dateObj(c.date_r);if(TRIP.n===1)return dateShort(c.date);
 return a.getUTCMonth()===b.getUTCMonth()?a.getUTCDate()+"–"+b.getUTCDate()+" "+MESI[b.getUTCMonth()]:dateShort(c.date)+" – "+dateShort(c.date_r)}
 function renderHero(){var c=CFG,A=TRIP.A,n=TRIP.n,ttl=n===1?PD.n+" in un giorno":PD.n+" in "+n+" giorni";
 $("#hero h1").textContent=ttl;
-$("#hsub").textContent=(n===1?cap(dateLong(c.date))+".":"Da "+dateLong(c.date).replace(/ \d{4}$/,"")+" a "+dateLong(c.date_r)+": "+n+" giorni e "+(n-1)+(n===2?" notte.":" notti."))+" Atterraggio a "+A.n+" alle "+fmt(toMin(c.a_arr))+", volo di ritorno alle "+fmt(toMin(c.r_dep))+". "+(c.ppl===1?"Una persona":c.ppl+" persone")+(n>1?", alloggio in "+home().where+".":", "+PD.T.move+".");
+$("#hsub").textContent=(n===1?cap(dateLong(c.date))+".":"Da "+dateLong(c.date).replace(/ \d{4}$/,"")+" a "+dateLong(c.date_r)+": "+n+" giorni e "+(n-1)+(n===2?" notte.":" notti."))+" Atterraggio a "+A.n+" alle "+fmt(toMin(c.a_arr))+", volo di ritorno"+(TRIP.R&&TRIP.R!==A?" da "+TRIP.R.n:"")+" alle "+fmt(toMin(c.r_dep))+". "+(c.ppl===1?"Una persona":c.ppl+" persone")+(n>1?", alloggio in "+home().where+".":", "+PD.T.move+".");
 $("#appt").innerHTML=esc(PD.n)+" <b>· "+esc(rangeTxt())+"</b>";
 $("#sps").textContent=PD.n+" · "+rangeTxt();
 document.title="Viaticum · "+ttl}
@@ -339,8 +340,8 @@ function avvList(){var c=CFG,res=[],last=TRIP.days[TRIP.n-1].date;
 function inR(a,d){return d>=a.from&&d<=a.to}
 PD.AVV.concat(window.AVV_IT||[]).forEach(function(a){var hit;
 if(a.fa)hit=inR(a,c.date);
-else if(a.fl){if(a.ap&&a.ap.indexOf(c.to)<0)return;hit=inR(a,c.date)||inR(a,last);if(a.air)hit=(a.air.test(c.a_num||"")&&inR(a,c.date))||(a.air.test(c.r_num||"")&&inR(a,last))}
-else hit=TRIP.days.some(function(d){if(!inR(a,d.date))return false;if(a.wd&&a.wd.indexOf(d.wd+1)<0)return false;if(a.ap&&a.ap.indexOf(c.to)<0)return false;
+else if(a.fl){var apOK=function(ap){return !a.ap||a.ap.indexOf(ap)>=0};if(!apOK(c.to)&&!apOK(c.rt))return;hit=(apOK(c.to)&&inR(a,c.date))||(apOK(c.rt)&&inR(a,last));if(a.air)hit=(a.air.test(c.a_num||"")&&inR(a,c.date))||(a.air.test(c.r_num||"")&&inR(a,last))}
+else hit=TRIP.days.some(function(d){if(!inR(a,d.date))return false;if(a.wd&&a.wd.indexOf(d.wd+1)<0)return false;if(a.ap&&a.ap.indexOf(c.to)<0&&a.ap.indexOf(c.rt)<0)return false;
  if(a.after!=null){var f=(d.kind==="single"||d.kind==="first")&&(d.land+d.A.inMin>=a.after-90),l=(d.kind==="single"||d.kind==="last")&&d.leave>=a.after-90;if(!f&&!l)return false}return true});
 if(hit&&!res.some(function(r){return r.t===a.t}))res.push(a)});return res}
 function renderAvv(){var el=$("#avv"),L=avvList();el.hidden=!L.length;el.innerHTML=L.map(function(a){return "<b>⚠️ "+esc(a.t)+"</b><p>"+esc(a.x)+"</p>"}).join("")}
@@ -366,7 +367,7 @@ var PREADY=false;
 function renderVcost(){var box=$("#vcost");if(!box||!CFG)return;var c=CFG,N=c.ppl,o=COPT.vl||{},F=fromInfo(c),multi=N>1,m=o.m==="tot"&&multi?"tot":"pp";
 var fld=function(k,t,sub){return '<label class="vcf"><span>'+t+(sub?'<small>'+sub+'</small>':'')+'</span><span class="vcin"><input type="number" inputmode="decimal" min="0" step="1" data-k="'+k+'" value="'+(+o[k]>0?o[k]:"")+'" placeholder="0" aria-label="'+esc(t)+'"><i>€</i></span></label>'};
 box.innerHTML='<div class="vh2"><b>💶 Costo dei voli</b></div>'+(multi?'<div class="vcm" role="radiogroup" aria-label="Come hai inserito i prezzi"><button type="button" role="radio" data-m="pp" class="'+(m==="pp"?"on":"")+'" aria-checked="'+(m==="pp")+'">A persona</button><button type="button" role="radio" data-m="tot" class="'+(m==="tot"?"on":"")+'" aria-checked="'+(m==="tot")+'">Totale per '+N+'</button></div>':'')
-+fld("a","Andata",(F.code||"")+" → "+esc(c.to))+fld("r","Ritorno",esc(c.to)+" → "+(F.code||""))+fld("x","Extra","Bagagli, posti, imbarco prioritario")
++fld("a","Andata",(F.code||"")+" → "+esc(c.to))+fld("r","Ritorno",esc(c.rt||c.to)+" → "+(F.code||""))+fld("x","Extra","Bagagli, posti, imbarco prioritario")
 +'<div class="vct"><span>Totale voli</span><span id="vctt"></span></div><p class="vcn">Le voci compaiono nella tabella dei Costi e nel PDF. Le trovi spuntabili anche lì.</p>';
 function upd(){var R=flightRows(),pp=R.reduce(function(s,r){return s+r[2]},0);$("#vctt").textContent=pp?eur(pp*N)+(multi?" ("+eur(pp)+" a persona)":""):"—"}
 function save(){COPT.vl=COPT.vl||{};ls("via-copt",JSON.stringify(COPT));upd();if(PREADY||true){renderCosti(false);renderSpese()}}
@@ -374,14 +375,14 @@ box.querySelectorAll("input").forEach(function(i){i.addEventListener("input",fun
 box.querySelectorAll(".vcm button").forEach(function(b){b.addEventListener("click",function(){COPT.vl=COPT.vl||{};COPT.vl.m=b.dataset.m;ls("via-copt",JSON.stringify(COPT));renderVcost();renderCosti(false);renderSpese()})});
 upd()}
 
-function renderVoli(){var c=CFG,A=TRIP.A,F=fromInfo(c),DL=TRIP.days[TRIP.n-1],fr=function(n){return n?'<a class="vch" target="_blank" rel="noopener" href="https://www.flightradar24.com/data/flights/'+encodeURIComponent(n.replace(/\s+/g,"").toLowerCase())+'">Flightradar24 ↗︎</a>':""};
-function card(side){var a=side==="a",num=a?c.a_num:c.r_num,o=a?F.code||"—":c.to,d=a?c.to:F.code||"—",dt=a?c.date:(c.date_r||c.date);
+function renderVoli(){var c=CFG,A=TRIP.A,RA=TRIP.R||A,F=fromInfo(c),DL=TRIP.days[TRIP.n-1],fr=function(n){return n?'<a class="vch" target="_blank" rel="noopener" href="https://www.flightradar24.com/data/flights/'+encodeURIComponent(n.replace(/\s+/g,"").toLowerCase())+'">Flightradar24 ↗︎</a>':""};
+function card(side){var a=side==="a",num=a?c.a_num:c.r_num,o=a?F.code||"—":(c.rt||c.to),d=a?c.to:F.code||"—",dt=a?c.date:(c.date_r||c.date);
 var rows=a?[["Data",cap(dateLong(dt))],["Numero volo",num||"—"],["Partenza",c.a_dep||"—"],["Atterraggio a "+PD.n,c.a_arr]]:[["Data",cap(dateLong(dt))],["Numero volo",num||"—"],["Apertura imbarco",c.r_imb||"—"],["Partenza",c.r_dep]];
-var lk=a?[[F.url,"🛫 Partenze "+F.name],[A.url,"🛬 Arrivi "+A.n]]:[[A.url,"🛫 Partenze "+A.n],[F.url,"🛬 Arrivi "+F.name]];
+var lk=a?[[F.url,"🛫 Partenze "+F.name],[A.url,"🛬 Arrivi "+A.n]]:[[RA.url,"🛫 Partenze "+RA.n],[F.url,"🛬 Arrivi "+F.name]];
 return '<div class="vcard"><div class="vleg"><span class="iata">'+esc(o)+'</span><i class="pl">✈︎</i><span class="iata">'+esc(d)+'</span> '+(a?"Andata":"Ritorno")+'</div>'+rows.map(function(r){return '<div class="vrw"><span>'+r[0]+'</span><b>'+esc(r[1])+'</b></div>'}).join("")+'<div class="vlinks">'+lk.filter(function(x){return x[0]}).map(function(x){return '<a class="vch" target="_blank" rel="noopener" href="'+esc(x[0])+'">'+esc(x[1])+' ↗︎</a>'}).join("")+fr(num)+'</div></div>'}
 $("#vgrid").innerHTML=card("a")+card("r");
 renderVcost();
-$("#vtips").innerHTML='<details><summary>🛬 Dall\'aeroporto di '+esc(A.n)+(TRIP.multi?' all\'alloggio':' al centro')+'</summary><ul><li>'+esc(A.arr)+'</li><li>'+esc(A.tk)+'</li>'+(PD.fx.voliTip?PD.fx.voliTip(E):(A.vt?'<li>'+esc(A.vt)+'</li>':''))+'</ul></details><details><summary>🛫 Ritorno in aeroporto</summary><ul><li>'+(TRIP.multi?"L'ultimo giorno parti alle "+fmt(DL.leave)+". ":"Parti dall'ultima tappa alle "+fmt(DL.leave)+". ")+esc(DL.items[DL.items.length-1].ret.txt)+'</li><li>Calcolo l\'arrivo in aeroporto almeno '+fdur(A.buf)+' prima del decollo'+(DL.imb!=null?' e 45 minuti prima dell\'apertura dell\'imbarco':'')+'.</li></ul></details>'}
+$("#vtips").innerHTML='<details><summary>🛬 Dall\'aeroporto di '+esc(A.n)+(TRIP.multi?' all\'alloggio':' al centro')+'</summary><ul><li>'+esc(A.arr)+'</li><li>'+esc(A.tk)+'</li>'+(PD.fx.voliTip?PD.fx.voliTip(E):(A.vt?'<li>'+esc(A.vt)+'</li>':''))+'</ul></details><details><summary>🛫 Ritorno in aeroporto'+(RA!==A?' ('+esc(RA.n)+')':'')+'</summary><ul>'+(RA!==A?'<li>Il volo di ritorno parte da '+esc(RA.n)+', non da '+esc(A.n)+'. '+esc(RA.tk)+'</li>':'')+'<li>'+(TRIP.multi?"L'ultimo giorno parti alle "+fmt(DL.leave)+". ":"Parti dall'ultima tappa alle "+fmt(DL.leave)+". ")+esc(DL.items[DL.items.length-1].ret.txt)+'</li><li>Calcolo l\'arrivo in aeroporto almeno '+fdur(RA.buf)+' prima del decollo'+(DL.imb!=null?' e 45 minuti prima dell\'apertura dell\'imbarco':'')+'.</li></ul></details>'}
 
 /* ===== pasti ===== */
 function renderPasti(){var hb=$("#hbt");if(hb){hb.hidden=!(TRIP&&TRIP.multi);$("#hbc").checked=COPT.hb===1}if(PD.T.mcrit)$("#mcrit").textContent=PD.T.mcrit;var it=P.items,meals=it.filter(function(x){return x.k==="meal"||x.k==="snk"}),h="";
@@ -428,16 +429,18 @@ function allActs(){var a=[];TRIP.days.forEach(function(d){d.acts.forEach(functio
 /* modello dei costi generico: prezzi in euro nei dati della città */
 function transport(){var c=CFG,n=TRIP.n,TR=PD.TR,alt=[],rides=TRIP.days.reduce(function(s,d){return s+d.rides},0);
 var cityDay=function(r){return TR.cap?Math.min(r*TR.one,TR.cap):r*TR.one},city=TRIP.days.reduce(function(s,d){return s+cityDay(d.rides)},0);
-var AF=(TR.air||{})[c.to]||null,air=AF?(AF.rt!=null?AF.rt:2*AF.one):0,airRow=AF?[["tr1",AF.n+(AF.rt!=null?" a/r":" a/r (2 × "+eur(AF.one)+")"),air]]:[];
+var rto=c.rt||c.to,AF=(TR.air||{})[c.to]||null,AF2=(TR.air||{})[rto]||null,same=rto===c.to,hf=function(f){return f?(f.one!=null?f.one:f.rt/2):0};
+var air=same?(AF?(AF.rt!=null?AF.rt:2*AF.one):0):hf(AF)+hf(AF2),airRow=same?(AF?[["tr1",AF.n+(AF.rt!=null?" a/r":" a/r (2 × "+eur(AF.one)+")"),air]]:[]):airLegs(false,false);
+function airLegs(sa,sr){var p=[],v=0;if(AF&&!sa){p.push(AF.n+" (andata, "+eur(hf(AF))+")");v+=hf(AF)}if(AF2&&!sr){p.push(AF2.n+" (ritorno, "+eur(hf(AF2))+")");v+=hf(AF2)}return p.length?[["tr1",p.join(" + "),v]]:[]}
 function cityRows(){if(!rides)return[];var capd=TR.cap?TRIP.days.filter(function(d){return d.rides*TR.one>TR.cap}).length:0;return[["tr2",capd?TR.lbl+" ("+rides+" corse, con il tetto giornaliero di "+eur(TR.cap)+" in "+capd+(capd===1?" giorno":" giorni")+")":TR.lbl+", "+rides+" corse da "+eur(TR.one),city]]}
 var opts=[{k:"single",n:"biglietti singoli",v:air+city,rows:airRow.concat(cityRows())}];
 (TR.passes||[]).forEach(function(ps){if(ps.d<n||(ps.max&&n>ps.max))return;if(ps.per&&!rides)return;if(ps.only&&ps.only(TRIP)===false)return;var bestSame=opts.filter(function(o){return o.k==="p"+ps.n})[0];if(bestSame)return;
- var k=ps.per?Math.ceil(rides/ps.per):1,pp=ps.p*k,inA=ps.air&&(ps.air===true||ps.air.indexOf(c.to)>=0),v=pp+(inA?0:air);opts.push({k:"p"+ps.n,n:ps.n+(k>1?" × "+k:""),v:v,rows:(inA?[]:airRow).concat([["tr2",ps.n+(k>1?" × "+k:"")+(inA?" (aeroporto compreso)":ps.per?" per "+rides+" corse":""),pp]]),note:ps.note})});
+ var k=ps.per?Math.ceil(rides/ps.per):1,pp=ps.p*k,inO=function(ap){return ps.air&&(ps.air===true||ps.air.indexOf(ap)>=0)},inA=inO(c.to)&&inO(rto),pr=same?(inA?[]:airRow):airLegs(inO(c.to),inO(rto)),v=pp+pr.reduce(function(s,r){return s+r[2]},0);opts.push({k:"p"+ps.n,n:ps.n+(k>1?" × "+k:""),v:v,rows:pr.concat([["tr2",ps.n+(k>1?" × "+k:"")+(inA?" (aeroporto compreso)":ps.per?" per "+rides+" corse":""),pp]]),note:ps.note})});
 opts.sort(function(a,b){return a.v-b.v});opts.slice(1).forEach(function(o){alt.push(o.n+" "+eur(o.v))});
 return{T:opts[0].rows,alt:alt,best:opts[0].k,bn:opts[0].note}}
 function flightRows(){var c=CFG,N=c.ppl,o=COPT.vl||{},d=o.m==="tot"&&N>1?N:1,F=fromInfo(c),R=[],pp=function(v){return(+v||0)/d};
 if(+o.a>0)R.push(["fa","Volo di andata ("+(F.code||"partenza")+"-"+c.to+")",pp(o.a),1]);
-if(+o.r>0)R.push(["fr","Volo di ritorno ("+c.to+"-"+(F.code||"partenza")+")",pp(o.r),1]);
+if(+o.r>0)R.push(["fr","Volo di ritorno ("+(c.rt||c.to)+"-"+(F.code||"partenza")+")",pp(o.r),1]);
 if(+o.x>0)R.push(["fx","Bagagli, posti e altri extra dei voli",pp(o.x),1]);
 return R}
 function costModel(){var M=costModelBase(),V=flightRows();M.V=V;M.tV=V.reduce(function(s,r){return s+(M.on(r)?r[2]:0)},0);return M}
@@ -600,7 +603,7 @@ $("#ckbox").innerHTML='<button type="button" class="hero chero cck" id="ckopen">
 window.PARCKN=function(){var n=ckCount();return{done:n,total:CKI.length}};
 var fr=PD.PHR?PD.PHR(N,M):[];
 var h=M?home():null,tx=M?(PD.TAX.filter(function(t){return t[0]===h.type})[0]||PD.TAX[0]):null;
-var avv=avvList(),Z=[["✈️ Aeroporto e trasporti",[A.arr,A.tk].concat(A.tips||[]).concat(PD.AIRTIPS||[]),1],
+var avv=avvList(),Z=[["✈️ Aeroporto e trasporti",[A.arr,A.tk].concat(TRIP.R&&TRIP.R!==A?["Il ritorno è da "+TRIP.R.n+": "+TRIP.R.tk]:[]).concat(A.tips||[]).concat(PD.AIRTIPS||[]),1],
 M?["🏨 Alloggio e bagagli",[(h.addr?"Il tuo alloggio: "+h.addr+(h.alt?"":" (zona "+h.zn+")"):"Il tuo alloggio è in zona "+h.zn)+". Check-in dalle "+h.cin+", check-out entro le "+h.cout+".","Il primo giorno l'itinerario passa dall'alloggio per lasciare i bagagli; l'ultimo giorno ripassa a prenderli prima dell'aeroporto. Chiedi alla struttura di tenerli: quasi tutte lo fanno gratis.","Se la struttura non tiene i bagagli, ci sono depositi a pagamento come Nannybag o Bounce, prenotabili online.",PD.taxTxt(tx)].concat(PD.STAYTIPS||[])]:null]
 .concat((PD.ZONES||[]).filter(function(z){return okIf(z[2])}).map(function(z){return[z[0],z[1]]}))
 .concat([PD.WTIPS?["💧 Acqua e fontanelle",PD.WTIPS]:null,fr.length?["🗣️ Frasario",null,2]:null,["📞 Numeri utili",null,3],["🚨 Scioperi e avvisi",null,4],["📋 In generale",PD.GEN]]).filter(Boolean);
@@ -653,7 +656,12 @@ var setup=$("#setup"),form=$("#sform"),serr=$("#serr"),stayF=$("#stayf");
 $("#aplist").innerHTML=PD.FROM.map(function(f){return '<option value="'+esc(f[1]+" ("+f[0]+")")+'">'}).join("");
 form.sz.innerHTML=PD.HZ.map(function(z){return '<option value="'+z[0]+'">'+esc(z[1])+'</option>'}).join("");
 form.stype.innerHTML=PD.TAX.map(function(t){return '<option value="'+t[0]+'">'+esc(t[1])+'</option>'}).join("");
-var APK=Object.keys(PD.PAR);$("#apts").innerHTML=APK.map(function(k,i){var A=PD.PAR[k];return '<label class="apt"><input type="radio" name="to" value="'+k+'"'+(i?'':' checked')+'><b>'+k+'</b><span>'+esc(A.sd)+'</span></label>'}).join("");
+var APK=Object.keys(PD.PAR);var aptH=function(nm){return APK.map(function(k,i){var A=PD.PAR[k];return '<label class="apt"><input type="radio" name="'+nm+'" value="'+k+'"'+(i?'':' checked')+'><b>'+k+'</b><span>'+esc(A.sd)+'</span></label>'}).join("")};
+$("#apts").innerHTML=aptH("to");$("#rapts").innerHTML=aptH("rto");$("#rapf").hidden=APK.length<2;
+/* il ritorno segue l'arrivo finché non lo scegli tu */
+function rtSync(){var t=($('input[name=to]:checked',form)||{}).value,r=($('input[name=rto]:checked',form)||{}).value;$("#rapn").hidden=!(t&&r&&t!==r)}
+$("#apts").addEventListener("change",function(){if(!form.dataset.rt){var t=($('input[name=to]:checked',form)||{}).value;$$('input[name=rto]',form).forEach(function(r){r.checked=r.value===t})}rtSync()});
+$("#rapts").addEventListener("change",function(){form.dataset.rt="1";rtSync()});
 $("#sfuso").textContent="Orari in ora locale ("+PD.T.fuso+"). I dati restano solo su questo telefono.";
 function dnote(){var a=form.date.value,b=form.date_r.value,n=1;if(a&&b&&b>a)n=Math.round((dateObj(b)-dateObj(a))/864e5)+1;
 $("#dnote").textContent=!a?"Scegli le date: per una gita in giornata lascia il ritorno uguale all'andata.":n===1?"Gita in giornata, senza hotel.":n+" giorni e "+(n-1)+(n===2?" notte: aggiungi l'hotel qui sotto.":" notti: aggiungi l'hotel qui sotto.");
@@ -662,7 +670,7 @@ $("#rlab").textContent=multi?"Ritorno":"Ritorno (stesso giorno)"}
 form.date.addEventListener("change",function(){form.date_r.min=form.date.value;if(!form.date_r.value||form.date_r.value<form.date.value)form.date_r.value=form.date.value;dnote()});
 form.date_r.addEventListener("change",dnote);$$('input[type=date],input[type=time]',form).forEach(function(i){i.addEventListener("click",function(){try{if(i.showPicker)i.showPicker()}catch(e){}})});form.date.addEventListener("input",dnote);form.date_r.addEventListener("input",dnote);
 function openSetup(first){var c=CFG||{},s=c.stay||{};form.date.value=c.date||"";form.date.min=paris().d;form.date_r.value=c.date_r||c.date||"";form.date_r.min=c.date||paris().d;$("#ppl").textContent=c.ppl||2;form.from.value=c.from||"";
-$$('input[name=to]',form).forEach(function(r){r.checked=r.value===(c.to&&PD.PAR[c.to]?c.to:APK[0])});["a_num","a_dep","a_arr","r_num","r_imb","r_dep"].forEach(function(k){form[k].value=c[k]||""});
+var to0=c.to&&PD.PAR[c.to]?c.to:APK[0],rt0=c.rt&&PD.PAR[c.rt]?c.rt:to0;$$('input[name=to]',form).forEach(function(r){r.checked=r.value===to0});$$('input[name=rto]',form).forEach(function(r){r.checked=r.value===rt0});if(rt0!==to0)form.dataset.rt="1";else delete form.dataset.rt;rtSync();["a_num","a_dep","a_arr","r_num","r_imb","r_dep"].forEach(function(k){form[k].value=c[k]||""});
 form.sz.value=s.zone||PD.HZ[0][0];form.saddr.value=s.addr||"";form.sin.value=s.cin||"15:00";form.sout.value=s.cout||"11:00";form.sprice.value=s.price||"";form.stype.value=s.type||PD.TAXDEF||PD.TAX[0][0];
 $$("input,select",form).forEach(function(x){x.classList.remove("bad")});serr.textContent="";$("#scancel").hidden=!CFG;$("#stayin").hidden=true;$("#stayno").hidden=false;setHead();dnote();
 closeSheet();setup.classList.add("on");setup.setAttribute("aria-hidden","false");setup.scrollTop=0;setTimeout(function(){document.documentElement.classList.remove("hold")},600)}
@@ -763,8 +771,8 @@ if(!msg&&ad!=null&&ad>=la){bad.push("a_dep");msg="La partenza dell'andata deve e
 if(!msg&&multi&&form.sz.value==="altro"&&!form.saddr.value.trim()){bad.push("saddr");msg="Scrivi l'indirizzo dell'alloggio, oppure scegli una zona."}
 $$("input,select",form).forEach(function(x){x.classList.toggle("bad",bad.indexOf(x.name)>=0)});
 if(msg){serr.textContent=msg;paintReq();var f=form[bad[0]];if(f)try{f.scrollIntoView({block:"center",behavior:"smooth"});f.focus({preventScroll:true})}catch(x){}return}
-var to=($('input[name=to]:checked',form)||{}).value||APK[0],old=(CFG&&CFG.stay)||{};
-var c={dest:PD.id,date:d0,date_r:d1,ppl:+$("#ppl").textContent||2,from:form.from.value.trim(),fromCode:fromCode(form.from.value),to:to,a_num:form.a_num.value.replace(/\s+/g,"").toUpperCase(),a_dep:form.a_dep.value,a_arr:form.a_arr.value,r_num:form.r_num.value.replace(/\s+/g,"").toUpperCase(),r_imb:form.r_imb.value,r_dep:form.r_dep.value};
+var to=($('input[name=to]:checked',form)||{}).value||APK[0],rt=($('input[name=rto]:checked',form)||{}).value||to,old=(CFG&&CFG.stay)||{};
+var c={dest:PD.id,date:d0,date_r:d1,ppl:+$("#ppl").textContent||2,from:form.from.value.trim(),fromCode:fromCode(form.from.value),to:to,rt:rt,a_num:form.a_num.value.replace(/\s+/g,"").toUpperCase(),a_dep:form.a_dep.value,a_arr:form.a_arr.value,r_num:form.r_num.value.replace(/\s+/g,"").toUpperCase(),r_imb:form.r_imb.value,r_dep:form.r_dep.value};
 if(multi){var addr=form.saddr.value.trim();c.stay={zone:form.sz.value,addr:addr,cin:form.sin.value||"15:00",cout:form.sout.value||"11:00",price:parseFloat(String(form.sprice.value).replace(",","."))||0,type:form.stype.value};
 if(addr&&addr===old.addr&&old.geo){c.stay.pos=old.pos;c.stay.geo=1}}
 var first=!CFG;if(SAVED&&SAVED.dest!==PD.id){parkCur();SP={};CK={};COPT={}}c.tid=(CFG&&CFG.tid)||newTid();CFG=c;SAVED=c;ls("via-trip",JSON.stringify(c));closeSetup();SEL=0;renderAll();window.dispatchEvent(new Event("voli"));
@@ -791,10 +799,10 @@ $("#shreset").addEventListener("click",function(){if(!confirm("Cancellare TUTTI 
 document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeSheet();if(CFG){closeSetup();closeDest();setCity(PD.id)}}});
 
 /* invio e importazione di un viaggio tramite link */
-function tripLink(c){var k=["dest","date","date_r","ppl","from","fromCode","to","a_num","a_dep","a_arr","r_num","r_imb","r_dep"],o={};k.forEach(function(x){if(c[x]!=null&&c[x]!=="")o[x]=c[x]});if(c.stay){o.stay={};["zone","addr","cin","cout","price","type","pos","geo"].forEach(function(x){if(c.stay[x]!=null)o.stay[x]=c.stay[x]})}
+function tripLink(c){var k=["dest","date","date_r","ppl","from","fromCode","to","rt","a_num","a_dep","a_arr","r_num","r_imb","r_dep"],o={};k.forEach(function(x){if(c[x]!=null&&c[x]!=="")o[x]=c[x]});if(c.stay){o.stay={};["zone","addr","cin","cout","price","type","pos","geo"].forEach(function(x){if(c.stay[x]!=null)o.stay[x]=c.stay[x]})}
 return location.origin+location.pathname+"#t="+btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
 function readLink(){var m=/^#t=([\w-]+)/.exec(location.hash||"");if(!m)return null;try{var s=m[1].replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";var o=JSON.parse(decodeURIComponent(escape(atob(s))));
-if(!o||!CITIES[o.dest]||!/^\d{4}-\d\d-\d\d$/.test(o.date||"")||!o.a_arr||!o.r_dep)return null;var c={},str=function(v){return String(v).slice(0,140)};["dest","date","date_r","from","fromCode","to","a_num","a_dep","a_arr","r_num","r_imb","r_dep"].forEach(function(x){if(o[x]!=null)c[x]=str(o[x])});c.ppl=Math.max(1,Math.min(10,+o.ppl||2));
+if(!o||!CITIES[o.dest]||!/^\d{4}-\d\d-\d\d$/.test(o.date||"")||!o.a_arr||!o.r_dep)return null;var c={},str=function(v){return String(v).slice(0,140)};["dest","date","date_r","from","fromCode","to","rt","a_num","a_dep","a_arr","r_num","r_imb","r_dep"].forEach(function(x){if(o[x]!=null)c[x]=str(o[x])});c.ppl=Math.max(1,Math.min(10,+o.ppl||2));
 if(o.stay&&typeof o.stay==="object"){c.stay={};["zone","addr","cin","cout","type"].forEach(function(x){if(o.stay[x]!=null)c.stay[x]=str(o.stay[x])});c.stay.price=+o.stay.price||0;if(Array.isArray(o.stay.pos)&&o.stay.pos.length===2&&isFinite(o.stay.pos[0])&&isFinite(o.stay.pos[1])){c.stay.pos=[+o.stay.pos[0],+o.stay.pos[1]];c.stay.geo=1}}return c}catch(e){return null}}
 $("#shlink").addEventListener("click",function(){if(!CFG){toast("Imposta prima il tuo viaggio");return}var u=tripLink(CFG),d=dOf(CFG.dest);closeSheet();
 if(navigator.share)navigator.share({title:"Viaggio a "+d.n+" con Viaticum",text:"Apri il mio viaggio a "+d.n+" ("+rangeOf(CFG)+") su Viaticum:",url:u}).catch(function(){});else{try{navigator.clipboard.writeText(u).then(function(){toast("Link copiato")},function(){prompt("Copia il link",u)})}catch(e){prompt("Copia il link",u)}}});
