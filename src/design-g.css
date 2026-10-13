@@ -480,8 +480,9 @@ body:has(#t-itinerario:checked) label[for=t-itinerario] span,body:has(#t-voli:ch
  --f1:#fff;--f2:color-mix(in srgb,#fff 78%,var(--z));--side:color-mix(in srgb,var(--z) 72%,var(--a));--rim:rgba(255,255,255,.9);
  --sksh:color-mix(in srgb,color-mix(in srgb,var(--a) 55%,#000) 45%,transparent);--lineC:color-mix(in srgb,var(--a) 90%,#000);--skg:rgba(255,255,255,.22);--swo:.6}
 #zin{display:none}#zin.on,#zin.out{display:flex}
-#zin.out{animation:zinOut .5s ease forwards}
-@keyframes zinOut{to{opacity:0;transform:scale(1.04)}}
+#zin.out{animation:zinOut .38s .1s ease-in forwards}
+#zin.out .zcol{opacity:0!important;transition:opacity .15s ease-out}
+@keyframes zinOut{to{opacity:0}}
 .zov .zbg{position:absolute;inset:0;background:radial-gradient(120% 90% at 12% 0%,rgba(255,255,255,.3),transparent 55%),radial-gradient(95% 62% at 72% 104%,color-mix(in srgb,var(--z) 95%,transparent) 0%,color-mix(in srgb,var(--z) 45%,transparent) 45%,transparent 78%),linear-gradient(160deg,color-mix(in srgb,var(--a) 76%,#fff),color-mix(in srgb,var(--a) 94%,#000))}
 .zov .zcol{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:0 28px 6vh;margin-top:-4vh}
 .zov .zchip{display:inline-flex;align-items:center;height:30px;padding:0 14px;border-radius:15px;background:rgba(255,255,255,.22);font:600 .82rem Outfit,system-ui,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
@@ -627,3 +628,4 @@ fieldset.sgrp.sl{animation:stepL .38s cubic-bezier(.22,1,.36,1) both}
 .tour .tcheck2{fill:none;stroke:var(--ga);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
 @media (prefers-reduced-motion:reduce){.tour,.td3{transition:none}}
 .tour:focus{outline:0}
+.zov.zx .zcol{opacity:0!important;transition:opacity .15s ease-out}
