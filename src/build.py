@@ -57,7 +57,7 @@ sbh=re.sub(r'^https?://','',sbu)
 CONN=["'self'","https://api.open-meteo.com","https://nominatim.openstreetmap.org","https://overpass-api.de","https://routing.openstreetmap.de","https://opendata.paris.fr","https://tile.openstreetmap.org","https://*.tile.openstreetmap.org","https://translate.googleapis.com"]+([sbu,'wss://'+sbh] if sbu else [])
 CSP="; ".join([
  "default-src 'self'",
- "script-src 'self' "+" ".join("'sha256-%s'"%h for h in shs)+" https://translate.google.com https://translate.googleapis.com https://www.gstatic.com",
+ "script-src 'self' "+" ".join("'sha256-%s'"%h for h in shs)+" 'unsafe-eval' https://translate.google.com https://translate.googleapis.com https://www.gstatic.com",  # unsafe-eval: lo richiede il widget di Google Traduttore
  "style-src 'self' 'unsafe-inline' https://www.gstatic.com https://translate.googleapis.com",
  "font-src 'self' data:",
  "img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://www.gstatic.com https://translate.google.com https://translate.googleapis.com https://www.google.com",
