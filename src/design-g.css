@@ -361,3 +361,36 @@ body:has(#t-itinerario:checked) label[for=t-itinerario] span,body:has(#t-voli:ch
 .tbind{top:9px!important;bottom:9px!important;left:var(--tbl,9px)!important;width:var(--tbw,48px)!important;border-radius:24px!important}
 @media (max-width:380px){.tabbar label{min-width:40px}
  body:has(#t-itinerario:checked) label[for=t-itinerario],body:has(#t-voli:checked) label[for=t-voli],body:has(#t-mappa:checked) label[for=t-mappa],body:has(#t-mangiare:checked) label[for=t-mangiare],body:has(#t-costi:checked) label[for=t-costi],body:has(#t-consigli:checked) label[for=t-consigli]{padding:0 12px}}
+
+/* --- costi: come nell'anteprima (blocco colorato, barra a segmenti, tabella pulita) --- */
+#costi>h2.sec{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#cdonut{background:none;border-radius:0;padding:0;margin:0}
+.chero{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding:22px 24px!important;margin:0 0 14px}
+.chero .ch-t{display:flex;flex-direction:column;gap:2px;min-width:0}
+.chero .ch-t span{font-size:.9rem;font-weight:500;opacity:.9}
+.chero .ch-t b{font:600 clamp(3rem,17vw,4.25rem)/1 Outfit,system-ui,sans-serif;letter-spacing:-.03em;color:var(--hon);text-shadow:0 2px 14px rgba(0,0,0,.14)}
+.chero .ch-t em{font-style:normal;font-size:.9rem;opacity:.9;margin-top:2px}
+.ch-pdf{flex:none;height:42px;padding:0 16px;border:0;border-radius:21px;background:rgba(255,255,255,.22);color:var(--hon);font:600 .9rem Outfit,system-ui,sans-serif;display:flex;align-items:center;gap:6px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.3);transition:transform .2s var(--spring,ease),background .2s}
+.ch-pdf:active{transform:scale(.94)}
+.ch-pdf svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ch-pdf{background:rgba(255,255,255,.12)}}
+:root[data-theme="dark"] .ch-pdf,:root:has(#dm:checked) .ch-pdf{background:rgba(255,255,255,.12)}
+.cbrk{background:var(--surf);border-radius:28px;padding:18px;margin:0 0 14px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--gsh)}
+.cbar{display:flex;height:18px;border-radius:9px;overflow:hidden;gap:3px}
+.cbar i{display:block;min-width:4px}
+.cbar.anim i{transform-origin:left;animation:cbIn .8s var(--spring,ease) both;animation-delay:calc(.1s + var(--i)*.09s)}
+@keyframes cbIn{from{transform:scaleX(0);opacity:0}to{transform:none;opacity:1}}
+.cbrk .dleg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin:0;font-size:.9rem}
+.cbrk .dleg li{gap:8px}.cbrk .dleg i{width:10px;height:10px;border-radius:5px;flex:none}
+.cbrk .dleg span{flex:1;color:var(--mute)}.cbrk .dleg b{font-weight:600;font-size:.95rem}
+#ccpdf{display:none!important}
+#costi table{border-radius:28px;padding:0;box-shadow:var(--gsh)}
+#costi th{font-size:.75rem;font-weight:500;color:var(--mute);padding:14px 18px 10px;background:none}
+#costi td{padding:12px 18px;border-top:1px solid var(--line)}
+#costi tr.grp td{background:none!important;font:600 .75rem Outfit,system-ui,sans-serif;color:var(--mute);padding:14px 18px 8px;border-top:1px solid var(--line)}
+#costi tr.tot td{border-top:2px solid var(--ga);font-weight:600}
+@media (prefers-reduced-motion:reduce){.cbar.anim i{animation:none}}
+:root{--k1:#5B8DB8;--k2:#CF5A36;--k3:#E0A63B;--k4:#6FA583;--k5:#8c7bd8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--k1:#7FB0DA;--k2:#E8805A;--k3:#EBB54D;--k4:#80BE95;--k5:#a99bea}}
+:root[data-theme="dark"],:root:has(#dm:checked){--k1:#7FB0DA;--k2:#E8805A;--k3:#EBB54D;--k4:#80BE95;--k5:#a99bea}
+#cdonut{box-shadow:none!important}
