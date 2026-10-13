@@ -2,7 +2,7 @@
 (function(){
 var NS="http://www.w3.org/2000/svg",root=document.documentElement;
 /* secondo colore di ogni città (preso da qualcosa che in città si vede davvero) */
-var Z={paris:"#F2B84B",bcn:"#E8B21C",roma:"#F2B33D",londra:"#E0313F",amsterdam:"#F39200",lisbona:"#F5C400",berlino:"#F0B323",praga:"#E4572E",vienna:"#E4BE6A",bruxelles:"#F1BF00",cracovia:"#E3B04B",budapest:"#EFB548",porto:"#F08A3C",monaco:"#E0A526"};
+var Z={paris:"#F2B84B",bcn:"#E8B21C",roma:"#F2B33D",londra:"#E0313F",amsterdam:"#F39200",lisbona:"#F5C400",berlino:"#F0B323",praga:"#E4572E",vienna:"#E4BE6A",bruxelles:"#F1BF00",cracovia:"#E3B04B",budapest:"#EFB548",porto:"#F08A3C",monaco:"#E0A526",madrid:"#E8B21C",milano:"#E3B04B",firenze:"#E0A84A",venezia:"#EFB548",napoli:"#F2B33D",siviglia:"#F08A3C",valencia:"#F5C400",varsavia:"#E3B04B",amburgo:"#E0A526",zurigo:"#E0A526",copenaghen:"#E8B21C",stoccolma:"#F1C40F",oslo:"#E0A526",helsinki:"#8FB8D6",reykjavik:"#8FB8D6",dublino:"#E0A526",edimburgo:"#C9A0DC",atene:"#F0C060",istanbul:"#F08A3C",vilnius:"#E0A526"};
 if(window.PD&&Z[PD.id])root.style.setProperty("--gz",Z[PD.id]);
 window.SKYZ=Z;window.zSky=zSky;
 var svg=document.querySelector("svg.sky");if(!svg||!window.PD||!PD.SKY)return;

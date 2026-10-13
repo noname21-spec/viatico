@@ -31,7 +31,27 @@ CITY_PAL={
 'cracovia':dict(pri='#b0122b',sec='#8c6a3a',gold='#d9b25f',cream='#faf2e4',flag=['#ffffff','#dc143c','#8c6a3a']),
 'budapest':dict(pri='#b3262e',sec='#3f7a4a',gold='#d9b25f',cream='#fbf3e2',flag=['#ce2939','#ffffff','#477050']),
 'porto':dict(pri='#1c4f8f',sec='#7a2e2e',gold='#c9a24a',cream='#f8f3e8',flag=['#1c4f8f','#ffffff','#7a2e2e']),
-'monaco':dict(pri='#1f6fb4',sec='#3b3f4a',gold='#d9a520',cream='#f6f4ee',flag=['#1f6fb4','#ffffff','#d9a520'])}
+'monaco':dict(pri='#1f6fb4',sec='#3b3f4a',gold='#d9a520',cream='#f6f4ee',flag=['#1f6fb4','#ffffff','#d9a520']),
+'madrid':dict(pri='#a8182b',sec='#2f3e5c',gold='#d9a520',cream='#faf2e4',flag=['#c60b1e', '#f1bf00', '#a8182b']),
+'milano':dict(pri='#8a1c2b',sec='#2f3a4a',gold='#c9a24a',cream='#f7f3ea',flag=['#ffffff', '#c8102e', '#8a1c2b']),
+'firenze':dict(pri='#a3262a',sec='#5a6b3a',gold='#c9a24a',cream='#faf1e2',flag=['#ffffff', '#c8102e', '#5a6b3a']),
+'venezia':dict(pri='#1f5f8b',sec='#9b2c2c',gold='#c9a24a',cream='#f7f2e6',flag=['#1f5f8b', '#c9a24a', '#9b2c2c']),
+'napoli':dict(pri='#1d6fb8',sec='#b3322a',gold='#e0a526',cream='#fbf3e3',flag=['#1d6fb8', '#ffffff', '#e0a526']),
+'siviglia':dict(pri='#c8501e',sec='#2d6a4f',gold='#e0a526',cream='#fbf1e1',flag=['#c8501e', '#e0a526', '#2d6a4f']),
+'valencia':dict(pri='#d9731a',sec='#1f5f8b',gold='#e8b21c',cream='#fbf3e3',flag=['#d9731a', '#e8b21c', '#1f5f8b']),
+'varsavia':dict(pri='#b3122a',sec='#2b3a55',gold='#d9b25f',cream='#faf3e6',flag=['#ffffff', '#dc143c', '#2b3a55']),
+'amburgo':dict(pri='#b3122a',sec='#1f3a5f',gold='#c9a24a',cream='#f6f3ee',flag=['#ffffff', '#b3122a', '#1f3a5f']),
+'zurigo':dict(pri='#c4281c',sec='#1f3a6b',gold='#c9a24a',cream='#f5f4f0',flag=['#c4281c', '#ffffff', '#1f3a6b']),
+'copenaghen':dict(pri='#c8102e',sec='#3f5f7a',gold='#d9b25f',cream='#faf3e8',flag=['#c8102e', '#ffffff', '#3f5f7a']),
+'stoccolma':dict(pri='#1f5f9f',sec='#2b4a6b',gold='#e0b22e',cream='#f6f4ec',flag=['#1f6fb4', '#f1c40f', '#2b4a6b']),
+'oslo':dict(pri='#b3122a',sec='#1f3a6b',gold='#c9a24a',cream='#f6f3ee',flag=['#c8102e', '#ffffff', '#1f3a6b']),
+'helsinki':dict(pri='#1f5fa8',sec='#3b5f7a',gold='#c9a24a',cream='#f5f4f0',flag=['#ffffff', '#1f5fa8', '#5a8fc4']),
+'reykjavik':dict(pri='#1f3a6b',sec='#b3122a',gold='#8fb8d6',cream='#f3f4f4',flag=['#1f3a6b', '#ffffff', '#c8102e']),
+'dublino':dict(pri='#13804f',sec='#c8651e',gold='#d9a520',cream='#f6f4ea',flag=['#169b62', '#ffffff', '#ff883e']),
+'edimburgo':dict(pri='#1f3a6b',sec='#6b4a8c',gold='#c9a24a',cream='#f6f2ea',flag=['#1f3a6b', '#ffffff', '#6b4a8c']),
+'atene':dict(pri='#0d5eaf',sec='#7a5a1e',gold='#c9a24a',cream='#faf4e6',flag=['#0d5eaf', '#ffffff', '#c9a24a']),
+'istanbul':dict(pri='#b3122a',sec='#1f6f8b',gold='#d9b25f',cream='#faf2e2',flag=['#c8102e', '#ffffff', '#1f6f8b']),
+'vilnius':dict(pri='#a8202a',sec='#006a44',gold='#e0a526',cream='#faf3e4',flag=['#fdb913', '#006a44', '#c1272d'])}
 for _k,_v in CITY_PAL.items():T[_k]=mk(**_v)
 
 def css_for(cid):

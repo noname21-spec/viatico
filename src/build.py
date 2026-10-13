@@ -3,7 +3,7 @@ from themes import css_for
 from world import W,REG as REGN
 d=os.path.dirname(os.path.abspath(__file__))
 r=lambda n:open(os.path.join(d,n)).read()
-ORDER=["paris","bcn","roma","londra","amsterdam","lisbona","berlino","praga","vienna","bruxelles","cracovia","budapest","porto","monaco"]
+ORDER=["paris","bcn","roma","londra","amsterdam","lisbona","berlino","praga","vienna","bruxelles","cracovia","budapest","porto","monaco","madrid","milano","firenze","venezia","napoli","siviglia","valencia","varsavia","amburgo","zurigo","copenaghen","stoccolma","oslo","helsinki","reykjavik","dublino","edimburgo","atene","istanbul","vilnius"]
 # città non ancora pronte: compaiono come «In arrivo»
 META={
 "bcn":{"n":"Barcellona","c":"Spagna","e":"🏖️","col":["#004d98","#a50044","#edbb00"],"k":"barcellona barcelona spagna"},
@@ -15,7 +15,7 @@ META={
 "praga":{"n":"Praga","c":"Repubblica Ceca","e":"🏰","col":["#11457e","#c8102e","#d4a017"],"k":"praga prague repubblica ceca"},
 "vienna":{"n":"Vienna","c":"Austria","e":"🎻","col":["#a7102a","#d9b25f","#ffffff"],"k":"vienna wien austria"}}
 have=[c for c in ORDER if os.path.exists(os.path.join(d,'cities',c+'.js'))]
-RG={"paris":"eu","bcn":"eu","roma":"eu","londra":"eu","amsterdam":"eu","lisbona":"eu","berlino":"eu","praga":"eu","vienna":"eu","bruxelles":"eu","cracovia":"eu","budapest":"eu","porto":"eu","monaco":"eu"}
+RG={"paris":"eu","bcn":"eu","roma":"eu","londra":"eu","amsterdam":"eu","lisbona":"eu","berlino":"eu","praga":"eu","vienna":"eu","bruxelles":"eu","cracovia":"eu","budapest":"eu","porto":"eu","monaco":"eu","madrid":"eu","milano":"eu","firenze":"eu","venezia":"eu","napoli":"eu","siviglia":"eu","valencia":"eu","varsavia":"eu","amburgo":"eu","zurigo":"eu","copenaghen":"eu","stoccolma":"eu","oslo":"eu","helsinki":"eu","reykjavik":"eu","dublino":"eu","edimburgo":"eu","atene":"eu","istanbul":"eu","vilnius":"eu"}
 soon=[dict(id=c,r=RG[c],**META[c]) for c in ORDER if c not in have and c in META]
 soon+=[dict(id=i,n=n,c=c,e=e,r=r,col=col,k=k) for (i,n,c,e,r,col,k) in W if i not in have]
 cities=r('cities/_it.js')+'\n'+''.join(r('cities/'+c+'.js')+'\n' for c in have)+r('foodtags.js')+'\n'
