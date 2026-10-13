@@ -378,7 +378,7 @@ function renderVoli(){var c=CFG,A=TRIP.A,F=fromInfo(c),DL=TRIP.days[TRIP.n-1],fr
 function card(side){var a=side==="a",num=a?c.a_num:c.r_num,o=a?F.code||"—":c.to,d=a?c.to:F.code||"—",dt=a?c.date:(c.date_r||c.date);
 var rows=a?[["Data",cap(dateLong(dt))],["Numero volo",num||"—"],["Partenza",c.a_dep||"—"],["Atterraggio a "+PD.n,c.a_arr]]:[["Data",cap(dateLong(dt))],["Numero volo",num||"—"],["Apertura imbarco",c.r_imb||"—"],["Partenza",c.r_dep]];
 var lk=a?[[F.url,"🛫 Partenze "+F.name],[A.url,"🛬 Arrivi "+A.n]]:[[A.url,"🛫 Partenze "+A.n],[F.url,"🛬 Arrivi "+F.name]];
-return '<div class="vcard"><div class="vleg"><span class="iata">'+esc(o)+'</span><i class="pl">✈︎</i><span class="iata">'+esc(d)+'</span> '+(a?"Andata":"Ritorno")+'</div>'+rows.map(function(r){return '<div class="vrw"><span>'+r[0]+'</span><b>'+esc(r[1])+'</b></div>'}).join("")+'<div class="vlive" data-l="'+side+'" hidden></div><div class="vlinks">'+lk.filter(function(x){return x[0]}).map(function(x){return '<a class="vch" target="_blank" rel="noopener" href="'+esc(x[0])+'">'+esc(x[1])+' ↗︎</a>'}).join("")+fr(num)+'</div></div>'}
+return '<div class="vcard"><div class="vleg"><span class="iata">'+esc(o)+'</span><i class="pl">✈︎</i><span class="iata">'+esc(d)+'</span> '+(a?"Andata":"Ritorno")+'</div>'+rows.map(function(r){return '<div class="vrw"><span>'+r[0]+'</span><b>'+esc(r[1])+'</b></div>'}).join("")+'<div class="vlinks">'+lk.filter(function(x){return x[0]}).map(function(x){return '<a class="vch" target="_blank" rel="noopener" href="'+esc(x[0])+'">'+esc(x[1])+' ↗︎</a>'}).join("")+fr(num)+'</div></div>'}
 $("#vgrid").innerHTML=card("a")+card("r");
 renderVcost();
 $("#vtips").innerHTML='<details><summary>🛬 Dall\'aeroporto di '+esc(A.n)+(TRIP.multi?' all\'alloggio':' al centro')+'</summary><ul><li>'+esc(A.arr)+'</li><li>'+esc(A.tk)+'</li>'+(PD.fx.voliTip?PD.fx.voliTip(E):(A.vt?'<li>'+esc(A.vt)+'</li>':''))+'</ul></details><details><summary>🛫 Ritorno in aeroporto</summary><ul><li>'+(TRIP.multi?"L'ultimo giorno parti alle "+fmt(DL.leave)+". ":"Parti dall'ultima tappa alle "+fmt(DL.leave)+". ")+esc(DL.items[DL.items.length-1].ret.txt)+'</li><li>Calcolo l\'arrivo in aeroporto almeno '+fdur(A.buf)+' prima del decollo'+(DL.imb!=null?' e 45 minuti prima dell\'apertura dell\'imbarco':'')+'.</li></ul></details>'}
@@ -615,7 +615,7 @@ $("#foot").textContent="Itinerario per "+(N===1?"una persona":N+" persone")+", "
 function renderAll(){if(!CFG)return;TRIP=buildTrip(CFG);var ti=todayIdx();SEL=ti>=0?ti:Math.min(SEL,TRIP.n-1);if(SEL<0)SEL=0;P=TRIP.days[SEL];WD=P.wd;lastNow=-2;
 renderHero();renderDays();renderBar();renderStay();renderShort();renderItin();renderAvv();PREADY=false;meteo();PREADY=true;renderVoli();renderPasti();renderCosti(false);renderSpese();renderConsigli();liveTick();PAR.emit()}
 PAR.render=renderAll;
-setInterval(liveTick,30000);document.addEventListener("visibilitychange",function(){if(!document.hidden)liveTick()});window.addEventListener("pageshow",function(e){if(e.persisted)liveTick()});window.addEventListener("vlive",liveTick);
+setInterval(liveTick,30000);document.addEventListener("visibilitychange",function(){if(!document.hidden)liveTick()});window.addEventListener("pageshow",function(e){if(e.persisted)liveTick()});
 document.getElementById("t-costi").addEventListener("change",function(){if(this.checked&&CFG)renderCosti(true)});
 
 /* ===== schermata «Il tuo viaggio» ===== */
@@ -753,7 +753,7 @@ $("#dgear").addEventListener("click",function(){sheet.classList.add("home","on")
 $("#shclose").addEventListener("click",closeSheet);
 sheet.addEventListener("click",function(e){if(e.target===sheet)closeSheet()});
 $$("[data-edit]").forEach(function(b){b.addEventListener("click",function(){openSetup(false)})});
-$("#shvoli").addEventListener("click",function(){closeSheet();var r=$("#t-voli");r.checked=true;r.dispatchEvent(new Event("change",{bubbles:true}));setTimeout(function(){var k=$("#vkey");k.open=true;k.scrollIntoView({behavior:"smooth",block:"center"})},350)});
+["via-adb-key","par-adb-key","via-vlive","via-vlive-n"].forEach(function(k){try{localStorage.removeItem(k)}catch(e){}});
 $("#shreset").addEventListener("click",function(){if(!confirm("Cancellare TUTTI i viaggi, spese, liste e la chiave salvati su questo telefono?"))return;
 ["via-trip","via-trips","via-spese","via-check","via-copt","via-adb-key","via-vlive","via-vlive-n","via-water","via-fp","via-notif","via-nfired","via-ckfold"].forEach(function(k){ls(k,null)});FP.d=[];FP.p=0;FP.k=[];if(PAR.fpPaint)PAR.fpPaint();CFG=null;SAVED=null;TRIP=null;SP={};CK={};COPT={};closeSheet();openDest()});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeSheet();if(CFG){closeSetup();closeDest();setCity(PD.id)}}});

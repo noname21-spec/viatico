@@ -3,7 +3,7 @@ from themes import css_for
 from world import W,REG as REGN
 d=os.path.dirname(os.path.abspath(__file__))
 r=lambda n:open(os.path.join(d,n)).read()
-ORDER=["paris","bcn","roma","londra","amsterdam","lisbona","berlino","praga","vienna"]
+ORDER=["paris","bcn","roma","londra","amsterdam","lisbona","berlino","praga","vienna","bruxelles","cracovia","budapest","porto","monaco"]
 # città non ancora pronte: compaiono come «In arrivo»
 META={
 "bcn":{"n":"Barcellona","c":"Spagna","e":"🏖️","col":["#004d98","#a50044","#edbb00"],"k":"barcellona barcelona spagna"},
@@ -15,7 +15,7 @@ META={
 "praga":{"n":"Praga","c":"Repubblica Ceca","e":"🏰","col":["#11457e","#c8102e","#d4a017"],"k":"praga prague repubblica ceca"},
 "vienna":{"n":"Vienna","c":"Austria","e":"🎻","col":["#a7102a","#d9b25f","#ffffff"],"k":"vienna wien austria"}}
 have=[c for c in ORDER if os.path.exists(os.path.join(d,'cities',c+'.js'))]
-RG={"paris":"eu","bcn":"eu","roma":"eu","londra":"eu","amsterdam":"eu","lisbona":"eu","berlino":"eu","praga":"eu","vienna":"eu"}
+RG={"paris":"eu","bcn":"eu","roma":"eu","londra":"eu","amsterdam":"eu","lisbona":"eu","berlino":"eu","praga":"eu","vienna":"eu","bruxelles":"eu","cracovia":"eu","budapest":"eu","porto":"eu","monaco":"eu"}
 soon=[dict(id=c,r=RG[c],**META[c]) for c in ORDER if c not in have and c in META]
 soon+=[dict(id=i,n=n,c=c,e=e,r=r,col=col,k=k) for (i,n,c,e,r,col,k) in W if i not in have]
 cities=r('cities/_it.js')+'\n'+''.join(r('cities/'+c+'.js')+'\n' for c in have)+r('foodtags.js')+'\n'
@@ -55,7 +55,7 @@ assert not re.search(r'<script\b[^>]+>',html), 'script con attributi: non copert
 shs=sorted(set(b64h(m) for m in re.findall(r'<script>(.*?)</script>',html,re.S)))
 sbu=SBC.get('url','')
 sbh=re.sub(r'^https?://','',sbu)
-CONN=["'self'","https://api.open-meteo.com","https://nominatim.openstreetmap.org","https://overpass-api.de","https://routing.openstreetmap.de","https://opendata.paris.fr","https://aerodatabox.p.rapidapi.com","https://tile.openstreetmap.org","https://*.tile.openstreetmap.org","https://translate.googleapis.com"]+([sbu,'wss://'+sbh] if sbu else [])
+CONN=["'self'","https://api.open-meteo.com","https://nominatim.openstreetmap.org","https://overpass-api.de","https://routing.openstreetmap.de","https://opendata.paris.fr","https://tile.openstreetmap.org","https://*.tile.openstreetmap.org","https://translate.googleapis.com"]+([sbu,'wss://'+sbh] if sbu else [])
 CSP="; ".join([
  "default-src 'self'",
  "script-src 'self' "+" ".join("'sha256-%s'"%h for h in shs)+" https://translate.google.com https://translate.googleapis.com https://www.gstatic.com",

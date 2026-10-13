@@ -30,7 +30,7 @@
 <div id="live" class="live" hidden></div>
 <div id="avv" class="avv" hidden></div>
 <div id="stay" class="stay" hidden></div>
-<label for="t-voli" class="golink"><span>✈️</span><b>Voli e stato live</b><small>Orari, gate, ritardi e pagine degli aeroporti</small><i>›</i></label>
+<label for="t-voli" class="golink"><span>✈️</span><b>Voli</b><small>Orari, costi e pagine degli aeroporti</small><i>›</i></label>
 <div id="meteo" class="meteo"><span class="mi">🌤️</span><div><b>Meteo</b><span>Caricamento…</span></div></div>
 <h2 class="sec" id="ith">Itinerario</h2>
 <p id="short" class="short" hidden></p>
@@ -38,18 +38,10 @@
 </section>
 
 <section class="blk" id="voli">
-<h2 class="sec">Voli e stato live</h2>
+<h2 class="sec">Voli</h2>
 <div class="voli" id="vcard">
 <div class="vh2"><b>I tuoi voli</b><button type="button" class="vbtn" data-edit>✏️ Modifica</button></div>
 <div class="vgrid" id="vgrid"></div>
-<div class="vbar"><button type="button" id="vref" class="vbtn" hidden>↻ Aggiorna stato</button><small id="vupd"></small></div>
-<details class="vkey" id="vkey"><summary><span>📡 Stato live dei voli</span><small id="vks">Non collegato</small></summary>
-<p>Gli aeroporti non danno i loro dati alle app esterne: i pulsanti qui sopra aprono le loro pagine ufficiali. Per vedere ritardi, gate, terminal e nastro bagagli direttamente qui, collega il servizio gratuito AeroDataBox (piano Basic gratuito, con un numero limitato di richieste al mese).</p>
-<ol><li>Crea un account su <a href="https://rapidapi.com/aedbx-aedbx/api/aerodatabox" target="_blank" rel="noopener">RapidAPI · AeroDataBox ↗︎</a> e attiva il piano <b>Basic</b> gratuito.</li><li>Copia la tua chiave <b>X-RapidAPI-Key</b> e incollala qui sotto.</li></ol>
-<div class="vkrow"><input type="password" id="vkin" placeholder="Incolla la chiave" autocomplete="off" autocapitalize="off" spellcheck="false"><button type="button" class="vbtn" id="vkok">Collega</button></div>
-<small class="vknote">La chiave resta solo su questo telefono, non finisce nel sito pubblicato. Nel giorno del viaggio l'app aggiorna da sola ogni 10 minuti intorno ai voli.</small>
-<button type="button" class="vlnk" id="vkdel" hidden>Scollega</button>
-</details>
 </div>
 <div class="voli vcost" id="vcost"></div>
 <div class="zones" id="vtips"></div>
@@ -156,9 +148,8 @@
 <button type="button" class="row" data-trip id="shoff"><span>🗺️</span><span>Mappa offline<small id="shoffs">Salva le tessere dell'area dei tuoi spostamenti, per usarla senza rete</small></span></button>
 <button type="button" class="row" id="shapp"><span>🔗</span><span>Condividi Viaticum<small>QR code e link per far scaricare l'app</small></span></button>
 <button type="button" class="row" id="shacct" hidden><span>👤</span><span><b class="at">Accedi o registrati</b><small class="as"></small></span></button>
-<button type="button" class="row" id="shvoli"><span>📡</span><span>Stato live dei voli<small>Collega o scollega la chiave AeroDataBox</small></span></button>
 <button type="button" class="row" id="shhelp"><span>🛟</span><span>Supporto e assistenza<small>Domande frequenti, contatti e privacy</small></span></button>
-<button type="button" class="row danger" id="shreset"><span>🗑️</span><span>Cancella tutti i dati<small>Tutti i viaggi, spese, liste e chiave salvati su questo telefono</small></span></button>
+<button type="button" class="row danger" id="shreset"><span>🗑️</span><span>Cancella tutti i dati<small>Tutti i viaggi, spese e liste salvati su questo telefono</small></span></button>
 <button type="button" class="btn ghost cls" id="shclose">Chiudi</button>
 </div></div>
 

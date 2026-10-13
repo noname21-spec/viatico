@@ -26,7 +26,12 @@ CITY_PAL={
 'lisbona':dict(pri='#1c4f8f',sec='#a87900',gold='#f5c400',cream='#fbf6e6',flag=['#1c4f8f','#ffd200','#f2f2f2']),
 'berlino':dict(pri='#b3122a',sec='#3b3f4a',gold='#f0b323',cream='#f5f3ef',flag=['#e4002b','#ffffff','#111111']),
 'praga':dict(pri='#11457e',sec='#b30d27',gold='#d4a017',cream='#faf3e3',flag=['#ffffff','#c8102e','#11457e']),
-'vienna':dict(pri='#a7102a',sec='#7a5a1e',gold='#d9b25f',cream='#fbf3e2',flag=['#c8102e','#ffffff','#d9b25f'])}
+'vienna':dict(pri='#a7102a',sec='#7a5a1e',gold='#d9b25f',cream='#fbf3e2',flag=['#c8102e','#ffffff','#d9b25f']),
+'bruxelles':dict(pri='#c8102e',sec='#2b2b2b',gold='#f1bf00',cream='#fbf4e0',flag=['#2b2b2b','#f1bf00','#c8102e']),
+'cracovia':dict(pri='#b0122b',sec='#8c6a3a',gold='#d9b25f',cream='#faf2e4',flag=['#ffffff','#dc143c','#8c6a3a']),
+'budapest':dict(pri='#b3262e',sec='#3f7a4a',gold='#d9b25f',cream='#fbf3e2',flag=['#ce2939','#ffffff','#477050']),
+'porto':dict(pri='#1c4f8f',sec='#7a2e2e',gold='#c9a24a',cream='#f8f3e8',flag=['#1c4f8f','#ffffff','#7a2e2e']),
+'monaco':dict(pri='#1f6fb4',sec='#3b3f4a',gold='#d9a520',cream='#f6f4ee',flag=['#1f6fb4','#ffffff','#d9a520'])}
 for _k,_v in CITY_PAL.items():T[_k]=mk(**_v)
 
 def css_for(cid):
