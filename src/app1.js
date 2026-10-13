@@ -231,7 +231,7 @@ function fpWords(){var q=[];FP.d.forEach(function(d){if(d==="veg"&&FP.d.indexOf(
 /* ===== rendering ===== */
 var TRIP=null,P=null,WD=0,SEL=0;
 window.PAR={get S(){return S},get MN(){return MN},get cfg(){return CFG},get plan(){return P},get trip(){return TRIP},get sel(){return SEL},home:home,fmt:fmt,fdur:fdur,esc:esc,toMin:toMin,paris:paris,gdir:gdir,eur:eur,ls:ls,lj:lj,dateShort:dateShort,dateLong:dateLong,wd:function(){return WD},DAYS:DAYS,mealIds:mealIds,vSorted:vSorted,vq:vq,toast:toast,cap:cap,fromInfo:function(){return fromInfo(CFG)},
- L:{},on:function(fn){(this.L.f=this.L.f||[]).push(fn)},emit:function(){(this.L.f||[]).forEach(function(f){try{f()}catch(e){console.error(e)}})}};
+ L:{},on:function(fn){(this.L.f=this.L.f||[]).push(fn)},emit:function(){if(this.quiet)return;(this.L.f||[]).forEach(function(f){try{f()}catch(e){console.error(e)}})}};
 
 var E={get S(){return S},get V(){return V},get cfg(){return CFG},get trip(){return TRIP},get plan(){return P},get wd(){return WD},home:home,legOf:legOf,posOf:posOf,access:access,hav:hav,est:estMin,fmt:fmt,fdur:fdur,eur:eur,esc:esc,toMin:toMin,sunset:sunset,dateObj:dateObj,lc:lc,allActs:function(){return allActs()},has:function(id){return allActs().indexOf(id)>=0},get copt(){return COPT}};
 function goBtn(q,mode,label,icon){return '<a class="go" href="'+esc(gdir(q,mode))+'" target="_blank" rel="noopener"><span>'+icon+'</span> '+label+'</a>'}
@@ -752,7 +752,7 @@ zbusy=true;
 var r=btn.getBoundingClientRect(),x=Math.round(r.left+r.width/2),y=Math.round(r.top+r.height/2),W=innerWidth,H=innerHeight,R=Math.ceil(Math.hypot(Math.max(x,W-x),Math.max(y,H-y)))+6,
  zc=(window.SKYZ&&SKYZ[d.id])||d.col[1],ov=document.createElement("div");
 ov.className="zov";ov.setAttribute("aria-hidden","true");ov.style.cssText="--a:"+d.col[0]+";--z:"+zc;
-ov.innerHTML='<div class="zdot"></div><div class="zbg"></div><div class="zcol"><span class="zchip">'+esc(d.c||"")+'</span><b class="zn">'+esc(d.n)+'</b></div>';
+ov.innerHTML='<div class="zdot"></div><div class="zbg"></div><div class="zcol"><span class="zchip">'+esc(d.c||"")+'</span><b class="zn" style="--l:'+Math.max(5,d.n.length)+'">'+esc(d.n)+'</b></div>';
 var sk=window.zSky?zSky(d.id):null;if(sk)ov.querySelector(".zcol").appendChild(sk);
 document.body.appendChild(ov);
 var done=function(){zbusy=false;if(ov.parentNode)ov.remove()};
@@ -767,7 +767,7 @@ setTimeout(function(){
  try{ss("via-zoom",JSON.stringify({a:d.col[0],z:zc,c:d.c||"",n:d.n,id:d.id}))}catch(x){}
  fn();
  ov.classList.add("zx");var out=ov.animate?ov.animate([{opacity:1},{opacity:0}],{duration:320,delay:110,easing:"ease-in",fill:"forwards"}):null;
- if(out)out.onfinish=done;else done()},d.id!==PD.id?760:1180);
+ if(out)out.onfinish=done;else done()},d.id!==PD.id?1000:1450);
 setTimeout(done,3200)}
 dgrid.addEventListener("click",function(e){var b=e.target.closest(".dcity");if(!b)return;var d=dOf(b.dataset.city);
 if(!d.ok){b.animate&&b.animate([{transform:"translateX(0)"},{transform:"translateX(-4px)"},{transform:"translateX(4px)"},{transform:"none"}],{duration:300,easing:"ease-out"});toast("La guida di "+d.n+" arriva presto ✨");return}
@@ -833,7 +833,7 @@ var t0=$("#t-itinerario");if(!t0.checked){t0.checked=true;t0.dispatchEvent(new E
 var blk=$("#itinerario");blk.scrollTop=0},function(){toast(first?"Itinerario pronto ✨":"Viaggio aggiornato ✓");
 if(multi&&c.stay.addr&&!c.stay.geo)geocode()})});
 /* attesa giocosa dopo la creazione: l'aereo gira intorno alla bandiera, le frasi cambiano, i passaggi si spuntano */
-function waitFun(c,first,work,done){var red=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches,ms=red?700:first?2900:1700,
+function waitFun(c,first,work,done){var red=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches,ms=red?700:window.LITE?(first?1800:1100):first?2900:1700,
 L=["Spiego la mappa di "+PD.n+"…","Cerco il caffè giusto per la colazione ☕","Metto in fila i monumenti, senza fretta","Controllo orari… e anche le code 👀","Scelgo dove pranzare (la parte più seria)","Controllo se serve l'ombrello ☂️"],v=styVals();
 L.splice(2,0,v.th==="eno"?"Faccio spazio per un buon calice 🍷":v.th==="cul"?"Non perdiamo nemmeno un museo 🏛️":"Un po' di storia, un po' di buon cibo 🍝");
 L.splice(4,0,v.pc==="rel"?"Aggiungo le pause gelato 🍦":v.pc==="int"?"Allaccio le scarpe da corsa 👟":"Bilancio camminate e pause ⚖️");

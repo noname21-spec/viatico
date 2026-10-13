@@ -244,3 +244,15 @@ document.addEventListener("visibilitychange",function(){if(document.hidden){hid=
 /* service worker per l'uso offline */
 try{if("serviceWorker" in navigator&&location.protocol==="https:"){navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(function(r){r.update()}).catch(function(){});var _r=false;navigator.serviceWorker.addEventListener("controllerchange",function(){if(_r)return;_r=true;if(!document.getElementById("setup").classList.contains("on"))location.reload()})}}catch(e){}
 })();
+
+/* meteo in alto: tocca per aprire la finestra con le previsioni */
+(function(){var wx=document.getElementById("wx");if(!wx)return;var pop=null;
+wx.setAttribute("role","button");wx.setAttribute("tabindex","0");wx.setAttribute("aria-haspopup","dialog");wx.setAttribute("aria-expanded","false");
+function close(){if(!pop)return;pop.classList.remove("on");wx.setAttribute("aria-expanded","false");var p=pop;pop=null;setTimeout(function(){p.remove()},180);document.removeEventListener("pointerdown",out,true);document.removeEventListener("keydown",key)}
+function out(e){if(pop&&!pop.contains(e.target)&&!wx.contains(e.target))close()}
+function key(e){if(e.key==="Escape")close()}
+function open(){var m=document.getElementById("meteo");if(!m)return;pop=document.createElement("div");pop.className="wxp";pop.setAttribute("role","dialog");pop.setAttribute("aria-label","Previsioni meteo");
+var body=document.createElement("div");body.className="wxpb meteo";body.innerHTML=m.innerHTML;var h=document.createElement("div");h.className="wxph";h.innerHTML='<b>Previsioni</b><button type="button" aria-label="Chiudi">✕</button>';h.querySelector("button").addEventListener("click",close);pop.appendChild(h);pop.appendChild(body);document.body.appendChild(pop);
+requestAnimationFrame(function(){if(pop)pop.classList.add("on")});wx.setAttribute("aria-expanded","true");document.addEventListener("pointerdown",out,true);document.addEventListener("keydown",key)}
+function tg(){pop?close():open()}
+wx.addEventListener("click",tg);wx.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();tg()}})})();

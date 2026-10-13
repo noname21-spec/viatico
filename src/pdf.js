@@ -110,10 +110,11 @@ function grabAll(){
  function P(i){return document.querySelectorAll("#dsel1 .dp")[i]}
  var cnt=document.querySelectorAll("#dsel1 .dp").length,cur=0,days=[],i0;
  for(i0=0;i0<cnt;i0++)if(P(i0).classList.contains("on"))cur=i0;
- var seq=Promise.resolve();
- function one(i){seq=seq.then(function(){P(i).click();var n=0;return(function poll(){return wait(80).then(function(){var q=P(i);if((q&&q.classList.contains("on"))||n++>25){return wait(150).then(function(){days.push(grabDay())})}return poll()})})()})}
+ var P0=window.PAR,seq=Promise.resolve();if(P0)P0.quiet=1;
+ function one(i){seq=seq.then(function(){P(i).click();days.push(grabDay());return new Promise(function(r){requestAnimationFrame(function(){r()})})})}
  for(i0=0;i0<cnt;i0++)one(i0);
- if(cnt)seq=seq.then(function(){P(cur).click();return wait(150)});else seq=seq.then(function(){days.push(grabDay())});
+ if(cnt)seq=seq.then(function(){P(cur).click()});else seq=seq.then(function(){days.push(grabDay())});
+ seq=seq.then(function(){if(P0){P0.quiet=0;P0.emit()}},function(e){if(P0)P0.quiet=0;throw e});
  return seq.then(function(){
   var h1=T($("#itinerario h1"))||"Itinerario",city=(h1.split(/\s+in\s+/)[0]||h1);
   return{title:h1,city:city,sub:T($("#hsub")),days:days,costs:grabCosts()}})
