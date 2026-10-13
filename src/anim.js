@@ -4,8 +4,11 @@ var reduce=matchMedia("(prefers-reduced-motion: reduce)");
 /* indicatore che scivola sul giorno scelto */
 function place(d){
   var on=d.querySelector(".dp.on");
-  if(!on||!on.offsetWidth){d.classList.remove("ind");return}
-  d.style.setProperty("--dl",on.offsetLeft+"px");d.style.setProperty("--dw",on.offsetWidth+"px");d.classList.add("ind")}
+  if(!on||!on.offsetWidth){if(d.classList.contains("ind"))d.classList.remove("ind");return}
+  var l=on.offsetLeft+"px",w=on.offsetWidth+"px";
+  if(d.style.getPropertyValue("--dl")!==l)d.style.setProperty("--dl",l);if(d.style.getPropertyValue("--dw")!==w)d.style.setProperty("--dw",w);
+  /* solo se serve: cambiare la classe anche senza differenze riattivava l'osservatore e ripartiva all'infinito */
+  if(!d.classList.contains("ind"))d.classList.add("ind")}
 var q=0;
 function all(){q=0;[].forEach.call(document.querySelectorAll(".dsel"),place)}
 function sched(){if(!q)q=requestAnimationFrame(all)}
@@ -40,4 +43,16 @@ function count(){
   }
 var tc=document.getElementById("t-costi");
 if(tc)tc.addEventListener("change",function(){if(tc.checked)setTimeout(function(){if(Date.now()-lastT>600){lastT=Date.now();count()}},120)});
+/* arrivo da un'altra città: la scheda colorata resta un attimo con lo skyline, poi si dissolve */
+var zi=window.__zin;if(zi&&zi.parentNode){try{var zs=window.zSky&&zSky(zi.getAttribute("data-id"));if(zs)zi.querySelector(".zcol").appendChild(zs)}catch(e){}
+setTimeout(function(){if(zi.parentNode)zi.className="zov out"},320);setTimeout(function(){if(zi.parentNode)zi.remove()},900)}
+/* a schermo fermo da qualche secondo le animazioni senza fine (nuvole, scintille, icone) si fermano; tornano al primo tocco */
+var idleT=0,held=[],lastTouch=0;
+function holdAnims(){try{document.getAnimations().forEach(function(a){var t=a.effect&&a.effect.getComputedTiming?a.effect.getComputedTiming():null;if(t&&t.iterations===Infinity&&a.playState==="running"){a.pause();held.push(a)}})}catch(e){}}
+function wakeAnims(){var n=Date.now();if(!held.length&&n-lastTouch<1500)return;lastTouch=n;if(held.length){held.forEach(function(a){try{a.play()}catch(e){}});held=[]}clearTimeout(idleT);idleT=setTimeout(holdAnims,12000)}
+["pointerdown","pointermove","keydown","touchstart","wheel"].forEach(function(e){addEventListener(e,wakeAnims,{passive:true,capture:true})});
+addEventListener("scroll",wakeAnims,{passive:true,capture:true});
+document.addEventListener("visibilitychange",function(){if(document.hidden){clearTimeout(idleT);holdAnims()}else wakeAnims()});
+[].forEach.call(document.querySelectorAll(".tabr"),function(r){r.addEventListener("change",function(){lastTouch=0;wakeAnims()})});
+wakeAnims();
 })();

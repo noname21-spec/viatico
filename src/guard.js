@@ -1,0 +1,21 @@
+/* rete di sicurezza: se l'app non parte, invece di una pagina vuota compare una scheda con due tasti */
+(function(){
+var shown=0;
+function show(){if(shown||window.__viaOK)return;shown=1;
+ try{var d=document.createElement("div");d.id="crash";d.setAttribute("role","alertdialog");d.setAttribute("aria-label","Errore");
+ d.style.cssText="position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(20,16,14,.72);font:500 16px/1.45 Outfit,system-ui,sans-serif";
+ d.innerHTML='<div style="max-width:380px;width:100%;box-sizing:border-box;padding:24px;border-radius:28px;background:#fff;color:#26221f;box-shadow:0 20px 50px rgba(0,0,0,.35)"><b style="display:block;font-size:22px;letter-spacing:-.02em;margin-bottom:8px">Qualcosa non è partito bene</b><p style="margin:0 0 18px;color:#6b645d">Succede di rado. Riprova: se il problema resta, puoi ripristinare i dati salvati su questo telefono (i viaggi non sincronizzati verranno cancellati).</p><button type="button" id="cr-r" style="display:block;width:100%;min-height:48px;margin-bottom:10px;border:0;border-radius:24px;background:#26221f;color:#fff;font:600 16px Outfit,system-ui,sans-serif">Riprova</button><button type="button" id="cr-x" style="display:block;width:100%;min-height:48px;border:0;border-radius:24px;background:#f1ece6;color:#26221f;font:600 16px Outfit,system-ui,sans-serif">Ripristina i dati e riparti</button></div>';
+ (document.body||document.documentElement).appendChild(d);
+ var r=d.querySelector("#cr-r"),x=d.querySelector("#cr-x"),sure=0;
+ r.addEventListener("click",function(){location.reload()});
+ x.addEventListener("click",function(){if(!sure){sure=1;x.textContent="Tocca ancora per cancellare i dati locali";x.style.background="#c0392b";x.style.color="#fff";return}
+  try{var k=[],i;for(i=0;i<localStorage.length;i++){var n=localStorage.key(i);if(n&&n.indexOf("via-")===0)k.push(n)}k.forEach(function(n){localStorage.removeItem(n)})}catch(e){}
+  try{sessionStorage.clear()}catch(e){}
+  var p=[];try{if(window.caches)p.push(caches.keys().then(function(ks){return Promise.all(ks.map(function(c){return caches.delete(c)}))}))}catch(e){}
+  try{if(navigator.serviceWorker)p.push(navigator.serviceWorker.getRegistrations().then(function(rs){return Promise.all(rs.map(function(s){return s.unregister()}))}))}catch(e){}
+  Promise.all(p).then(function(){location.reload()},function(){location.reload()})})
+ }catch(e){}}
+window.addEventListener("error",function(e){if(window.__viaOK)return;var f=e&&e.filename;if(f&&f.indexOf(location.origin)!==0)return;setTimeout(show,1200)});
+window.addEventListener("unhandledrejection",function(){});
+setTimeout(show,7000);
+})();

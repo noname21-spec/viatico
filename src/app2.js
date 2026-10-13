@@ -172,12 +172,12 @@ function kind(c){return c===0?["☀️","sun"]:c<=2?["🌤️","sun"]:c===3?["�
 function paint(t,c){var k=kind(c);wi.textContent=k[0];wx.className="wx "+k[1];wt.textContent=Math.round(t)+"°";wx.setAttribute("aria-label",PD.n+" ora: "+Math.round(t)+" gradi")}
 try{var sv=JSON.parse(localStorage.getItem("via-wx")||"null");if(sv&&sv.city===PD.id)paint(sv.t,sv.c)}catch(e){}
 function load(){if(!window.fetch)return;fetch("https://api.open-meteo.com/v1/forecast?latitude="+PD.LL[0]+"&longitude="+PD.LL[1]+"&current=temperature_2m,weather_code&timezone="+encodeURIComponent(PD.TZ)).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){var t=d.current.temperature_2m,c=d.current.weather_code;if(t==null)return;paint(t,c);try{localStorage.setItem("via-wx",JSON.stringify({t:t,c:c,city:PD.id}))}catch(e){}}).catch(function(){})}
-load();setInterval(load,15*60*1000);
+var lw=Date.now();function loadW(){lw=Date.now();load()}load();setInterval(function(){if(!document.hidden)loadW()},15*60*1000);document.addEventListener("visibilitychange",function(){if(!document.hidden&&Date.now()-lw>15*60*1000)loadW()});
 var tk=0;function upd(){tk=0;var a=document.querySelector(".tabr:checked"),b=a&&document.getElementById(a.id.slice(2));body.classList.toggle("scrolled",!!(b&&b.scrollTop>40))}
 blks.forEach(function(b){b.addEventListener("scroll",function(){if(!tk)tk=requestAnimationFrame(upd)},{passive:true})});
 /* splash a ogni apertura */
 var sp=document.getElementById("splash"),hid=0,tm;function hide(){if(sp)sp.style.display="none"}tm=setTimeout(hide,3500);
-document.addEventListener("visibilitychange",function(){if(document.hidden){hid=Date.now();return}if(!sp||!hid||Date.now()-hid<5000||matchMedia("(prefers-reduced-motion: reduce)").matches)return;var n=sp.cloneNode(true);n.style.display="";sp.parentNode.replaceChild(n,sp);sp=n;clearTimeout(tm);tm=setTimeout(hide,3500)});
+document.addEventListener("visibilitychange",function(){if(document.hidden){hid=Date.now();return}if(!sp||!hid||Date.now()-hid<120000||matchMedia("(prefers-reduced-motion: reduce)").matches)return;var n=sp.cloneNode(true);n.style.display="";sp.parentNode.replaceChild(n,sp);sp=n;clearTimeout(tm);tm=setTimeout(hide,3500)});
 /* service worker per l'uso offline */
 try{if("serviceWorker" in navigator&&location.protocol==="https:"){navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(function(r){r.update()}).catch(function(){});var _r=false;navigator.serviceWorker.addEventListener("controllerchange",function(){if(_r)return;_r=true;if(!document.getElementById("setup").classList.contains("on"))location.reload()})}}catch(e){}
 })();

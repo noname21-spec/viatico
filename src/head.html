@@ -945,17 +945,6 @@ html.sa body.tbmin .tabbar{top:calc(var(--apph) - 58px - 10px - env(safe-area-in
 .qrb{display:grid;gap:8px;margin-bottom:8px}
 .qrc .btn{width:100%;justify-content:center}
 .shc,.qrc{background:linear-gradient(180deg,var(--hi2),transparent 38%),color-mix(in srgb,var(--bg) 84%,transparent)!important}
-/* --- zoom sulla destinazione --- */
-.zcl{position:fixed!important;z-index:330;margin:0;pointer-events:none;overflow:hidden;will-change:left,top,width,height;transform:translateZ(0)}
-.zcl .zwash,#zin{background:linear-gradient(160deg,var(--a,var(--za)),var(--b,var(--zb)) 60%,var(--c,var(--zc)))}
-.zcl .zwash{position:absolute;inset:0;opacity:0}
-.zcl .zc{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:8px;opacity:0}
-.zem{font-size:4rem;line-height:1}
-.zn{font:800 2rem/1.1 Outfit,system-ui,sans-serif;color:#fff;letter-spacing:-.02em;text-shadow:0 2px 10px rgba(0,0,0,.4)}
-#zin{display:none}
-#zin.on,#zin.out{position:fixed;inset:0;z-index:400;display:grid;place-content:center;justify-items:center;gap:8px;pointer-events:none}
-#zin.out{animation:zinOut .65s ease forwards}
-@keyframes zinOut{to{opacity:0;transform:scale(1.06)}}
 /* --- fluidità: niente sfocature sulle grandi superfici (la sfocatura resta solo su barra in alto e barra sezioni) --- */
 .blk,.scard,.dcard,.shc,.qrc,#dest,#setup,#sheet,#qrbox,#acct,#ask,#exp,#help,.gear{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 .appbar::before{-webkit-backdrop-filter:blur(14px) saturate(160%)!important;backdrop-filter:blur(14px) saturate(160%)!important}

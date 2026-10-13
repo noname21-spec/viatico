@@ -303,7 +303,7 @@ WH={wheel:wheel,items:items,go:function(i){wheel.scrollTop=i*H;upd()}};upd()}
 var lastNow=-2;
 function todayIdx(){if(!TRIP)return -1;var d=paris().d;for(var i=0;i<TRIP.days.length;i++)if(TRIP.days[i].date===d)return i;return -1}
 var lastDay=null;
-function liveTick(){var live=$("#live");if(!TRIP||!CFG){live.hidden=true;return}var dd=paris().d;if(lastDay&&dd!==lastDay){lastDay=dd;try{renderAll()}catch(e){console.error(e)}return}lastDay=dd;
+function liveTick(){if(document.hidden)return;var live=$("#live");if(!TRIP||!CFG){live.hidden=true;return}var dd=paris().d;if(lastDay&&dd!==lastDay){lastDay=dd;try{renderAll()}catch(e){console.error(e)}return}lastDay=dd;
 var n=paris(),c=CFG,A=TRIP.A,D0=TRIP.days[0],DN=TRIP.days[TRIP.n-1];
 function set(cls,b,sp){live.className="live "+cls;live.innerHTML='<i class="dot"></i><div class="lt"><b></b><span></span></div>';$("b",live).textContent=b;$("span",live).textContent=sp;live.hidden=false}
 var steps=$$("#steps .step");steps.forEach(function(li){li.classList.remove("now")});if(WH.items)WH.items.forEach(function(w){w.classList.remove("now")});
@@ -713,23 +713,25 @@ function zoomGo(btn,d,fn){
 if(zbusy)return;
 if(!btn.animate||(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){fn();return}
 zbusy=true;
-var r=btn.getBoundingClientRect(),cl=document.createElement("div");
-cl.className="dcity ok zcl";cl.setAttribute("aria-hidden","true");
-cl.style.cssText="--a:"+d.col[0]+";--b:"+d.col[1]+";--c:"+d.col[2]+";left:"+r.left+"px;top:"+r.top+"px;width:"+r.width+"px;height:"+r.height+"px";
-cl.innerHTML=btn.innerHTML+'<i class="zwash"></i><div class="zc"><span class="zem">'+d.e+'</span><b class="zn">'+esc(d.n)+'</b></div>';
-document.body.appendChild(cl);btn.style.visibility="hidden";
-var E="cubic-bezier(.7,0,.2,1)",geo=cl.animate([{left:r.left+"px",top:r.top+"px",width:r.width+"px",height:r.height+"px",borderRadius:"22px"},{left:"0px",top:"0px",width:"100%",height:"100%",borderRadius:"0px"}],{duration:540,easing:E,fill:"forwards"});
-[].forEach.call(cl.children,function(c){
- if(c.classList.contains("zwash"))c.animate([{opacity:0},{opacity:1}],{duration:380,delay:60,easing:"ease-out",fill:"forwards"});
- else if(c.classList.contains("zc"))c.animate([{opacity:0,transform:"scale(.6)"},{opacity:1,transform:"none"}],{duration:320,delay:230,easing:"cubic-bezier(.2,1.3,.4,1)",fill:"forwards"});
- else c.animate([{opacity:1},{opacity:0}],{duration:200,fill:"forwards"})});
-destEl.animate([{opacity:1},{opacity:0}],{duration:420,easing:"ease-in",fill:"forwards"});
-var fin=function(){
- try{ss("via-zoom",JSON.stringify({a:d.col[0],b:d.col[1],c:d.col[2],e:d.e,n:d.n}))}catch(x){}
+/* la città si apre dal punto toccato: il colore si allarga, il nome appare e i monumenti salgono uno dopo l'altro */
+var r=btn.getBoundingClientRect(),x=Math.round(r.left+r.width/2),y=Math.round(r.top+r.height/2),W=innerWidth,H=innerHeight,R=Math.ceil(Math.hypot(Math.max(x,W-x),Math.max(y,H-y)))+6,
+ zc=(window.SKYZ&&SKYZ[d.id])||d.col[1],ov=document.createElement("div");
+ov.className="zov";ov.setAttribute("aria-hidden","true");ov.style.cssText="--a:"+d.col[0]+";--z:"+zc;
+ov.innerHTML='<div class="zbg"></div><div class="zcol"><span class="zchip">'+esc(d.c||"")+'</span><b class="zn">'+esc(d.n)+'</b></div>';
+var sk=window.zSky?zSky(d.id):null;if(sk)ov.querySelector(".zcol").appendChild(sk);
+document.body.appendChild(ov);
+var done=function(){zbusy=false;if(ov.parentNode)ov.remove()};
+try{
+btn.animate([{transform:"scale(1)"},{transform:"scale(.95)"},{transform:"scale(1)"}],{duration:280,easing:"ease-out"});
+ov.querySelector(".zbg").animate([{clipPath:"circle(0px at "+x+"px "+y+"px)"},{clipPath:"circle("+R+"px at "+x+"px "+y+"px)"}],{duration:480,easing:"cubic-bezier(.65,0,.15,1)",fill:"forwards"});
+ov.querySelector(".zcol").animate([{opacity:0,transform:"translateY(14px) scale(.96)"},{opacity:1,transform:"none"}],{duration:440,delay:240,easing:"cubic-bezier(.2,1.2,.4,1)",fill:"backwards"});
+}catch(e){}
+setTimeout(function(){
+ try{ss("via-zoom",JSON.stringify({a:d.col[0],z:zc,c:d.c||"",n:d.n,id:d.id}))}catch(x){}
  fn();
- setTimeout(function(){destEl.getAnimations().forEach(function(a){a.cancel()});btn.style.visibility="";zbusy=false;
-  cl.animate([{opacity:1},{opacity:0}],{duration:420,easing:"ease-out",fill:"forwards"}).onfinish=function(){cl.remove()}},60)};
-geo.onfinish=fin;geo.oncancel=function(){cl.remove();zbusy=false}}
+ var out=ov.animate?ov.animate([{opacity:1,transform:"scale(1)"},{opacity:0,transform:"scale(1.04)"}],{duration:380,delay:60,easing:"ease-in",fill:"forwards"}):null;
+ if(out)out.onfinish=done;else done()},1080);
+setTimeout(done,3200)}
 dgrid.addEventListener("click",function(e){var b=e.target.closest(".dcity");if(!b)return;var d=dOf(b.dataset.city);
 if(!d.ok){b.animate&&b.animate([{transform:"translateX(0)"},{transform:"translateX(-4px)"},{transform:"translateX(4px)"},{transform:"none"}],{duration:300,easing:"ease-out"});toast("La guida di "+d.n+" arriva presto ✨");return}
 var ex=sameCity(d.id);if(ex.length){var e0=ex[0];ask("Hai già un viaggio a "+d.n,"Vuoi aprire quello che hai già o organizzarne uno nuovo?",[{t:"＋ Nuovo viaggio a "+d.n,fn:function(){startNew(d,b)}},{t:"Apri il viaggio esistente",fn:function(){if(e0.cur){if(d.id!==PD.id)goCity(d.id);else{closeDest();setCity(PD.id)}}else switchTrip(e0.i)}}]);return}

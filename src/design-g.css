@@ -473,3 +473,26 @@ body:has(#t-itinerario:checked) label[for=t-itinerario] span,body:has(#t-voli:ch
 .csck input.ckin:checked~.tx{color:var(--mute);text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--mute) 50%,transparent)}
 .csbody a.call,.csbody .call{display:inline-block}
 @media (max-width:420px){#costi td,#costi th{padding-left:8px;padding-right:8px}#costi td:first-child,#costi th:first-child,#costi tr.grp td{padding-left:16px}#costi td:last-child,#costi th:last-child{padding-right:16px}}
+
+/* --- scelta della città: il colore si allarga, il nome sale e i monumenti si alzano --- */
+.zov{--a:#8e1b1b;--z:#F2B33D;position:fixed;inset:0;z-index:400;overflow:hidden;pointer-events:none;color:#fff;display:flex;flex-direction:column;justify-content:center;
+ --hon:#fff;--far:#fff;--farOp:.16;--sun:color-mix(in srgb,var(--z) 45%,#fff);--sunHalo:color-mix(in srgb,var(--z) 65%,#fff);--cloud:rgba(255,255,255,.22);--moonc:transparent;
+ --f1:#fff;--f2:color-mix(in srgb,#fff 78%,var(--z));--side:color-mix(in srgb,var(--z) 72%,var(--a));--rim:rgba(255,255,255,.9);
+ --sksh:color-mix(in srgb,color-mix(in srgb,var(--a) 55%,#000) 45%,transparent);--lineC:color-mix(in srgb,var(--a) 90%,#000);--skg:rgba(255,255,255,.22);--swo:.6}
+#zin{display:none}#zin.on,#zin.out{display:flex}
+#zin.out{animation:zinOut .5s ease forwards}
+@keyframes zinOut{to{opacity:0;transform:scale(1.04)}}
+.zov .zbg{position:absolute;inset:0;background:radial-gradient(120% 90% at 12% 0%,rgba(255,255,255,.3),transparent 55%),radial-gradient(95% 62% at 72% 104%,color-mix(in srgb,var(--z) 95%,transparent) 0%,color-mix(in srgb,var(--z) 45%,transparent) 45%,transparent 78%),linear-gradient(160deg,color-mix(in srgb,var(--a) 76%,#fff),color-mix(in srgb,var(--a) 94%,#000))}
+.zov .zcol{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:0 28px 6vh;margin-top:-4vh}
+.zov .zchip{display:inline-flex;align-items:center;height:30px;padding:0 14px;border-radius:15px;background:rgba(255,255,255,.22);font:600 .82rem Outfit,system-ui,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.zov .zchip:empty{display:none}
+.zov .zn{font:600 clamp(3.4rem,19vw,5.4rem)/1 Outfit,system-ui,sans-serif;letter-spacing:-.035em;text-shadow:0 2px 16px rgba(0,0,0,.16)}
+.zov .zsk{display:block;width:calc(100% + 56px);max-width:none;margin:22px -28px 0;height:auto;overflow:visible}
+.zsk .face,.zsk .face *{fill:url(#zgFace)}.zsk .halo{fill:url(#zgSun)}
+.zsk .gnd{fill:url(#zgGround)}
+.zsk .mon{animation-duration:.5s;animation-delay:calc(var(--k)*50ms + 220ms)}
+.zsk .shd{animation-delay:.7s}.zsk .ln{animation-delay:calc(.65s + var(--i)*40ms)}
+.zsk .sunG{animation-duration:1.1s}
+.zsk .halo,.zsk .spk circle,.zsk .bird{animation:none}
+#zin .zsk *{animation:none!important}
+@media (prefers-reduced-motion:reduce){.zov{display:none!important}}
