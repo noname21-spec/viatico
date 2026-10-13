@@ -297,7 +297,7 @@ function renderStay(){var el=$("#stay");if(!TRIP.multi){el.hidden=true;el.innerH
 var h=home(),c=CFG,nights=TRIP.n-1;el.hidden=false;
 var bk="https://www.booking.com/searchresults.it.html?ss="+encodeURIComponent(h.addr?PD.BK:h.zn.split(" / ")[0]+", "+PD.BK)+"&checkin="+c.date+"&checkout="+c.date_r+"&group_adults="+c.ppl+"&no_rooms=1";
 el.innerHTML='<span class="se">🏨</span><div><b>'+esc(h.name)+'</b><small>'+(h.addr&&!h.alt?'Zona '+esc(h.zn)+' · ':'')+nights+(nights===1?" notte":" notti")+' · check-in dalle '+esc(h.cin)+' · check-out entro le '+esc(h.cout)+'</small><small>'+(h.geo?"📍 Posizione presa dall'indirizzo":h.addr?"📍 Indirizzo non trovato sulla mappa: uso il centro della zona":"📍 Posizione indicativa: centro della zona")+'</small><div class="lpa">'+'<a class="go sm" target="_blank" rel="noopener" href="'+esc(gdir(h.q,"transit"))+'">↗︎ Portami all\'alloggio</a>'+(h.addr?'':'<a class="go sm" target="_blank" rel="noopener" href="'+esc(bk)+'">🔎 Cerca su Booking</a>')+'<button type="button" class="go sm" data-edit>✏️ Modifica</button></div></div>';
-$("[data-edit]",el).addEventListener("click",function(){openSetup(false)})}
+$("[data-edit]",el).addEventListener("click",function(){openSetup(false,2)})}
 
 function renderItin(){$("#ith").textContent=TRIP.multi?"Giorno "+(SEL+1)+" · "+DAYS[P.wd]+" "+dateObj(P.date).getUTCDate():"Itinerario";$("#steps").innerHTML=P.items.map(stepHTML).join("");buildWheel()}
 
@@ -305,7 +305,7 @@ function renderItin(){$("#ith").textContent=TRIP.multi?"Giorno "+(SEL+1)+" · "+
 var WH={};
 function buildWheel(){var ol=$("#steps");var old=$("#itinerario .wbox");if(old)old.remove();
 var steps=$$(".step",ol),box=document.createElement("section");box.className="wbox";
-box.innerHTML='<div class="wheelwrap"><div class="wheel" id="wheel" tabindex="0" role="listbox" aria-label="Tappe della giornata"></div></div><div id="detail" aria-live="polite"></div><div class="ctl"><button type="button" id="wl">'+(document.body.classList.contains("showall")?"Torna alla ghiera":"Mostra tutto l'elenco")+'</button></div>';
+var sa0=document.body.classList.contains("showall");box.innerHTML='<div class="vsw" role="tablist" aria-label="Come vedere le tappe"><button type="button" role="tab" data-v="w" aria-selected="'+!sa0+'" class="'+(sa0?"":"on")+'"><i aria-hidden="true">◎</i>Ghiera</button><button type="button" role="tab" data-v="l" aria-selected="'+sa0+'" class="'+(sa0?"on":"")+'"><i aria-hidden="true">☰</i>Elenco</button></div><div class="wheelwrap"><div class="wheel" id="wheel" tabindex="0" role="listbox" aria-label="Tappe della giornata"></div></div><div id="detail" aria-live="polite"></div>';
 ol.parentNode.insertBefore(box,ol);
 var wheel=$("#wheel",box),detail=$("#detail",box),H=44,cur=-1,tick=0;
 var items=steps.map(function(li,i){var b=document.createElement("button");b.type="button";b.className="wi";b.setAttribute("role","option");b.innerHTML='<span class="wt"></span><span class="wn"></span>';b.children[0].textContent=$(".t",li).textContent;b.children[1].textContent=$("h2",li).textContent;b.addEventListener("click",function(){wheel.scrollTo({top:i*H,behavior:"smooth"})});wheel.appendChild(b);return b});
@@ -313,7 +313,7 @@ function upd(){var y=wheel.scrollTop,idx=Math.max(0,Math.min(items.length-1,Math
 if(idx!==cur){cur=idx;detail.innerHTML=$(".body",steps[idx]).innerHTML;$$("[data-edit]",detail).forEach(function(x){x.addEventListener("click",function(){openSetup(false)})})}}
 wheel.addEventListener("scroll",function(){if(!tick)tick=requestAnimationFrame(function(){tick=0;upd()})});
 wheel.addEventListener("keydown",function(e){if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();wheel.scrollTo({top:(cur+(e.key==="ArrowDown"?1:-1))*H,behavior:"smooth"})}});
-$("#wl",box).addEventListener("click",function(){var all=document.body.classList.toggle("showall");this.textContent=all?"Torna alla ghiera":"Mostra tutto l'elenco"});
+$$(".vsw button",box).forEach(function(b){b.addEventListener("click",function(){var all=b.dataset.v==="l";document.body.classList.toggle("showall",all);$$(".vsw button",box).forEach(function(x){var on=x===b;x.classList.toggle("on",on);x.setAttribute("aria-selected",on)})})});
 WH={wheel:wheel,items:items,go:function(i){wheel.scrollTop=i*H;upd()}};upd()}
 
 /* banner dal vivo */
@@ -480,8 +480,11 @@ var cat=[["Trasporti",M.tT,"var(--k1)"],["Attrazioni",M.tA,"var(--k2)"],["Cibo",
 var segs=cat.map(function(c,i){return '<i style="flex:'+Math.max(c[1],tot?tot*.012:1).toFixed(2)+';background:'+c[2]+';--i:'+i+'"></i>'}).join("");
 $("#cdonut").innerHTML='<div class="hero chero"><div class="ch-t"><span>Costi stimati · a persona</span><b>'+eur(tot)+'</b><em>'+(TRIP.n>1?TRIP.n+" giorni":"1 giorno")+(N>1?" · "+eur(tot*N)+" in "+N:"")+'</em></div><button type="button" class="ch-pdf" id="cdpdf" aria-label="Scarica i costi in PDF"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>PDF</button></div><div class="cbrk"><div class="cbar'+(anim?" anim":"")+'" aria-hidden="true">'+segs+'</div><ul class="dleg">'+cat.map(function(c){return '<li><i style="background:'+c[2]+'"></i><span>'+c[0]+'</span><b>'+eur(c[1])+'</b></li>'}).join("")+'</ul></div>';
 var cdp=$("#cdpdf");if(cdp)cdp.addEventListener("click",function(){var o=$("#ccpdf");if(o)o.click()});
-function rows(t,a){if(!a.length)return"";return '<tr class="grp"><td colspan="'+(N>1?3:2)+'">'+t+'</td></tr>'+a.map(function(r){var o=M.on(r);return '<tr class="'+(o?"":"off")+'"><td>'+(r[3]?'<label class="opt"><input type="checkbox" data-o="'+r[0]+'"'+(o?" checked":"")+'><span>'+esc(r[1])+'</span></label>':esc(r[1]))+'</td><td>'+(r[2]?eur(r[2]):(r[0]==="al"?"—":"gratis"))+'</td>'+(N>1?'<td>'+(r[2]?eur(r[2]*N):(r[0]==="al"?"—":"gratis"))+'</td>':'')+'</tr>'}).join("")}
+var CCOL=window.CCOL=window.CCOL||{};
+function rows(t,a){if(!a.length)return"";var sub=a.reduce(function(q,r){return q+(M.on(r)?r[2]:0)},0),cl=CCOL[t]!==false;return '<tr class="grp acc'+(cl?"":" open")+'" data-g="'+esc(t)+'" tabindex="0" role="button" aria-expanded="'+!cl+'"><td><i class="chev" aria-hidden="true">›</i>'+t+'</td><td>'+(sub?eur(sub):"—")+'</td>'+(N>1?'<td>'+(sub?eur(sub*N):"—")+'</td>':'')+'</tr>'+a.map(function(r){var o=M.on(r),hot=r[0]==="al";return '<tr class="gi'+(o?"":" off")+(hot?" hot":"")+'" data-gi="'+esc(t)+'"'+(cl?" hidden":"")+'><td>'+(r[3]?'<label class="opt"><input type="checkbox" data-o="'+r[0]+'"'+(o?" checked":"")+'><span>'+esc(r[1])+'</span></label>':hot?'<button type="button" class="hotb" data-hotel>'+esc(r[1])+' <b>Modifica ›</b></button>':esc(r[1]))+'</td><td>'+(r[2]?eur(r[2]):(r[0]==="al"?"—":"gratis"))+'</td>'+(N>1?'<td>'+(r[2]?eur(r[2]*N):(r[0]==="al"?"—":"gratis"))+'</td>':'')+'</tr>'}).join("")}
 $("#ctab").innerHTML='<tr><th>Voce</th><th>A persona</th>'+(N>1?'<th>In '+N+'</th>':'')+'</tr>'+rows("Voli",M.V)+rows("Trasporti",M.T)+rows("Attrazioni",M.AT)+rows("Cibo",M.F)+rows("Alloggio",M.AL)+'<tr class="tot"><td>Totale</td><td>'+eur(tot)+'</td>'+(N>1?'<td>'+eur(tot*N)+'</td>':'')+'</tr>';
+$$("#ctab .acc").forEach(function(h){function tg(){var g=h.dataset.g,op=CCOL[g]===false;CCOL[g]=op;h.classList.toggle("open",!op);h.setAttribute("aria-expanded",!op);$$('#ctab tr[data-gi]').forEach(function(r){if(r.dataset.gi===g)r.hidden=op})}h.addEventListener("click",tg);h.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();tg()}})});
+$$("#ctab [data-hotel]").forEach(function(b){b.addEventListener("click",function(){openSetup(false,2);setTimeout(function(){var p=form.sprice;if(p&&!$("#stayin").hidden)try{p.focus({preventScroll:true});p.scrollIntoView({block:"center"})}catch(e){}},350)})});
 $$("#ctab input[data-o]").forEach(function(x){x.addEventListener("change",function(){COPT[x.dataset.o]=x.checked?1:0;ls("via-copt",JSON.stringify(COPT));renderCosti(false);renderSpese()})});
 var nt=(M.V.length?"Voli inclusi come li hai inseriti. ":"Voli esclusi: puoi aggiungerne il costo nella sezione Voli. ")+"Tutte le attrazioni sono facoltative: togli la spunta a quelle che non ti interessano e il totale si aggiorna. ";
 if(PD.fx.costNote)nt+=PD.fx.costNote(E,M);else{nt+=(M.bn?M.bn+" ":M.best==="single"?"Con poche corse i biglietti singoli costano meno degli abbonamenti. ":"")+(M.alt.length?"Alternative: "+M.alt.join(", ")+". ":"")+PD.TR.note+(PD.T.foodNote?" "+PD.T.foodNote:"");if(TRIP.multi&&PD.T.taxNote)nt+=" "+PD.T.taxNote}
@@ -692,11 +695,11 @@ var multi=n>1,si=$("#stayin");if(si.hidden===multi){si.hidden=!multi;$("#stayno"
 $("#rlab").textContent=multi?"Ritorno":"Ritorno (stesso giorno)";paintSteps()}
 form.date.addEventListener("change",function(){form.date_r.min=form.date.value;if(!form.date_r.value||form.date_r.value<form.date.value)form.date_r.value=form.date.value;dnote()});
 form.date_r.addEventListener("change",dnote);$$('input[type=date],input[type=time]',form).forEach(function(i){i.addEventListener("click",function(){try{if(i.showPicker)i.showPicker()}catch(e){}})});form.date.addEventListener("input",dnote);form.date_r.addEventListener("input",dnote);
-function openSetup(first){var c=CFG||{},s=c.stay||{};form.date.value=c.date||"";form.date.min=paris().d;form.date_r.value=c.date_r||c.date||"";form.date_r.min=c.date||paris().d;$("#ppl").textContent=c.ppl||2;form.from.value=c.from||"";
-var to0=c.to&&PD.PAR[c.to]?c.to:APK[0],rt0=c.rt&&PD.PAR[c.rt]?c.rt:to0;$$('input[name=to]',form).forEach(function(r){r.checked=r.value===to0});$$('input[name=rto]',form).forEach(function(r){r.checked=r.value===rt0});if(rt0!==to0)form.dataset.rt="1";else delete form.dataset.rt;rtSync();["a_num","a_dep","a_arr","r_num","r_imb","r_dep"].forEach(function(k){form[k].value=c[k]||""});
+function openSetup(first,stp){var c=CFG||{},s=c.stay||{};form.date.value=c.date||"";form.date.min=paris().d;form.date_r.value=c.date_r||c.date||"";form.date_r.min=c.date||paris().d;$("#ppl").textContent=c.ppl||2;form.from.value=c.from||"";
+var to0=c.to&&PD.PAR[c.to]?c.to:APK[0],rt0=c.rt&&PD.PAR[c.rt]?c.rt:to0;$$('input[name=to]',form).forEach(function(r){r.checked=r.value===to0});$$('input[name=rto]',form).forEach(function(r){r.checked=r.value===rt0});if(rt0!==to0)form.dataset.rt="1";else delete form.dataset.rt;rtSync();["a_dep","a_arr","r_imb","r_dep"].forEach(function(k){form[k].value=c[k]||""});
 form.sz.value=s.zone||PD.HZ[0][0];form.saddr.value=s.addr||"";form.sin.value=s.cin||"15:00";form.sout.value=s.cout||"11:00";form.sprice.value=s.price||"";form.stype.value=s.type||PD.TAXDEF||PD.TAX[0][0];
 var sv=sty(c);$$("input[name=th]",form).forEach(function(r){r.checked=r.value===sv.th});$$("input[name=pc]",form).forEach(function(r){r.checked=r.value===sv.pc});
-$$("input,select",form).forEach(function(x){x.classList.remove("bad")});serr.textContent="";$("#scancel").hidden=!CFG;$("#stayin").hidden=true;$("#stayno").hidden=false;setHead();dnote();showStep(0);
+$$("input,select",form).forEach(function(x){x.classList.remove("bad")});serr.textContent="";$("#scancel").hidden=!CFG;$("#stayin").hidden=true;$("#stayno").hidden=false;setHead();dnote();showStep(stp||0);
 closeSheet();setup.classList.add("on");setup.setAttribute("aria-hidden","false");setup.scrollTop=0;setTimeout(function(){document.documentElement.classList.remove("hold")},600)}
 function closeSetup(){setup.classList.remove("on");setup.setAttribute("aria-hidden","true")}
 /* ===== destinazioni ===== */
@@ -821,7 +824,7 @@ var er=verr(3);if(er){showErr(er);return}
 $$("input,select",form).forEach(function(x){x.classList.remove("bad")});
 var d0=form.date.value,d1=form.date_r.value||d0,multi=d1>d0;
 var to=($('input[name=to]:checked',form)||{}).value||APK[0],rt=($('input[name=rto]:checked',form)||{}).value||to,old=(CFG&&CFG.stay)||{};
-var c={dest:PD.id,date:d0,date_r:d1,ppl:+$("#ppl").textContent||2,from:form.from.value.trim(),fromCode:fromCode(form.from.value),to:to,rt:rt,a_num:form.a_num.value.replace(/\s+/g,"").toUpperCase(),a_dep:form.a_dep.value,a_arr:form.a_arr.value,r_num:form.r_num.value.replace(/\s+/g,"").toUpperCase(),r_imb:form.r_imb.value,r_dep:form.r_dep.value,th:styVals().th,pc:styVals().pc};
+var c={dest:PD.id,date:d0,date_r:d1,ppl:+$("#ppl").textContent||2,from:form.from.value.trim(),fromCode:fromCode(form.from.value),to:to,rt:rt,a_num:(CFG&&CFG.a_num)||"",a_dep:form.a_dep.value,a_arr:form.a_arr.value,r_num:(CFG&&CFG.r_num)||"",r_imb:form.r_imb.value,r_dep:form.r_dep.value,th:styVals().th,pc:styVals().pc};
 if(multi){var addr=form.saddr.value.trim();c.stay={zone:form.sz.value,addr:addr,cin:form.sin.value||"15:00",cout:form.sout.value||"11:00",price:parseFloat(String(form.sprice.value).replace(",","."))||0,type:form.stype.value};
 if(addr&&addr===old.addr&&old.geo){c.stay.pos=old.pos;c.stay.geo=1}}
 var first=!CFG;if(SAVED&&SAVED.dest!==PD.id){parkCur();SP={};CK={};COPT={}}c.tid=(CFG&&CFG.tid)||newTid();CFG=c;SAVED=c;ls("via-trip",JSON.stringify(c));
@@ -830,14 +833,14 @@ var t0=$("#t-itinerario");if(!t0.checked){t0.checked=true;t0.dispatchEvent(new E
 var blk=$("#itinerario");blk.scrollTop=0},function(){toast(first?"Itinerario pronto ✨":"Viaggio aggiornato ✓");
 if(multi&&c.stay.addr&&!c.stay.geo)geocode()})});
 /* attesa giocosa dopo la creazione: l'aereo gira intorno alla bandiera, le frasi cambiano, i passaggi si spuntano */
-function waitFun(c,first,work,done){var red=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches,ms=red?700:first?4200:2400,
+function waitFun(c,first,work,done){var red=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches,ms=red?700:first?2900:1700,
 L=["Spiego la mappa di "+PD.n+"…","Cerco il caffè giusto per la colazione ☕","Metto in fila i monumenti, senza fretta","Controllo orari… e anche le code 👀","Scelgo dove pranzare (la parte più seria)","Controllo se serve l'ombrello ☂️"],v=styVals();
 L.splice(2,0,v.th==="eno"?"Faccio spazio per un buon calice 🍷":v.th==="cul"?"Non perdiamo nemmeno un museo 🏛️":"Un po' di storia, un po' di buon cibo 🍝");
 L.splice(4,0,v.pc==="rel"?"Aggiungo le pause gelato 🍦":v.pc==="int"?"Allaccio le scarpe da corsa 👟":"Bilancio camminate e pause ⚖️");
 if(!first)L=["Rimetto a posto le tappe…","Ricalcolo orari e spostamenti ⏱️","Ultimi ritocchi ✨"];
 var ST4=["Voli","Tappe","Pasti","Mappa"],el=document.createElement("div");el.className="mw"+(first?"":" mu");el.setAttribute("role","status");el.setAttribute("aria-live","polite");
 el.style.setProperty("--mwd",ms+"ms");
-el.innerHTML='<div class="mwc"><div class="mwo"><i class="mwr"></i><b class="mwp"><span>✈︎</span></b><div class="mwf">'+esc(PD.flag||"🧳")+'</div></div><h3 class="mwt">'+esc(first?"Preparo il tuo viaggio":"Aggiorno il tuo viaggio")+'</h3><p class="mwm" id="mwm">'+esc(L[0])+'</p>'+(first?'<ul class="mws">'+ST4.map(function(t){return '<li>'+t+'</li>'}).join("")+'</ul>':'')+'<div class="mwb"><i></i></div></div>';
+el.innerHTML='<div class="mwc"><div class="mwo"><i class="mwr"></i><b class="mwp"><span>✈︎</span></b><div class="mwf">'+esc(PD.flag||"🧳")+'</div></div><h3 class="mwt">'+esc(first?"Preparo il tuo viaggio":"Aggiorno il tuo viaggio")+'</h3><p class="mwm" id="mwm">'+esc(L[0])+'</p>'+(first?'<ul class="mws">'+ST4.map(function(t){return '<li>'+t+'</li>'}).join("")+'</ul>':'')+'<div class="mwb"><i></i></div><p class="mwl">Dal latino <i>viaticum</i>: ciò che si porta con sé quando si parte.</p></div>';
 document.body.appendChild(el);var m=el.querySelector("#mwm"),lis=el.querySelectorAll(".mws li"),k=0,tk=[];
 requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add("on");setTimeout(function(){try{work()}catch(e){console.error(e)}},380)})});
 if(!red){var per=Math.max(650,(ms-900)/L.length);L.forEach(function(t,i){if(!i)return;tk.push(setTimeout(function(){m.classList.add("out");setTimeout(function(){m.textContent=t;m.classList.remove("out")},200)},i*per+500))});
@@ -857,7 +860,7 @@ $("#gear").addEventListener("click",function(){sheet.classList.remove("home");sh
 $("#dgear").addEventListener("click",function(){sheet.classList.add("home","on");sheet.setAttribute("aria-hidden","false")});
 $("#shclose").addEventListener("click",closeSheet);
 sheet.addEventListener("click",function(e){if(e.target===sheet)closeSheet()});
-$$("[data-edit]").forEach(function(b){b.addEventListener("click",function(){openSetup(false)})});
+$$("[data-edit]").forEach(function(b){b.addEventListener("click",function(){openSetup(false,+b.dataset.edit||0)})});
 ["via-adb-key","par-adb-key","via-vlive","via-vlive-n"].forEach(function(k){try{localStorage.removeItem(k)}catch(e){}});
 $("#shreset").addEventListener("click",function(){if(!confirm("Cancellare TUTTI i viaggi, spese, liste e la chiave salvati su questo telefono?"))return;
 ["via-trip","via-trips","via-spese","via-check","via-copt","via-adb-key","via-vlive","via-vlive-n","via-water","via-fp","via-notif","via-nfired","via-ckfold"].forEach(function(k){ls(k,null)});FP.d=[];FP.p=0;FP.k=[];if(PAR.fpPaint)PAR.fpPaint();CFG=null;SAVED=null;TRIP=null;SP={};CK={};COPT={};closeSheet();openDest()});

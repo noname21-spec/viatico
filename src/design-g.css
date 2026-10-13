@@ -629,3 +629,11 @@ fieldset.sgrp.sl{animation:stepL .38s cubic-bezier(.22,1,.36,1) both}
 @media (prefers-reduced-motion:reduce){.tour,.td3{transition:none}}
 .tour:focus{outline:0}
 .zov.zx .zcol{opacity:0!important;transition:opacity .15s ease-out}
+
+/* leggerezza: niente sfocature in tempo reale, niente animazioni decorative continue */
+*,*::before,*::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.appbar::before,.tabbar,.gear{background:color-mix(in srgb,var(--bg) 94%,transparent)!important}
+.sky .sk-sea path,.sky .sk-spark circle,.wx .wxi,.golink>span,.dshare>span,.dp.on .i3,.dcity.ok .i3{animation:none!important}
+.dish>div,.tips li,.route,.wbox{animation:none!important}
+#setup.on .scard>*,#dest.on .dcard>*{animation:none!important}
+.blk,.scard,.shc,.dcard,.qrc{box-shadow:0 2px 10px rgba(0,0,0,.08)!important}
