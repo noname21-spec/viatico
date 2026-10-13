@@ -491,9 +491,9 @@ window.PAREST=tot*N}
 /* spese reali: elenco di spese condivise, saldi e rimborsi (come Splitwise) */
 var SP=lj("via-spese",{});
 (function(){if(!SP||typeof SP!=="object"||Array.isArray(SP))SP={};["n","x","q"].forEach(function(k){if(!Array.isArray(SP[k]))SP[k]=[]});if(typeof SP.lp!=="number")delete SP.lp;if(typeof SP.lc!=="string")delete SP.lc})();
-function cats(){var a=[["tr","Trasporti"],["co","Colazioni"],["pr","Pranzi"],["ce","Cene"],["sp","Spuntini"],["ex","Extra"]];if(TRIP&&TRIP.multi){a.splice(5,0,["mu","Musei"]);a.push(["al","Alloggio"])}else a[1][1]="Colazione",a[2][1]="Pranzo",a[3][1]="Cena";return a}
-var CI={tr:"🚇",co:"🥐",pr:"🥙",ce:"🍽️",sp:"🍦",ex:"🛍️",mu:"🏛️",al:"🏨"};
-function catName(k){var a=[["tr","Trasporti"],["co","Colazione"],["pr","Pranzo"],["ce","Cena"],["sp","Spuntini"],["ex","Extra"],["mu","Musei"],["al","Alloggio"]].filter(function(c){return c[0]===k})[0];return a?a[1]:"Spesa"}
+function cats(){var a=[["tr","Trasporti"],["vo","Voli"],["co","Colazioni"],["pr","Pranzi"],["ce","Cene"],["sp","Spuntini"],["ex","Extra"]];if(TRIP&&TRIP.multi){a.splice(6,0,["mu","Musei"]);a.push(["al","Alloggio"])}else a[2][1]="Colazione",a[3][1]="Pranzo",a[4][1]="Cena";return a}
+var CI={tr:"🚇",vo:"✈️",co:"🥐",pr:"🥙",ce:"🍽️",sp:"🍦",ex:"🛍️",mu:"🏛️",al:"🏨"};
+function catName(k){var a=[["tr","Trasporti"],["vo","Voli"],["co","Colazione"],["pr","Pranzo"],["ce","Cena"],["sp","Spuntini"],["ex","Extra"],["mu","Musei"],["al","Alloggio"]].filter(function(c){return c[0]===k})[0];return a?a[1]:"Spesa"}
 function names(){var N=CFG.ppl,a=[];for(var i=0;i<N;i++)a.push(((SP.n||[])[i]||"").trim()||(i===0?"Io":"Persona "+(i+1)));return a}
 function saveSP(){ls("via-spese",JSON.stringify(SP))}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
@@ -564,6 +564,8 @@ var h='<h3>'+(x?"Modifica spesa":"Nuova spesa")+'</h3><div class="xf">'+
 $("#xbody").innerHTML=h;
 function val(){var v=parseFloat($("#xa").value.replace(",","."));return isNaN(v)?0:v}
 function cur(){var s=$("#xcu");return s?s.value:"EUR"}
+function flTot(){var pp=flightRows().reduce(function(q,r){return q+r[2]},0);return Math.round(pp*N*100)/100}
+$("#xc").addEventListener("change",function(){if(this.value!=="vo")return;var t=flTot(),a=$("#xa"),d=$("#xd");if(t>0&&!(parseFloat(String(a.value).replace(",","."))>0)){a.value=t;if(!d.value.trim())d.value="Voli";a.dispatchEvent(new Event("input"));toast("Importo preso dai costi dei voli")}})
 function rate(){return cur()==="EUR"?1:(CU&&CU.e)||1}
 function sym(){return cur()==="EUR"?"€":(CU&&CU.s)||"€"}
 function tcents(){return Math.round(val()*rate()*100)}
