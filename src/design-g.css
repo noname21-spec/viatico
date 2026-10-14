@@ -848,3 +848,17 @@ html.lite .dbrand::before{background:radial-gradient(closest-side,color-mix(in s
 .dmc{position:absolute;left:12px;bottom:8px;font-size:.72rem;color:var(--mute)}.dmc b{font:700 1.2rem Outfit,system-ui,sans-serif;color:var(--ink);margin-right:2px}
 #dest.pick .dmap{display:none!important}
 @media (prefers-reduced-motion:reduce){.pl i,.pl em,.dmap .v circle{animation:none}}
+
+/* logo: saluto e luce secondo l'ora, valigia */
+.dgreet{margin:12px 0 0;font:500 .9rem Outfit,system-ui,sans-serif;color:var(--mute);text-align:center;animation:fadeUp .5s .3s both}
+.dbrand.open .dgreet{display:none}
+#dest[data-tod=dawn] .dbrand::before{background:radial-gradient(closest-side,color-mix(in srgb,#f6a56a 38%,transparent),transparent 75%)}
+#dest[data-tod=dusk] .dbrand::before{background:radial-gradient(closest-side,color-mix(in srgb,#f08a5d 36%,transparent),color-mix(in srgb,#a24b7a 12%,transparent) 55%,transparent 75%)}
+#dest[data-tod=night] .dbrand::before{background:radial-gradient(closest-side,color-mix(in srgb,#4a63c4 38%,transparent),transparent 75%)}
+#dest[data-tod=night] .dlw .dlogo{filter:brightness(.82) saturate(.9)}
+.dbrand::before{transition:opacity .6s}
+.dlw{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.didea.flash{animation:ideaFlash 1.2s ease-out}
+@keyframes ideaFlash{0%{transform:scale(1)}25%{transform:scale(1.025)}100%{transform:none}}
+#dest.pick .dgreet{display:none}
+html.lite #dest[data-tod=night] .dlw .dlogo{filter:none}
