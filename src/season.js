@@ -1,13 +1,13 @@
 /* Logo di stagione: neve, petali, luce d'estate, foglie. Una sola tela leggera, ferma quando non serve. */
 (function(){
-var dest=document.getElementById("dest"),box=document.querySelector(".dbrand");if(!dest||!box||!window.requestAnimationFrame)return;
+var dest=document.getElementById("dest"),box=document.querySelector(".dhero")||document.querySelector(".dbrand");if(!dest||!box||!window.requestAnimationFrame)return;
 var rm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
 var m=new Date().getMonth(),S=m===11||m<2?"winter":m<5?"spring":m<8?"summer":"autumn";
-dest.dataset.sea=S;
+dest.dataset.sea=S;try{window.__homeSky&&window.__homeSky()}catch(e){}
 if(rm)return;
 var cv=document.createElement("canvas");cv.className="seac";cv.setAttribute("aria-hidden","true");box.insertBefore(cv,box.firstChild);
 var cx=cv.getContext("2d"),W=0,H=0,dpr=Math.min(window.devicePixelRatio||1,window.LITE?1:1.75),P=[],raf=0,last=0,t0=0,N=window.LITE?14:S==="winter"?60:S==="summer"?22:26;
-function size(){W=box.clientWidth;H=Math.min(300,box.clientHeight||300);cv.width=W*dpr;cv.height=H*dpr;cv.style.height=H+"px";cx.setTransform(dpr,0,0,dpr,0,0)}
+function size(){W=box.clientWidth;H=Math.min(560,box.clientHeight||300);cv.width=W*dpr;cv.height=H*dpr;cv.style.height=H+"px";cx.setTransform(dpr,0,0,dpr,0,0)}
 /* sprite del fiocco: cerchio morbido, disegnato una sola volta */
 var sp=document.createElement("canvas");sp.width=sp.height=32;(function(){var g=sp.getContext("2d"),r=g.createRadialGradient(16,16,0,16,16,16);r.addColorStop(0,"rgba(255,255,255,1)");r.addColorStop(.5,"rgba(255,255,255,.95)");r.addColorStop(.78,"rgba(165,198,235,.3)");r.addColorStop(1,"rgba(165,198,235,0)");g.fillStyle=r;g.fillRect(0,0,32,32)})();
 var LC=["#d9741f","#c2491d","#e8a030","#a8421c","#f0b43a"],PC=["#ffc2d6","#ffd9e5","#fff","#f7a8c4"];
