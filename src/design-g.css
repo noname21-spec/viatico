@@ -825,3 +825,6 @@ html.lite .dbrand::before{background:radial-gradient(closest-side,color-mix(in s
 .dpass{transition:transform .15s ease}.dpass:active{transform:scale(.985)}
 @media (prefers-reduced-motion:reduce){.tkm-bg,.tkm-p,.tkm-b,.tkm-l{animation:none}}
 .flyic,.flyic *{animation:none!important}.flyic .iwm,.flyic .ipin{opacity:1!important;transform:none!important}.flyic .shine{display:none}
+
+/* animazioni: solo proprietà composite, niente repaint durante l'ingresso */
+.dlw{transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .5s ease}

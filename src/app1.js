@@ -923,7 +923,7 @@ var ST4=["Voli","Tappe","Pasti","Mappa"],el=document.createElement("div");el.cla
 el.style.setProperty("--mwd",ms+"ms");
 el.innerHTML='<div class="mwc"><div class="mwo"><i class="mwr"></i><b class="mwp"><span>✈︎</span></b><div class="mwf">'+esc(PD.flag||"🧳")+'</div></div><h3 class="mwt">'+esc(first?"Preparo il tuo viaggio":"Aggiorno il tuo viaggio")+'</h3><p class="mwm" id="mwm">'+esc(L[0])+'</p>'+(first?'<ul class="mws">'+ST4.map(function(t){return '<li>'+t+'</li>'}).join("")+'</ul>':'')+'<div class="mwb"><i></i></div><p class="mwl">Dal latino <i>viaticum</i>: ciò che si porta con sé quando si parte.</p></div>';
 document.body.appendChild(el);var m=el.querySelector("#mwm"),lis=el.querySelectorAll(".mws li"),k=0,tk=[];
-requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add("on");setTimeout(function(){try{work()}catch(e){console.error(e)}},380)})});
+requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add("on");setTimeout(function(){try{work()}catch(e){console.error(e)}},720)})});
 if(!red){var per=Math.max(650,(ms-900)/L.length);L.forEach(function(t,i){if(!i)return;tk.push(setTimeout(function(){m.classList.add("out");setTimeout(function(){m.textContent=t;m.classList.remove("out")},200)},i*per+500))});
 [].forEach.call(lis,function(li,i){tk.push(setTimeout(function(){li.classList.add("ok")},900+i*((ms-1900)/lis.length)))})}
 else[].forEach.call(lis,function(li){li.classList.add("ok")});

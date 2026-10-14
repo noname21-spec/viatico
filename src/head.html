@@ -197,12 +197,12 @@ body:has(.tabr:focus-visible) .tabbar{outline:2px solid var(--c3);outline-offset
 /* ===== itinerario ===== */
 .live{display:flex;gap:12px;align-items:center;margin:0 0 16px;padding:12px 14px;border-color:color-mix(in srgb,var(--c3) 30%,transparent)}
 .live[hidden]{display:none}
-.live .dot{flex:none;width:12px;height:12px;border-radius:50%;background:var(--c2);animation:pulse 1.8s ease-out infinite}
+.live .dot{flex:none;width:12px;height:12px;border-radius:50%;background:var(--c2);position:relative}.live .dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--c2);animation:pulse 1.8s ease-out infinite;will-change:transform,opacity}
 .live .lt{display:flex;flex-direction:column;gap:2px;font-size:.92rem;line-height:1.35}.live .lt b{font-size:1rem}.live .lt span{color:var(--mute)}
 .live.alert{border-color:var(--c2);background:linear-gradient(180deg,var(--hi2),transparent 45%),color-mix(in srgb,var(--c2) 14%,var(--gl2))}
 .live.alert .lt b{color:var(--c2)}
 .live.calm .dot{background:var(--c4);animation:none}
-@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--c2) 55%,transparent)}100%{box-shadow:0 0 0 12px transparent}}
+@keyframes pulse{0%{transform:scale(1);opacity:.55}100%{transform:scale(3);opacity:0}}
 .avv{margin:0 0 16px;padding:10px 14px;border-color:color-mix(in srgb,var(--c2) 45%,transparent)}
 .avv[hidden]{display:none}
 .avv b{color:var(--c2)}.avv p{margin:4px 0 0;font-size:.88rem}
@@ -720,7 +720,7 @@ button.go{border:0;cursor:pointer}
 @keyframes idleWiggle{0%,100%{transform:none}50%{transform:translate3d(0,-2px,0)}}
 @keyframes titleIn{0%{opacity:0;transform:translate3d(0,6px,0)}100%{opacity:1;transform:none}}
 @keyframes secFlow{0%{background-position:0 0}100%{background-position:200% 0}}
-@keyframes tbFloat{0%{transform:none}30%{transform:translate3d(0,-6px,0);box-shadow:0 16px 28px -10px color-mix(in srgb,var(--g1) 55%,transparent),0 10px 20px -8px color-mix(in srgb,var(--g2) 45%,transparent)}58%{transform:translate3d(0,1px,0)}78%{transform:translate3d(0,-2px,0)}100%{transform:none}}
+@keyframes tbFloat{0%{transform:none}30%{transform:translate3d(0,-6px,0)}58%{transform:translate3d(0,1px,0)}78%{transform:translate3d(0,-2px,0)}100%{transform:none}}
 @keyframes tbFloatL{0%{transform:none}30%{transform:translate3d(0,-6px,0)}58%{transform:translate3d(0,1px,0)}78%{transform:translate3d(0,-2px,0)}100%{transform:none}}
 /* luci sfumate fisse dietro il vetro */
 body::before{background:radial-gradient(58% 44% at 4% 2%,color-mix(in srgb,#4fc3ec 50%,transparent),transparent 70%),radial-gradient(46% 38% at 96% 10%,color-mix(in srgb,#16b6cf 34%,transparent),transparent 70%),radial-gradient(44% 36% at 6% 58%,color-mix(in srgb,#7fd6b4 36%,transparent),transparent 70%),radial-gradient(58% 46% at 98% 98%,color-mix(in srgb,#ffcf2a 52%,transparent),transparent 70%)!important;background-size:100% 100%!important}
