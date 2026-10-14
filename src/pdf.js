@@ -98,11 +98,12 @@ function grabDay(){
  return{head:T($("#ith")),steps:steps}
 }
 function grabCosts(){
- var rows=[];[].forEach.call(document.querySelectorAll("#ctab tr"),function(tr){
-  if(tr.classList.contains("off"))return;
-  var c=[].map.call(tr.children,function(x){return T(x)});
-  if(!c.length)return;
-  rows.push({k:tr.classList.contains("grp")?"grp":tr.classList.contains("tot")?"tot":c[0]==="Voce"?"head":"row",c:c})});
+ var rows=[],q=function(x){return[].map.call(x.children,function(y){return T(y)})},H=document.querySelector("#ctab .cth");
+ if(H){var h=q(H);h[0]="Voce";rows.push({k:"head",c:h})}
+ [].forEach.call(document.querySelectorAll("#ctab .cg"),function(g){
+  var s=g.querySelector(".cs");rows.push({k:"grp",c:q(s)});
+  [].forEach.call(g.querySelectorAll(".cr"),function(r){if(!r.classList.contains("off"))rows.push({k:"row",c:q(r).map(function(x){return x.replace(/ Modifica ›$/,"")})})})});
+ var t=document.querySelector("#ctab .ctot");if(t)rows.push({k:"tot",c:q(t)});
  return rows
 }
 function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
