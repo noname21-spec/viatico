@@ -2326,14 +2326,14 @@ html.lite .pdy em{animation:none}
 .dhero .dsk{position:absolute;left:0;right:0;bottom:30px;pointer-events:none}
 .dhero .zsk{display:block;width:calc(100% + 56px);max-width:none;margin:0 -28px;height:auto;overflow:visible}
 .dhero .zsk *{animation-play-state:running}
-.dhc{all:unset;box-sizing:border-box;position:absolute;left:20px;right:20px;top:calc(78px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:4px;cursor:pointer;text-shadow:0 2px 16px rgba(0,0,0,.2);-webkit-tap-highlight-color:transparent;z-index:3}
+.dhc{all:unset;box-sizing:border-box;position:absolute;left:20px;right:20px;top:calc(102px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:4px;cursor:pointer;text-shadow:0 2px 16px rgba(0,0,0,.2);-webkit-tap-highlight-color:transparent;z-index:3}
 .dhc small{font:600 .76rem Outfit,system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;opacity:.92}
 .dhc b{white-space:nowrap;max-width:100%;font:700 clamp(2.4rem,min(16vw,calc(130vw / var(--l,6))),4.8rem)/1.02 Outfit,system-ui,sans-serif;letter-spacing:-.04em}
 .dhc span{font:500 .95rem Outfit,system-ui,sans-serif;opacity:.94}
 .dhc:focus-visible{outline:2px solid #fff;outline-offset:4px;border-radius:8px}
-#dest .dbrand{position:sticky;top:0;height:0;display:flex;flex-direction:row;align-items:flex-start;justify-content:flex-start;gap:8px;padding:calc(12px + env(safe-area-inset-top,0px)) 14px 0;z-index:5;isolation:auto}
+#dest .dbrand{position:sticky;top:0;height:0;display:flex;flex-direction:row;align-items:flex-start;justify-content:flex-start;gap:8px;padding:0 14px;--bt:calc(34px + env(safe-area-inset-top,0px));z-index:5;isolation:auto}
 #dest .dbrand::before{display:none}
-#dest .dbrand .dlw{width:48px;height:48px;border-radius:14px;flex:none;box-shadow:0 4px 14px rgba(0,0,0,.28)}
+#dest .dbrand .dlw{margin-top:var(--bt);width:48px;height:48px;border-radius:14px;flex:none;box-shadow:0 4px 14px rgba(0,0,0,.28)}
 #dest .dbrand .dlw .dlogo,#dest .dbrand .dtint,#dest .dbrand .dlw.hint::after{border-radius:14px}
 #dest .dbrand .dshare2{position:static!important;top:auto!important;margin-left:auto;height:38px!important;background:rgba(255,255,255,.24)!important;color:#fff!important}
 #dest .dbrand .dgear{position:static;margin:0;width:38px;height:38px;font-size:1.05rem;background:rgba(255,255,255,.24)!important;color:#fff!important}
@@ -2385,14 +2385,19 @@ html.lite .pdy em{animation:none}
 .dhero .zsk .halo,.dhero .zsk .spk circle,.dhero .zsk .bird,.dhero .zsk .cl1,.dhero .zsk .cl2,.dhero .zsk .sweep,.dhero .zsk .flock{animation:none!important}
 
 /* barra in alto: il nome della città compare scorrendo, la scheda lascia intravedere lo sfondo fermo */
-.dscrim{position:absolute;left:0;right:0;top:0;height:calc(84px + env(safe-area-inset-top,0px));background:linear-gradient(rgba(8,18,38,.6),rgba(8,18,38,0));opacity:0;pointer-events:none;z-index:-1}
-.dbn{flex:1;min-width:0;align-self:flex-start;margin-top:11px;line-height:26px;padding:0 4px;opacity:0;color:#fff;font:700 1.15rem Outfit,system-ui,sans-serif;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 8px rgba(0,0,0,.35);pointer-events:none}
+.dscrim{position:absolute;left:0;right:0;top:0;height:calc(110px + env(safe-area-inset-top,0px));background:linear-gradient(rgba(8,18,38,.6),rgba(8,18,38,0));opacity:0;pointer-events:none;z-index:-1}
+.dbn{flex:1;min-width:0;align-self:flex-start;margin-top:calc(var(--bt) + 11px);line-height:26px;padding:0 4px;opacity:0;color:#fff;font:700 1.15rem Outfit,system-ui,sans-serif;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 8px rgba(0,0,0,.35);pointer-events:none}
 #dest .dbrand .dshare2{margin-left:0}
 .dhc{will-change:opacity,transform}
 .dsheet{background:color-mix(in srgb,var(--bg) 86%,transparent);-webkit-backdrop-filter:blur(16px) saturate(1.2);backdrop-filter:blur(16px) saturate(1.2)}
 html.lite .dsheet{background:color-mix(in srgb,var(--bg) 95%,transparent);-webkit-backdrop-filter:none;backdrop-filter:none}
 .dlw .seac{position:absolute;left:50%;top:-26px;margin-left:-60px;width:120px;height:112px;z-index:3;pointer-events:none}
 .dhero .seac{display:none}
+
+/* Condividi e Impostazioni: stessa altezza, stessa riga, centrati sul logo */
+#dest .dbrand .dshare2,#dest .dbrand .dgear{box-sizing:border-box;height:40px!important;margin:calc(var(--bt) + 4px) 0 0!important;align-self:flex-start!important;border:0!important}
+#dest .dbrand .dgear{width:40px!important;min-height:0;padding:0;line-height:1;display:grid;place-items:center}
+#dest .dbrand .dshare2{padding:0 14px 0 12px}
 
 </style>
 </head>
