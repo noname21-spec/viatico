@@ -51,7 +51,17 @@ CITY_PAL={
 'edimburgo':dict(pri='#1f3a6b',sec='#6b4a8c',gold='#c9a24a',cream='#f6f2ea',flag=['#1f3a6b', '#ffffff', '#6b4a8c']),
 'atene':dict(pri='#0d5eaf',sec='#7a5a1e',gold='#c9a24a',cream='#faf4e6',flag=['#0d5eaf', '#ffffff', '#c9a24a']),
 'istanbul':dict(pri='#b3122a',sec='#1f6f8b',gold='#d9b25f',cream='#faf2e2',flag=['#c8102e', '#ffffff', '#1f6f8b']),
-'vilnius':dict(pri='#a8202a',sec='#006a44',gold='#e0a526',cream='#faf3e4',flag=['#fdb913', '#006a44', '#c1272d'])}
+'vilnius':dict(pri='#a8202a',sec='#006a44',gold='#e0a526',cream='#faf3e4',flag=['#fdb913', '#006a44', '#c1272d']),
+'lubiana':dict(pri='#0a6ebd',sec='#2e7d4f',gold='#d9a520',cream='#f6f4ec',flag=['#0a6ebd', '#ffffff', '#c8102e']),
+'zagabria':dict(pri='#c8102e',sec='#1f3a6b',gold='#d9a520',cream='#f8f3ea',flag=['#c8102e', '#ffffff', '#1f3a6b']),
+'bucarest':dict(pri='#1f3a8a',sec='#b3122a',gold='#e0b000',cream='#f7f3e6',flag=['#1f3a8a', '#fcd116', '#ce1126']),
+'sofia':dict(pri='#00805a',sec='#b3201a',gold='#d9a520',cream='#f6f4ea',flag=['#ffffff', '#00966e', '#d62612']),
+'riga':dict(pri='#9e1b32',sec='#6b4a2e',gold='#c9a24a',cream='#f8f1e6',flag=['#9e1b32', '#ffffff', '#9e1b32']),
+'tallinn':dict(pri='#0b5fa8',sec='#2b2b2b',gold='#c9a24a',cream='#f4f4f1',flag=['#0072ce', '#2b2b2b', '#ffffff']),
+'valletta':dict(pri='#c4122a',sec='#7a5a1e',gold='#c9a24a',cream='#faf2e2',flag=['#ffffff', '#cf142b', '#c9a24a']),
+'salisburgo':dict(pri='#b3122a',sec='#7a5a1e',gold='#c9a24a',cream='#f9f2e4',flag=['#c8102e', '#ffffff', '#c8102e']),
+'ginevra':dict(pri='#c4281c',sec='#1f3a6b',gold='#c9a24a',cream='#f5f4f0',flag=['#d52b1e', '#ffffff', '#1f3a6b']),
+'malaga':dict(pri='#c8501e',sec='#1f6f8b',gold='#e8b21c',cream='#fbf2e0',flag=['#c8102e', '#f1bf00', '#1f6f8b'])}
 for _k,_v in CITY_PAL.items():T[_k]=mk(**_v)
 
 def css_for(cid):
