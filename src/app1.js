@@ -835,7 +835,7 @@ window.__homeSky=skySet;
 function heroSet(up,ix,all){var h=$("#dhero"),hc=$("#dhc");if(!h||!hc)return;var id,lab,sub,mode;
 if(up.length){var n0=up[0];id=n0.cfg.dest;mode="trip";lab=n0.now?"Viaggio in corso":"Il tuo prossimo viaggio";sub=n0.now?"Oggi · giorno "+(1-n0.dd)+" di "+(Math.round((dateObj(n0.cfg.date_r||n0.cfg.date)-dateObj(n0.cfg.date))/864e5)+1):rangeOf(n0.cfg)+" · "+(n0.dd===0?"si parte oggi":n0.dd===1?"domani":"tra "+n0.dd+" giorni")}
 else{var us=window.__used||{},pool=ix.filter(function(x){return!us[x[0]]});if(!pool.length)pool=ix;var p=pool.length?pool[dayNo()%pool.length]:null;id=p?p[0]:"lisbona";if(!CITIES[id])id=Object.keys(CITIES)[0];mode="idea";lab="Idea di oggi";sub=p?p[1]:""}
-var d=dOf(id);hc.dataset.mode=mode;hc.dataset.id=id;$("#dhl").textContent=lab;var hn=$("#dhn");hn.textContent=d.n;hn.style.setProperty("--l",Math.max(5,d.n.length));$("#dhs").textContent=sub;
+var d=dOf(id);hc.dataset.mode=mode;hc.dataset.id=id;$("#dhl").textContent=lab;var hn=$("#dhn");hn.textContent=d.n;$("#dbn").textContent=d.n;hn.style.setProperty("--l",Math.max(5,d.n.length));$("#dhs").textContent=sub;
 if(h.dataset.id!==id){h.dataset.id=id;h.style.cssText="--a:"+d.col[0]+";--z:"+((window.SKYZ&&SKYZ[id])||d.col[1]);var sk=$("#dsk");sk.innerHTML="";skySet()}
 destEl.dataset.nxt=up.length?"open":"plan";
 $("#dopen").textContent=up.length?(up[0].now?"Apri il viaggio":"Apri viaggio"):(all.length?"Pianifica un viaggio":"Pianifica il tuo primo viaggio");wordSet(id)}
@@ -846,6 +846,11 @@ el.hidden=false;if(el.dataset.k===k)return;el.dataset.k=k;
 el.innerHTML='<small>Il tuo anno in viaggio</small><div class="dys"><div><b data-n="'+yr.length+'">'+yr.length+'</b><span>'+(yr.length===1?"viaggio":"viaggi")+'</span></div><div><b data-n="'+dys+'">'+dys+'</b><span>'+(dys===1?"giorno":"giorni")+'</span></div><div><b data-n="'+nc+'">'+nc+'</b><span>'+(nc===1?"città":"città")+'</span></div></div>';
 if(!matchMedia("(prefers-reduced-motion:reduce)").matches)[].forEach.call(el.querySelectorAll("b"),function(b){var N=+b.dataset.n,t0=0;function f(ts){if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/700);b.textContent=Math.round(N*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)}b.textContent="0";requestAnimationFrame(f)})}
 function homeSet(all,up,dn,ix){heroSet(up,ix,all);yearSet(dn)}
+
+/* scorrendo: il nome della città sale nella barra, lo sfondo resta fermo */
+(function(){var tk=false,hc=$("#dhc"),bn=$("#dbn"),sc=$("#dscrim");
+function upd(){tk=false;var p=Math.max(0,Math.min(1,destEl.scrollTop/220));hc.style.opacity=Math.max(0,1-p*1.5).toFixed(3);hc.style.transform="translate3d(0,"+(-p*18).toFixed(1)+"px,0)";bn.style.opacity=Math.max(0,Math.min(1,(p-.45)*2.2)).toFixed(3);sc.style.opacity=p.toFixed(3)}
+destEl.addEventListener("scroll",function(){if(!tk){tk=true;requestAnimationFrame(upd)}},{passive:true});upd()})();
 $("#dword").addEventListener("click",function(){this.classList.toggle("fl")});
 $("#dopen").addEventListener("click",function(){if(destEl.dataset.nxt==="open"&&window.__openNext)window.__openNext();else setPick(1)});
 $("#dhc").addEventListener("click",function(){if(this.dataset.mode==="trip"&&window.__openNext)window.__openNext();else cityGo(this,this.dataset.id)});
