@@ -697,3 +697,16 @@ details.more>summary i{font-style:normal;font-size:1.1rem;line-height:1;transiti
 details.more[open]>summary i{transform:rotate(90deg)}
 details.more>.mb{margin-top:10px;color:var(--mute);font-size:.95rem;line-height:1.55;animation:moreIn .25s ease both}
 @keyframes moreIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+/* percorsi: pulsante accanto al titolo + pannello richiudibile */
+h2.sec.mh{display:flex;align-items:center;justify-content:space-between;gap:10px}
+h2.sec.mh>span{min-width:0}
+.rtb{all:unset;cursor:pointer;flex:none;display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:999px;background:var(--surf);box-shadow:var(--gsh);color:var(--ink);font:500 .85rem Outfit,system-ui,sans-serif;letter-spacing:0;-webkit-tap-highlight-color:transparent}
+.rtb i{font-style:normal;font-size:1.1rem;line-height:1;transition:transform .2s ease}.rtb.on i{transform:rotate(90deg)}
+.rtp{margin:0 0 14px;padding:14px 16px;border-radius:22px;background:var(--surf);box-shadow:var(--gsh);animation:moreIn .25s ease both}
+.rtp[hidden]{display:none}
+.rsw{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;font-size:.85rem;color:var(--mute)}
+.rsw button{all:unset;cursor:pointer;padding:7px 12px;border-radius:999px;border:1px solid color-mix(in srgb,var(--ink) 18%,transparent);color:var(--ink);font-size:.85rem}
+.rsw button.on{background:var(--ink);color:var(--surf);border-color:transparent}
+.rtp .tips{margin:0}
+.rtp .tips{background:none!important;box-shadow:none!important;padding:0 0 0 4px!important;border:0!important;margin:0!important}.rtp .tips li{margin:0 0 8px}

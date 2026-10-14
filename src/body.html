@@ -48,7 +48,8 @@
 </section>
 
 <section class="blk" id="mappa">
-<h2 class="sec">Mappa e spostamenti</h2>
+<h2 class="sec mh"><span>Mappa e spostamenti</span><button type="button" id="rtb" class="rtb" aria-expanded="false" aria-controls="rtp"><span aria-hidden="true">🧭</span>Percorsi<i aria-hidden="true">›</i></button></h2>
+<div id="rtp" class="rtp" hidden><div class="rsw" role="radiogroup" aria-label="Apri i percorsi con"><span>Apri con</span><button type="button" role="radio" data-a="g">Google Maps</button><button type="button" role="radio" data-a="a">Apple Maps</button></div><ul class="tips" id="gmroutes"></ul></div>
 <div class="dsel" hidden></div>
 <div class="map" id="mapbox">
 <div class="stage">
@@ -68,8 +69,6 @@
 </div>
 <details class="shots" id="shots"></details>
 <div class="route" id="route"></div>
-<p class="route"><b>Apri i percorsi in Google Maps</b> (da lì puoi salvare i luoghi nelle tue liste):</p>
-<ul class="tips" id="gmroutes"></ul>
 </section>
 
 <section class="blk" id="mangiare">

@@ -184,8 +184,15 @@ else if(it.k==="free"&&it.leg){parts.push("Pausa all'alloggio: "+lc(it.leg.txt))
 else if(it.k==="night"){parts.push("Rientro: "+lc(it.leg.txt));node(H.q,"Alloggio",it.leg.mode)}
 else if(it.k==="ret"){parts.push("Ritorno: "+lc(it.ret.txt));if(it.multi&&it.ret.toHome)node(H.q,"Alloggio",it.ret.toHome.mode);else if(it.multi)node(H.q,"Alloggio");node((P.R||P.A).gm,"Aeroporto di "+(P.R||P.A).n,"transit")}});
 document.getElementById("route").innerHTML=parts.length?moreHtml("<b>I mezzi in ordine"+(multi?" (giorno "+(PAR.sel+1)+")":"")+":</b> "+esc(parts.join(" "))):"";
-var h="";for(var i=1;i<nodes.length;i++){h+='<li><a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(nodes[i-1].q)+'&destination='+encodeURIComponent(nodes[i].q)+'&travelmode='+(nodes[i].m==="walk"?"walking":"transit")+'">'+esc(nodes[i-1].t+" → "+nodes[i].t)+'</a></li>'}
-document.getElementById("gmroutes").innerHTML=h||'<li>Oggi nessuno spostamento da pianificare.</li>'}
+RN=nodes;rtList()}
+var RN=[];
+function rtApp(){var v=null;try{v=localStorage.getItem("via-mapapp")}catch(e){}return v==="a"||v==="g"?v:(/iPhone|iPad|Macintosh/.test(navigator.userAgent)&&"ontouchend" in document?"a":"g")}
+function rtList(){var ap=rtApp(),h="";for(var i=1;i<RN.length;i++){var A=RN[i-1],B=RN[i],w=B.m==="walk",u=ap==="a"?"https://maps.apple.com/?saddr="+encodeURIComponent(A.q)+"&daddr="+encodeURIComponent(B.q)+"&dirflg="+(w?"w":"r"):"https://www.google.com/maps/dir/?api=1&origin="+encodeURIComponent(A.q)+"&destination="+encodeURIComponent(B.q)+"&travelmode="+(w?"walking":"transit");h+='<li><a target="_blank" rel="noopener" href="'+u+'">'+esc(A.t+" → "+B.t)+'</a></li>'}
+document.getElementById("gmroutes").innerHTML=h||'<li>Oggi nessuno spostamento da pianificare.</li>';
+[].forEach.call(document.querySelectorAll("#rtp .rsw button"),function(b){var on=b.dataset.a===ap;b.classList.toggle("on",on);b.setAttribute("aria-checked",on)})}
+(function(){var b=document.getElementById("rtb"),p=document.getElementById("rtp");if(!b||!p)return;
+b.addEventListener("click",function(){var o=p.hidden;p.hidden=!o;b.setAttribute("aria-expanded",o);b.classList.toggle("on",o)});
+[].forEach.call(p.querySelectorAll(".rsw button"),function(x){x.addEventListener("click",function(){try{localStorage.setItem("via-mapapp",x.dataset.a)}catch(e){}rtList()})})})();
 PAR.on(side);side();
 })();
 
