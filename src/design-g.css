@@ -797,3 +797,8 @@ html.lite .dbrand::before{background:radial-gradient(closest-side,color-mix(in s
 .dlw.hint::after{content:"";position:absolute;inset:-6px;border-radius:34px;border:3px solid color-mix(in srgb,var(--ink) 40%,transparent);animation:dhint 1.8s ease-out 1.2s 3;pointer-events:none}
 @keyframes dhint{0%{opacity:.8;transform:scale(1)}100%{opacity:0;transform:scale(1.22)}}
 @media (prefers-reduced-motion:reduce){.dlw.hint::after{animation:none;opacity:.35}}
+
+.tkb{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+.thint{margin:0 4px 6px;color:var(--mute);font-size:.78rem;text-align:center}
+.tfoot{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.tfoot .tdel{margin:0}.tcl{all:unset;cursor:pointer;color:var(--mute);font-size:.82rem;padding:4px 10px}
