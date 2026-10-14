@@ -495,7 +495,6 @@ body:has(#t-itinerario:checked) label[for=t-itinerario] span,body:has(#t-voli:ch
 .zsk .shd{animation-delay:.7s}.zsk .ln{animation-delay:calc(.65s + var(--i)*40ms)}
 .zsk .sunG{animation-duration:.85s}
 .zsk .halo,.zsk .spk circle,.zsk .bird{animation:none}
-#zin .zsk *{animation:none!important}
 @media (prefers-reduced-motion:reduce){.zov{display:none!important}}
 #rapf[hidden]{display:none}
 #rapn{margin:6px 0 0!important;font-size:.78rem}

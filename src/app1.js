@@ -919,7 +919,7 @@ var r=btn.getBoundingClientRect(),x=Math.round(r.left+r.width/2),y=Math.round(r.
  zc=(window.SKYZ&&SKYZ[d.id])||d.col[1],ov=document.createElement("div");
 ov.className="zov";ov.setAttribute("aria-hidden","true");ov.style.cssText="--a:"+d.col[0]+";--z:"+zc;
 ov.innerHTML='<div class="zdot"></div><div class="zbg"></div><div class="zcol"><span class="zchip">'+esc(d.c||"")+'</span><b class="zn" style="--l:'+Math.max(5,d.n.length)+'">'+esc(d.n)+'</b></div>';
-var sk=window.zSky?zSky(d.id):null;if(sk)ov.querySelector(".zcol").appendChild(sk);
+var sk=(d.id===PD.id&&window.zSky)?zSky(d.id):null;if(sk)ov.querySelector(".zcol").appendChild(sk);
 document.body.appendChild(ov);
 var done=function(){zbusy=false;if(ov.parentNode)ov.remove()};
 try{
@@ -934,7 +934,7 @@ setTimeout(function(){
  fn();
  if(d.id!==PD.id)return;
  ov.classList.add("zx");var out=ov.animate?ov.animate([{opacity:1},{opacity:0}],{duration:320,delay:110,easing:"ease-in",fill:"forwards"}):null;
- if(out)out.onfinish=done;else done()},d.id!==PD.id?1000:1450);
+ if(out)out.onfinish=done;else done()},d.id!==PD.id?800:1450);
 setTimeout(done,3200)}
 dgrid.addEventListener("click",function(e){var b=e.target.closest(".dcity");if(b)cityGo(b,b.dataset.city)});
 function cityGo(b,id){var d=dOf(id);
