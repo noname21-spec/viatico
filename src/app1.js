@@ -772,7 +772,7 @@ var ide=$("#didea"),IDEE=[
 [["edimburgo","Autunno scozzese tra castelli e vicoli"],["lisbona","Ancora luce e tram"],["atene","Antichità senza il caldo estremo"],["praga","Tetti rossi e foglie"]],
 [["budapest","Bagni termali con il freddo"],["napoli","Pizza e sole tiepido"],["amburgo","Porto e atmosfera nordica"],["sofia","Montagne e poca folla"]],
 [["vienna","Mercatini di Natale"],["salisburgo","Natale tra le Alpi"],["praga","Mercatini e Città vecchia"],["tallinn","Piazza con l'albero e i mercatini"]]],
-mn=new Date().getMonth(),ix=(IDEE[mn]||[]).filter(function(x){return CITIES[x[0]]});
+mn=new Date().getMonth(),ix=(IDEE[mn]||[]).filter(function(x){return CITIES[x[0]]});window.__ideas=ix;window.__used={};all.forEach(function(t){window.__used[t.cfg.dest]=1});
 if(ix.length){ide.hidden=false;ide.innerHTML='<div class="dih">'+(all.length?"Idee per "+MESI[mn]:"Dove vuoi andare? Idee per "+MESI[mn])+'</div><div class="dir">'+ix.map(function(x){var q=dOf(x[0]);return '<button type="button" class="dic" data-c="'+x[0]+'" style="'+sw(q)+'"><span class="ie">'+q.e+'</span><b>'+esc(q.n)+'</b><span>'+esc(x[1])+'</span></button>'}).join("")+'</div>'}else ide.hidden=true;
 var my=$("#dmy");if(my){my.hidden=!all.length;$("#dmyn").textContent=all.length;my.setAttribute("aria-expanded",DOPEN?"true":"false");$(".dmyl",my).textContent=DOPEN?"Chiudi i viaggi":"I miei viaggi"}
 dl.setAttribute("aria-label",all.length?"I miei viaggi ("+all.length+")":"Viaticum");
@@ -823,6 +823,19 @@ function todSet(){var h=new Date().getHours(),k=h<5?"night":h<11?"dawn":h<17?"da
 todSet();setInterval(todSet,6e4);
 function togMy(){togMine();var my=$("#dmy");if(my){my.setAttribute("aria-expanded",DOPEN?"true":"false");$(".dmyl",my).textContent=DOPEN?"Chiudi i viaggi":"I miei viaggi"}}
 $("#dlw").addEventListener("click",togMy);$("#dmy").addEventListener("click",togMy);$("#dpass").addEventListener("click",function(){if(window.__openNext)window.__openNext();else togMine()});
+/* Sorprendimi: una città adatta al mese, tra quelle non ancora in programma */
+var LASTS="";
+function surprise(){var used=window.__used||{},ide=window.__ideas||[],pool=[];
+ide.forEach(function(x){if(!used[x[0]]){for(var i=0;i<3;i++)pool.push([x[0],x[1]])}});
+DEST.forEach(function(d){if(d.ok&&!used[d.id]&&d.id!==LASTS)pool.push([d.id,"Una meta nuova, con guida completa"])});
+pool=pool.filter(function(p){return p[0]!==LASTS});if(!pool.length)pool=DEST.filter(function(d){return d.ok}).map(function(d){return[d.id,d.c]});
+var p=pool[Math.floor(Math.random()*pool.length)];LASTS=p[0];return p}
+function showSur(){var p=surprise(),d=dOf(p[0]),box=$("#dsr"),dd=$(".dsd");
+if(dd&&dd.animate)dd.animate([{transform:"rotate(0)"},{transform:"rotate(360deg)"}],{duration:520,easing:"cubic-bezier(.3,1.3,.5,1)"});
+setTimeout(function(){box.hidden=false;box.style.cssText=sw(d);box.dataset.c=d.id;box.innerHTML='<span class="dse" aria-hidden="true">'+d.e+'</span><span class="dst"><b>'+esc(d.n)+'</b><small>'+esc(d.c)+'</small><em>'+esc(p[1])+'</em></span><span class="dsa"><button type="button" class="dsgo">Scopri →</button><button type="button" class="dsre">Un\'altra</button></span>';
+if(box.animate)box.animate([{opacity:0,transform:"translateY(12px) scale(.96)"},{opacity:1,transform:"none"}],{duration:420,easing:"cubic-bezier(.2,1.3,.4,1)"})},dd&&dd.animate?300:0)}
+$("#dsb").addEventListener("click",showSur);
+$("#dsr").addEventListener("click",function(e){var box=$("#dsr");if(e.target.closest(".dsre")){showSur();return}if(e.target.closest(".dsgo")){var id=box.dataset.c;DEXP=true;setPick(1);setTimeout(function(){var b=$('#dgrid .dcity[data-city="'+id+'"]');if(b)b.click()},60)}});
 $("#dnext").addEventListener("click",function(){setPick(1)});$("#didea").addEventListener("click",function(e){var bt=e.target.closest(".dic");if(!bt)return;var id=bt.dataset.c;DEXP=true;setPick(1);setTimeout(function(){var b=$('#dgrid .dcity[data-city="'+id+'"]');if(b)b.click()},60)});$("#dback").addEventListener("click",function(){setPick(0)});
 function setPick(v){var dc=destEl.querySelector(".dcard"),rm=matchMedia("(prefers-reduced-motion:reduce)").matches,o=null;
 function sw2(){destEl.classList.toggle("pick",!!v);destEl.scrollTop=0;if(v)DOPEN=false;renderDest();if(dc&&dc.animate&&!rm)dc.animate([{opacity:0,transform:"translateX("+(v?26:-26)+"px)"},{opacity:1,transform:"none"}],{duration:280,easing:"cubic-bezier(.2,.8,.2,1)"});if(o)o.cancel()}

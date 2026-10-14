@@ -873,3 +873,18 @@ html.lite #dest[data-tod=night] .dlw .dlogo{filter:none}
 .dshare2 svg{width:17px;height:17px}
 @media (max-width:340px){.dshare2 span{display:none}.dshare2{padding:0 11px 0 11px}}
 .dbrand[data-st=""]~.dchips{display:none}
+
+/* Sorprendimi */
+.dsur{display:flex;flex-direction:column;align-items:center;gap:12px;margin:16px 0 0;width:100%}
+.dsb{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:999px;background:var(--ink);color:var(--surf,#fff);font:600 .95rem Outfit,system-ui,sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;box-shadow:0 8px 18px -6px rgba(0,0,0,.35);transition:transform .25s var(--spring,ease)}
+.dsb:active{transform:scale(.95)}.dsb:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.dsd{display:inline-block;font-size:1.15rem;line-height:1}
+.dsr{box-sizing:border-box;width:100%;max-width:420px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 16px;border-radius:20px;background:var(--surf,#fff);box-shadow:0 10px 24px -10px rgba(0,0,0,.25);color:var(--ink);text-align:left}
+.dsr[hidden]{display:none}
+.dse{font-size:2.2rem;line-height:1;flex:none}
+.dst{flex:1;min-width:130px;display:flex;flex-direction:column}.dst b{font:700 1.2rem Outfit,system-ui,sans-serif;letter-spacing:-.02em}.dst small{color:var(--mute);font-size:.78rem}.dst em{font-style:normal;margin-top:4px;font-size:.88rem;color:var(--ink)}
+.dsa{display:flex;gap:8px;width:100%}
+.dsa button{all:unset;box-sizing:border-box;flex:1;text-align:center;padding:10px 12px;border-radius:999px;font:600 .88rem Outfit,system-ui,sans-serif;cursor:pointer;background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--ink);-webkit-tap-highlight-color:transparent}
+.dsa .dsgo{background:var(--ga,#0a6f95);color:var(--gon,#fff)}
+.dsa button:focus-visible{outline:2px solid var(--ink)}
+#dest.pick .dsur{display:none!important}
