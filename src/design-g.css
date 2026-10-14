@@ -850,7 +850,7 @@ html.lite .dbrand::before{background:radial-gradient(closest-side,color-mix(in s
 @media (prefers-reduced-motion:reduce){.pl i,.pl em,.dmap .v circle{animation:none}}
 
 /* logo: saluto e luce secondo l'ora, valigia */
-.dgreet{margin:12px 0 0;font:500 .9rem Outfit,system-ui,sans-serif;color:var(--mute);text-align:center;animation:fadeUp .5s .3s both}
+.dgreet{margin:10px 0 0;font:500 .9rem Outfit,system-ui,sans-serif;color:var(--mute);text-align:center;animation:fadeUp .5s .3s both}
 .dbrand.open .dgreet{display:none}
 #dest[data-tod=dawn] .dbrand::before{background:radial-gradient(closest-side,color-mix(in srgb,#f6a56a 38%,transparent),transparent 75%)}
 #dest[data-tod=dusk] .dbrand::before{background:radial-gradient(closest-side,color-mix(in srgb,#f08a5d 36%,transparent),color-mix(in srgb,#a24b7a 12%,transparent) 55%,transparent 75%)}
@@ -862,3 +862,14 @@ html.lite .dbrand::before{background:radial-gradient(closest-side,color-mix(in s
 @keyframes ideaFlash{0%{transform:scale(1)}25%{transform:scale(1.025)}100%{transform:none}}
 #dest.pick .dgreet{display:none}
 html.lite #dest[data-tod=night] .dlw .dlogo{filter:none}
+
+/* home più chiara: pulsante I miei viaggi, invito sul biglietto, condividi con etichetta */
+.dmy{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:8px;margin:12px auto 0;padding:9px 18px;border-radius:999px;background:var(--surf);color:var(--ink);font:600 .9rem Outfit,system-ui,sans-serif;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.08);-webkit-tap-highlight-color:transparent;transition:transform .25s var(--spring,ease)}
+.dmy:active{transform:scale(.96)}.dmy:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.dmy[hidden]{display:none}.dmy b{min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:var(--ink);color:var(--surf);font-size:.78rem;display:grid;place-items:center}
+#dest.pick .dmy{display:none!important}
+.pgo{display:block;margin-top:8px;font-weight:700;font-size:.82rem;color:var(--ga,#0a6f95)}
+.dshare2{width:auto!important;padding:0 14px 0 12px;display:flex!important;gap:6px;align-items:center;border-radius:999px!important;height:38px!important;top:8px!important;font:600 .8rem Outfit,system-ui,sans-serif}
+.dshare2 svg{width:17px;height:17px}
+@media (max-width:340px){.dshare2 span{display:none}.dshare2{padding:0 11px 0 11px}}
+.dbrand[data-st=""]~.dchips{display:none}
