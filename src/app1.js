@@ -263,8 +263,9 @@ return '<li class="step '+cls+'" data-t="'+it.t+'"><div class="t">'+fmt(it.t)+'<
 
 function rangeTxt(){var c=CFG,a=dateObj(c.date),b=dateObj(c.date_r);if(TRIP.n===1)return dateShort(c.date);
 return a.getUTCMonth()===b.getUTCMonth()?a.getUTCDate()+"–"+b.getUTCDate()+" "+MESI[b.getUTCMonth()]:dateShort(c.date)+" – "+dateShort(c.date_r)}
+window.fitH1=fitH1;function fitH1(){var h=$("#hero h1");if(!h)return;h.style.fontSize="";var go=function(){h.style.fontSize="";var w=h.parentNode.clientWidth,sw=h.scrollWidth;if(w&&sw>w){h.style.fontSize=Math.floor(parseFloat(getComputedStyle(h).fontSize)*w/sw*.98*10)/10+"px"}};go();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(go);addEventListener("resize",go)}
 function renderHero(){var c=CFG,A=TRIP.A,n=TRIP.n,ttl=n===1?PD.n+" in un giorno":PD.n+" in "+n+" giorni";
-$("#hero h1").textContent=ttl;
+$("#hero h1").textContent=ttl;fitH1();
 $("#hsub").textContent=(n===1?cap(dateLong(c.date))+".":"Da "+dateLong(c.date).replace(/ \d{4}$/,"")+" a "+dateLong(c.date_r)+": "+n+" giorni e "+(n-1)+(n===2?" notte.":" notti."))+" Atterraggio a "+A.n+" alle "+fmt(toMin(c.a_arr))+", volo di ritorno"+(TRIP.R&&TRIP.R!==A?" da "+TRIP.R.n:"")+" alle "+fmt(toMin(c.r_dep))+". "+(c.ppl===1?"Una persona":c.ppl+" persone")+(n>1?", alloggio in "+home().where+".":", "+PD.T.move+".")+styTxt(c);
 $("#appt").innerHTML=esc(PD.n)+" <b>· "+esc(rangeTxt())+"</b>";
 $("#sps").textContent=PD.n+" · "+rangeTxt();
