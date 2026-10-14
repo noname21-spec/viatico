@@ -997,3 +997,19 @@ html.lite .dsheet{background:color-mix(in srgb,var(--bg) 95%,transparent);-webki
 #dest .dbrand .dshare2,#dest .dbrand .dgear{box-sizing:border-box;height:40px!important;margin:calc(var(--bt) + 4px) 0 0!important;align-self:flex-start!important;border:0!important}
 #dest .dbrand .dgear{width:40px!important;min-height:0;padding:0;line-height:1;display:grid;place-items:center}
 #dest .dbrand .dshare2{padding:0 14px 0 12px}
+
+/* città del momento che scorrono, e skyline in modalità scura */
+@property --a{syntax:"<color>";inherits:true;initial-value:#0a6f95}
+@property --z{syntax:"<color>";inherits:true;initial-value:#1cc0d6}
+.dhero{transition:--a .7s ease,--z .7s ease}
+.dhd{position:absolute;right:20px;top:calc(104px + env(safe-area-inset-top,0px));display:flex;gap:2px;z-index:3}
+.dhd[hidden]{display:none}
+.dhd button{all:unset;box-sizing:border-box;width:22px;height:22px;display:grid;place-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.dhd button::before{content:"";width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.5);transition:transform .25s ease,background .25s ease}
+.dhd button.on::before{background:#fff;transform:scale(1.35)}
+.dhd button:focus-visible{outline:2px solid #fff;border-radius:50%}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .dhero{--hon:#F6EFE6;--farOp:.07;--sun:#F3EBD8;--sunHalo:#F3EBD8;--cloud:rgba(255,255,255,.06);--moonc:color-mix(in srgb,var(--a) 26%,#0d0b0a);--f1:#3A3430;--f2:#24201D;--side:color-mix(in srgb,var(--z) 26%,#000);--rim:color-mix(in srgb,var(--z) 35%,transparent);--sksh:rgba(0,0,0,.45);--lineC:color-mix(in srgb,var(--z) 75%,#fff);--skg:color-mix(in srgb,var(--z) 14%,transparent);--swo:.18}
+:root:not([data-theme="light"]) .dhero .dbg{background:radial-gradient(120% 90% at 12% 0%,rgba(255,255,255,.08),transparent 55%),radial-gradient(95% 62% at 72% 104%,color-mix(in srgb,var(--z) 34%,transparent) 0%,color-mix(in srgb,var(--z) 12%,transparent) 45%,transparent 78%),linear-gradient(160deg,color-mix(in srgb,var(--a) 26%,#0d0b0a),color-mix(in srgb,var(--a) 10%,#060505))}}
+:root[data-theme="dark"] .dhero,:root:has(#dm:checked) .dhero{--hon:#F6EFE6;--farOp:.07;--sun:#F3EBD8;--sunHalo:#F3EBD8;--cloud:rgba(255,255,255,.06);--moonc:color-mix(in srgb,var(--a) 26%,#0d0b0a);--f1:#3A3430;--f2:#24201D;--side:color-mix(in srgb,var(--z) 26%,#000);--rim:color-mix(in srgb,var(--z) 35%,transparent);--sksh:rgba(0,0,0,.45);--lineC:color-mix(in srgb,var(--z) 75%,#fff);--skg:color-mix(in srgb,var(--z) 14%,transparent);--swo:.18}
+:root[data-theme="dark"] .dhero .dbg,:root:has(#dm:checked) .dhero .dbg{background:radial-gradient(120% 90% at 12% 0%,rgba(255,255,255,.08),transparent 55%),radial-gradient(95% 62% at 72% 104%,color-mix(in srgb,var(--z) 34%,transparent) 0%,color-mix(in srgb,var(--z) 12%,transparent) 45%,transparent 78%),linear-gradient(160deg,color-mix(in srgb,var(--a) 26%,#0d0b0a),color-mix(in srgb,var(--a) 10%,#060505))}
+.dhero .zsk .face,.dhero .zsk .face *{fill:url(#hgFace)}.dhero .zsk .halo{fill:url(#hgSun)}.dhero .zsk .gnd{fill:url(#hgGround)}

@@ -5,7 +5,7 @@ var NS="http://www.w3.org/2000/svg",root=document.documentElement;
 var Z={paris:"#F2B84B",bcn:"#E8B21C",roma:"#F2B33D",londra:"#E0313F",amsterdam:"#F39200",lisbona:"#F5C400",berlino:"#F0B323",praga:"#E4572E",vienna:"#E4BE6A",bruxelles:"#F1BF00",cracovia:"#E3B04B",budapest:"#EFB548",porto:"#F08A3C",monaco:"#E0A526",madrid:"#E8B21C",milano:"#E3B04B",firenze:"#E0A84A",venezia:"#EFB548",napoli:"#F2B33D",siviglia:"#F08A3C",valencia:"#F5C400",varsavia:"#E3B04B",amburgo:"#E0A526",zurigo:"#E0A526",copenaghen:"#E8B21C",stoccolma:"#F1C40F",oslo:"#E0A526",helsinki:"#8FB8D6",reykjavik:"#8FB8D6",dublino:"#E0A526",edimburgo:"#C9A0DC",atene:"#F0C060",istanbul:"#F08A3C",vilnius:"#E0A526",lubiana:"#7FC4E8",zagabria:"#F0B040",bucarest:"#FCD116",sofia:"#E0A526",riga:"#E3B04B",tallinn:"#8FB8D6",valletta:"#E3B04B",salisburgo:"#E3B04B",ginevra:"#8FB8D6",malaga:"#F5C400"};
 if(window.PD&&Z[PD.id])root.style.setProperty("--gz",Z[PD.id]);
 window.SKYZ=Z;window.zSky=zSky;
-var svg=document.querySelector("svg.sky");if(!svg||!window.PD||!PD.SKY)return;
+var svg=document.querySelector("svg.sky:not(.zsk)");if(!svg||!window.PD||!PD.SKY)return;
 var reduce=matchMedia("(prefers-reduced-motion: reduce)"),exts=[],px=0,tx=null,raf=0,vis=true;
 function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
 function build(svg,sfx,sky,lite){
@@ -44,7 +44,7 @@ function build(svg,sfx,sky,lite){
   if(!lite){var fl=el("g",{"class":"flock"},svg);[[0,40],[12,34],[22,44]].forEach(function(b,j){var g=el("g",{transform:"translate("+b[0]+" "+b[1]+")"},fl);el("path",{"class":"bird",d:"M0 0q3-3 6 0q3-3 6 0",style:"animation-delay:"+(j*.13)+"s"},g)})}
   return exts}
 function buildHero(){var parent=svg.parentNode,next=svg.nextSibling;parent.removeChild(svg);exts=build(svg,"",PD.SKY,false);parent.insertBefore(svg,next);persp(0)}
-function zSky(id){var C=window.CITIES&&CITIES[id];if(!C||!C.SKY)return null;var z=document.createElementNS(NS,"svg");z.setAttribute("class","sky zsk");z.setAttribute("aria-hidden","true");var ex=build(z,"z",C.SKY,true);for(var j=0;j<ex.length;j++){var u=ex[j];u.setAttribute("transform","translate("+(u._s*.75).toFixed(2)+" "+(u._s*-.55).toFixed(2)+")")}return z}
+function zSky(id,sfx){var C=window.CITIES&&CITIES[id];if(!C||!C.SKY)return null;var z=document.createElementNS(NS,"svg");z.setAttribute("class","sky zsk");z.setAttribute("aria-hidden","true");var ex=build(z,sfx||"z",C.SKY,true);for(var j=0;j<ex.length;j++){var u=ex[j];u.setAttribute("transform","translate("+(u._s*.75).toFixed(2)+" "+(u._s*-.55).toFixed(2)+")")}return z}
 function persp(p){
   var dx=.75+p*.55,dy=-.55;
   for(var j=0;j<exts.length;j++){var u=exts[j];u.setAttribute("transform","translate("+(u._s*dx).toFixed(2)+" "+(u._s*dy).toFixed(2)+")")}

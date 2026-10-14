@@ -23,7 +23,7 @@ boot='window.CITY_ORDER='+json.dumps(have)+';window.REG='+json.dumps(RG)+';windo
 (function(){var id=null;try{id=sessionStorage.getItem("via-pick")}catch(e){}if(!id||!CITIES[id]){id=null;try{var t=JSON.parse(localStorage.getItem("via-trip")||"null");if(t&&t.date)id=t.dest||"paris"}catch(e){}}
 window.PD=CITIES[id]||CITIES[CITY_ORDER[0]];Object.keys(CITIES).forEach(function(k){var C=CITIES[k];C.fx=C.fx||{};C.T=C.T||{}});
 /* skyline della città */
-if(PD.SKY)[].forEach.call(document.querySelectorAll("svg.sky,svg.spsky"),function(sv){var df=sv.querySelector("defs");sv.innerHTML="";if(df)sv.appendChild(df);sv.insertAdjacentHTML("beforeend",PD.SKY)})})();'''
+if(PD.SKY)[].forEach.call(document.querySelectorAll("svg.sky:not(.zsk),svg.spsky"),function(sv){var df=sv.querySelector("defs");sv.innerHTML="";if(df)sv.appendChild(df);sv.insertAdjacentHTML("beforeend",PD.SKY)})})();'''
 cfgp=os.path.join(d,'supabase.json')
 SBC=json.load(open(cfgp)) if os.path.exists(cfgp) else {}
 SYNC=r('sync.js').replace('__SB_URL__',SBC.get('url','')).replace('__SB_KEY__',SBC.get('key',''))
