@@ -362,6 +362,7 @@ else hit=TRIP.days.some(function(d){if(!inR(a,d.date))return false;if(a.wd&&a.wd
  if(a.after!=null){var f=(d.kind==="single"||d.kind==="first")&&(d.land+d.A.inMin>=a.after-90),l=(d.kind==="single"||d.kind==="last")&&d.leave>=a.after-90;if(!f&&!l)return false}return true});
 if(hit&&!res.some(function(r){return r.t===a.t}))res.push(a)});return res}
 var AVVOPEN=false;
+function moreHtml(h,open){return '<details class="more"'+(open?" open":"")+'><summary>Ulteriori informazioni<i aria-hidden="true">›</i></summary><div class="mb">'+h+'</div></details>'}window.moreHtml=moreHtml;
 function renderAvv(){var el=$("#avv"),L=avvList();el.hidden=!L.length;if(!L.length){el.innerHTML="";return}
 el.innerHTML='<details'+(AVVOPEN?" open":"")+'><summary><span class="avs"><b>⚠️ '+(L.length===1?"Un avviso per il tuo viaggio":L.length+" avvisi per il tuo viaggio")+'</b><small>'+esc(L.length===1?L[0].t:L.map(function(a){return a.t}).join(" · "))+'</small></span><i class="avc" aria-hidden="true">›</i></summary><div class="avl">'+L.map(function(a){return '<div class="avi"><b>'+esc(a.t)+'</b><p>'+esc(a.x)+'</p></div>'}).join("")+'</div></details>';
 var d=el.querySelector("details");d.addEventListener("toggle",function(){AVVOPEN=d.open})}
@@ -496,7 +497,7 @@ $$("#ctab [data-hotel]").forEach(function(b){b.addEventListener("click",function
 $$("#ctab input[data-o]").forEach(function(x){x.addEventListener("change",function(){COPT[x.dataset.o]=x.checked?1:0;ls("via-copt",JSON.stringify(COPT));renderCosti(false);renderSpese()})});
 var nt=(M.V.length?"Voli inclusi come li hai inseriti. ":"Voli esclusi: puoi aggiungerne il costo nella sezione Voli. ")+"Tutte le attrazioni sono facoltative: togli la spunta a quelle che non ti interessano e il totale si aggiorna. ";
 if(PD.fx.costNote)nt+=PD.fx.costNote(E,M);else{nt+=(M.bn?M.bn+" ":M.best==="single"?"Con poche corse i biglietti singoli costano meno degli abbonamenti. ":"")+(M.alt.length?"Alternative: "+M.alt.join(", ")+". ":"")+PD.TR.note+(PD.T.foodNote?" "+PD.T.foodNote:"");if(TRIP.multi&&PD.T.taxNote)nt+=" "+PD.T.taxNote}
-$("#cnote").textContent=nt;
+var cn=$("#cnote"),wo=anim===false&&cn.querySelector("details")&&cn.querySelector("details").open;cn.innerHTML=moreHtml(esc(nt),wo);
 window.PAREST=tot*N}
 
 /* spese reali: elenco di spese condivise, saldi e rimborsi (come Splitwise) */
@@ -683,7 +684,7 @@ if(BOOT){BOOT=false;var bt=setTimeout(function(){PAR.flush&&PAR.flush()},3900);P
 PAR.emit()}
 PAR.render=renderAll;["pointerdown","keydown","change"].forEach(function(t){document.addEventListener(t,function(){if(PAR.flush)PAR.flush()},{capture:true,passive:true})});
 setInterval(liveTick,30000);document.addEventListener("visibilitychange",function(){if(!document.hidden)liveTick()});window.addEventListener("pageshow",function(e){if(e.persisted)liveTick()});
-document.getElementById("t-costi").addEventListener("change",function(){if(!(this.checked&&CFG))return;var bar=$("#cdonut .cbar");if(bar&&bar.children.length){bar.classList.remove("anim");void bar.offsetWidth;bar.classList.add("anim")}else renderCosti(true)});
+document.getElementById("t-costi").addEventListener("change",function(){if(!(this.checked&&CFG))return;var mo=$("#cnote details");if(mo)mo.open=false;var bar=$("#cdonut .cbar");if(bar&&bar.children.length){bar.classList.remove("anim");void bar.offsetWidth;bar.classList.add("anim")}else renderCosti(true)});
 
 /* ===== schermata «Il tuo viaggio» ===== */
 var setup=$("#setup"),form=$("#sform"),serr=$("#serr"),stayF=$("#stayf");

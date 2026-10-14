@@ -183,7 +183,7 @@ else if(it.k==="act"){var s=PD.STOPS[it.id];parts.push("Verso "+s.t+": "+lc(it.l
 else if(it.k==="free"&&it.leg){parts.push("Pausa all'alloggio: "+lc(it.leg.txt));node(H.q,"Alloggio",it.leg.mode)}
 else if(it.k==="night"){parts.push("Rientro: "+lc(it.leg.txt));node(H.q,"Alloggio",it.leg.mode)}
 else if(it.k==="ret"){parts.push("Ritorno: "+lc(it.ret.txt));if(it.multi&&it.ret.toHome)node(H.q,"Alloggio",it.ret.toHome.mode);else if(it.multi)node(H.q,"Alloggio");node((P.R||P.A).gm,"Aeroporto di "+(P.R||P.A).n,"transit")}});
-document.getElementById("route").innerHTML=parts.length?"<b>I mezzi in ordine"+(multi?" (giorno "+(PAR.sel+1)+")":"")+":</b> "+esc(parts.join(" ")):"";
+document.getElementById("route").innerHTML=parts.length?moreHtml("<b>I mezzi in ordine"+(multi?" (giorno "+(PAR.sel+1)+")":"")+":</b> "+esc(parts.join(" "))):"";
 var h="";for(var i=1;i<nodes.length;i++){h+='<li><a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(nodes[i-1].q)+'&destination='+encodeURIComponent(nodes[i].q)+'&travelmode='+(nodes[i].m==="walk"?"walking":"transit")+'">'+esc(nodes[i-1].t+" → "+nodes[i].t)+'</a></li>'}
 document.getElementById("gmroutes").innerHTML=h||'<li>Oggi nessuno spostamento da pianificare.</li>'}
 PAR.on(side);side();

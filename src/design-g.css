@@ -688,3 +688,12 @@ html.bigtext .tabbar label span{overflow:visible;max-width:none}
 .cr .hotb{all:unset;cursor:pointer;display:block;box-sizing:border-box}.cr .hotb b{margin-left:4px;color:var(--c1,#0388b0);font-weight:600;white-space:nowrap}
 .ctot{border-top:2px solid var(--ink);margin-top:6px;padding-top:12px;font-weight:600}
 html.bigtext .cacc{--cw:5.2rem}
+
+/* testi lunghi: tendina "Ulteriori informazioni" */
+details.more{margin:12px 0 18px}
+details.more>summary{list-style:none;display:inline-flex;align-items:center;gap:6px;cursor:pointer;padding:8px 14px;border-radius:999px;background:var(--surf);box-shadow:var(--gsh);color:var(--ink);font-size:.9rem;font-weight:500;-webkit-tap-highlight-color:transparent}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary i{font-style:normal;font-size:1.1rem;line-height:1;transition:transform .2s ease}
+details.more[open]>summary i{transform:rotate(90deg)}
+details.more>.mb{margin-top:10px;color:var(--mute);font-size:.95rem;line-height:1.55;animation:moreIn .25s ease both}
+@keyframes moreIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
