@@ -601,6 +601,7 @@ fieldset.sgrp.sl{animation:stepL .38s cubic-bezier(.22,1,.36,1) both}
 /* selezione città: il colore si allarga con una trasformazione (sul compositor), poi sfuma il gradiente */
 .zov .zdot{position:absolute;border-radius:50%;background:color-mix(in srgb,var(--a) 86%,#000);transform:scale(0);will-change:transform}
 .zov .zbg{opacity:0;will-change:opacity}
+#zin .zbg{opacity:1}
 .zov .zcol{will-change:transform,opacity}
 
 /* tutorial */
