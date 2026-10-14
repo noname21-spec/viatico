@@ -360,7 +360,10 @@ else if(a.fl){var apOK=function(ap){return !a.ap||a.ap.indexOf(ap)>=0};if(!apOK(
 else hit=TRIP.days.some(function(d){if(!inR(a,d.date))return false;if(a.wd&&a.wd.indexOf(d.wd+1)<0)return false;if(a.ap&&a.ap.indexOf(c.to)<0&&a.ap.indexOf(c.rt)<0)return false;
  if(a.after!=null){var f=(d.kind==="single"||d.kind==="first")&&(d.land+d.A.inMin>=a.after-90),l=(d.kind==="single"||d.kind==="last")&&d.leave>=a.after-90;if(!f&&!l)return false}return true});
 if(hit&&!res.some(function(r){return r.t===a.t}))res.push(a)});return res}
-function renderAvv(){var el=$("#avv"),L=avvList();el.hidden=!L.length;el.innerHTML=L.map(function(a){return "<b>⚠️ "+esc(a.t)+"</b><p>"+esc(a.x)+"</p>"}).join("")}
+var AVVOPEN=false;
+function renderAvv(){var el=$("#avv"),L=avvList();el.hidden=!L.length;if(!L.length){el.innerHTML="";return}
+el.innerHTML='<details'+(AVVOPEN?" open":"")+'><summary><span class="avs"><b>⚠️ '+(L.length===1?"Un avviso per il tuo viaggio":L.length+" avvisi per il tuo viaggio")+'</b><small>'+esc(L.length===1?L[0].t:L.map(function(a){return a.t}).join(" · "))+'</small></span><i class="avc" aria-hidden="true">›</i></summary><div class="avl">'+L.map(function(a){return '<div class="avi"><b>'+esc(a.t)+'</b><p>'+esc(a.x)+'</p></div>'}).join("")+'</div></details>';
+var d=el.querySelector("details");d.addEventListener("toggle",function(){AVVOPEN=d.open})}
 
 /* meteo dei giorni del viaggio */
 function wxKind(c){return c===0?["☀️","sun"]:c<=2?["🌤️","sun"]:c===3?["☁️","cloud"]:c<=48?["🌫️","fog"]:c<=67?["🌧️","rain"]:c<=77?["🌨️","snow"]:c<=82?["🌦️","rain"]:["⛈️","storm"]}
