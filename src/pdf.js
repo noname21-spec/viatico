@@ -101,7 +101,7 @@ function grabCosts(){
  var rows=[],q=function(x){return[].map.call(x.children,function(y){return T(y)})},H=document.querySelector("#ctab .cth");
  if(H){var h=q(H);h[0]="Voce";rows.push({k:"head",c:h})}
  [].forEach.call(document.querySelectorAll("#ctab .cg"),function(g){
-  var s=g.querySelector(".cs");rows.push({k:"grp",c:q(s)});
+  var s=g.querySelector(".cs");rows.push({k:"grp",c:q(s).map(function(x){return x.replace(/›$/,"")})});
   [].forEach.call(g.querySelectorAll(".cr"),function(r){if(!r.classList.contains("off"))rows.push({k:"row",c:q(r).map(function(x){return x.replace(/ Modifica ›$/,"")})})})});
  var t=document.querySelector("#ctab .ctot");if(t)rows.push({k:"tot",c:q(t)});
  return rows
