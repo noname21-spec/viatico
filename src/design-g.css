@@ -720,3 +720,45 @@ h2.sec.mh>span{min-width:0}
 @keyframes dlogoIn{from{opacity:0;transform:translateY(10px) scale(.86)}to{opacity:1;transform:none}}
 html.lite .dbrand::before{background:radial-gradient(closest-side,color-mix(in srgb,#1cc0d6 26%,transparent),transparent 75%)}
 @media (prefers-reduced-motion:reduce){.dbrand .dlogo{animation:none}}
+
+/* icona cliccabile: stato dei viaggi, biglietto d'imbarco, elenco a biglietti */
+.dbrand .dlogo{animation:none;box-shadow:none}
+.dlw{all:unset;position:relative;display:block;width:116px;height:116px;border-radius:30px;cursor:pointer;-webkit-tap-highlight-color:transparent;animation:dlogoIn .9s var(--ease,ease) both;box-shadow:0 18px 40px -8px color-mix(in srgb,#0a6f95 55%,transparent),0 0 0 6px color-mix(in srgb,var(--surf) 70%,transparent);transition:width .35s ease,height .35s ease,box-shadow .5s ease}
+.dlw:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
+.dlw .dlogo{width:100%;height:100%;border-radius:30px;display:block}
+.dtint{position:absolute;inset:0;border-radius:30px;mix-blend-mode:color;opacity:0;transition:opacity .6s ease;pointer-events:none}
+.dbrand[data-st="up"] .dtint{background:linear-gradient(145deg,#ffb347,#ff7a59 40%,#c2417b 80%);opacity:.92}
+.dbrand[data-st="up"] .dlw{box-shadow:0 18px 40px -8px rgba(194,65,123,.5),0 0 0 6px color-mix(in srgb,var(--surf) 70%,transparent)}
+.dbrand[data-st="done"] .dtint{background:linear-gradient(145deg,#7fd6b4,#2f9e7a 55%,#0f5a58);opacity:.92}
+.dbrand[data-st="done"] .dlw{box-shadow:0 18px 40px -8px rgba(47,158,122,.5),0 0 0 6px color-mix(in srgb,var(--surf) 70%,transparent)}
+.dbadge{position:absolute;top:-8px;right:-8px;min-width:30px;height:30px;padding:0 8px;border-radius:15px;background:var(--surf,#fff);color:#c2417b;display:grid;place-items:center;font:600 .95rem Outfit,system-ui,sans-serif;box-shadow:0 4px 10px rgba(0,0,0,.22)}
+.dbadge[hidden]{display:none}
+.dbrand[data-st="done"] .dbadge{color:#2f9e7a}
+.dbrand.open .dlw{width:84px;height:84px;border-radius:23px}.dbrand.open .dlw .dlogo,.dbrand.open .dtint{border-radius:23px}
+.dpass{all:unset;box-sizing:border-box;display:flex;width:100%;max-width:420px;margin-top:20px;border-radius:18px;overflow:hidden;background:var(--surf,#fff);box-shadow:0 8px 22px rgba(0,0,0,.14);cursor:pointer;position:relative;color:var(--ink);animation:tkIn .5s .25s both;-webkit-tap-highlight-color:transparent}
+.dpass[hidden]{display:none}.dbrand.open .dpass{display:none}
+.tm{flex:1;min-width:0;padding:11px 14px;display:flex;flex-direction:column;text-align:left}
+.tm small{color:var(--mute);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tm b{font-size:1.2rem;letter-spacing:.02em;font-weight:600;line-height:1.25}
+.tm>span{color:var(--mute);font-size:.82rem}
+.ts{width:78px;flex:none;border-left:2px dashed color-mix(in srgb,var(--ink) 20%,transparent);background:color-mix(in srgb,#ff7a59 13%,var(--surf,#fff));color:#c2417b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:8px 6px;text-align:center}
+.ts b{font-size:1.45rem;line-height:1;font-weight:600}.ts span{font-size:.62rem}
+.ts.nw{background:color-mix(in srgb,#2f9e7a 14%,var(--surf,#fff));color:#2f9e7a}
+.dpass::before,.dpass::after,.tkb::before,.tkb::after{content:"";position:absolute;right:68px;width:14px;height:14px;border-radius:50%;background:var(--bg,#eef6f9)}
+.dpass::before,.tkb::before{top:-7px}.dpass::after,.tkb::after{bottom:-7px}
+#dmine{margin:14px 0 6px}#dmine[hidden]{display:none}
+.tsec{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:12px 4px 7px}
+.tk{margin-bottom:10px;animation:tkIn .4s calc(var(--n)*.06s) both;color:var(--ink)}
+.tkb{all:unset;box-sizing:border-box;display:flex;width:100%;position:relative;overflow:hidden;border-radius:18px;background:var(--surf,#fff);box-shadow:0 2px 10px rgba(0,0,0,.1),inset 4px 0 0 var(--a,#0388b0);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tkb:focus-visible{outline:2px solid var(--ink)}
+.tk.dn .tkb{opacity:.78}.tk.dn .ts{background:color-mix(in srgb,#2f9e7a 14%,var(--surf,#fff));color:#2f9e7a}
+.tkd{margin-top:6px;padding:12px 14px;border-radius:18px;background:var(--surf,#fff);box-shadow:0 2px 10px rgba(0,0,0,.08);animation:moreIn .25s ease both}
+.tkd[hidden]{display:none}
+.tkg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.tkg>div{background:color-mix(in srgb,var(--ink) 5%,transparent);border-radius:12px;padding:8px 10px;font-size:.9rem}
+.tkg small{display:block;color:var(--mute);font-size:.62rem;letter-spacing:.06em;text-transform:uppercase}
+.tka .btn{width:100%}
+.tdel{all:unset;display:block;margin:10px auto 0;color:#c2417b;font-size:.82rem;cursor:pointer;padding:4px 10px}
+.tnew{all:unset;box-sizing:border-box;display:block;width:100%;text-align:center;border:2px dashed color-mix(in srgb,var(--ink) 22%,transparent);border-radius:16px;padding:12px;color:var(--mute);font-size:.9rem;cursor:pointer;margin-top:4px}
+@keyframes tkIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.tk,.dpass,.dlw{animation:none}}
