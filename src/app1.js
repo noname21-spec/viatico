@@ -750,8 +750,21 @@ bd.hidden=!all.length;bd.textContent=up.length?up.length:"✓";
 if(up.length){var n0=up[0],d0=dOf(n0.cfg.dest);dp.hidden=false;dp.style.cssText=sw(d0);dp.innerHTML='<span class="tm"><small>'+(n0.now?"Viaggio in corso":"Prossimo viaggio")+'</small><b>'+rt(n0.cfg,d0)+'</b><span>'+esc(d0.n)+' · '+(n0.now?"oggi giorno "+(1-n0.dd)+" di "+(Math.round((dateObj(n0.cfg.date_r||n0.cfg.date)-dateObj(n0.cfg.date))/864e5)+1):esc(rangeOf(n0.cfg)))+'</span></span><span class="ts'+(n0.now?" nw":"")+'">'+stub(n0)+'</span>'}else{dp.hidden=true;dp.innerHTML=""}
 $("#dnext .dnl").textContent=all.length?"Pianifica un nuovo viaggio":"Pianifica il tuo primo viaggio";var al=$("#dal");if(up.length&&!up[0].now&&up[0].dd<=2){al.hidden=false;al.textContent=up[0].dd===0?"Si parte oggi: buon viaggio!":up[0].dd===1?"Domani si parte: hai controllato voli, documenti e valigia?":"Mancano due giorni: hai controllato voli e meteo?"}else{al.hidden=true;al.textContent=""}
 var st=$("#dstat");if(dn.length){var cs={},dys=0;dn.forEach(function(t){cs[t.cfg.dest]=1;dys+=Math.round((dateObj(t.cfg.date_r||t.cfg.date)-dateObj(t.cfg.date))/864e5)+1});var nc=Object.keys(cs).length;st.hidden=false;st.textContent=nc+(nc===1?" città · ":" città · ")+dys+(dys===1?" giorno":" giorni")+" in viaggio"}else{st.hidden=true;st.textContent=""}
-var ide=$("#didea"),IDEE=[["reykjavik","Luci del nord e bagni caldi"],["venezia","Calli quasi vuote e aria di Carnevale"],["siviglia","Arance in fiore e primavera in arrivo"],["amsterdam","Stagione dei tulipani"],["lisbona","Luce e terrazze sul fiume"],["helsinki","Giornate lunghissime"],["tallinn","La città vecchia d'estate"],["copenaghen","Giorni lunghi e porto"],["porto","Luce dorata e vendemmia"],["edimburgo","Autunno scozzese tra castelli e vicoli"],["budapest","Bagni termali con il freddo"],["vienna","Mercatini di Natale"]],ix=IDEE[new Date().getMonth()],idc=ix&&CITIES[ix[0]]?CITIES[ix[0]]:null;
-if(idc){var dd2=dOf(ix[0]);ide.hidden=false;ide.dataset.c=ix[0];ide.style.cssText=sw(dd2);ide.innerHTML='<span class="ie">'+dd2.e+'</span><span class="it"><small>Idea per questo periodo</small><b>'+esc(dd2.n)+'</b><span>'+esc(ix[1])+'</span></span><i aria-hidden="true">›</i>'}else ide.hidden=true;
+var ide=$("#didea"),IDEE=[
+[["reykjavik","Luci del nord e bagni caldi"],["edimburgo","Vicoli e pub contro il freddo"],["vienna","Caffè storici e concerti"],["praga","Città vecchia senza la folla"]],
+[["venezia","Calli quasi vuote e aria di Carnevale"],["budapest","Bagni termali con il freddo"],["siviglia","Primi tepori andalusi"],["salisburgo","Atmosfera d'inverno da cartolina"]],
+[["siviglia","Arance in fiore e primavera in arrivo"],["lisbona","Luce dolce e terrazze"],["malaga","Sole già caldo e mare"],["valencia","Aria di festa e sole"]],
+[["amsterdam","Stagione dei tulipani"],["porto","Fiumi, vino e primavera"],["roma","Primavera tra i monumenti"],["bruxelles","Parchi e caffè all'aperto"]],
+[["lisbona","Luce e terrazze sul fiume"],["bcn","Spiaggia e tapas"],["copenaghen","Biciclette e giornate lunghe"],["firenze","Colline e giardini in fiore"]],
+[["helsinki","Giornate lunghissime"],["stoccolma","Isole e luce infinita"],["tallinn","Città vecchia con il sole fino a sera"],["oslo","Fiordi e tramonti tardi"]],
+[["tallinn","La città vecchia d'estate"],["riga","Art nouveau e giorni lunghi"],["reykjavik","Luce a tutte le ore"],["copenaghen","Bagni nel porto"]],
+[["lubiana","Fiume, caffè e verde fresco"],["zagabria","Estate lenta e caffè all'aperto"],["valletta","Mare e pietra dorata"],["oslo","Fiordi in estate"]],
+[["porto","Luce dorata e vendemmia"],["monaco","Birrerie e prati d'autunno"],["vienna","Fine estate nei caffè"],["istanbul","Bosforo senza il caldo forte"]],
+[["edimburgo","Autunno scozzese tra castelli e vicoli"],["lisbona","Ancora luce e tram"],["atene","Antichità senza il caldo estremo"],["praga","Tetti rossi e foglie"]],
+[["budapest","Bagni termali con il freddo"],["napoli","Pizza e sole tiepido"],["amburgo","Porto e atmosfera nordica"],["sofia","Montagne e poca folla"]],
+[["vienna","Mercatini di Natale"],["salisburgo","Natale tra le Alpi"],["praga","Mercatini e Città vecchia"],["tallinn","Piazza con l'albero e i mercatini"]]],
+mn=new Date().getMonth(),ix=(IDEE[mn]||[]).filter(function(x){return CITIES[x[0]]});
+if(ix.length){ide.hidden=false;ide.innerHTML='<div class="dih">Idee per '+MESI[mn]+'</div><div class="dir">'+ix.map(function(x){var q=dOf(x[0]);return '<button type="button" class="dic" data-c="'+x[0]+'" style="'+sw(q)+'"><span class="ie">'+q.e+'</span><b>'+esc(q.n)+'</b><span>'+esc(x[1])+'</span></button>'}).join("")+'</div>'}else ide.hidden=true;
 dl.setAttribute("aria-label",all.length?"I miei viaggi ("+all.length+")":"Viaticum");
 if(!all.length)DOPEN=false;
 if(all.length){mine.hidden=!DOPEN;
@@ -760,14 +773,31 @@ var det=(c.a_dep&&c.a_arr?'<div><small>Andata</small><b>'+esc(c.a_dep)+' → '+e
 return '<div class="tk'+(t.past?" dn":"")+'" style="'+sw(d)+';--n:'+k+'"><button type="button" class="tkb" data-k="'+k+'" aria-expanded="false"><span class="tm"><small>'+d.e+' '+esc(d.n)+' · '+pl+'</small><b>'+rt(c,d)+'</b><span>'+esc(rangeOf(c))+'</span></span><span class="ts'+(t.now?" nw":"")+'">'+stub(t)+'</span>'+(t.past?'<span class="stamp" aria-hidden="true">'+esc(d.n)+'<br>'+MESI[dateObj(c.date_r||c.date).getUTCMonth()]+' '+(c.date_r||c.date).slice(0,4)+'</span>':'')+'</button><div class="tkd" hidden>'+(det?'<div class="tkg">'+det+'</div>':'')+'<div class="tka"><button type="button" class="btn tgo" data-k="'+k+'">Apri viaggio</button></div><div class="tfoot"><button type="button" class="tcl">Chiudi</button><button type="button" class="tdel" data-k="'+k+'">Elimina viaggio</button></div></div></div>'}
 var dns=DALL?dn:dn.slice(0,3);mine.innerHTML='<p class="thint">Tocca un viaggio per aprirlo · tieni premuto per le opzioni</p>'+(up.length?'<div class="tsec">In programma</div>'+up.map(tk).join(""):'')+(dn.length?'<div class="tsec">Già fatti</div>'+dns.map(tk).join("")+(dn.length>3?'<button type="button" class="tmore" id="tmore">'+(DALL?"Mostra meno":"Vedi tutti ("+dn.length+")")+'</button>':''):'')+'<button type="button" class="tnew" id="dnew">＋ Nuovo viaggio</button>';
 var tm=$("#tmore",mine);if(tm)tm.addEventListener("click",function(){DALL=!DALL;renderDest()});
-function openTk(k){var t=all[+k];if(!t)return;if(t.cur){if(!SAVED||!SAVED.dest){closeDest();return}if(SAVED.dest===PD.id&&CFG){closeDest();setCity(PD.id)}else goCity(SAVED.dest)}else switchTrip(t.i)}
-function showOpts(b){var d=b.parentNode.querySelector(".tkd"),o=d.hidden;$$(".tkd",mine).forEach(function(x){x.hidden=true});$$(".tkb",mine).forEach(function(x){x.setAttribute("aria-expanded","false")});if(o){d.hidden=false;b.setAttribute("aria-expanded","true");try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}}}
+function openTk(k){var t=all[+k];if(!t)return;fade(function(){go()});function go(){if(t.cur){if(!SAVED||!SAVED.dest){closeDest();return}if(SAVED.dest===PD.id&&CFG){closeDest();setCity(PD.id)}else goCity(SAVED.dest)}else switchTrip(t.i)}}
+function fade(fn,ms){var el=destEl;if(!el.animate||matchMedia("(prefers-reduced-motion:reduce)").matches||window.LITE&&0){fn();return}var an=el.animate([{opacity:1,transform:"none"},{opacity:0,transform:"scale(.985)"}],{duration:ms||170,easing:"ease-in",fill:"forwards"});an.onfinish=function(){fn();setTimeout(function(){try{an.cancel()}catch(e){}},60)}}
+var TKM=null;
+function closeMenu(now){if(!TKM)return;var m=TKM;TKM=null;$$(".tk.sel").forEach(function(x){x.classList.remove("sel")});if(now||!m.el.animate){m.el.remove();m.bg.remove();return}var o=m.el.animate([{opacity:1},{opacity:0}],{duration:120,fill:"forwards"});m.bg.animate([{opacity:1},{opacity:0}],{duration:120,fill:"forwards"});o.onfinish=function(){m.el.remove();m.bg.remove()}}
+function showMenu(b,x,y){closeMenu(true);var tkEl=b.parentNode,k=b.dataset.k,t=all[+k],c=t.cfg,d=dOf(c.dest),W=innerWidth,H=innerHeight,R=92,up=y>200,ud=up?-1:1,cx=Math.max(122,Math.min(W-122,x)),
+ bg=document.createElement("div"),el=document.createElement("div");
+tkEl.classList.add("sel");
+bg.className="tkm-bg";el.className="tkm";el.setAttribute("role","menu");el.setAttribute("aria-label","Opzioni del viaggio a "+d.n);
+var det=(c.a_dep&&c.a_arr?"Andata "+c.a_dep+" → "+c.a_arr:"")+(c.r_dep?(c.a_dep&&c.a_arr?" · ":"")+"ritorno "+c.r_dep:"");
+function bt(lab,ic,ang,cls,fn,i){var r=ang*Math.PI/180,L=Math.round(cx+R*Math.cos(r)),T=Math.round(y+ud*R*Math.sin(r)),u=document.createElement("button");u.type="button";u.className="tkm-b "+cls;u.setAttribute("role","menuitem");u.style.cssText="left:"+L+"px;top:"+T+"px;--i:"+i+";--fx:"+(x-L)+"px;--fy:"+(y-T)+"px";u.innerHTML='<span aria-hidden="true">'+ic+'</span><small>'+lab+'</small>';u.addEventListener("click",function(ev){ev.stopPropagation();closeMenu(true);fn()});return u}
+var lab=document.createElement("div");lab.className="tkm-l";lab.style.cssText="left:"+Math.max(Math.min(150,W/2-12),Math.min(W-Math.min(150,W/2-12),x))+"px;top:"+Math.round(up?y-R-86:y+R+60)+"px";lab.innerHTML='<b>'+d.e+' '+esc(d.n)+'</b><span>'+esc(rangeOf(c))+(det?' · '+esc(det):'')+'</span>';
+var pt=document.createElement("i");pt.className="tkm-p";pt.style.cssText="left:"+x+"px;top:"+y+"px";
+el.appendChild(pt);el.appendChild(lab);
+el.appendChild(bt("Apri","▶",125,"go",function(){openTk(k)},0));
+el.appendChild(bt("Elimina","🗑",55,"del",function(){tkEl.querySelector(".tdel").click()},1));
+bg.addEventListener("click",function(){closeMenu()});bg.addEventListener("contextmenu",function(e){e.preventDefault();closeMenu()});
+document.body.appendChild(bg);document.body.appendChild(el);TKM={el:el,bg:bg};
+try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}}
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&TKM)closeMenu()});
 $$(".tkb",mine).forEach(function(b){var tm=0,lp=false,sx=0,sy=0;
 function cl(){clearTimeout(tm);tm=0}
-b.addEventListener("pointerdown",function(e){lp=false;sx=e.clientX;sy=e.clientY;cl();tm=setTimeout(function(){tm=0;lp=true;showOpts(b)},480)});
+b.addEventListener("pointerdown",function(e){lp=false;sx=e.clientX;sy=e.clientY;cl();tm=setTimeout(function(){tm=0;lp=true;showMenu(b,sx,sy)},480)});
 b.addEventListener("pointermove",function(e){if(tm&&(Math.abs(e.clientX-sx)>9||Math.abs(e.clientY-sy)>9))cl()});
 ["pointerup","pointercancel","pointerleave"].forEach(function(n){b.addEventListener(n,cl)});
-b.addEventListener("contextmenu",function(e){e.preventDefault();cl();lp=true;showOpts(b)});
+b.addEventListener("contextmenu",function(e){e.preventDefault();cl();lp=true;showMenu(b,e.clientX,e.clientY)});
 b.addEventListener("click",function(e){if(lp){lp=false;e.preventDefault();return}openTk(b.dataset.k)})});
 $$(".tcl",mine).forEach(function(b){b.addEventListener("click",function(){var k=b.closest(".tk");k.querySelector(".tkd").hidden=true;k.querySelector(".tkb").setAttribute("aria-expanded","false")})});
 $$(".tgo",mine).forEach(function(b){b.addEventListener("click",function(){var t=all[+b.dataset.k];if(!t)return;if(t.cur){if(!SAVED||!SAVED.dest){closeDest();return}if(SAVED.dest===PD.id&&CFG){closeDest();setCity(PD.id)}else goCity(SAVED.dest)}else switchTrip(t.i)})});
@@ -776,11 +806,13 @@ $$(".tdel",mine).forEach(function(b){b.addEventListener("click",function(){var t
 db.classList.toggle("open",DOPEN&&all.length>0);dl.setAttribute("aria-expanded",DOPEN&&all.length>0)}
 var DOPEN=false;
 function todayStr(){var d=new Date(),p=function(n){return(n<10?"0":"")+n};return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())}
-function togMine(){try{localStorage.setItem("via-iconhint","1")}catch(e){}$("#dlw").classList.remove("hint");var m=$("#dmine");if(!m||m.innerHTML===""){var l=$("#dlw");if(l&&l.animate)l.animate([{transform:"scale(1)"},{transform:"scale(.94)"},{transform:"scale(1)"}],{duration:260});return}DOPEN=!DOPEN;renderDest();if(DOPEN)setTimeout(function(){try{m.scrollIntoView({behavior:"smooth",block:"nearest"})}catch(e){}},50)}
+function togMine(){try{localStorage.setItem("via-iconhint","1")}catch(e){}$("#dlw").classList.remove("hint");var m=$("#dmine");if(!m||m.innerHTML===""){var l=$("#dlw");if(l&&l.animate)l.animate([{transform:"scale(1)"},{transform:"scale(.94)"},{transform:"scale(1)"}],{duration:260});return}if(DOPEN&&m.animate&&!matchMedia("(prefers-reduced-motion:reduce)").matches){var an=m.animate([{opacity:1,transform:"none"},{opacity:0,transform:"translateY(-8px)"}],{duration:140,easing:"ease-in",fill:"forwards"});an.onfinish=function(){DOPEN=false;renderDest();an.cancel()};return}DOPEN=!DOPEN;renderDest();if(DOPEN)setTimeout(function(){try{m.scrollIntoView({behavior:"smooth",block:"nearest"})}catch(e){}},50)}
 (function(){var c=$("#dchips");if(c){c.innerHTML=CHIPS.map(function(x,i){return '<button type="button" data-i="'+i+'"><span aria-hidden="true">'+x[0]+'</span>'+x[1]+'</button>'}).join("");c.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;var x=CHIPS[+b.dataset.i];DSET=x[2];DSN=x[0]+" "+x[1];DEXP=true;setPick(1)})}})();
 $("#dlw").addEventListener("click",togMine);$("#dpass").addEventListener("click",togMine);
-$("#dnext").addEventListener("click",function(){setPick(1)});$("#didea").addEventListener("click",function(){var id=this.dataset.c;DEXP=true;setPick(1);setTimeout(function(){var b=$('#dgrid .dcity[data-city="'+id+'"]');if(b)b.click()},60)});$("#dback").addEventListener("click",function(){setPick(0)});
-function setPick(v){destEl.classList.toggle("pick",!!v);destEl.scrollTop=0;if(v)DOPEN=false;renderDest()}
+$("#dnext").addEventListener("click",function(){setPick(1)});$("#didea").addEventListener("click",function(e){var bt=e.target.closest(".dic");if(!bt)return;var id=bt.dataset.c;DEXP=true;setPick(1);setTimeout(function(){var b=$('#dgrid .dcity[data-city="'+id+'"]');if(b)b.click()},60)});$("#dback").addEventListener("click",function(){setPick(0)});
+function setPick(v){var dc=destEl.querySelector(".dcard"),rm=matchMedia("(prefers-reduced-motion:reduce)").matches,o=null;
+function sw2(){destEl.classList.toggle("pick",!!v);destEl.scrollTop=0;if(v)DOPEN=false;renderDest();if(dc&&dc.animate&&!rm)dc.animate([{opacity:0,transform:"translateX("+(v?26:-26)+"px)"},{opacity:1,transform:"none"}],{duration:280,easing:"cubic-bezier(.2,.8,.2,1)"});if(o)o.cancel()}
+if(dc&&dc.animate&&!rm){o=dc.animate([{opacity:1,transform:"none"},{opacity:0,transform:"translateX("+(v?-26:26)+"px)"}],{duration:150,easing:"ease-in",fill:"forwards"});o.onfinish=sw2}else sw2()}
 function openDest(){destEl.classList.remove("pick");DEXP=false;DOPEN=false;DSET=null;DSN="";DALL=false;closeSetup();closeSheet();setCity(null);dfind.value="";renderDest();destEl.classList.add("on");destEl.setAttribute("aria-hidden","false");destEl.scrollTop=0;setTimeout(function(){document.documentElement.classList.remove("hold")},600)}
 function closeDest(){destEl.classList.remove("on");destEl.setAttribute("aria-hidden","true")}
 PAR.openDest=openDest;
