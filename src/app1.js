@@ -968,14 +968,14 @@ var want=order.length>0;try{if(want&&!has){history.pushState({vov:1},"");has=tru
 var mo=new MutationObserver(recon);Object.keys(els).forEach(function(k){els[k]&&mo.observe(els[k],{attributes:true,attributeFilter:["class"]})});
 window.addEventListener("popstate",function(){if(pop){pop=false;return}if(!has)return;has=false;order=order.filter(isOn);var top=order.pop();if(top)closeTop(top);setTimeout(function(){order=order.filter(isOn);recon()},60)});
 window.viaNavTick=recon})();
-function hav(a,b,c,d){var R=6371,r=Math.PI/180,x=(c-a)*r,y=(d-b)*r,h=Math.sin(x/2)*Math.sin(x/2)+Math.cos(a*r)*Math.cos(c*r)*Math.sin(y/2)*Math.sin(y/2);return 2*R*Math.asin(Math.sqrt(h))}
+function havG(a,b,c,d){var R=6371,r=Math.PI/180,x=(c-a)*r,y=(d-b)*r,h=Math.sin(x/2)*Math.sin(x/2)+Math.cos(a*r)*Math.cos(c*r)*Math.sin(y/2)*Math.sin(y/2);return 2*R*Math.asin(Math.sqrt(h))}
 function geoTrip(cb){var td=todayStr(),L=[];if(SAVED&&SAVED.date&&CITIES[SAVED.dest])L.push({cur:1,c:SAVED});trips().forEach(function(t,i){L.push({k:i,c:t.cfg})});
 L=L.filter(function(x){var en=x.c.date_r||x.c.date;return x.c.date<=td&&td<=en&&CITIES[x.c.dest]&&CITIES[x.c.dest].LL});
 if(!L.length||!navigator.geolocation||!navigator.permissions||!navigator.permissions.query){cb(null);return}
 var done=false;function fin(m){if(done)return;done=true;cb(m)}
 setTimeout(function(){fin(null)},2400);
 navigator.permissions.query({name:"geolocation"}).then(function(p){if(p.state!=="granted"){fin(null);return}
-navigator.geolocation.getCurrentPosition(function(pos){var best=null,bd=1e9;L.forEach(function(x){var ll=CITIES[x.c.dest].LL,d=hav(pos.coords.latitude,pos.coords.longitude,ll[0],ll[1]);if(d<60&&d<bd){best=x;bd=d}});fin(best)},function(){fin(null)},{maximumAge:600000,timeout:2200,enableHighAccuracy:false})},function(){fin(null)})}
+navigator.geolocation.getCurrentPosition(function(pos){var best=null,bd=1e9;L.forEach(function(x){var ll=CITIES[x.c.dest].LL,d=havG(pos.coords.latitude,pos.coords.longitude,ll[0],ll[1]);if(d<60&&d<bd){best=x;bd=d}});fin(best)},function(){fin(null)},{maximumAge:600000,timeout:2200,enableHighAccuracy:false})},function(){fin(null)})}
 /* avvio */
 if(CFG&&CFG.date&&CFG.a_arr&&CFG.r_dep){if(!CFG.date_r)CFG.date_r=CFG.date;setCity(PD.id);renderAll();document.documentElement.classList.remove("hold");if(TRIP.multi&&CFG.stay&&CFG.stay.addr&&!CFG.stay.geo)geocode();if(OPEN==="setup")openSetup(false);
 /* all'apertura: sempre la schermata principale, tranne se il GPS ti colloca in un viaggio in corso */
