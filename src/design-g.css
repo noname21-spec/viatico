@@ -902,3 +902,11 @@ html.lite #dest[data-tod=night] .dlw .dlogo{filter:none}
 @media (prefers-reduced-motion:reduce){.pdy em{animation:none}}
 html.lite .pdy em{animation:none}
 .tm .pnx small{text-transform:none;letter-spacing:0;white-space:normal;overflow:visible;text-overflow:clip;font-size:.8rem;color:var(--mute)}
+
+/* logo di stagione */
+.seac{position:absolute;left:0;top:0;width:100%;pointer-events:none;z-index:2;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
+#dest[data-tod=day][data-sea=winter] .dbrand::before{background:radial-gradient(closest-side,color-mix(in srgb,#9fc4ee 40%,transparent),transparent 75%)}
+#dest[data-tod=day][data-sea=spring] .dbrand::before{background:radial-gradient(closest-side,color-mix(in srgb,#ffb3cf 38%,transparent),transparent 75%)}
+#dest[data-tod=day][data-sea=summer] .dbrand::before{background:radial-gradient(closest-side,color-mix(in srgb,#ffd24d 42%,transparent),transparent 75%)}
+#dest[data-tod=day][data-sea=autumn] .dbrand::before{background:radial-gradient(closest-side,color-mix(in srgb,#f09a4a 40%,transparent),transparent 75%)}
+#dest.pick .seac{display:none}
