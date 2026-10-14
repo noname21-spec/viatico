@@ -762,3 +762,22 @@ html.lite .dbrand::before{background:radial-gradient(closest-side,color-mix(in s
 .tnew{all:unset;box-sizing:border-box;display:block;width:100%;text-align:center;border:2px dashed color-mix(in srgb,var(--ink) 22%,transparent);border-radius:16px;padding:12px;color:var(--mute);font-size:.9rem;cursor:pointer;margin-top:4px}
 @keyframes tkIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.tk,.dpass,.dlw{animation:none}}
+
+/* home: elenco città nascosto, si apre dal tasto "Prossimo viaggio" */
+#dest:not(.pick) #dpick{display:none}
+#dest.pick .dbrand,#dest.pick #dmine,#dest.pick #dnext{display:none!important}
+.dnext{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;width:100%;margin:26px 0 8px;padding:18px 24px;border-radius:999px;background:var(--ink);color:var(--surf,#fff);font:600 1.15rem Outfit,system-ui,sans-serif;cursor:pointer;box-shadow:0 12px 26px -8px color-mix(in srgb,var(--ink) 55%,transparent);animation:tkIn .5s .3s both;-webkit-tap-highlight-color:transparent}
+.dnext i{font-style:normal;font-size:1.4rem;transition:transform .2s ease}.dnext:active i{transform:translateX(4px)}
+.dnext:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.dback{all:unset;cursor:pointer;display:inline-block;margin:6px 0 2px;padding:8px 14px 8px 4px;color:var(--mute);font:500 1rem Outfit,system-ui,sans-serif}
+#dest.pick #dpick{animation:tkIn .35s both}
+
+.dal{margin:12px 2px 0;font-size:.9rem;color:#c2417b;text-align:center;font-weight:500;max-width:420px}.dal[hidden]{display:none}
+.dbrand.open .dal{display:none}
+.dstat{margin:6px 0 0;text-align:center;color:var(--mute);font-size:.85rem}.dstat[hidden]{display:none}
+.didea{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:14px;width:100%;margin:18px 0 8px;padding:14px 16px;border-radius:22px;background:var(--surf,#fff);box-shadow:0 2px 10px rgba(0,0,0,.08),inset 4px 0 0 var(--a,#0388b0);cursor:pointer;color:var(--ink);-webkit-tap-highlight-color:transparent;animation:tkIn .5s .45s both}
+.didea[hidden]{display:none}.didea .ie{font-size:1.7rem}.didea .it{flex:1;display:flex;flex-direction:column;min-width:0}
+.didea small{color:var(--mute);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase}.didea b{font-size:1.1rem;font-weight:600}.didea .it>span{color:var(--mute);font-size:.84rem}
+.didea i{font-style:normal;font-size:1.4rem;color:var(--mute)}
+#dest.pick .dstat,#dest.pick .didea,#dest.pick .dal{display:none!important}
+.stamp{position:absolute;right:92px;top:50%;transform:translateY(-50%) rotate(-9deg);border:2px solid #2f9e7a;border-radius:8px;padding:3px 7px;color:#2f9e7a;font:600 .58rem/1.15 Outfit,system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;text-align:center;opacity:.8;pointer-events:none}
