@@ -888,3 +888,17 @@ html.lite #dest[data-tod=night] .dlw .dlogo{filter:none}
 .dsa .dsgo{background:var(--ga,#0a6f95);color:var(--gon,#fff)}
 .dsa button:focus-visible{outline:2px solid var(--ink)}
 #dest.pick .dsur{display:none!important}
+
+/* biglietto durante il viaggio */
+.dpass.now{background:linear-gradient(135deg,color-mix(in srgb,#ffb347 16%,var(--surf,#fff)),var(--surf,#fff) 60%)}
+.dpass.now .ts{background:color-mix(in srgb,#ffb347 24%,var(--surf,#fff));color:#b45f06}
+.dpass.now .tm>small{color:#b45f06;font-weight:700}
+.pnx{display:flex;flex-direction:column;gap:2px;margin-top:8px;animation:fadeUp .4s both}
+.pnx b{font:700 .95rem Outfit,system-ui,sans-serif;color:var(--ink);overflow-wrap:anywhere}.pnx small{color:var(--mute);font-size:.8rem}
+.pdy{position:relative;display:flex;gap:3px;height:8px;margin-top:10px;align-items:center}
+.pdy i{display:block;height:6px;border-radius:3px;background:color-mix(in srgb,#ffb347 45%,transparent)}
+.pdy em{position:absolute;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#e8870b;box-shadow:0 0 0 4px color-mix(in srgb,#e8870b 25%,transparent);animation:pdPulse 2s ease-in-out infinite}
+@keyframes pdPulse{50%{box-shadow:0 0 0 7px color-mix(in srgb,#e8870b 10%,transparent)}}
+@media (prefers-reduced-motion:reduce){.pdy em{animation:none}}
+html.lite .pdy em{animation:none}
+.tm .pnx small{text-transform:none;letter-spacing:0;white-space:normal;overflow:visible;text-overflow:clip;font-size:.8rem;color:var(--mute)}

@@ -318,17 +318,17 @@ $$(".vsw button",box).forEach(function(b){b.addEventListener("click",function(){
 WH={wheel:wheel,items:items,go:function(i){wheel.scrollTop=i*H;upd()}};upd()}
 
 /* banner dal vivo */
-var lastNow=-2;
+var lastNow=-2,LB=null;
 function todayIdx(){if(!TRIP)return -1;var d=paris().d;for(var i=0;i<TRIP.days.length;i++)if(TRIP.days[i].date===d)return i;return -1}
 var lastDay=null;
 function liveTick(){if(document.hidden)return;var live=$("#live");if(!TRIP||!CFG){live.hidden=true;return}var dd=paris().d;if(lastDay&&dd!==lastDay){lastDay=dd;try{renderAll()}catch(e){console.error(e)}return}lastDay=dd;
 var n=paris(),c=CFG,A=TRIP.A,D0=TRIP.days[0],DN=TRIP.days[TRIP.n-1];
-function set(cls,b,sp){live.className="live "+cls;live.innerHTML='<i class="dot"></i><div class="lt"><b></b><span></span></div>';$("b",live).textContent=b;$("span",live).textContent=sp;live.hidden=false}
+function set(cls,b,sp){try{localStorage.setItem("via-live",JSON.stringify({k:c.dest+c.date,b:b,s:sp,t:Date.now(),bar:LB}))}catch(e){}live.className="live "+cls;live.innerHTML='<i class="dot"></i><div class="lt"><b></b><span></span></div>';$("b",live).textContent=b;$("span",live).textContent=sp;live.hidden=false}
 var steps=$$("#steps .step");steps.forEach(function(li){li.classList.remove("now")});if(WH.items)WH.items.forEach(function(w){w.classList.remove("now")});
 if(n.d<D0.date){var d=Math.round((dateObj(D0.date)-dateObj(n.d))/864e5);set("calm",d===1?"Domani si parte! ✈️":"Mancano "+d+" giorni al viaggio",(c.a_num?"Volo "+c.a_num+(c.a_dep?" alle "+c.a_dep:"")+". ":"")+"Atterraggio a "+A.n+" alle "+c.a_arr+"."+(d<=2&&PD.T.remind?" "+PD.T.remind:""));return}
 if(n.d>DN.date){set("calm","Com'è andata a "+PD.n+"? "+PD.flag,"L'itinerario resta qui come ricordo.");return}
 var di=todayIdx(),T=TRIP.days[di];if(!T)return;
-var i=-1;T.items.forEach(function(s,k){if(n.m>=s.t)i=k});
+var i=-1;T.items.forEach(function(s,k){if(n.m>=s.t)i=k});LB={a:T.items.map(function(s){return s.t}),e:T.kind==="single"||T.kind==="last"?T.dep:(T.end||T.leave),m:n.m};
 if(di===SEL){steps.forEach(function(li,k){li.classList.toggle("now",k===i)});if(WH.items){WH.items.forEach(function(w,k){w.classList.toggle("now",k===i)});if(i!==lastNow){lastNow=i;if(i>=0)try{WH.go(i)}catch(e){}}}}
 var nm=function(s){return s?stepTitle(T,s):""};
 if(T.kind==="single"||T.kind==="last"){
@@ -733,6 +733,12 @@ var DREG="",DEXP=false,DLIM=12,DSET=null,DSN="",DALL=false;
 var CHIPS=[["🏖️","Mare",["bcn","lisbona","valencia","malaga","atene","napoli","valletta","porto","siviglia","venezia"]],["🎄","Mercatini",["vienna","praga","salisburgo","monaco","budapest","bruxelles","cracovia","tallinn","riga","vilnius"]],["🧊","Nord",["copenaghen","stoccolma","oslo","helsinki","reykjavik","tallinn","riga","edimburgo"]],["🏛️","Arte e storia",["roma","firenze","atene","istanbul","vienna","parigi","paris","madrid","praga","venezia"]]];
 (function(){var el=$("#dreg");if(!el)return;var R=window.REGN||{};el.innerHTML='<button type="button" class="on" data-r="">Tutte</button>'+Object.keys(R).map(function(k){return '<button type="button" data-r="'+k+'">'+R[k]+'</button>'}).join("");
 el.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;DREG=b.dataset.r;DEXP=false;$$("button",el).forEach(function(x){x.classList.toggle("on",x===b)});renderDest()})})();
+function liveBlk(t){var o=null;try{o=JSON.parse(localStorage.getItem("via-live")||"null")}catch(e){}
+if(!o||o.k!==t.cfg.dest+t.cfg.date||Date.now()-o.t>4*36e5)return '';
+var h='<span class="pnx"><b>'+esc(o.b)+'</b>'+(o.s?'<small>'+esc(o.s)+'</small>':'')+'</span>';
+if(o.bar&&o.bar.a&&o.bar.a.length){var a=o.bar.a,e=o.bar.e,st=a[0],span=Math.max(1,e-st),m=Math.max(st,Math.min(e,o.bar.m+Math.round((Date.now()-o.t)/6e4))),p=((m-st)/span*100).toFixed(1);
+h+='<span class="pdy" aria-hidden="true">'+a.map(function(x,i){var nx=(a[i+1]!=null?a[i+1]:e),w=Math.max(2,(nx-x)/span*100);return '<i style="flex:'+w.toFixed(1)+'"></i>'}).join("")+'<em style="left:'+p+'%"></em></span>'}
+return h}
 var WXC={};function pPr(t){return t.now?1:Math.max(.06,Math.min(1,1-t.dd/60)).toFixed(3)}
 function wxIc(c){return c===0?"☀️":c<=2?"🌤️":c===3?"☁️":c<=48?"🌫️":c<=67?"🌧️":c<=77?"🌨️":c<=82?"🌦️":"⛈️"}
 function wxPass(t){var el=$("#pw");if(!el||!t||t.dd>14||t.dd<-1)return;var c=t.cfg,L=CITIES[c.dest]&&CITIES[c.dest].LL,day=t.now?todayStr():c.date,key=c.dest+day;if(!L)return;
@@ -751,12 +757,12 @@ var mine=$("#dmine"),all=[],hasCur=SAVED&&SAVED.date&&CITIES[SAVED.dest];if(hasC
 var td=todayStr();all.forEach(function(t){var c=t.cfg,en=c.date_r||c.date;t.past=en<td;t.now=!t.past&&c.date<=td;t.dd=Math.round((dateObj(c.date)-dateObj(td))/864e5)});
 var up=all.filter(function(t){return!t.past}).sort(function(x,y){return x.cfg.date<y.cfg.date?-1:1}),dn=all.filter(function(t){return t.past}).sort(function(x,y){return x.cfg.date<y.cfg.date?1:-1});
 all=up.concat(dn);
-function stub(t){if(t.past)return '<b>✓</b><span>fatto</span>';if(t.now)return '<b>●</b><span>in viaggio</span>';if(t.dd===0)return '<b>oggi</b>';return '<span>tra</span><b>'+t.dd+'</b><span>'+(t.dd===1?"giorno":"giorni")+'</span>'}
+function stub(t){if(t.past)return '<b>✓</b><span>fatto</span>';if(t.now){var tot=Math.round((dateObj(t.cfg.date_r||t.cfg.date)-dateObj(t.cfg.date))/864e5)+1;return '<span>giorno</span><b>'+(1-t.dd)+'</b><span>di '+tot+'</span>'}if(t.dd===0)return '<b>oggi</b>';return '<span>tra</span><b>'+t.dd+'</b><span>'+(t.dd===1?"giorno":"giorni")+'</span>'}
 function rt(c,d){return c.fromCode&&c.to?esc(c.fromCode)+" → "+esc(c.to):d.e+" "+esc(d.n)}
 var dl=$("#dlw"),dp=$("#dpass"),db=$("#dbrand")||dl.parentNode,bd=$("#dbadge");
 db.dataset.st=!all.length?"":up.length?"up":"done";var hs=false;try{hs=!localStorage.getItem("via-iconhint")}catch(e){}dl.classList.toggle("hint",hs&&all.length>0&&!DOPEN);dl.disabled=false;
 bd.hidden=!all.length;bd.textContent=up.length?up.length:"✓";
-if(up.length){var n0=up[0],d0=dOf(n0.cfg.dest);dp.hidden=false;dp.style.cssText=sw(d0);dp.innerHTML='<span class="tm"><small>'+(n0.now?"Viaggio in corso":"Prossimo viaggio")+'</small><b>'+rt(n0.cfg,d0)+'</b><span>'+esc(d0.n)+' · '+(n0.now?"oggi giorno "+(1-n0.dd)+" di "+(Math.round((dateObj(n0.cfg.date_r||n0.cfg.date)-dateObj(n0.cfg.date))/864e5)+1):esc(rangeOf(n0.cfg)))+'</span><span class="pgo">'+(n0.now?"Apri il viaggio":"Apri il viaggio")+' →</span><span class="pl" aria-hidden="true"><i style="--p:'+pPr(n0)+'"></i><em style="--p:'+pPr(n0)+'">✈︎</em></span><span class="pw" id="pw" hidden></span></span><span class="ts'+(n0.now?" nw":"")+'">'+stub(n0)+'</span>';wxPass(n0)}else{dp.hidden=true;dp.innerHTML=""}
+if(up.length){var n0=up[0],d0=dOf(n0.cfg.dest);dp.hidden=false;dp.classList.toggle("now",!!n0.now);dp.style.cssText=sw(d0);dp.innerHTML='<span class="tm"><small>'+(n0.now?"Viaggio in corso":"Prossimo viaggio")+'</small><b>'+rt(n0.cfg,d0)+'</b><span>'+esc(d0.n)+' · '+(n0.now?"oggi giorno "+(1-n0.dd)+" di "+(Math.round((dateObj(n0.cfg.date_r||n0.cfg.date)-dateObj(n0.cfg.date))/864e5)+1):esc(rangeOf(n0.cfg)))+'</span><span class="pgo">'+(n0.now?"Apri il viaggio":"Apri il viaggio")+' →</span>'+(n0.now?liveBlk(n0):'<span class="pl" aria-hidden="true"><i style="--p:'+pPr(n0)+'"></i><em style="--p:'+pPr(n0)+'">✈︎</em></span>')+'<span class="pw" id="pw" hidden></span></span><span class="ts'+(n0.now?" nw":"")+'">'+stub(n0)+'</span>';wxPass(n0)}else{dp.hidden=true;dp.innerHTML=""}
 $("#dnext .dnl").textContent=all.length?"Pianifica un nuovo viaggio":"Pianifica il tuo primo viaggio";var al=$("#dal");if(up.length&&!up[0].now&&up[0].dd<=2){al.hidden=false;al.textContent=up[0].dd===0?"Si parte oggi: buon viaggio!":up[0].dd===1?"Domani si parte: hai controllato voli, documenti e valigia?":"Mancano due giorni: hai controllato voli e meteo?"}else{al.hidden=true;al.textContent=""}
 stampMap(dn);var st=$("#dstat");if(dn.length){var cs={},dys=0;dn.forEach(function(t){cs[t.cfg.dest]=1;dys+=Math.round((dateObj(t.cfg.date_r||t.cfg.date)-dateObj(t.cfg.date))/864e5)+1});var nc=Object.keys(cs).length;st.hidden=false;st.textContent=nc+(nc===1?" città · ":" città · ")+dys+(dys===1?" giorno":" giorni")+" in viaggio"}else{st.hidden=true;st.textContent=""}
 var ide=$("#didea"),IDEE=[
