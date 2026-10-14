@@ -835,8 +835,8 @@ if(dd&&dd.animate)dd.animate([{transform:"rotate(0)"},{transform:"rotate(360deg)
 setTimeout(function(){box.hidden=false;box.style.cssText=sw(d);box.dataset.c=d.id;box.innerHTML='<span class="dse" aria-hidden="true">'+d.e+'</span><span class="dst"><b>'+esc(d.n)+'</b><small>'+esc(d.c)+'</small><em>'+esc(p[1])+'</em></span><span class="dsa"><button type="button" class="dsgo">Scopri →</button><button type="button" class="dsre">Un\'altra</button></span>';
 if(box.animate)box.animate([{opacity:0,transform:"translateY(12px) scale(.96)"},{opacity:1,transform:"none"}],{duration:420,easing:"cubic-bezier(.2,1.3,.4,1)"})},dd&&dd.animate?300:0)}
 $("#dsb").addEventListener("click",showSur);
-$("#dsr").addEventListener("click",function(e){var box=$("#dsr");if(e.target.closest(".dsre")){showSur();return}if(e.target.closest(".dsgo")){var id=box.dataset.c;DEXP=true;setPick(1);setTimeout(function(){var b=$('#dgrid .dcity[data-city="'+id+'"]');if(b)b.click()},60)}});
-$("#dnext").addEventListener("click",function(){setPick(1)});$("#didea").addEventListener("click",function(e){var bt=e.target.closest(".dic");if(!bt)return;var id=bt.dataset.c;DEXP=true;setPick(1);setTimeout(function(){var b=$('#dgrid .dcity[data-city="'+id+'"]');if(b)b.click()},60)});$("#dback").addEventListener("click",function(){setPick(0)});
+$("#dsr").addEventListener("click",function(e){var box=$("#dsr");if(e.target.closest(".dsre")){showSur();return}if(e.target.closest(".dsgo")){cityGo(box,box.dataset.c)}});
+$("#dnext").addEventListener("click",function(){setPick(1)});$("#didea").addEventListener("click",function(e){var bt=e.target.closest(".dic");if(!bt)return;cityGo(bt,bt.dataset.c)});$("#dback").addEventListener("click",function(){setPick(0)});
 function setPick(v){var dc=destEl.querySelector(".dcard"),rm=matchMedia("(prefers-reduced-motion:reduce)").matches,o=null;
 function sw2(){destEl.classList.toggle("pick",!!v);destEl.scrollTop=0;if(v)DOPEN=false;renderDest();if(dc&&dc.animate&&!rm)dc.animate([{opacity:0,transform:"translateX("+(v?26:-26)+"px)"},{opacity:1,transform:"none"}],{duration:280,easing:"cubic-bezier(.2,.8,.2,1)"});if(o)o.cancel()}
 if(dc&&dc.animate&&!rm){o=dc.animate([{opacity:1,transform:"none"},{opacity:0,transform:"translateX("+(v?-26:26)+"px)"}],{duration:150,easing:"ease-in",fill:"forwards"});o.onfinish=sw2}else sw2()}
@@ -877,10 +877,11 @@ setTimeout(function(){
  ov.classList.add("zx");var out=ov.animate?ov.animate([{opacity:1},{opacity:0}],{duration:320,delay:110,easing:"ease-in",fill:"forwards"}):null;
  if(out)out.onfinish=done;else done()},d.id!==PD.id?1000:1450);
 setTimeout(done,3200)}
-dgrid.addEventListener("click",function(e){var b=e.target.closest(".dcity");if(!b)return;var d=dOf(b.dataset.city);
+dgrid.addEventListener("click",function(e){var b=e.target.closest(".dcity");if(b)cityGo(b,b.dataset.city)});
+function cityGo(b,id){var d=dOf(id);
 if(!d.ok){b.animate&&b.animate([{transform:"translateX(0)"},{transform:"translateX(-4px)"},{transform:"translateX(4px)"},{transform:"none"}],{duration:300,easing:"ease-out"});toast("La guida di "+d.n+" arriva presto ✨");return}
 var ex=sameCity(d.id);if(ex.length){var e0=ex[0];ask("Hai già un viaggio a "+d.n,"Vuoi aprire quello che hai già o organizzarne uno nuovo?",[{t:"＋ Nuovo viaggio a "+d.n,fn:function(){startNew(d,b)}},{t:"Apri il viaggio esistente",fn:function(){if(e0.cur){if(d.id!==PD.id)goCity(d.id);else{closeDest();setCity(PD.id)}}else switchTrip(e0.i)}}]);return}
-zoomGo(b,d,function(){if(d.id!==PD.id){goCity(d.id,"setup");return}setCity(d.id);closeDest();openSetup(!CFG)})});
+zoomGo(b,d,function(){if(d.id!==PD.id){goCity(d.id,"setup");return}setCity(d.id);closeDest();openSetup(!CFG)})}
 $("#sback").addEventListener("click",function(){openDest()});
 $("#shdest").addEventListener("click",function(){openDest()});
 $("#ahome").addEventListener("click",function(){openDest()});
