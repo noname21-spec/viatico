@@ -1082,3 +1082,13 @@ html.lite .dsheet{background:color-mix(in srgb,var(--bg) 95%,transparent);-webki
 
 /* la Home sta nella barra in basso: via il tasto in alto a sinistra (resta nel DOM per il tasto della barra) */
 .appbar .ahome{display:none!important}
+
+/* barra delle sezioni più alta e alzata di qualche pixel */
+:root{--tb:76px}
+.tabbar{bottom:calc(env(safe-area-inset-bottom,0px)*.3 + 10px)}
+html.sa .tabbar{top:calc(var(--apph) - var(--tb) - 16px - env(safe-area-inset-bottom,0px)*.45)!important}
+.blk{bottom:calc(env(safe-area-inset-bottom,0px)*.3 + 4px + var(--tb) + 14px)}
+html.sa .blk{height:calc(var(--apph) - 66px - env(safe-area-inset-top,0px) - var(--tb) - 24px - env(safe-area-inset-bottom,0px)*.45)}
+.tb2 .tbh,.tb2 .tbm{width:56px;height:56px}
+.tb2 .tbact{height:56px;border-radius:28px;gap:3px}
+.tb2 .tbt b{font-size:.9rem}
