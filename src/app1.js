@@ -880,6 +880,7 @@ ov.querySelector(".zcol").animate([{opacity:0,transform:"translateY(14px) scale(
 setTimeout(function(){
  try{ss("via-zoom",JSON.stringify({a:d.col[0],z:zc,c:d.c||"",n:d.n,id:d.id}))}catch(x){}
  fn();
+ if(d.id!==PD.id)return;
  ov.classList.add("zx");var out=ov.animate?ov.animate([{opacity:1},{opacity:0}],{duration:320,delay:110,easing:"ease-in",fill:"forwards"}):null;
  if(out)out.onfinish=done;else done()},d.id!==PD.id?1000:1450);
 setTimeout(done,3200)}

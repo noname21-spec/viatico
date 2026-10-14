@@ -45,7 +45,7 @@ assert head.count(mark)==1
 head=head.replace(mark,theme+mark)
 assert '<!--SPLASH-->' in body
 body=body.replace('<!--SPLASH-->',r('splash.html'),1)
-html=head+body+'<script>\n'+r('guard.js')+'\n</script>\n<script>\n'+icons_js+'\n</script>\n<script>\n'+cities+boot+'\n</script>\n<script>\n'+r('app1.js')+'\n</script>\n<script>\n'+r('app2.js')+'\n</script>\n<script>\n'+r('skyfx.js')+'\n</script>\n<script>\n'+r('anim.js')+'\n</script>\n<script>\n'+r('season.js')+'\n</script>\n<script>\n'+r('pdf.js')+'\n</script>\n<script>\n'+SYNC+'\n</script>\n<script>\n'+r('offline.js')+'\n</script>\n<script>\n'+r('help.js')+'\n</script>\n<script>\n'+r('tutorial.js')+'\n</script>\n<script>\n'+r('notify.js')+'\n</script>\n<script>\nwindow.__viaOK=1;\n</script>\n</body>\n</html>\n'
+html=head+body+'<script>\n'+r('guard.js')+'\n</script>\n<script>\n'+icons_js+'\n</script>\n<script>\n'+cities+boot+'\n</script>\n<script>\n'+r('app1.js')+'\n</script>\n<script>\n'+r('app2.js')+'\n</script>\n<script>\n'+r('skyfx.js')+'\n</script>\n<script>\n'+r('anim.js')+'\n</script>\n<script>\n'+r('season.js')+'\n</script>\n<script>\n'+r('pdf.js')+'\n</script>\n<script>\n'+SYNC+'\n</script>\n<script>\n'+r('offline.js')+'\n</script>\n<script>\n'+r('help.js')+'\n</script>\n<script>\n'+r('tutorial.js')+'\n</script>\n<script>\n'+r('notify.js')+'\n</script>\n<script>\nwindow.__viaOK=1;try{window.__zinReady&&window.__zinReady()}catch(e){}\n</script>\n</body>\n</html>\n'
 # Content-Security-Policy: hash di ogni script inline, niente 'unsafe-inline' per gli script
 import hashlib
 def b64h(t): return base64.b64encode(hashlib.sha256(t.encode('utf-8')).digest()).decode()
