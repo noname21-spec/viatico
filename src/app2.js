@@ -247,15 +247,7 @@ var tk=0;function upd(){tk=0;var a=document.querySelector(".tabr:checked"),b=a&&
 blks.forEach(function(b){b.addEventListener("scroll",function(){if(!tk)tk=requestAnimationFrame(upd)},{passive:true})});
 /* splash a ogni apertura */
 var sp=document.getElementById("splash"),hid=0,tm;function hide(){if(!sp)return;var s=sp,sh=s.querySelector(".spshr"),tg=document.getElementById("dlw"),de=document.getElementById("dest");
-if(sh&&tg&&de&&de.classList.contains("on")&&!de.classList.contains("pick")&&sh.animate&&!matchMedia("(prefers-reduced-motion: reduce)").matches&&s.style.display!=="none"){
-var r0=sh.getBoundingClientRect(),r1=tg.getBoundingClientRect();if(r0.width>20&&r1.width>20){
-var c=sh.cloneNode(true);c.className="spshr flyic";c.style.cssText="position:fixed;z-index:400;left:"+r0.left+"px;top:"+r0.top+"px;width:"+r0.width+"px;height:"+r0.height+"px;margin:0;transform-origin:0 0;pointer-events:none;will-change:transform";document.body.appendChild(c);
-tg.style.visibility="hidden";s.style.pointerEvents="none";
-var dx=r1.left-r0.left,dy=r1.top-r0.top,k=r1.width/r0.width,T=function(x,y,sx,sy){return"translate("+x+"px,"+y+"px) scale("+sx+","+sy+")"};
-s.animate([{opacity:1},{opacity:0}],{duration:420,easing:"ease-out",fill:"forwards"}).onfinish=function(){s.style.display="none";try{s.getAnimations().forEach(function(x){x.cancel()})}catch(e){}};
-var an=c.animate([{transform:T(0,0,1,1),easing:"cubic-bezier(.3,0,.2,1)"},{transform:T(dx,dy-26,k*1.1,k*1.1),offset:.46,easing:"ease-in"},{transform:T(dx,dy+5,k*1.07,k*.9),offset:.62,easing:"ease-out"},{transform:T(dx,dy-9,k*.98,k*1.03),offset:.8,easing:"ease-in-out"},{transform:T(dx,dy,k,k)}],{duration:980,fill:"forwards"});
-an.onfinish=function(){tg.style.visibility="";c.remove();try{tg.animate([{transform:"scale(1.05)"},{transform:"none"}],{duration:200,easing:"ease-out"})}catch(e){}};
-return}}
+if(s.animate&&s.style.display!=="none"){s.style.pointerEvents="none";s.animate([{opacity:1},{opacity:0}],{duration:380,easing:"ease-out",fill:"forwards"}).onfinish=function(){s.style.display="none";try{s.getAnimations().forEach(function(x){x.cancel()})}catch(e){}};return}
 s.style.display="none"}tm=setTimeout(hide,3500);
 document.addEventListener("visibilitychange",function(){if(document.hidden){hid=Date.now();return}if(!sp||!hid||Date.now()-hid<120000||matchMedia("(prefers-reduced-motion: reduce)").matches)return;var n=sp.cloneNode(true);n.style.display="";sp.parentNode.replaceChild(n,sp);sp=n;clearTimeout(tm);tm=setTimeout(hide,3500)});
 /* service worker per l'uso offline */
