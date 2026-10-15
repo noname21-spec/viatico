@@ -28,7 +28,7 @@ var AT='<svg viewBox="0 0 240 170" aria-hidden="true"><g class="tl"><path d="M24
 ART.splice(2,0,AH);ART.splice(4,0,AB);ART.splice(5,0,AS);ART.splice(6,0,AT);
 S[1][1]="Tocca una delle città europee e, con il cuoricino, tieni le preferite in cima. Poi inserisci le date: «Crea subito» ti basta per iniziare, voli e alloggio si aggiungono dopo.";
 S.splice(2,0,["La pagina principale","In alto a sinistra il logo apre i tuoi viaggi. Condividi e Impostazioni sono sempre in alto a destra. Qui sotto trovi la parola del giorno, il tuo anno in viaggio e il pulsante per pianificare."]);
-S.splice(4,0,["La barra in basso","Il pulsante grande è quello della sezione: toccalo per l'azione (Portami lì, Aggiungi spesa), trascinalo di lato per cambiare sezione, tienilo premuto per vedere tutte le sezioni e scegli senza staccare il dito: nel menu trovi anche la Home (c'è pure in alto a sinistra)."]);
+S.splice(4,0,["La barra in basso","Il pulsante grande è quello della sezione: toccalo per l'azione (Portami lì, Aggiungi spesa), trascinalo di lato per cambiare sezione, tienilo premuto per aprire il ventaglio con tutte le sezioni e la Home, e scegli senza staccare il dito."]);
 S.splice(5,0,["Le sei sezioni","Tappe: orari e luoghi. Voli: aeroporti e orari. Mappa: percorso e posizione. Pasti: dove mangiare. Costi: stime e spese da dividere. Consigli: frasi e trucchi utili."]);
 S.splice(6,0,["Cerca, meteo e impostazioni","In alto trovi il meteo, la lente per cercare tappe, locali e consigli di tutto il viaggio e l'ingranaggio per tema, lingua, offline e assistenza."]);
 var el=null,idx=0,done=null,last=null;
