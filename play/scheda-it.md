@@ -14,7 +14,7 @@ Scegli la destinazione, le date e gli orari dei voli: Viaticum prepara un itiner
 COSA PUOI FARE
 • Itinerario giornaliero con orari e percorsi: "Portami lì" apre la tappa nella tua app di mappe.
 • Voli e aeroporti: orari, imbarco e margine di tempo per non rischiare di perdere il volo.
-• Mappa del viaggio con la tua posizione, percorsi a piedi e possibilità di scaricare l'area per usarla senza rete.
+• Mappa del viaggio con la tua posizione, percorsi a piedi e punti di interesse.
 • Pasti e locali: dove mangiare vicino alla tappa, con le specialità del posto.
 • Spese: registra quanto spendi, dividi i conti tra amici e vedi il riepilogo a persona.
 • Lista "Prima di partire" con i controlli da fare nei giorni prima della partenza.

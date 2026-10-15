@@ -30,7 +30,7 @@ S[1][1]="Tocca una delle città europee e, con il cuoricino, tieni le preferite 
 S.splice(2,0,["La pagina principale","In alto a sinistra il logo apre i tuoi viaggi. Condividi e Impostazioni sono sempre in alto a destra. Qui sotto trovi la parola del giorno, il tuo anno in viaggio e il pulsante per pianificare."]);
 S.splice(4,0,["La barra in basso","Il pulsante grande è quello della sezione: toccalo per l'azione (Portami lì, Aggiungi spesa), trascinalo di lato per cambiare sezione, tienilo premuto per aprire il ventaglio con tutte le sezioni e la Home, e scegli senza staccare il dito."]);
 S.splice(5,0,["Le sei sezioni","Tappe: orari e luoghi. Voli: aeroporti e orari. Mappa: percorso e posizione. Pasti: dove mangiare. Costi: stime e spese da dividere. Consigli: frasi e trucchi utili."]);
-S.splice(6,0,["Cerca, meteo e impostazioni","In alto trovi il meteo, la lente per cercare tappe, locali e consigli di tutto il viaggio e l'ingranaggio per tema, lingua, offline e assistenza."]);
+S.splice(6,0,["Cerca, meteo e impostazioni","In alto trovi il meteo, la lente per cercare tappe, locali e consigli di tutto il viaggio e l'ingranaggio per tema, lingua e assistenza."]);
 var el=null,idx=0,done=null,last=null;
 function close(ok){if(!el)return;mark();var e=el;el=null;e.classList.remove("on");e.classList.add("bye");document.removeEventListener("keydown",key,true);setTimeout(function(){e.remove();if(last&&last.focus)try{last.focus()}catch(x){}if(ok&&done)done();done=null},red?0:320)}
 function key(e){if(e.key==="Escape"){e.stopPropagation();close(true)}else if(e.key==="ArrowRight")go(idx+1);else if(e.key==="ArrowLeft")go(idx-1)}

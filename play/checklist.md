@@ -16,6 +16,6 @@ Repository → Settings → Secrets and variables → Actions → New repository
 Poi: Actions → «Android APK» → Run workflow. L'AAB firmato compare in Releases (android-latest) come viaticum.aab.
 
 ## Rischi da controllare
-- Le tessere di OpenStreetMap non si possono scaricare in massa secondo la loro politica d'uso. La funzione «Mappa offline» scarica un'area intera: per la pubblicazione conviene usare un fornitore di tessere con licenza adatta o ridurre/togliere il download.
+- Mappa offline: tolto il download anticipato delle tessere di OpenStreetMap (vietato dalla loro politica). Resta la mappa online. Più avanti: tessere proprie (PMTiles) o un fornitore che la consente.
 - La chiave di caricamento va custodita: con «Play App Signing» Google firma l'app, e se la perdi si può reimpostare dall'assistenza Google.
 - Le dichiarazioni di Play (dati, privacy) devono restare coerenti con la pagina privacy.html.
