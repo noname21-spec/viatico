@@ -1298,9 +1298,6 @@ html.sa #sheet{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px)*.45)!i
 
 /* v148 pagina principale: la scheda si ferma sotto logo e ingranaggio, tasti dentro una maschera */
 :root{--dlim:calc(78px + env(safe-area-inset-top,0px))}
-#dest:not(.pick) .dsheet{box-sizing:border-box;min-height:0;height:calc(100dvh - var(--dlim) - 24px - env(safe-area-inset-bottom,0px));overflow-y:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
-html.sa #dest:not(.pick) .dsheet{height:calc(var(--apph) - var(--dlim) - 24px - env(safe-area-inset-bottom,0px))}
-#dest.pin:not(.pick) .dsheet{overflow-y:auto}
 .dcta{position:sticky;bottom:0;margin:14px -14px 0;padding:26px 14px calc(12px + env(safe-area-inset-bottom,0px)*.3);background:linear-gradient(transparent,var(--bg) 26px)!important}
 .dctp{display:flex;gap:6px;padding:6px;border-radius:36px;background:var(--surf);box-shadow:0 8px 28px rgba(30,20,10,.16)}
 .dctp .dopen{padding-block:14px;box-shadow:none}
@@ -1310,3 +1307,7 @@ html.sa #dest:not(.pick) .dsheet{height:calc(var(--apph) - var(--dlim) - 24px - 
 .dctp .dopen{flex:1.1}
 .dctp .dmy{flex:1;padding-inline:8px;font-size:.88rem;gap:6px}
 .dcta .dctp{flex:1;min-width:0}
+
+/* la scheda sale sotto una fascia piena dietro logo e ingranaggio: non si sovrappone più */
+#dest .dbrand::after{content:"";position:absolute;left:-12px;right:-12px;top:0;height:calc(var(--dlim) + 14px);background:linear-gradient(var(--bg) calc(100% - 12px),transparent);opacity:0;transition:opacity .2s ease;pointer-events:none;z-index:-2}
+#dest.pin .dbrand::after{opacity:1}

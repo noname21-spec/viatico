@@ -1141,5 +1141,5 @@ else{CFG=null;document.documentElement.classList.add("hold");if(PICK&&CITIES[PIC
 /* condividi il viaggio: un solo punto d'ingresso */
 (function(){var b=document.getElementById("shshare");if(!b)return;b.addEventListener("click",function(){var sh=document.getElementById("sheet");if(window.__ask)window.__ask("Condividi il viaggio","Come vuoi inviarlo?",[{t:"Invia l'itinerario in PDF",fn:function(){var x=document.getElementById("shsit");x&&x.click()}},{t:"Link per aprirlo su un altro telefono",fn:function(){var x=document.getElementById("shlink");x&&x.click()}}])})})();
 
-/* pagina principale: la lista interna scorre solo quando la scheda ha raggiunto la cima */
-(function(){var d=document.getElementById("dest");if(!d)return;function pin(){d.classList.toggle("pin",d.scrollTop>=d.scrollHeight-d.clientHeight-3)}d.addEventListener("scroll",pin,{passive:true});window.addEventListener("resize",pin);setTimeout(pin,400)})();
+/* pagina principale: fascia piena dietro logo e ingranaggio quando la scheda arriva in alto */
+(function(){var d=document.getElementById("dest"),sh=document.getElementById("dsheet");if(!d||!sh)return;var t=0;function pin(){t=0;var top=sh.getBoundingClientRect().top;d.classList.toggle("pin",top<96+(parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--sat"))||0))}d.addEventListener("scroll",function(){if(!t)t=requestAnimationFrame(pin)},{passive:true});window.addEventListener("resize",pin)})();
