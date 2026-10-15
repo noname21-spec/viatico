@@ -1127,3 +1127,22 @@ html.lite .dsheet{background:color-mix(in srgb,var(--bg) 92%,transparent)}
 
 /* v127 niente home nella barra */
 .tb2 .tbh{display:none!important}
+
+/* v128 menu a ventaglio */
+.tbsh{display:block;padding:0}
+.tbsh .tbfan{position:absolute;left:50%;bottom:calc(var(--tb,76px) + 10px + env(safe-area-inset-bottom,0px)*.3 + 34px);width:0;height:0}
+.tbfan button{all:unset;box-sizing:border-box;position:absolute;left:0;top:0;width:52px;height:52px;margin:-26px;border-radius:50%;display:grid;place-items:center;background:var(--surf);color:var(--ink);box-shadow:0 8px 20px -6px rgba(0,0,0,.45),0 0 0 1px color-mix(in srgb,var(--ink) 10%,transparent);cursor:pointer;-webkit-tap-highlight-color:transparent;transform:translate(0,0) scale(.3);opacity:0}
+.tbfan button .em{display:block;line-height:1;font-style:normal}
+.tbfan button .em .ic,.tbfan button .em svg{width:24px;height:24px}
+.tbsh.in .tbfan button{animation:tbfo .42s var(--spring,cubic-bezier(.2,1.3,.4,1)) var(--d,0ms) both}
+@keyframes tbfo{from{transform:translate(0,0) scale(.3);opacity:0}to{transform:translate(var(--x),var(--y)) scale(1);opacity:1}}
+.tbfan button.on{background:color-mix(in srgb,var(--ga) 16%,var(--surf));box-shadow:0 8px 20px -6px rgba(0,0,0,.45),inset 0 0 0 2px var(--ga)}
+.tbfan button.hov{background:var(--ga);color:var(--gon,#fff);box-shadow:0 10px 24px -6px rgba(0,0,0,.5);animation:none;transform:translate(var(--x),var(--y)) scale(1.25);opacity:1;z-index:2;transition:transform .15s var(--spring,ease)}
+.tbfl{position:absolute;left:0;top:-14px;transform:translate(-50%,-50%);white-space:nowrap;padding:8px 18px;border-radius:999px;background:var(--surf);color:var(--ink);font:700 .9rem Outfit,system-ui,sans-serif;box-shadow:0 6px 18px -6px rgba(0,0,0,.4)}
+@media (prefers-reduced-motion:reduce){.tbsh.in .tbfan button{animation:none;transform:translate(var(--x),var(--y));opacity:1}}
+
+/* v128b nomi dentro i pulsanti */
+.tbfan button{width:62px;height:62px;margin:-31px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.tbfan button .em .ic,.tbfan button .em svg{width:22px;height:22px}
+.tbfan button span{font:700 .6rem/1 Outfit,system-ui,sans-serif;letter-spacing:.01em}
+.tbfl{display:none}

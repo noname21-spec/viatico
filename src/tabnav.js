@@ -30,15 +30,17 @@ var trk=$(".tbt",pill),lbs=trk.querySelectorAll("b"),dots=pill.querySelectorAll(
 function render(){var c=curI();lbs[0].textContent=lab(c-1);lbs[1].textContent=lab(c);lbs[2].textContent=lab(c+1);[].forEach.call(dots,function(d,i){d.classList.toggle("on",i===c)});pill.setAttribute("data-sec",NAMES[c])}
 /* foglio con tutte le sezioni */
 var sh=document.createElement("div");sh.className="tbsh";sh.hidden=true;sh.setAttribute("role","dialog");sh.setAttribute("aria-label","Sezioni del viaggio");
-sh.innerHTML='<div class="tbp"><i class="tbg" aria-hidden="true"></i><div class="tbgr">'+rs.map(function(r,i){return'<button type="button" data-i="'+i+'"><b class="em">'+ICO[i]+'</b><span>'+NAMES[i]+'</span></button>'}).join("")+'<button type="button" data-h="1" class="tbhm"><b class="em">'+home.innerHTML+'</b><span>Home · Tutti i viaggi</span></button></div></div>';
+sh.innerHTML='<div class="tbfan"><div class="tbfl" aria-live="polite"></div>'+rs.map(function(r,i){return'<button type="button" data-i="'+i+'" aria-label="'+NAMES[i]+'"><b class="em">'+ICO[i]+'</b><span>'+NAMES[i]+'</span></button>'}).join("")+'<button type="button" data-h="1" class="tbhm" aria-label="Home, tutti i viaggi"><b class="em">'+home.innerHTML+'</b><span>Home</span></button></div>';
+var fl=sh.querySelector(".tbfl");
+function flab(b){fl.textContent=!b?NAMES[curI()]:b.dataset.h?"Home":NAMES[+b.dataset.i]}
 document.body.appendChild(sh);
-function shOpen(on){sh.hidden=!on;if(on){[].forEach.call(sh.querySelectorAll("button[data-i]"),function(b){var e=labs[+b.dataset.i].querySelector(".em"),t=b.querySelector(".em");if(e&&t&&e.innerHTML)t.innerHTML=e.innerHTML});[].forEach.call(sh.querySelectorAll("button[data-i]"),function(b){b.classList.toggle("on",+b.dataset.i===curI())});sh.classList.remove("in");void sh.offsetWidth;sh.classList.add("in")}}
+function shOpen(on){sh.hidden=!on;if(on){var bs=sh.querySelectorAll(".tbfan button"),n=bs.length,R=Math.max(96,Math.min(148,(innerWidth-24-62)/2));[].forEach.call(bs,function(b,k){if(b.dataset.i!=null){var e=labs[+b.dataset.i].querySelector(".em"),t=b.querySelector(".em");if(e&&t&&e.innerHTML)t.innerHTML=e.innerHTML;b.classList.toggle("on",+b.dataset.i===curI())}var g=Math.PI*(.07+.86*k/(n-1));b.style.setProperty("--x",(-Math.cos(g)*R).toFixed(1)+"px");b.style.setProperty("--y",(-Math.sin(g)*R*.92).toFixed(1)+"px");b.style.setProperty("--d",(k*28)+"ms")});flab(null);sh.classList.remove("in");void sh.offsetWidth;sh.classList.add("in")}}
 sh.addEventListener("click",function(e){var b=e.target.closest("button[data-i],button[data-h]");if(b){shOpen(false);if(b.dataset.h)home.click();else setI(+b.dataset.i);return}if(e.target===sh)shOpen(false)});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!sh.hidden)shOpen(false)});
 home.addEventListener("click",function(){var h=$("#ahome");if(h)h.click()});
 /* il pulsante si trascina: a sinistra e a destra cambia sezione */
 var sx=null,dx=0,drag=0,busy=0,t0=0,W=150,lp=0,hold=0,hov=null,supp=0;
-function hv(x,y){var el=document.elementFromPoint(x,y),b=el&&el.closest?el.closest(".tbgr button"):null;if(b===hov)return;if(hov)hov.classList.remove("hov");hov=b;if(b){b.classList.add("hov");if(navigator.vibrate)try{navigator.vibrate(4)}catch(e){}}}
+function hv(x,y){var best=null,bd=46;[].forEach.call(sh.querySelectorAll(".tbfan button"),function(b){var r=b.getBoundingClientRect(),d=Math.hypot(x-(r.left+r.width/2),y-(r.top+r.height/2));if(d<bd){bd=d;best=b}});if(best===hov)return;if(hov)hov.classList.remove("hov");hov=best;if(best)best.classList.add("hov");flab(best);if(best&&navigator.vibrate)try{navigator.vibrate(4)}catch(e){}}
 function mv(x){trk.style.transform="translateX("+x+"px)"}
 function settle(d){busy=1;W=pill.clientWidth;trk.style.transition="transform .28s cubic-bezier(.2,1,.3,1)";mv(-d*W);
  setTimeout(function(){trk.style.transition="none";setI(curI()+d);render();mv(0);[].forEach.call(chv,function(c){c.classList.add("gone")});try{localStorage.setItem("via-tbhint","1")}catch(e){}busy=0;if(navigator.vibrate)try{navigator.vibrate(8)}catch(e){}},290)}
