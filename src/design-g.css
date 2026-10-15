@@ -1109,3 +1109,15 @@ background-size:100% var(--hh),100% 100%,100% var(--hh);background-repeat:no-rep
 .dsheet{background:color-mix(in srgb,var(--bg) 74%,transparent)}
 html.lite .dsheet{background:color-mix(in srgb,var(--bg) 92%,transparent)}
 .dcta{background:linear-gradient(transparent,color-mix(in srgb,var(--bg) 55%,transparent) 45%)}
+
+/* barra: il pulsante centrale occupa tutto lo spazio, tenuto premuto apre le sezioni */
+.tb2 .tbm{display:none!important}
+.tb2 .tbact{transition:transform .2s var(--spring,ease)}
+.tb2 .tbact.pr{transform:scale(.97)}
+.tbgr button.on{background:color-mix(in srgb,var(--ga) 14%,transparent);box-shadow:inset 0 0 0 2px var(--ga);color:var(--ink)}
+.tbgr button{transition:transform .15s var(--spring,ease),background .15s}
+.tbgr button.hov{background:var(--ga);color:var(--gon,#fff);transform:scale(1.06);box-shadow:none}
+/* v125 barra più alta */
+:root{--tb:88px}
+.tb2 .tbh{width:66px;height:66px}
+.tb2 .tbact{height:66px;border-radius:33px;gap:4px}
