@@ -2664,6 +2664,33 @@ svg.sky.sk-fix .mon,svg.sky.sk-fix .hills{animation:none!important;opacity:1!imp
 #costi table{overflow:clip!important}
 #costi thead th{position:sticky;top:0;z-index:2;background:var(--surf)!important}
 
+/* v146 impostazioni: gruppi, icone a pastiglia, allineata alla barra in basso, apertura che nasce dalla barra */
+#sheet{padding-left:14px!important;padding-right:14px!important;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px)*.3)!important;transition:opacity .3s ease,visibility 0s linear .5s!important}
+#sheet.on{transition:opacity .25s ease,visibility 0s!important}
+html.sa #sheet{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px)*.45)!important}
+.shc{width:min(560px,100%)!important;border-radius:36px!important;padding:18px 16px 14px!important;clip-path:inset(calc(100% - var(--tb)) 0 0 0 round 36px);transform:none!important;transition:clip-path .42s cubic-bezier(.4,0,.6,1),opacity .2s ease!important;box-shadow:none!important;border:1px solid var(--line)!important}
+#sheet.on .shc{clip-path:inset(0 0 0 0 round 36px);transition:clip-path .62s cubic-bezier(.2,.9,.25,1),opacity .2s ease!important}
+.shc>*{opacity:0;transform:translateY(10px);transition:opacity .15s ease,transform .15s ease}
+#sheet.on .shc>*{opacity:1;transform:none;transition:opacity .35s ease,transform .45s cubic-bezier(.2,.9,.25,1)}
+#sheet.on .shc>*:nth-child(2){transition-delay:.14s}#sheet.on .shc>*:nth-child(3){transition-delay:.19s}#sheet.on .shc>*:nth-child(4){transition-delay:.24s}#sheet.on .shc>*:nth-child(5){transition-delay:.29s}#sheet.on .shc>*:nth-child(6){transition-delay:.34s}#sheet.on .shc>*:nth-child(7){transition-delay:.38s}
+@media (prefers-reduced-motion:reduce){.shc{clip-path:none!important;transition:opacity .2s!important}.shc>*{opacity:1!important;transform:none!important}}
+.shc h3{font:700 1.3rem/1.1 Outfit,system-ui,sans-serif!important;margin:2px 6px 14px!important}
+.shsec{margin:0 0 14px}
+.shgt{margin:0 8px 7px;font:700 .72rem Outfit,system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--mute)}
+.shgrp{background:var(--surf);border-radius:24px;overflow:hidden}
+.shc .shgrp>button.row,.shc .shgrp>.shtheme{background:none!important;border:0!important;border-radius:0!important;margin:0!important;box-shadow:none!important;padding:12px 14px!important;width:100%}
+.shgrp>:not([hidden])~:not([hidden]){border-top:1px solid var(--line)!important}
+.shc .shgrp>button.row:active{transform:none;background:color-mix(in srgb,var(--ink) 6%,transparent)!important}
+.shi{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--ga) 12%,transparent);color:var(--ga)}
+.shi svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.shc button.row.danger .shi{background:color-mix(in srgb,var(--c2) 13%,transparent);color:var(--c2)}
+.shc .shgrp>button.row>span:last-child{flex:1;min-width:0}
+.shc .shgrp>button.row::after{content:"";width:8px;height:8px;border-right:2px solid var(--mute);border-top:2px solid var(--mute);transform:rotate(45deg);margin-left:auto;opacity:.5;flex:none;transition:transform .25s}
+.shc .shgrp>button.row[aria-expanded="true"]::after{transform:rotate(135deg)}
+.shc .shgrp>button.row.danger::after{display:none}
+.shgrp .nbox{margin:0!important;border-radius:0!important;box-shadow:none!important;background:color-mix(in srgb,var(--ink) 4%,transparent)!important}
+.shc .cls{margin-top:4px}
+
 </style>
 </head>
 <body class="showall">
@@ -2789,15 +2816,14 @@ svg.sky.sk-fix .mon,svg.sky.sk-fix .hills{animation:none!important;opacity:1!imp
 <nav class="tabbar" aria-label="Sezioni"><i class="tbind" aria-hidden="true"></i><label for="t-itinerario"><b class="em em-spin" aria-hidden="true">🕗</b><span>Tappe</span></label><label for="t-voli"><b class="em em-fly" aria-hidden="true">✈️</b><span>Voli</span></label><label for="t-mappa"><b class="em em-unfold" aria-hidden="true">🗺️</b><span>Mappa</span></label><label for="t-mangiare"><b class="em em-bob" aria-hidden="true">🥐</b><span>Pasti</span></label><label for="t-costi"><b class="em em-flip" aria-hidden="true">💶</b><span>Costi</span></label><label for="t-consigli"><b class="em em-glow" aria-hidden="true">💡</b><span>Consigli</span></label><img class="tbicon" src="icon-mark-192.png" alt="" aria-hidden="true" draggable="false"><i class="tbdots" aria-hidden="true">🕗</i></nav>
 
 <div id="sheet" aria-hidden="true"><div class="shc" role="dialog" aria-label="Impostazioni">
-<h3>⚙️ Impostazioni</h3>
-<div class="shtheme"><div class="shl"><span>🌗</span><span>Aspetto<small>"Sistema" segue le impostazioni del telefono</small></span></div><div class="seg3" role="radiogroup" aria-label="Aspetto"><button type="button" role="radio" data-t="auto" aria-checked="true" class="on">Sistema</button><button type="button" role="radio" data-t="light" aria-checked="false">Chiaro</button><button type="button" role="radio" data-t="dark" aria-checked="false">Scuro</button></div></div>
-<div class="shtheme shlang"><div class="shl"><span>🌍</span><span>Lingua dell'app<small>Traduzione automatica con Google Traduttore: serve internet</small></span></div><select id="shlang" translate="no" aria-label="Lingua dell'app"><option value="it">Italiano</option><option value="en">English</option><option value="fr">Français</option><option value="es">Español</option><option value="de">Deutsch</option><option value="pt">Português</option></select></div>
-<button type="button" class="row" data-trip data-edit><span>✏️</span><span>Modifica il tuo viaggio<small>Date, persone, volo e hotel</small></span></button>
-<button type="button" class="row" data-trip id="shdest"><span>🧭</span><span>Tutti i viaggi<small>Torna alla pagina principale e organizza un altro viaggio</small></span></button>
-<button type="button" class="row" data-trip id="shpdf"><span>📄</span><span>Scarica l'itinerario in PDF<small id="shpdfs">Tutti i giorni e i costi, da salvare o stampare</small></span></button>
-<button type="button" class="row" data-trip id="shsit"><span>📤</span><span>Condividi l'itinerario<small>Invia il PDF a chi viaggia con te</small></span></button>
-<button type="button" class="row" data-trip id="shcal"><span>📅</span><span>Aggiungi al calendario<small id="shcals">Tappe e voli con promemoria (file .ics)</small></span></button>
-<button type="button" class="row" data-trip id="shnot" aria-expanded="false" aria-controls="nbox"><span>🔔</span><span>Notifiche e promemoria<small id="shnots">Voli, tappe, pasti, alloggio e lista</small></span></button>
+<h3>Impostazioni</h3>
+<div class="shsec" data-trip><p class="shgt">Questo viaggio</p><div class="shgrp">
+<button type="button" class="row" data-trip data-edit><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/></svg></span><span>Modifica il tuo viaggio<small>Date, persone, volo e hotel</small></span></button>
+<button type="button" class="row" data-trip id="shpdf"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7Z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg></span><span>Scarica l'itinerario in PDF<small id="shpdfs">Tutti i giorni e i costi, da salvare o stampare</small></span></button>
+<button type="button" class="row" data-trip id="shsit"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4M5 13v6h14v-6"/></svg></span><span>Condividi l'itinerario<small>Invia il PDF a chi viaggia con te</small></span></button>
+<button type="button" class="row" data-trip id="shcal"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M8 3v4M16 3v4"/></svg></span><span>Aggiungi al calendario<small id="shcals">Tappe e voli con promemoria (file .ics)</small></span></button>
+<button type="button" class="row" data-trip id="shlink"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg></span><span>Apri su un altro telefono<small>Un link per aprirlo su un altro telefono</small></span></button>
+<button type="button" class="row" data-trip id="shnot" aria-expanded="false" aria-controls="nbox"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15Z"/><path d="M10 21h4"/></svg></span><span>Notifiche e promemoria<small id="shnots">Voli, tappe, pasti, alloggio e lista</small></span></button>
 <div class="nbox" id="nbox" data-trip hidden>
 <label class="nrow nmain"><span>Attiva i promemoria<small id="nst">Disattivati</small></span><input type="checkbox" class="nsw" id="non" role="switch"></label>
 <div id="nopts">
@@ -2812,14 +2838,25 @@ svg.sky.sk-fix .mon,svg.sky.sk-fix .hills{animation:none!important;opacity:1!imp
 <div class="nbtns"><button type="button" class="btn ghost" id="ntest">Prova una notifica</button><button type="button" class="btn ghost" id="ncal">Aggiungi anche al calendario</button></div>
 <p class="nnote" id="nnote">I promemoria suonano quando l'app è aperta o appena usata. Per avere gli avvisi anche con l'app chiusa, aggiungi il viaggio al calendario del telefono.</p>
 </div>
-<button type="button" class="row" data-trip id="shlink"><span>🔗</span><span>Invia il viaggio<small>Un link che apre lo stesso viaggio su un altro telefono</small></span></button>
-<button type="button" class="row" id="shapp"><span>🔗</span><span>Condividi Viaticum<small>QR code e link per far scaricare l'app</small></span></button>
-<button type="button" class="row" id="shacct" hidden><span>👤</span><span><b class="at">Accedi o registrati</b><small class="as"></small></span></button>
-<button type="button" class="row" id="shtour"><span>🧭</span><span>Come funziona<small>Rivedi il tutorial di benvenuto</small></span></button>
-<button type="button" class="row" id="shcof" hidden><span>☕</span><span>Offrimi un caffè<small>Viaticum è gratis e senza pubblicità: se ti è utile, puoi sostenerlo con una piccola offerta</small></span></button>
-<button type="button" class="row" id="shcoach"><span>💡</span><span>Guida di questa schermata<small>Rivedi i suggerimenti della pagina in cui ti trovi</small></span></button>
-<button type="button" class="row" id="shhelp"><span>🛟</span><span>Supporto e assistenza<small>Domande frequenti, contatti e privacy</small></span></button>
-<button type="button" class="row danger" id="shreset"><span>🗑️</span><span>Cancella tutti i dati<small>Tutti i viaggi, spese e liste salvati su questo telefono</small></span></button>
+<button type="button" class="row" data-trip id="shdest"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="12" rx="2.5"/><path d="M9 8V5h6v3M3 13h18"/></svg></span><span>Tutti i viaggi<small>Torna alla pagina principale</small></span></button>
+</div></div>
+<div class="shsec"><p class="shgt">Aspetto e lingua</p><div class="shgrp">
+<div class="shtheme"><div class="shl"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg></span><span>Aspetto<small>"Sistema" segue le impostazioni del telefono</small></span></div><div class="seg3" role="radiogroup" aria-label="Aspetto"><button type="button" role="radio" data-t="auto" aria-checked="true" class="on">Sistema</button><button type="button" role="radio" data-t="light" aria-checked="false">Chiaro</button><button type="button" role="radio" data-t="dark" aria-checked="false">Scuro</button></div></div>
+<div class="shtheme shlang"><div class="shl"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span><span>Lingua dell'app<small>Traduzione automatica con Google Traduttore: serve internet</small></span></div><select id="shlang" translate="no" aria-label="Lingua dell'app"><option value="it">Italiano</option><option value="en">English</option><option value="fr">Français</option><option value="es">Español</option><option value="de">Deutsch</option><option value="pt">Português</option></select></div>
+</div></div>
+<div class="shsec"><p class="shgt">Aiuto</p><div class="shgrp">
+<button type="button" class="row" id="shtour"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5Z"/></svg></span><span>Come funziona<small>Rivedi il tutorial di benvenuto</small></span></button>
+<button type="button" class="row" id="shcoach"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"/></svg></span><span>Guida di questa schermata<small>Rivedi i suggerimenti della pagina in cui ti trovi</small></span></button>
+<button type="button" class="row" id="shhelp"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><path d="m5.6 5.6 3.9 3.9M14.5 14.5l3.9 3.9M18.4 5.6l-3.9 3.9M9.5 14.5l-3.9 3.9"/></svg></span><span>Supporto e assistenza<small>Domande frequenti, contatti e privacy</small></span></button>
+</div></div>
+<div class="shsec"><p class="shgt">Viaticum</p><div class="shgrp">
+<button type="button" class="row" id="shapp"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="8" r="4"/><path d="M3 20a7 7 0 0 1 14 0M19 8v6M16 11h6"/></svg></span><span>Invita un amico<small>QR code e link per scaricare l'app</small></span></button>
+<button type="button" class="row" id="shcof" hidden><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5Z"/><path d="M16 11h2a2.5 2.5 0 0 1 0 5h-2M8 3v2M12 3v2"/></svg></span><span>Offrimi un caffè<small>Gratis e senza pubblicità: sostienilo con un'offerta</small></span></button>
+</div></div>
+<div class="shsec"><p class="shgt">Account e dati</p><div class="shgrp">
+<button type="button" class="row" id="shacct" hidden><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><span><b class="at">Accedi o registrati</b><small class="as"></small></span></button>
+<button type="button" class="row danger" id="shreset"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg></span><span>Cancella tutti i dati<small>Tutti i viaggi, spese e liste salvati su questo telefono</small></span></button>
+</div></div>
 <button type="button" class="btn ghost cls" id="shclose">Chiudi</button>
 </div></div>
 

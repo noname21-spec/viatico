@@ -1261,3 +1261,30 @@ svg.sky.sk-fix .mon,svg.sky.sk-fix .hills{animation:none!important;opacity:1!imp
 @media (prefers-reduced-motion:reduce){.blk.bin-r,.blk.bin-l{animation:none}}
 #costi table{overflow:clip!important}
 #costi thead th{position:sticky;top:0;z-index:2;background:var(--surf)!important}
+
+/* v146 impostazioni: gruppi, icone a pastiglia, allineata alla barra in basso, apertura che nasce dalla barra */
+#sheet{padding-left:14px!important;padding-right:14px!important;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px)*.3)!important;transition:opacity .3s ease,visibility 0s linear .5s!important}
+#sheet.on{transition:opacity .25s ease,visibility 0s!important}
+html.sa #sheet{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px)*.45)!important}
+.shc{width:min(560px,100%)!important;border-radius:36px!important;padding:18px 16px 14px!important;clip-path:inset(calc(100% - var(--tb)) 0 0 0 round 36px);transform:none!important;transition:clip-path .42s cubic-bezier(.4,0,.6,1),opacity .2s ease!important;box-shadow:none!important;border:1px solid var(--line)!important}
+#sheet.on .shc{clip-path:inset(0 0 0 0 round 36px);transition:clip-path .62s cubic-bezier(.2,.9,.25,1),opacity .2s ease!important}
+.shc>*{opacity:0;transform:translateY(10px);transition:opacity .15s ease,transform .15s ease}
+#sheet.on .shc>*{opacity:1;transform:none;transition:opacity .35s ease,transform .45s cubic-bezier(.2,.9,.25,1)}
+#sheet.on .shc>*:nth-child(2){transition-delay:.14s}#sheet.on .shc>*:nth-child(3){transition-delay:.19s}#sheet.on .shc>*:nth-child(4){transition-delay:.24s}#sheet.on .shc>*:nth-child(5){transition-delay:.29s}#sheet.on .shc>*:nth-child(6){transition-delay:.34s}#sheet.on .shc>*:nth-child(7){transition-delay:.38s}
+@media (prefers-reduced-motion:reduce){.shc{clip-path:none!important;transition:opacity .2s!important}.shc>*{opacity:1!important;transform:none!important}}
+.shc h3{font:700 1.3rem/1.1 Outfit,system-ui,sans-serif!important;margin:2px 6px 14px!important}
+.shsec{margin:0 0 14px}
+.shgt{margin:0 8px 7px;font:700 .72rem Outfit,system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--mute)}
+.shgrp{background:var(--surf);border-radius:24px;overflow:hidden}
+.shc .shgrp>button.row,.shc .shgrp>.shtheme{background:none!important;border:0!important;border-radius:0!important;margin:0!important;box-shadow:none!important;padding:12px 14px!important;width:100%}
+.shgrp>:not([hidden])~:not([hidden]){border-top:1px solid var(--line)!important}
+.shc .shgrp>button.row:active{transform:none;background:color-mix(in srgb,var(--ink) 6%,transparent)!important}
+.shi{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--ga) 12%,transparent);color:var(--ga)}
+.shi svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.shc button.row.danger .shi{background:color-mix(in srgb,var(--c2) 13%,transparent);color:var(--c2)}
+.shc .shgrp>button.row>span:last-child{flex:1;min-width:0}
+.shc .shgrp>button.row::after{content:"";width:8px;height:8px;border-right:2px solid var(--mute);border-top:2px solid var(--mute);transform:rotate(45deg);margin-left:auto;opacity:.5;flex:none;transition:transform .25s}
+.shc .shgrp>button.row[aria-expanded="true"]::after{transform:rotate(135deg)}
+.shc .shgrp>button.row.danger::after{display:none}
+.shgrp .nbox{margin:0!important;border-radius:0!important;box-shadow:none!important;background:color-mix(in srgb,var(--ink) 4%,transparent)!important}
+.shc .cls{margin-top:4px}
