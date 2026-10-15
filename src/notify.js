@@ -71,7 +71,7 @@ document.addEventListener("visibilitychange",function(){if(document.visibilitySt
 window.addEventListener("focus",tick);window.addEventListener("pageshow",tick);
 if(window.PAR&&PAR.on)PAR.on(function(){sigNow="";if(ST.on)tick()});
 /* impostazioni */
-var btn=$("#shnot"),box=$("#nbox");if(!btn||!box)return;
+var btn=$("#shnot"),box=$("#nbox");if(!btn||!box)return;if(window.__IS_APP){btn.hidden=true;box.hidden=true;box.setAttribute("data-off","1");return}
 var on=$("#non"),opts=$("#nopts"),st=$("#nst"),sub=$("#shnots"),note=$("#nnote"),lead=$("#nlead");
 function label(){
  var p=perm(),t;

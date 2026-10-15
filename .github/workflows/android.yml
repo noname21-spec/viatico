@@ -34,6 +34,11 @@ jobs:
         run: |
           sed -i 's#</manifest>#    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n</manifest>#' app/src/main/AndroidManifest.xml
           grep -c ACCESS_FINE_LOCATION app/src/main/AndroidManifest.xml
+      - name: Accesso (link profondo)
+        working-directory: android/android
+        run: |
+          python3 ../patch_manifest.py
+          grep -c "it.viaticum.app" app/src/main/AndroidManifest.xml
       - name: Versione
         working-directory: android/android
         run: |

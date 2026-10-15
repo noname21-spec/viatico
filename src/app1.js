@@ -567,6 +567,11 @@ o.push("","Fatto con Viaticum");var txt=o.join("\n");
 if(navigator.share){navigator.share({text:txt}).catch(function(){})}else if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){toast("Riepilogo copiato")},function(){toast("Non sono riuscito a copiare")})}else toast("Condivisione non disponibile")}
 /* scheda per aggiungere o modificare una spesa */
 var EXP=$("#exp");
+/* spesa rapida: "12 caffè" = 12 € pagati da chi ha pagato l'ultima volta, divisi tra tutti */
+(function(){var f=$("#sq");if(!f)return;f.addEventListener("submit",function(e){e.preventDefault();var i=$("#sqi"),t=i.value.trim(),m=/(\d+(?:[.,]\d{1,2})?)/.exec(t);if(!m||!(c100(m[1])>0)){toast("Scrivi importo e descrizione, per esempio 12 caffè");i.focus();return}
+var N=CFG.ppl,CT=cats(),hr=new Date().getHours(),dc=hr<11?"co":hr<16?"pr":"ce";if(!CT.some(function(c){return c[0]===dc}))dc="ex";var c=SP.lc&&CT.some(function(z){return z[0]===SP.lc})?SP.lc:dc;
+var d=t.replace(m[0],"").replace(/^[\s€:\-–,]+|[\s€:\-–,]+$/g,"").trim();var o={id:uid(),d:d||catName(c),a:c100(m[1])/100,p:N>1?Math.min(N-1,SP.lp||0):0,c:c,m:"eq",w:null,t:Date.now()};
+SP.x=SP.x||[];SP.x.push(o);saveSP();renderSpeseBody();i.value="";toast("Spesa aggiunta: "+eur(o.a))})})();
 function openExp(id){var N=CFG.ppl,x=id?(SP.x||[]).filter(function(z){return z.id===id})[0]:null,nm=names(),CU=PD.CUR,CT=cats();
 var hr=new Date().getHours(),dc=hr<11?"co":hr<16?"pr":"ce";if(!CT.some(function(c){return c[0]===dc}))dc="ex";
 var st={m:x?(x.m||"eq"):"eq",w:x&&x.w&&x.w.length?x.w.slice():allIdx(N),p:x?Math.min(N-1,x.p||0):Math.min(N-1,SP.lp||0),xv:x&&x.xv?x.xv.slice():[],cu:x&&x.o?x.o.c:"EUR",c:x?x.c:(SP.lc&&CT.some(function(c){return c[0]===SP.lc})?SP.lc:dc)};
@@ -933,6 +938,7 @@ $("#dmore").addEventListener("click",function(){DEXP=!DEXP;renderDest();if(!DEXP
 /* zoom sulla card scelta: la card si espande a schermo intero con i colori della città */
 var zbusy=false;
 var askEl=$("#ask");function closeAsk(){askEl.classList.remove("on");askEl.setAttribute("aria-hidden","true")}
+window.__ask=function(a,b,c){return ask(a,b,c)};
 function ask(tt,tx,btns){$("#asktt").textContent=tt;$("#asktx").textContent=tx;var box=$("#askb");box.innerHTML="";btns.concat([{t:"Annulla",g:1}]).forEach(function(b){var x=document.createElement("button");x.type="button";x.className="btn"+(b.g?" ghost":"");x.textContent=b.t;x.addEventListener("click",function(){closeAsk();if(b.fn)setTimeout(b.fn,120)});box.appendChild(x)});askEl.classList.add("on");askEl.setAttribute("aria-hidden","false")}
 askEl.addEventListener("click",function(e){if(e.target===askEl)closeAsk()});
 function sameCity(id){var r=[];if(SAVED&&SAVED.date&&SAVED.dest===id)r.push({cur:1});trips().forEach(function(t,i){if(t.cfg.dest===id)r.push({i:i})});return r}
@@ -1131,3 +1137,6 @@ if(CFG&&CFG.date&&CFG.a_arr&&CFG.r_dep){if(!CFG.date_r)CFG.date_r=CFG.date;setCi
 if(!PICK&&!OPEN&&!HASHT){var t0=Date.now(),rmo=matchMedia("(prefers-reduced-motion: reduce)").matches;geoTrip(function(m){if(m){if(m.cur)return;if(m.k!=null){switchTrip(m.k);return}}setTimeout(function(){openDest()},Math.max(0,(rmo?500:2700)-(Date.now()-t0)))})}}
 else{CFG=null;document.documentElement.classList.add("hold");if(PICK&&CITIES[PICK]){setCity(PD.id);openSetup(true)}else{setCity(null);setTimeout(function(){if(window.viaTour&&!viaTour.seen())viaTour.open(openDest);else openDest()},matchMedia("(prefers-reduced-motion: reduce)").matches?500:2700)}}
 })();
+
+/* condividi il viaggio: un solo punto d'ingresso */
+(function(){var b=document.getElementById("shshare");if(!b)return;b.addEventListener("click",function(){var sh=document.getElementById("sheet");if(window.__ask)window.__ask("Condividi il viaggio","Come vuoi inviarlo?",[{t:"Invia l'itinerario in PDF",fn:function(){var x=document.getElementById("shsit");x&&x.click()}},{t:"Link per aprirlo su un altro telefono",fn:function(){var x=document.getElementById("shlink");x&&x.click()}}])})})();

@@ -97,6 +97,7 @@
 <div class="spese"><h3>💳 Spese reali <small id="sppl"></small></h3>
 <div class="who" id="who"></div>
 <div class="stot"><div><b id="stot">0 €</b><span>spesi finora</span></div><div class="sbar"><i id="sbar"></i></div><span id="sdiff"></span></div>
+<form class="sq" id="sq" autocomplete="off"><input id="sqi" type="text" inputmode="text" enterkeyhint="done" maxlength="60" placeholder="Spesa rapida: 12 caffè" aria-label="Spesa rapida: importo e descrizione"><button type="submit" aria-label="Aggiungi la spesa">＋</button></form>
 <button type="button" class="btn sadd" id="sadd">＋ Aggiungi spesa</button>
 <div class="scat" id="scat"></div>
 <div class="slist" id="slist"></div>
@@ -125,9 +126,10 @@
 <div class="shsec" data-trip><p class="shgt">Questo viaggio</p><div class="shgrp">
 <button type="button" class="row" data-trip data-edit><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/></svg></span><span>Modifica il tuo viaggio<small>Date, persone, volo e hotel</small></span></button>
 <button type="button" class="row" data-trip id="shpdf"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7Z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg></span><span>Scarica l'itinerario in PDF<small id="shpdfs">Tutti i giorni e i costi, da salvare o stampare</small></span></button>
-<button type="button" class="row" data-trip id="shsit"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4M5 13v6h14v-6"/></svg></span><span>Condividi l'itinerario<small>Invia il PDF a chi viaggia con te</small></span></button>
+<button type="button" class="row" data-trip id="shshare"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4M5 13v6h14v-6"/></svg></span><span>Condividi il viaggio<small>PDF, link o QR: scegli come inviarlo</small></span></button>
+<button type="button" class="row" hidden data-trip id="shsit"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4M5 13v6h14v-6"/></svg></span><span>Condividi l'itinerario<small>Invia il PDF a chi viaggia con te</small></span></button>
 <button type="button" class="row" data-trip id="shcal"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M8 3v4M16 3v4"/></svg></span><span>Aggiungi al calendario<small id="shcals">Tappe e voli con promemoria (file .ics)</small></span></button>
-<button type="button" class="row" data-trip id="shlink"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg></span><span>Apri su un altro telefono<small>Un link per aprirlo su un altro telefono</small></span></button>
+<button type="button" class="row" hidden data-trip id="shlink"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg></span><span>Apri su un altro telefono<small>Un link per aprirlo su un altro telefono</small></span></button>
 <button type="button" class="row" data-trip id="shnot" aria-expanded="false" aria-controls="nbox"><span class="shi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15Z"/><path d="M10 21h4"/></svg></span><span>Notifiche e promemoria<small id="shnots">Voli, tappe, pasti, alloggio e lista</small></span></button>
 <div class="nbox" id="nbox" data-trip hidden>
 <label class="nrow nmain"><span>Attiva i promemoria<small id="nst">Disattivati</small></span><input type="checkbox" class="nsw" id="non" role="switch"></label>
