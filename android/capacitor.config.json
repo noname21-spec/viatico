@@ -1,0 +1,7 @@
+{
+  "appId": "it.viaticum.app",
+  "appName": "Viaticum",
+  "webDir": "www",
+  "server": { "androidScheme": "https" },
+  "android": { "backgroundColor": "#f0f9fc" }
+}

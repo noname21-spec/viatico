@@ -1,3 +1,4 @@
+window.__IS_APP=location.hostname==='localhost'&&location.protocol==='https:'&&/Android/.test(navigator.userAgent);
 /* ===== nucleo: configurazione, pianificazione, sezioni ===== */
 (function(){
 "use strict";
@@ -1063,7 +1064,7 @@ document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeSheet(
 
 /* invio e importazione di un viaggio tramite link */
 function tripLink(c){var k=["dest","date","date_r","ppl","from","fromCode","to","rt","a_num","a_dep","a_arr","r_num","r_imb","r_dep","th","pc"],o={};k.forEach(function(x){if(c[x]!=null&&c[x]!=="")o[x]=c[x]});if(c.stay){o.stay={};["zone","addr","cin","cout","price","type","pos","geo"].forEach(function(x){if(c.stay[x]!=null)o.stay[x]=c.stay[x]})}
-return location.origin+location.pathname+"#t="+btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+return (window.__IS_APP?"https://noname21-spec.github.io/viatico/":location.origin+location.pathname)+"#t="+btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
 function readLink(){var m=/^#t=([\w-]+)/.exec(location.hash||"");if(!m)return null;try{var s=m[1].replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";var o=JSON.parse(decodeURIComponent(escape(atob(s))));
 if(!o||!CITIES[o.dest]||!/^\d{4}-\d\d-\d\d$/.test(o.date||"")||!o.a_arr||!o.r_dep)return null;var c={},str=function(v){return String(v).slice(0,140)};["dest","date","date_r","from","fromCode","to","rt","a_num","a_dep","a_arr","r_num","r_imb","r_dep"].forEach(function(x){if(o[x]!=null)c[x]=str(o[x])});if(THS.indexOf(o.th)>=0)c.th=o.th;if(PCS.indexOf(o.pc)>=0)c.pc=o.pc;c.ppl=Math.max(1,Math.min(10,+o.ppl||2));
 if(o.stay&&typeof o.stay==="object"){c.stay={};["zone","addr","cin","cout","type"].forEach(function(x){if(o.stay[x]!=null)c.stay[x]=str(o.stay[x])});c.stay.price=+o.stay.price||0;if(Array.isArray(o.stay.pos)&&o.stay.pos.length===2&&isFinite(o.stay.pos[0])&&isFinite(o.stay.pos[1])){c.stay.pos=[+o.stay.pos[0],+o.stay.pos[1]];c.stay.geo=1}}return c}catch(e){return null}}
