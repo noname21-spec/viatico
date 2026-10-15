@@ -51,6 +51,9 @@ function tick(){if(got("home")&&got("trip")){clearInterval(iv);return}
  if(k!==pk){pk=k;ok=1;return}
  if(++ok>=2){ok=0;run(k)}}
 var iv=navigator.webdriver?0:setInterval(tick,1300);
+/* puntino sull'ingranaggio: c'è qualcosa da attivare */
+(function(){var g=$("#gear");if(!g)return;function tk(){try{var c=window.PAR&&PAR.cfg;if(!c||!vis(g)){g.classList.remove("hasdot");return}var id="via-gd:"+(c.tid||c.dest+c.date);if(localStorage.getItem(id)){g.classList.remove("hasdot");return}var need=("Notification" in window&&Notification.permission==="default")||!localStorage.getItem("via-off:"+(c.tid||c.dest+c.date));g.classList.toggle("hasdot",!!need)}catch(e){}}
+g.addEventListener("click",function(){try{var c=window.PAR&&PAR.cfg;if(c)localStorage.setItem("via-gd:"+(c.tid||c.dest+c.date),"1")}catch(e){}g.classList.remove("hasdot")});setInterval(tk,3000);setTimeout(tk,1200)})();
 /* rivedi dalle Impostazioni */
 var row=$("#shcoach");if(row)row.addEventListener("click",function(){var s=$("#sheet");var k=homeOn()?"home":"trip";if(s){s.classList.remove("on");s.setAttribute("aria-hidden","true")}setTimeout(function(){run(k,true)},260)});
 })();

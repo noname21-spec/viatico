@@ -238,8 +238,8 @@ function setTheme(t){if(t==="auto"){root.removeAttribute("data-theme");try{local
 try{mq.addEventListener("change",function(){if(!root.getAttribute("data-theme"))sync()})}catch(e){}sync();
 /* meteo attuale di Parigi nella barra in alto */
 var wx=document.getElementById("wx"),wt=document.getElementById("wxt"),wi=wx.querySelector(".wxi");
-function kind(c){return c===0?["☀️","sun"]:c<=2?["🌤️","sun"]:c===3?["☁️","cloud"]:c<=48?["🌫️","fog"]:c<=67?["🌧️","rain"]:c<=77?["🌨️","snow"]:c<=82?["🌦️","rain"]:["⛈️","storm"]}
-function paint(t,c){var k=kind(c);wi.textContent=k[0];wx.className="wx "+k[1];wt.textContent=Math.round(t)+"°";wx.setAttribute("aria-label",PD.n+" ora: "+Math.round(t)+" gradi")}
+function kind(c){return c===0?["☀️","sun","Sereno"]:c<=2?["🌤️","sun","Poche nubi"]:c===3?["☁️","cloud","Nuvoloso"]:c<=48?["🌫️","fog","Nebbia"]:c<=67?["🌧️","rain","Pioggia"]:c<=77?["🌨️","snow","Neve"]:c<=82?["🌦️","rain","Rovesci"]:["⛈️","storm","Temporale"]}
+function paint(t,c){var k=kind(c);wi.textContent=k[0];wx.className="wx "+k[1];wt.textContent=Math.round(t)+"°";var wd=document.getElementById("wxd");if(wd)wd.textContent=k[2];wx.setAttribute("aria-label",PD.n+" ora: "+Math.round(t)+" gradi")}
 try{var sv=JSON.parse(localStorage.getItem("via-wx")||"null");if(sv&&sv.city===PD.id)paint(sv.t,sv.c)}catch(e){}
 function load(){if(!window.fetch)return;fetch("https://api.open-meteo.com/v1/forecast?latitude="+PD.LL[0]+"&longitude="+PD.LL[1]+"&current=temperature_2m,weather_code&timezone="+encodeURIComponent(PD.TZ)).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){var t=d.current.temperature_2m,c=d.current.weather_code;if(t==null)return;paint(t,c);try{localStorage.setItem("via-wx",JSON.stringify({t:t,c:c,city:PD.id}))}catch(e){}}).catch(function(){})}
 var lw=Date.now();function loadW(){lw=Date.now();load()}load();setInterval(function(){if(!document.hidden)loadW()},15*60*1000);document.addEventListener("visibilitychange",function(){if(!document.hidden&&Date.now()-lw>15*60*1000)loadW()});

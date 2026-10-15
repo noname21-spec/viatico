@@ -262,13 +262,15 @@ else if(it.k==="ret"){cls="air";var RA=P.R||A;ti=(it.multi?"Bagagli e aeroporto"
 body='<p>'+esc(R.txt)+'</p><p class="meta">Arrivo in aeroporto verso le '+fmt(it.arr)+(imb?", imbarco dalle "+imb:"")+", decollo alle "+fmt(P.dep)+"."+(it.slack>=20?" Hai circa "+fdur(it.slack)+" di margine in più.":"")+'</p>'+(it.multi&&R.toHome?goBtn(h.q,R.toHome.mode==="walk"?"walking":"transit","Portami all'alloggio","🏨")+' ':'')+goBtn(RA.gm,"transit","Portami in aeroporto","🚆")}
 return '<li class="step '+cls+'" data-t="'+it.t+'"><div class="t">'+fmt(it.t)+'</div><div class="body"><h2>'+esc(ti)+'</h2>'+body+'</div></li>'}
 
+function apdTxt(){try{var i=todayIdx();if(i>=0&&TRIP.n>1)return"Giorno "+(i+1)+" di "+TRIP.n+" · "+dateShort(TRIP.days[i].date)}catch(e){}return rangeTxt()}
+window.__apPaint=function(st){if(st!==undefined)window.__apLast=st;else st=window.__apLast;var d=document.querySelector("#appt .apd");if(d&&TRIP&&CFG)d.textContent=apdTxt();var s=document.querySelector("#appt .aps");if(s&&st!==undefined){s.textContent=st||"";s.hidden=!st}};
 function rangeTxt(){var c=CFG,a=dateObj(c.date),b=dateObj(c.date_r);if(TRIP.n===1)return dateShort(c.date);
 return a.getUTCMonth()===b.getUTCMonth()?a.getUTCDate()+"–"+b.getUTCDate()+" "+MESI[b.getUTCMonth()]:dateShort(c.date)+" – "+dateShort(c.date_r)}
 window.fitH1=fitH1;function fitH1(){var h=$("#hero h1");if(!h)return;h.style.fontSize="";var go=function(){h.style.fontSize="";var w=h.clientWidth,sw=h.scrollWidth;if(w&&sw>w){h.style.fontSize=Math.floor(parseFloat(getComputedStyle(h).fontSize)*w/sw*.98*10)/10+"px"}};go();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(go);addEventListener("resize",go)}
 function renderHero(){var c=CFG,A=TRIP.A,n=TRIP.n,ttl=n===1?PD.n+" in un giorno":PD.n+" in "+n+" giorni";
 $("#hero h1").textContent=ttl;fitH1();
 $("#hsub").textContent=(n===1?cap(dateLong(c.date))+".":"Da "+dateLong(c.date).replace(/ \d{4}$/,"")+" a "+dateLong(c.date_r)+": "+n+" giorni e "+(n-1)+(n===2?" notte.":" notti."))+" Atterraggio a "+A.n+" alle "+fmt(toMin(c.a_arr))+", volo di ritorno"+(TRIP.R&&TRIP.R!==A?" da "+TRIP.R.n:"")+" alle "+fmt(toMin(c.r_dep))+". "+(c.ppl===1?"Una persona":c.ppl+" persone")+(n>1?", alloggio in "+home().where+".":", "+PD.T.move+".")+styTxt(c);
-$("#appt").innerHTML='<span class="apc">'+esc(PD.n)+'</span><span class="apd">'+esc(rangeTxt())+'</span>';
+$("#appt").innerHTML='<span class="apc">'+esc(PD.n)+'</span><span class="apd">'+esc(apdTxt())+'</span><span class="aps" hidden></span>';window.__apPaint&&__apPaint();
 $("#sps").textContent=PD.n+" · "+rangeTxt();
 document.title="Viaticum · "+ttl}
 function renderBar(){var it=P.items,segs=[],end=P.kind==="single"||P.kind==="last"?P.dep:(P.end||P.leave);
@@ -324,7 +326,7 @@ function todayIdx(){if(!TRIP)return -1;var d=paris().d;for(var i=0;i<TRIP.days.l
 var lastDay=null;
 function liveTick(){if(document.hidden)return;var live=$("#live");if(!TRIP||!CFG){live.hidden=true;return}var dd=paris().d;if(lastDay&&dd!==lastDay){lastDay=dd;try{renderAll()}catch(e){console.error(e)}return}lastDay=dd;
 var n=paris(),c=CFG,A=TRIP.A,D0=TRIP.days[0],DN=TRIP.days[TRIP.n-1];
-function set(cls,b,sp){try{localStorage.setItem("via-live",JSON.stringify({k:c.dest+c.date,b:b,s:sp,t:Date.now(),bar:LB}))}catch(e){}live.className="live "+cls;live.innerHTML='<i class="dot"></i><div class="lt"><b></b><span></span></div>';$("b",live).textContent=b;$("span",live).textContent=sp;live.hidden=false}
+function set(cls,b,sp){try{localStorage.setItem("via-live",JSON.stringify({k:c.dest+c.date,b:b,s:sp,t:Date.now(),bar:LB}))}catch(e){}live.className="live "+cls;live.innerHTML='<i class="dot"></i><div class="lt"><b></b><span></span></div>';$("b",live).textContent=b;$("span",live).textContent=sp;live.hidden=false;window.__apPaint&&__apPaint(/^Prossima:/.test(sp)?sp.replace(/^Prossima: /,"Poi: "):b)}
 var steps=$$("#steps .step");steps.forEach(function(li){li.classList.remove("now")});if(WH.items)WH.items.forEach(function(w){w.classList.remove("now")});
 if(n.d<D0.date){var d=Math.round((dateObj(D0.date)-dateObj(n.d))/864e5);set("calm",d===1?"Domani si parte! ✈️":"Mancano "+d+" giorni al viaggio",(c.a_num?"Volo "+c.a_num+(c.a_dep?" alle "+c.a_dep:"")+". ":"")+"Atterraggio a "+A.n+" alle "+c.a_arr+"."+(d<=2&&PD.T.remind?" "+PD.T.remind:""));return}
 if(n.d>DN.date){set("calm","Com'è andata a "+PD.n+"? "+PD.flag,"L'itinerario resta qui come ricordo.");return}

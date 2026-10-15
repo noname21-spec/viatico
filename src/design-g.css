@@ -1217,3 +1217,21 @@ body:has(#dest.on) .utoast{bottom:112px}
 .gear{width:44px;height:44px;top:calc(13px + env(safe-area-inset-top,0px))}
 .blk{top:calc(74px + env(safe-area-inset-top,0px))}
 html.sa .blk{height:calc(var(--apph) - 74px - env(safe-area-inset-top,0px) - var(--tb) - 24px - env(safe-area-inset-bottom,0px)*.45)}
+/* v137 barra alta: giorno, prossima tappa, meteo con testo, compatta allo scorrimento, puntino */
+:root{--abh:78px}
+body.scrolled{--abh:56px}
+.appbar{height:calc(var(--abh) + env(safe-area-inset-top,0px));transition:height .25s ease;padding-left:max(18px,calc((100% - 724px)/2 + 18px))}
+.blk{top:calc(var(--abh) + 4px + env(safe-area-inset-top,0px));transition:top .25s ease}
+html.sa .blk{height:calc(var(--apph) - var(--abh) - 4px - env(safe-area-inset-top,0px) - var(--tb) - 24px - env(safe-area-inset-bottom,0px)*.45);transition:top .25s ease,height .25s ease}
+.appt .aps{font:600 .76rem/1.25 Outfit,system-ui,sans-serif;color:var(--acc,var(--ga));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-height:1.4em;transition:opacity .2s,max-height .25s}
+.appt .apd,.appt .apc{transition:font-size .25s ease,opacity .2s}
+body.scrolled .appt .aps,body.scrolled .appt .apd{opacity:0;max-height:0;overflow:hidden}
+body.scrolled .appt .apc{font-size:1.15rem}
+.wx .wxd{font:500 .78rem Outfit,system-ui,sans-serif;color:var(--mute);margin-left:2px}
+.wx .wxd:empty{display:none}
+body.scrolled .wx .wxd{display:none}
+@media (max-width:380px){.wx .wxd{display:none}}
+.gear{position:fixed}
+.gear.hasdot::after{content:"";position:absolute;top:2px;right:2px;width:11px;height:11px;border-radius:50%;background:#e0453a;box-shadow:0 0 0 2px var(--bg)}
+/* v137 coerenza con la home: stessa dimensione dell'ingranaggio */
+#dest .dbrand .dgear{width:44px!important;height:44px!important}
