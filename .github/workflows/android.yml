@@ -26,17 +26,27 @@ jobs:
           npm install
           npx cap add android
           npx cap sync android
-      - name: Permessi, versione e icona
+      - name: Permessi posizione
         working-directory: android/android
         run: |
           sed -i 's#</manifest>#    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n</manifest>#' app/src/main/AndroidManifest.xml
+          grep -c ACCESS_FINE_LOCATION app/src/main/AndroidManifest.xml
+      - name: Versione
+        working-directory: android/android
+        run: |
           sed -i "s/versionCode 1/versionCode ${{ github.run_number }}/; s/versionName \"1.0\"/versionName \"1.0.${{ github.run_number }}\"/" app/build.gradle
-          rm -rf app/src/main/res/mipmap-anydpi-v26
+          grep -n "version" app/build.gradle
+      - name: Icona
+        working-directory: android/android
+        run: |
+          IM=$(command -v magick || command -v convert)
+          echo "uso $IM"
+          rm -rf app/src/main/res/mipmap-anydpi-v26 app/src/main/res/mipmap-anydpi
           for d in mdpi:48 hdpi:72 xhdpi:96 xxhdpi:144 xxxhdpi:192; do
             n=${d%%:*}; s=${d##*:}
             mkdir -p app/src/main/res/mipmap-$n
             for f in ic_launcher ic_launcher_round ic_launcher_foreground; do
-              convert ../../icon-512.png -resize ${s}x${s} app/src/main/res/mipmap-$n/$f.png
+              $IM ../../icon-512.png -resize ${s}x${s} app/src/main/res/mipmap-$n/$f.png
             done
           done
       - name: Compila
