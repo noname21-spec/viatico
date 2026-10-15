@@ -39,16 +39,20 @@ jobs:
       - name: Icona
         working-directory: android/android
         run: |
-          IM=$(command -v magick || command -v convert)
-          echo "uso $IM"
-          rm -rf app/src/main/res/mipmap-anydpi-v26 app/src/main/res/mipmap-anydpi
-          for d in mdpi:48 hdpi:72 xhdpi:96 xxhdpi:144 xxxhdpi:192; do
-            n=${d%%:*}; s=${d##*:}
-            mkdir -p app/src/main/res/mipmap-$n
-            for f in ic_launcher ic_launcher_round ic_launcher_foreground; do
-              $IM ../../icon-512.png -resize ${s}x${s} app/src/main/res/mipmap-$n/$f.png
-            done
-          done
+          pip install pillow
+          python3 - <<'PY'
+          import os, shutil
+          from PIL import Image
+          src = Image.open("../../icon-512.png").convert("RGBA")
+          res = "app/src/main/res"
+          for d in ("mipmap-anydpi-v26", "mipmap-anydpi"):
+              shutil.rmtree(os.path.join(res, d), ignore_errors=True)
+          for n, s in (("mdpi", 48), ("hdpi", 72), ("xhdpi", 96), ("xxhdpi", 144), ("xxxhdpi", 192)):
+              os.makedirs(os.path.join(res, "mipmap-" + n), exist_ok=True)
+              for f in ("ic_launcher", "ic_launcher_round", "ic_launcher_foreground"):
+                  src.resize((s, s), Image.LANCZOS).save(os.path.join(res, "mipmap-" + n, f + ".png"))
+          print("icone ok")
+          PY
       - name: Compila
         working-directory: android/android
         run: ./gradlew assembleRelease --no-daemon
