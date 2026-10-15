@@ -45,7 +45,9 @@ var tc=document.getElementById("t-costi");
 if(tc)tc.addEventListener("change",function(){if(tc.checked)setTimeout(function(){if(Date.now()-lastT>600){lastT=Date.now();count()}},120)});
 /* arrivo da un'altra città: la scheda colorata resta un attimo con lo skyline, poi si dissolve */
 var zi=window.__zin;if(zi&&zi.parentNode){try{var zs=!zi.querySelector(".zsk")&&window.zSky&&zSky(zi.getAttribute("data-id"));if(zs)zi.querySelector(".zcol").appendChild(zs)}catch(e){}
-setTimeout(function(){if(zi.parentNode)zi.className="zov out"},2000);setTimeout(function(){if(zi.parentNode)zi.remove()},2600)}
+var zst=0;function zgo(){if(zst)return;zst=1;var L=window.LITE;setTimeout(function(){if(zi.parentNode)zi.className="zov out"},L?2600:2000);setTimeout(function(){if(zi.parentNode)zi.remove()},L?3300:2600)}
+/* il conto parte dal primo disegno a schermo, non dall'avvio dello script: su telefoni lenti il caricamento durava più dell'animazione */
+requestAnimationFrame(function(){requestAnimationFrame(zgo)});setTimeout(zgo,2500)}
 /* a schermo fermo da qualche secondo le animazioni senza fine (nuvole, scintille, icone) si fermano; tornano al primo tocco */
 var idleT=0,held=[],lastTouch=0;
 function holdAnims(){try{document.getAnimations().forEach(function(a){var t=a.effect&&a.effect.getComputedTiming?a.effect.getComputedTiming():null;if(t&&t.iterations===Infinity&&a.playState==="running"){a.pause();held.push(a)}})}catch(e){}}
@@ -55,4 +57,11 @@ addEventListener("scroll",wakeAnims,{passive:true,capture:true});
 document.addEventListener("visibilitychange",function(){if(document.hidden){clearTimeout(idleT);holdAnims()}else wakeAnims()});
 [].forEach.call(document.querySelectorAll(".tabr"),function(r){r.addEventListener("change",function(){lastTouch=0;wakeAnims()})});
 wakeAnims();
+
+/* skyline: si ferma mentre scorri e quando non si vede; se resta invisibile viene mostrato fermo */
+(function(){var R=document.documentElement,st=0;function on(){R.classList.add("scr");clearTimeout(st);st=setTimeout(function(){R.classList.remove("scr")},180)}
+addEventListener("scroll",on,{passive:true,capture:true});
+try{var io=new IntersectionObserver(function(es){es.forEach(function(e){e.target.classList.toggle("off",!e.isIntersecting)})},{threshold:0});
+function watch(){[].forEach.call(document.querySelectorAll("svg.sky:not(.zsk)"),function(s){if(!s.__w){s.__w=1;io.observe(s)}})}watch();setTimeout(watch,1500);setTimeout(watch,4000)}catch(e){}
+setTimeout(function(){[].forEach.call(document.querySelectorAll("svg.sky:not(.zsk)"),function(s){var m=s.querySelector(".mon");if(!m||!s.getBoundingClientRect().width)return;var o=parseFloat(getComputedStyle(m).opacity);var run=false;try{run=m.getAnimations().some(function(x){return x.playState==="running"})}catch(e){}if(o<.05&&!run)s.classList.add("sk-fix")})},4200)})();
 })();

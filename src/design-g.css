@@ -1235,3 +1235,7 @@ body.scrolled .wx .wxd{display:none}
 .gear.hasdot::after{content:"";position:absolute;top:2px;right:2px;width:11px;height:11px;border-radius:50%;background:#e0453a;box-shadow:0 0 0 2px var(--bg)}
 /* v137 coerenza con la home: stessa dimensione dell'ingranaggio */
 #dest .dbrand .dgear{width:44px!important;height:44px!important}
+
+/* v139 Android: skyline più leggero */
+html.scr svg.sky *,svg.sky.off *{animation-play-state:paused!important}
+svg.sky.sk-fix .mon,svg.sky.sk-fix .hills{animation:none!important;opacity:1!important;transform:none!important}
