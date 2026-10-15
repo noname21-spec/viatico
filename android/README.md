@@ -9,3 +9,4 @@ Il file finito è in Releases, voce `android-latest`, `viaticum.apk`.
 
 `viaticum.keystore` firma l'APK per l'installazione diretta (stessa firma a ogni versione, così si aggiorna sopra la precedente).
 Per il Play Store si usa una chiave di caricamento separata, non questa.
+
