@@ -268,7 +268,7 @@ window.fitH1=fitH1;function fitH1(){var h=$("#hero h1");if(!h)return;h.style.fon
 function renderHero(){var c=CFG,A=TRIP.A,n=TRIP.n,ttl=n===1?PD.n+" in un giorno":PD.n+" in "+n+" giorni";
 $("#hero h1").textContent=ttl;fitH1();
 $("#hsub").textContent=(n===1?cap(dateLong(c.date))+".":"Da "+dateLong(c.date).replace(/ \d{4}$/,"")+" a "+dateLong(c.date_r)+": "+n+" giorni e "+(n-1)+(n===2?" notte.":" notti."))+" Atterraggio a "+A.n+" alle "+fmt(toMin(c.a_arr))+", volo di ritorno"+(TRIP.R&&TRIP.R!==A?" da "+TRIP.R.n:"")+" alle "+fmt(toMin(c.r_dep))+". "+(c.ppl===1?"Una persona":c.ppl+" persone")+(n>1?", alloggio in "+home().where+".":", "+PD.T.move+".")+styTxt(c);
-$("#appt").innerHTML=esc(PD.n)+" <b>· "+esc(rangeTxt())+"</b>";
+$("#appt").innerHTML='<span class="apc">'+esc(PD.n)+'</span><span class="apd">'+esc(rangeTxt())+'</span>';
 $("#sps").textContent=PD.n+" · "+rangeTxt();
 document.title="Viaticum · "+ttl}
 function renderBar(){var it=P.items,segs=[],end=P.kind==="single"||P.kind==="last"?P.dep:(P.end||P.leave);

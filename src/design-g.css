@@ -1205,3 +1205,15 @@ html.offl::before{content:"📴 Sei offline · viaggi e guide salvati restano di
 .utoast{width:max-content;white-space:nowrap}
 .utoast span{white-space:nowrap}
 body:has(#dest.on) .utoast{bottom:112px}
+
+/* v136 barra alta del viaggio più ampia */
+#ahome,#gsb{display:none!important}
+.appbar{height:calc(70px + env(safe-area-inset-top,0px))}
+.appt{display:flex!important;flex-direction:column;justify-content:center;gap:2px;flex:1 1 auto;min-width:0;white-space:normal!important;overflow:visible!important;color:var(--ink)!important;-webkit-text-fill-color:currentColor!important;background:none!important;padding-top:4px}
+.appt .apc{font:700 1.4rem/1.05 Outfit,system-ui,sans-serif;letter-spacing:-.02em;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appt .apd{font:500 .8rem/1.2 Outfit,system-ui,sans-serif;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wx,body:not(.scrolled) .wx{margin-right:58px!important;width:auto!important;padding:7px 13px 7px 10px!important;border-width:0!important;overflow:visible!important;font-size:1.02rem;gap:6px}
+.wx .wxi{font-size:1.3rem}.wx b{font-weight:700}
+.gear{width:44px;height:44px;top:calc(13px + env(safe-area-inset-top,0px))}
+.blk{top:calc(74px + env(safe-area-inset-top,0px))}
+html.sa .blk{height:calc(var(--apph) - 74px - env(safe-area-inset-top,0px) - var(--tb) - 24px - env(safe-area-inset-bottom,0px)*.45)}
