@@ -3,7 +3,7 @@
 L'app Android è un involucro (Capacitor) attorno alla stessa pagina `index.html` della versione web.
 L'APK si costruisce da solo con GitHub Actions (`.github/workflows/android.yml`):
 - a mano: scheda Actions, "Android APK", Run workflow;
-- oppure con un tag: `git tag android-2 && git push origin android-2`.
+- oppure ogni volta che cambia qualcosa dentro `android/` (basta modificare questo file).
 
 Il file finito è in Releases, voce `android-latest`, `viaticum.apk`.
 
