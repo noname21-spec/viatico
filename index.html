@@ -2642,6 +2642,9 @@ body.scrolled .wx .wxd{display:none}
 html.scr svg.sky *,svg.sky.off *{animation-play-state:paused!important}
 svg.sky.sk-fix .mon,svg.sky.sk-fix .hills{animation:none!important;opacity:1!important;transform:none!important}
 
+/* v140 ingranaggio allineato in verticale al meteo e al titolo, anche a barra compatta */
+.gear{top:calc((var(--abh) - 44px)/2 + 4px + env(safe-area-inset-top,0px))!important;transition:top .25s ease,transform .5s var(--spring),box-shadow .45s ease,background-color .25s,color .25s}
+
 </style>
 </head>
 <body class="showall">
