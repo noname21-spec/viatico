@@ -1153,3 +1153,7 @@ html.tbhold,html.tbhold *{-webkit-user-select:none!important;user-select:none!im
 
 /* v130 ventaglio più basso */
 .tbsh .tbfan{bottom:calc(var(--tb,76px) + 10px + env(safe-area-inset-bottom,0px)*.3 + 22px)}
+
+/* v131 viaggi: niente selezione, voce sotto il dito */
+.tkb,.tkb *,.tkm,.tkm *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
+.tkm-b.hov{transform:scale(1.18)!important;filter:brightness(1.08);z-index:3}
