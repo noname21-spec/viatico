@@ -1162,3 +1162,9 @@ html.tbhold,html.tbhold *{-webkit-user-select:none!important;user-select:none!im
 .tkm-l{animation:tkLb .3s .06s both!important;transform:translateX(-50%)}
 @media (prefers-reduced-motion:reduce){.tkm-l{animation:none!important}}
 .tkm-l{max-width:min(244px,88vw)!important}
+
+/* v133 logo non cliccabile, pressione lunga sul viaggio in evidenza */
+#dlw{pointer-events:none;cursor:default}
+#dlw.hint{animation:none!important}
+#dbadge{display:none!important}
+#dhc,#dhc *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
