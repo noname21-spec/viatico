@@ -25,7 +25,7 @@ home.innerHTML='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stro
 var pill=document.createElement("div");pill.className="tbact";pill.setAttribute("role","group");pill.setAttribute("tabindex","0");pill.setAttribute("aria-label","Azione della sezione. Scorri a sinistra o a destra per cambiare sezione, tieni premuto per vedere tutte le sezioni");
 pill.innerHTML='<i class="tbc l" aria-hidden="true">‹</i><span class="tbo" aria-hidden="true">'+rs.map(function(){return"<i></i>"}).join("")+'</span><div class="tbv"><div class="tbt"><b></b><b></b><b></b></div></div><i class="tbc r" aria-hidden="true">›</i>';
 var ind=$(".tbind",bar);if(ind)pill.insertBefore(ind,pill.firstChild);
-bar.insertBefore(home,bar.firstChild);bar.insertBefore(pill,home.nextSibling);
+bar.insertBefore(pill,bar.firstChild);
 var trk=$(".tbt",pill),lbs=trk.querySelectorAll("b"),dots=pill.querySelectorAll(".tbo i"),chv=pill.querySelectorAll(".tbc");
 function render(){var c=curI();lbs[0].textContent=lab(c-1);lbs[1].textContent=lab(c);lbs[2].textContent=lab(c+1);[].forEach.call(dots,function(d,i){d.classList.toggle("on",i===c)});pill.setAttribute("data-sec",NAMES[c])}
 /* foglio con tutte le sezioni */
