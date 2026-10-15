@@ -1157,3 +1157,8 @@ html.tbhold,html.tbhold *{-webkit-user-select:none!important;user-select:none!im
 /* v131 viaggi: niente selezione, voce sotto il dito */
 .tkb,.tkb *,.tkm,.tkm *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
 .tkm-b.hov{transform:scale(1.18)!important;filter:brightness(1.08);z-index:3}
+/* v132 nuvoletta centrata sul menu */
+@keyframes tkLb{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
+.tkm-l{animation:tkLb .3s .06s both!important;transform:translateX(-50%)}
+@media (prefers-reduced-motion:reduce){.tkm-l{animation:none!important}}
+.tkm-l{max-width:min(244px,88vw)!important}
