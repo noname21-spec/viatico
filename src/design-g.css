@@ -1312,3 +1312,31 @@ html.sa #sheet{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px)*.45)!i
 #dest .dbrand::after{content:"";position:absolute;left:-12px;right:-12px;top:0;height:calc(var(--dlim) + 34px);background:color-mix(in srgb,var(--bg) 97%,transparent);-webkit-backdrop-filter:blur(22px) saturate(1.2);backdrop-filter:blur(22px) saturate(1.2);-webkit-mask-image:linear-gradient(#000 calc(100% - 42px),transparent);mask-image:linear-gradient(#000 calc(100% - 42px),transparent);opacity:0;transition:opacity .25s ease;pointer-events:none;z-index:-2}
 html.lite #dest .dbrand::after{background:color-mix(in srgb,var(--bg) 90%,transparent);-webkit-backdrop-filter:none;backdrop-filter:none}
 #dest.pin .dbrand::after{opacity:1}
+
+/* v151 passaporto: i timbri delle città visitate al posto della mappa a pallini */
+.dmap{padding:14px 12px 10px!important}
+.dmap .dmt{margin:0 4px 10px;font:700 .72rem Outfit,system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--mute)}
+.stps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:12px 8px}
+.stp{position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:8px;text-align:center;border-radius:50%;color:var(--a,#0a6f95);border:3px double var(--a,#0a6f95);background:radial-gradient(closest-side,color-mix(in srgb,var(--a,#0a6f95) 7%,transparent),transparent);transform:rotate(var(--r,0deg));opacity:.93;animation:stpIn .55s var(--d,0s) cubic-bezier(.2,1.4,.4,1) backwards}
+.stp::before{content:"";position:absolute;inset:4px;border-radius:50%;border:1px solid color-mix(in srgb,var(--a,#0a6f95) 55%,transparent)}
+.stp i{font-style:normal;font-size:1.25rem;line-height:1;filter:saturate(.9)}
+.stp b{font:800 .62rem/1.1 Outfit,system-ui,sans-serif;letter-spacing:.06em;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stp b.lg{font-size:.52rem;letter-spacing:.03em}
+.stp small{font:700 .5rem Outfit,system-ui,sans-serif;letter-spacing:.08em;opacity:.8}
+.stp.lk{color:var(--mute);border:2px dashed color-mix(in srgb,var(--mute) 45%,transparent);background:none;opacity:.7;animation:none;transform:none}
+.stp.lk::before{display:none}
+.stp.lk i{font:600 1.4rem/1 Outfit,system-ui,sans-serif;opacity:.6}
+@keyframes stpIn{from{opacity:0;transform:rotate(var(--r,0deg)) scale(1.55)}to{opacity:.93;transform:rotate(var(--r,0deg)) scale(1)}}
+@media (prefers-reduced-motion:reduce){.stp{animation:none}}
+html.lite .stp{animation:none}
+.dmap .dmc{position:static;margin:12px 4px 0;text-align:left}
+.stps{grid-template-columns:repeat(4,1fr);gap:10px 8px}
+.stp{padding:5px;min-width:0}
+.stp i,.stp i .ic,.stp i img{width:22px;height:22px;font-size:1.05rem}
+.stp i img{object-fit:contain}
+.stp b{font-size:.55rem;letter-spacing:.04em}
+.stp b.lg{font-size:.46rem;letter-spacing:.02em}
+.stp small{font-size:.42rem;letter-spacing:.06em}
+.stp.lk small{font-size:.4rem}
+.stp.lk i{font-size:1.15rem}
+.stp::before{inset:3px}

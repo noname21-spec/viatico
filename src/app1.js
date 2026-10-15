@@ -756,9 +756,14 @@ function wxPass(t){var el=$("#pw");if(!el||!t||t.dd>14||t.dd<-1)return;var c=t.c
 function show(w){var e=$("#pw");if(!e||!w)return;e.hidden=false;e.innerHTML='<span aria-hidden="true">'+wxIc(w[0])+'</span> '+(t.now&&w[3]!=null?'Adesso '+Math.round(w[3])+'° · ':'')+Math.round(w[1])+'° / '+Math.round(w[2])+'°'}
 if(WXC[key]){show(WXC[key]);return}if(!window.fetch)return;
 fetch("https://api.open-meteo.com/v1/forecast?latitude="+L[0]+"&longitude="+L[1]+"&current=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&start_date="+day+"&end_date="+day).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){var d=j&&j.daily;if(!d||d.weathercode==null)throw 0;var cu=j.current;WXC[key]=[t.now&&cu&&cu.weathercode!=null?cu.weathercode:d.weathercode[0],d.temperature_2m_max[0],d.temperature_2m_min[0],t.now&&cu?cu.temperature_2m:null];show(WXC[key])}).catch(function(){})}
-function stampMap(dn){var el=$("#dmap");if(!el)return;if(!dn.length){el.hidden=true;el.innerHTML="";return}var vis={};dn.forEach(function(t){vis[t.cfg.dest]=1});var ids=Object.keys(CITIES).filter(function(i){return CITIES[i]&&CITIES[i].LL}),nv=0,dots="",k=0;
-ids.forEach(function(i){var L=CITIES[i].LL,x=((L[1]+24)/56*300).toFixed(1),y=((66-L[0])/31*118+10).toFixed(1);if(vis[i]){nv++;dots+='<g class="v" style="--d:'+(k++*.12).toFixed(2)+'s"><circle class="r" cx="'+x+'" cy="'+y+'" r="5"/><circle cx="'+x+'" cy="'+y+'" r="4.2"/></g>'}else dots+='<circle class="o" cx="'+x+'" cy="'+y+'" r="2.2"/>'});
-el.hidden=false;el.innerHTML='<svg viewBox="0 0 300 138" role="img" aria-label="Mappa delle città visitate: '+nv+' di '+ids.length+'">'+dots+'</svg><div class="dmc"><b>'+nv+'</b> di '+ids.length+' città</div>'}
+function stampMap(dn){var el=$("#dmap");if(!el)return;if(!dn.length){el.hidden=true;el.innerHTML="";return}var vis={};dn.forEach(function(t){var id=t.cfg.dest,d=dateObj(t.cfg.date);if(!vis[id]||d<vis[id])vis[id]=d});
+var ids=Object.keys(CITIES).filter(function(i){return CITIES[i]&&CITIES[i].LL}),got=ids.filter(function(i){return vis[i]}).sort(function(a,b){return vis[a]-vis[b]}),lock=ids.filter(function(i){return!vis[i]}),h="",k=0;
+function rot(id){var n=0;for(var q=0;q<id.length;q++)n+=id.charCodeAt(q)*(q+3);return(n%15)-7}
+got.slice(0,15).forEach(function(i){var d=dOf(i),m=vis[i].toLocaleDateString("it-IT",{month:"short",year:"numeric"}).replace(".","").toUpperCase(),nm=(d.n||i).toUpperCase();
+h+='<li class="stp" style="--a:'+d.col[0]+';--b:'+d.col[1]+';--r:'+rot(i)+'deg;--d:'+(k++*.1).toFixed(2)+'s"><i aria-hidden="true">'+d.e+'</i><b'+(nm.length>9?' class="lg"':'')+'>'+esc(nm)+'</b><small>'+esc(m)+'</small></li>'});
+lock.slice(0,Math.max(1,Math.ceil((Math.min(got.length,15)+1)/4)*4-Math.min(got.length,15))).forEach(function(){h+='<li class="stp lk" aria-hidden="true"><i>?</i><small>da scoprire</small></li>'});
+var more=Math.max(0,got.length-15);
+el.hidden=false;el.innerHTML='<p class="dmt">Il tuo passaporto</p><ul class="stps" aria-label="Timbri delle città visitate: '+got.length+' di '+ids.length+'">'+h+'</ul><div class="dmc"><b>'+got.length+'</b> di '+ids.length+' città'+(more?' · altri '+more+' timbri':'')+'</div>'}
 function favs(){var a=lj("via-fav",[]);return Array.isArray(a)?a.filter(function(x){return CITIES[x]}):[]}
 function favTog(id){var a=favs(),i=a.indexOf(id);if(i<0)a.unshift(id);else a.splice(i,1);ls("via-fav",a.length?JSON.stringify(a):null);return i<0}
 function hap(n){try{if(navigator.vibrate)navigator.vibrate(n||12)}catch(e){}}
