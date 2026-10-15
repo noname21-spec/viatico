@@ -30,10 +30,10 @@ var trk=$(".tbt",pill),lbs=trk.querySelectorAll("b"),dots=pill.querySelectorAll(
 function render(){var c=curI();lbs[0].textContent=lab(c-1);lbs[1].textContent=lab(c);lbs[2].textContent=lab(c+1);[].forEach.call(dots,function(d,i){d.classList.toggle("on",i===c)});pill.setAttribute("data-sec",NAMES[c])}
 /* foglio con tutte le sezioni */
 var sh=document.createElement("div");sh.className="tbsh";sh.hidden=true;sh.setAttribute("role","dialog");sh.setAttribute("aria-label","Sezioni del viaggio");
-sh.innerHTML='<div class="tbp"><i class="tbg" aria-hidden="true"></i><div class="tbgr">'+rs.map(function(r,i){return'<button type="button" data-i="'+i+'"><b class="em">'+ICO[i]+'</b><span>'+NAMES[i]+'</span></button>'}).join("")+'</div></div>';
+sh.innerHTML='<div class="tbp"><i class="tbg" aria-hidden="true"></i><div class="tbgr">'+rs.map(function(r,i){return'<button type="button" data-i="'+i+'"><b class="em">'+ICO[i]+'</b><span>'+NAMES[i]+'</span></button>'}).join("")+'<button type="button" data-h="1" class="tbhm"><b class="em">'+home.innerHTML+'</b><span>Home · Tutti i viaggi</span></button></div></div>';
 document.body.appendChild(sh);
-function shOpen(on){sh.hidden=!on;if(on){[].forEach.call(sh.querySelectorAll("button"),function(b){var e=labs[+b.dataset.i].querySelector(".em"),t=b.querySelector(".em");if(e&&t&&e.innerHTML)t.innerHTML=e.innerHTML});[].forEach.call(sh.querySelectorAll("button"),function(b){b.classList.toggle("on",+b.dataset.i===curI())});sh.classList.remove("in");void sh.offsetWidth;sh.classList.add("in")}}
-sh.addEventListener("click",function(e){var b=e.target.closest("button[data-i]");if(b){shOpen(false);setI(+b.dataset.i);return}if(e.target===sh)shOpen(false)});
+function shOpen(on){sh.hidden=!on;if(on){[].forEach.call(sh.querySelectorAll("button[data-i]"),function(b){var e=labs[+b.dataset.i].querySelector(".em"),t=b.querySelector(".em");if(e&&t&&e.innerHTML)t.innerHTML=e.innerHTML});[].forEach.call(sh.querySelectorAll("button[data-i]"),function(b){b.classList.toggle("on",+b.dataset.i===curI())});sh.classList.remove("in");void sh.offsetWidth;sh.classList.add("in")}}
+sh.addEventListener("click",function(e){var b=e.target.closest("button[data-i],button[data-h]");if(b){shOpen(false);if(b.dataset.h)home.click();else setI(+b.dataset.i);return}if(e.target===sh)shOpen(false)});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!sh.hidden)shOpen(false)});
 home.addEventListener("click",function(){var h=$("#ahome");if(h)h.click()});
 /* il pulsante si trascina: a sinistra e a destra cambia sezione */
@@ -47,7 +47,7 @@ bar.addEventListener("pointerdown",function(e){if(busy||e.target.closest(".tbh")
 clearTimeout(lp);lp=setTimeout(function(){if(sx!=null&&!drag){hold=1;supp=1;pill.classList.add("pr");shOpen(true);if(navigator.vibrate)try{navigator.vibrate(14)}catch(x){}}},380)});
 bar.addEventListener("pointermove",function(e){if(sx==null)return;if(hold){hv(e.clientX,e.clientY);return}dx=e.clientX-sx;if(Math.abs(dx)>6){drag=1;clearTimeout(lp)}if(drag)mv(dx)});
 function end(e){clearTimeout(lp);pill.classList.remove("pr");if(sx==null)return;
-if(hold){hold=0;sx=null;var b=hov;if(hov){hov.classList.remove("hov");hov=null}if(b){shOpen(false);setI(+b.dataset.i)}return}
+if(hold){hold=0;sx=null;var b=hov;if(hov){hov.classList.remove("hov");hov=null}if(b){shOpen(false);if(b.dataset.h)home.click();else setI(+b.dataset.i)}return}
 var v=Math.abs(dx)/Math.max(1,Date.now()-t0);sx=null;if(!drag)return;if(Math.abs(dx)>W*.22||(v>.45&&Math.abs(dx)>14))settle(dx<0?1:-1);else back()}
 bar.addEventListener("pointerup",end);bar.addEventListener("pointercancel",function(){clearTimeout(lp);pill.classList.remove("pr");if(hold){hold=0;if(hov){hov.classList.remove("hov");hov=null}}if(sx!=null){sx=null;back()}});
 bar.addEventListener("click",function(e){if(e.target.closest(".tbh"))return;if(supp){supp=0;e.stopPropagation();return}if(drag){drag=0;e.stopPropagation();return}if(e.target.closest(".tbact")){var a=act(curI());try{a.f()}catch(x){}}},true);
