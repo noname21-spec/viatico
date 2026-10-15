@@ -1146,3 +1146,7 @@ html.lite .dsheet{background:color-mix(in srgb,var(--bg) 92%,transparent)}
 .tbfan button .em .ic,.tbfan button .em svg{width:22px;height:22px}
 .tbfan button span{font:700 .6rem/1 Outfit,system-ui,sans-serif;letter-spacing:.01em}
 .tbfl{display:none}
+
+/* v129 niente selezione testo */
+.tabbar,.tabbar *,.tbsh,.tbsh *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
+html.tbhold,html.tbhold *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
