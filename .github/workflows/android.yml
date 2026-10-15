@@ -9,12 +9,15 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      UPLOAD_KEYSTORE_B64: ${{ secrets.UPLOAD_KEYSTORE_B64 }}
+      UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 20 }
+        with: { node-version: 22 }
       - uses: actions/setup-java@v4
-        with: { distribution: temurin, java-version: 17 }
+        with: { distribution: temurin, java-version: 21 }
       - name: Contenuto web
         run: |
           rm -rf android/www && mkdir -p android/www
@@ -55,7 +58,7 @@ jobs:
           PY
       - name: Compila
         working-directory: android/android
-        run: ./gradlew assembleRelease --no-daemon
+        run: ./gradlew assembleRelease bundleRelease --no-daemon
       - name: Firma
         run: |
           BT=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -1)
@@ -63,10 +66,23 @@ jobs:
           $BT/zipalign -p -f 4 $U aligned.apk
           $BT/apksigner sign --ks android/viaticum.keystore --ks-pass pass:viaticum2026 --key-pass pass:viaticum2026 --ks-key-alias viaticum --out viaticum.apk aligned.apk
           $BT/apksigner verify viaticum.apk
+      - name: Firma l'AAB per il Play Store
+        if: env.UPLOAD_KEYSTORE_B64 != ''
+        run: |
+          echo "$UPLOAD_KEYSTORE_B64" | base64 -d > upload.keystore
+          cp android/android/app/build/outputs/bundle/release/app-release.aab viaticum.aab
+          jarsigner -sigalg SHA256withRSA -digestalg SHA-256 -keystore upload.keystore -storepass "$UPLOAD_KEYSTORE_PASSWORD" -keypass "$UPLOAD_KEYSTORE_PASSWORD" viaticum.aab upload
+          jarsigner -verify viaticum.aab | head -2
+          rm upload.keystore
       - uses: actions/upload-artifact@v4
-        with: { name: viaticum-apk, path: viaticum.apk }
+        with:
+          name: viaticum-android
+          path: |
+            viaticum.apk
+            viaticum.aab
+          if-no-files-found: ignore
       - name: Pubblica in Releases
         env: { GH_TOKEN: "${{ github.token }}" }
         run: |
           gh release delete android-latest --cleanup-tag -y || true
-          gh release create android-latest viaticum.apk --title "Viaticum per Android (build ${{ github.run_number }})" --notes "APK da installare a mano. Scaricalo dal telefono e aprilo." --prerelease --target ${{ github.sha }}
+          gh release create android-latest viaticum.apk $(ls viaticum.aab 2>/dev/null) --title "Viaticum per Android (build ${{ github.run_number }})" --notes "APK da installare a mano. Scaricalo dal telefono e aprilo." --prerelease --target ${{ github.sha }}
