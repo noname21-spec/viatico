@@ -57,7 +57,18 @@ var v=Math.abs(dx)/Math.max(1,Date.now()-t0);sx=null;if(!drag)return;if(Math.abs
 bar.addEventListener("pointerup",end);bar.addEventListener("pointercancel",function(){clearTimeout(lp);document.documentElement.classList.remove("tbhold");pill.classList.remove("pr");if(hold){hold=0;if(hov){hov.classList.remove("hov");hov=null}}if(sx!=null){sx=null;back()}});
 bar.addEventListener("click",function(e){if(e.target.closest(".tbh"))return;if(supp){supp=0;e.stopPropagation();return}if(drag){drag=0;e.stopPropagation();return}if(e.target.closest(".tbact")){var a=act(curI());try{a.f()}catch(x){}}},true);
 pill.addEventListener("keydown",function(e){if(busy)return;if(e.key==="ArrowRight")settle(1);else if(e.key==="ArrowLeft")settle(-1);else if(e.key==="ArrowUp")shOpen(true);else if(e.key==="Enter"||e.key===" "){e.preventDefault();var a=act(curI());try{a.f()}catch(x){}}});
-rs.forEach(function(r){r.addEventListener("change",render)});window.addEventListener("voli",function(){setTimeout(render,60)});
+rs.forEach(function(r){r.addEventListener("change",render)});
+/* v143: transizione, vibrazione e swipe tra le sezioni */
+var prevI=rs.findIndex(function(r){return r.checked});
+rs.forEach(function(r){r.addEventListener("change",function(){var i=curI(),d=i>prevI?1:-1;prevI=i;try{if(navigator.vibrate)navigator.vibrate(8)}catch(e){}
+if(matchMedia("(prefers-reduced-motion:reduce)").matches||document.documentElement.classList.contains("lite"))return;
+var b=document.getElementById(r.id.replace(/^t-/,""));if(!b)return;b.classList.remove("bin-l","bin-r");void b.offsetWidth;b.classList.add(d>0?"bin-r":"bin-l");setTimeout(function(){b.classList.remove("bin-l","bin-r")},420)})});
+(function(){var x0,y0,t0,ok=0;
+function blocked(el){for(var n=el;n&&n!==document.body;n=n.parentNode){if(n.nodeType!==1)continue;var tg=n.tagName;if(tg==="INPUT"||tg==="SELECT"||tg==="TEXTAREA"||tg==="TABLE"||n.isContentEditable||n.hasAttribute("data-noswipe"))return 1;if(n.classList&&(n.classList.contains("leaflet-container")||n.classList.contains("tbfan")||n.classList.contains("tbact")||n.classList.contains("tabbar")))return 1;if(n.scrollWidth>n.clientWidth+4){var o=getComputedStyle(n).overflowX;if(o==="auto"||o==="scroll")return 1}}return 0}
+function busy(){return document.querySelector("#setup.on,#sheet.on,#dest.on,#ask.on,#exp.on,.cch,.tour,.tbfan.on")}
+document.addEventListener("touchstart",function(e){ok=0;if(e.touches.length!==1||busy()||!document.querySelector(".tabr:checked")||getComputedStyle(bar).display==="none")return;if(blocked(e.target))return;var t=e.touches[0];x0=t.clientX;y0=t.clientY;t0=Date.now();ok=1},{passive:true});
+document.addEventListener("touchend",function(e){if(!ok)return;ok=0;var t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;if(Date.now()-t0>650||Math.abs(dx)<72||Math.abs(dy)>Math.abs(dx)*.5)return;var i=curI()+(dx<0?1:-1);if(i<0||i>=rs.length)return;setI(i)},{passive:true})})();
+window.addEventListener("voli",function(){setTimeout(render,60)});
 setInterval(function(){if(!document.hidden)render()},4000);
 /* un cenno all'inizio fa capire che si trascina */
 var seen=false;try{seen=!!localStorage.getItem("via-tbhint")}catch(e){}
