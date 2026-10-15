@@ -1150,3 +1150,6 @@ html.lite .dsheet{background:color-mix(in srgb,var(--bg) 92%,transparent)}
 /* v129 niente selezione testo */
 .tabbar,.tabbar *,.tbsh,.tbsh *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
 html.tbhold,html.tbhold *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
+
+/* v130 ventaglio più basso */
+.tbsh .tbfan{bottom:calc(var(--tb,76px) + 10px + env(safe-area-inset-bottom,0px)*.3 + 22px)}
