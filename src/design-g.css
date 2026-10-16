@@ -1309,9 +1309,11 @@ html.sa #sheet{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px)*.45)!i
 .dcta .dctp{flex:1;min-width:0}
 
 /* la scheda sale sotto una fascia piena dietro logo e ingranaggio: non si sovrappone più */
-#dest .dbrand::after{content:"";position:absolute;left:-12px;right:-12px;top:0;height:calc(var(--dlim) + 34px);background:color-mix(in srgb,var(--bg) 97%,transparent);-webkit-backdrop-filter:blur(22px) saturate(1.2);backdrop-filter:blur(22px) saturate(1.2);-webkit-mask-image:linear-gradient(#000 calc(100% - 42px),transparent);mask-image:linear-gradient(#000 calc(100% - 42px),transparent);opacity:0;transition:opacity .25s ease;pointer-events:none;z-index:-2}
+#dest .dbrand::after{content:"";position:absolute;left:0;right:0;top:0;height:calc(var(--dlim) + 34px);background:color-mix(in srgb,var(--bg) 97%,transparent);-webkit-backdrop-filter:blur(22px) saturate(1.2);backdrop-filter:blur(22px) saturate(1.2);-webkit-mask-image:linear-gradient(#000 calc(100% - 42px),transparent);mask-image:linear-gradient(#000 calc(100% - 42px),transparent);opacity:0;transition:opacity .25s ease;pointer-events:none;z-index:-2}
 html.lite #dest .dbrand::after{background:color-mix(in srgb,var(--bg) 90%,transparent);-webkit-backdrop-filter:none;backdrop-filter:none}
 #dest.pin .dbrand::after{opacity:1}
+/* v152 la home non si trascina più di lato: niente sporge oltre il bordo e lo scorrimento orizzontale è chiuso */
+#dest:not(.pick){overflow-x:hidden}
 
 /* v151 passaporto: i timbri delle città visitate al posto della mappa a pallini */
 .dmap{padding:14px 12px 10px!important}
