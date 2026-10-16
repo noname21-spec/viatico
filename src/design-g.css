@@ -1357,3 +1357,23 @@ html.lite .stp{animation:none}
 .rcap img{width:100%;height:auto;border-radius:18px;display:block}
 .rcap p{margin:0;font-size:.85rem;color:var(--mute)}
 .rcap .btn{justify-content:center;text-decoration:none}
+
+/* v155 costi: stato, ritmo, categorie, ricorrenti, valuta */
+.sbar i.warn{background:var(--acc2,#d99a1f)!important}
+.stot #sdiff.warn{background:color-mix(in srgb,#d99a1f 20%,transparent);color:#9a6400}
+:root[data-theme="dark"] .stot #sdiff.warn{color:#f0c060}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stot #sdiff.warn{color:#f0c060}}
+.stot #sdiff.warn::before{content:"● "}
+.space{margin:8px 0 12px}.space[hidden]{display:none}
+.space p{margin:0 0 2px;font-size:.88rem;color:var(--mute)}
+.sqc{width:46px;height:46px;border-radius:50%;border:1.5px solid color-mix(in srgb,var(--ink) 18%,transparent);background:var(--bg);color:var(--ink);font:700 .95rem Outfit,system-ui,sans-serif;flex:none;cursor:pointer}
+.sqc.on{background:var(--ga);color:var(--gon);border-color:var(--ga)}
+.sqr{display:flex;gap:8px;overflow-x:auto;margin:0 0 10px;padding:0 0 2px;scrollbar-width:none}
+.sqr::-webkit-scrollbar{display:none}
+.sqr button{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border-radius:99px;border:1.5px dashed color-mix(in srgb,var(--ink) 22%,transparent);background:transparent;color:var(--ink);font:500 .85rem Outfit,system-ui,sans-serif;cursor:pointer}
+.sqr button b{font-weight:700}
+.scb{display:flex;height:12px;border-radius:99px;overflow:hidden;gap:2px;margin:12px 0 8px}
+.scb i{display:block;min-width:4px}
+.scb[hidden]{display:none}
+.scp em{font-style:normal;color:var(--mute);margin-left:6px;font-size:.78em}
+.scp>i{box-shadow:0 0 0 2px var(--cc,transparent) inset;border-radius:50%}

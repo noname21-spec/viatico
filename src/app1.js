@@ -538,12 +538,21 @@ $("#sppl").textContent=N===1?"solo tu":"in "+N;
 var who=$("#who");who.hidden=N<2;who.innerHTML=N<2?"":names().map(function(nm,i){return '<input type="text" maxlength="14" data-i="'+i+'" value="'+esc((SP.n[i]||""))+'" placeholder="'+esc(i===0?"Io":"Persona "+(i+1))+'" aria-label="Nome persona '+(i+1)+'">'}).join("");
 $$("#who input").forEach(function(x){x.addEventListener("input",function(){SP.n[+x.dataset.i]=x.value;saveSP();renderSpeseBody()})});
 renderSpeseBody()}
-function renderSpeseBody(){var N=CFG.ppl,EST=window.PAREST||0,L=ledger(N),t=L.total/100,nm=names(),X=SP.x||[];
+function renderSpeseBody(){var N=CFG.ppl,EST=window.PAREST||0,L=ledger(N),t=L.total/100,nm=names(),X=SP.x||[];window.__sqcRefresh&&window.__sqcRefresh();
 $("#stot").textContent=eur(t);var sb=$("#sbar"),sd=$("#sdiff"),over=t>EST;sb.style.width=Math.min(100,EST?t/EST*100:0)+"%";sb.classList.toggle("over",over);sd.classList.toggle("over",over);
 sd.textContent=t===0?"Previsto: "+eur(EST)+(N>1?" in "+N:""):over?"Sopra il previsto di "+eur(t-EST):"Restano "+eur(EST-t)+" sul previsto di "+eur(EST);
+sd.classList.toggle("warn",!over&&EST>0&&t/EST>=.85);sb.classList.toggle("warn",!over&&EST>0&&t/EST>=.85);
+(function(){var sp=$("#space"),ln=[];if(EST>0&&TRIP&&TRIP.n){var n=TRIP.n,ti=todayIdx(),last=TRIP.days[n-1].date,pd=paris().d,dE=EST/n;
+if(pd>last){if(t>0)ln.push("Viaggio finito: hai speso "+eur(t)+(N>1?", cioè "+eur(t/N)+" a persona":"")+", "+(t<=EST?eur(EST-t)+" sotto":eur(t-EST)+" sopra")+" il previsto.")}
+else if(ti>=0){var left=n-ti;if(t<=EST)ln.push(left===1?"Ti restano "+eur(EST-t)+" per oggi.":"Puoi spendere circa "+eur((EST-t)/left)+" al giorno nei "+left+" giorni che restano.");
+if(ti>0&&t>0){var av=t/ti;ln.push("Finora "+eur(av)+" al giorno, previsto "+eur(dE)+" ("+(av<=dE?"in linea":"sopra ritmo")+").")}}}
+sp.hidden=!ln.length;sp.innerHTML=ln.map(function(x){return '<p>'+esc(x)+'</p>'}).join("")})();
 /* categorie */
 var bc={};X.forEach(function(x){bc[x.c]=(bc[x.c]||0)+c100(x.a)});
-$("#scat").innerHTML=Object.keys(bc).sort(function(a,b){return bc[b]-bc[a]}).map(function(k){return '<span class="scp"><i>'+(CI[k]||"💶")+'</i>'+esc(catName(k))+' <b>'+ec(bc[k])+'</b></span>'}).join("");
+var ks=Object.keys(bc).sort(function(a,b){return bc[b]-bc[a]}),tt=ks.reduce(function(q,k){return q+bc[k]},0),CC={tr:"#3b82c4",vo:"#7b5fc7",co:"#e0a030",pr:"#d9622b",ce:"#b83a4b",sp:"#e58aa6",ex:"#2f9c8a",mu:"#8a6d3b",al:"#5c7a8f"};
+var scb=$("#scb");scb.hidden=!ks.length;scb.innerHTML=ks.map(function(k){return '<i style="flex:'+bc[k]+';background:'+(CC[k]||"#888")+'" title="'+esc(catName(k))+'"></i>'}).join("");
+$("#scat").innerHTML=ks.map(function(k){return '<span class="scp"><i style="--cc:'+(CC[k]||"#888")+'">'+(CI[k]||"💶")+'</i>'+esc(catName(k))+' <b>'+ec(bc[k])+'</b><em>'+Math.round(bc[k]/tt*100)+'%</em></span>'}).join("");
+renderRecent();
 /* elenco */
 var list=X.map(function(x){return{t:x.t||0,x:x}}).concat(SP.q.map(function(q){return{t:q.t||0,q:q}})).sort(function(a,b){return b.t-a.t}),last="",h="";
 list.forEach(function(r){var d=dayTxt(r.t);if(d!==last){h+='<div class="sday">'+esc(d)+'</div>';last=d}
@@ -570,6 +579,7 @@ x.font="180px "+F;x.fillText(PD.flag||d.e||"",90,380);x.fillStyle="#fff";x.font=
 x.font="500 50px "+F;x.fillStyle="rgba(255,255,255,.9)";x.fillText(rangeTxt(),90,640);
 var st=[[String(TRIP.n),TRIP.n===1?"giorno":"giorni"],[String(stops),stops===1?"tappa":"tappe"]];if(L.total>0)st.push([ec(L.total/ (N>1?N:1)).replace(/\s/g," "),N>1?"a persona":"spesi"]);
 var bw=(W-180-(st.length-1)*30)/st.length;st.forEach(function(q,i){var bx=90+i*(bw+30),by=760;x.fillStyle="rgba(255,255,255,.18)";x.beginPath();if(x.roundRect)x.roundRect(bx,by,bw,260,40);else x.rect(bx,by,bw,260);x.fill();x.fillStyle="#fff";x.textAlign="center";var f2=q[0].length>6?64:96;x.font="800 "+f2+"px "+F;x.fillText(q[0],bx+bw/2,by+130);x.font="600 38px "+F;x.fillStyle="rgba(255,255,255,.85)";x.fillText(q[1],bx+bw/2,by+200);x.textAlign="left"});
+var EST=window.PAREST||0;if(EST>0&&L.total>0){var dv=EST-L.total/100,pp=N>1?N:1;x.fillStyle="rgba(255,255,255,.95)";x.font="600 44px "+F;x.fillText(dv>=0?eur(dv/pp)+(N>1?" a persona":"")+" sotto il previsto":eur(-dv/pp)+(N>1?" a persona":"")+" sopra il previsto",90,1120)}
 x.fillStyle="rgba(255,255,255,.95)";x.font="800 54px "+F;x.fillText("Viaticum",90,H-140);x.font="500 36px "+F;x.fillStyle="rgba(255,255,255,.8)";x.fillText("Il tuo viaggio, tappa dopo tappa.",90,H-85);
 cv.toBlob(function(b){if(!b){toast("Non riesco a creare l'immagine");return}var f=null;try{f=new File([b],"viaggio-"+PD.id+".png",{type:"image/png"})}catch(e){}
 if(f&&navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){navigator.share({files:[f],title:"Il mio viaggio a "+PD.n}).catch(function(){});return}
@@ -578,15 +588,30 @@ try{var fl=document.fonts&&document.fonts.load?Promise.all([document.fonts.load(
 function shareSpese(){var N=CFG.ppl,L=ledger(N),nm=names(),X=SP.x||[],o=["Spese del viaggio a "+PD.n+" ("+rangeTxt()+")","Totale: "+ec(L.total)+(N>1?" in "+N:""),""];
 if(N>1){o.push("Saldi:");nm.forEach(function(n,i){o.push("• "+n+": "+(L.net[i]>0?"deve ricevere ":L.net[i]<0?"deve dare ":"pari ")+ec(Math.abs(L.net[i])))});var st=settle(L.net);if(st.length){o.push("","Per saldare:");st.forEach(function(s){o.push("• "+nm[s.f]+" dà "+ec(s.a)+" a "+nm[s.t])})}o.push("")}
 o.push("Spese:");X.slice().sort(function(a,b){return (a.t||0)-(b.t||0)}).forEach(function(x){o.push("• "+dayTxt(x.t||0)+" · "+(x.d||catName(x.c))+": "+eur(x.a)+(N>1?" (pagato da "+nm[Math.min(N-1,x.p||0)]+")":""))});
+var bc={};X.forEach(function(x){bc[x.c]=(bc[x.c]||0)+c100(x.a)});var ks=Object.keys(bc).sort(function(p,q){return bc[q]-bc[p]});if(ks.length){o.push("","Per categoria:");ks.forEach(function(k){o.push("• "+catName(k)+": "+ec(bc[k]))})}
+var EST=window.PAREST||0;if(EST>0&&L.total>0){var tt=L.total/100;o.push("","Previsto "+eur(EST)+", speso "+eur(tt)+" ("+(tt<=EST?eur(EST-tt)+" sotto":eur(tt-EST)+" sopra")+").")}
 o.push("","Fatto con Viaticum");var txt=o.join("\n");
 if(navigator.share){navigator.share({text:txt}).catch(function(){})}else if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){toast("Riepilogo copiato")},function(){toast("Non sono riuscito a copiare")})}else toast("Condivisione non disponibile")}
 /* scheda per aggiungere o modificare una spesa */
 var EXP=$("#exp");
 /* spesa rapida: "12 caffè" = 12 € pagati da chi ha pagato l'ultima volta, divisi tra tutti */
-(function(){var f=$("#sq");if(!f)return;f.addEventListener("submit",function(e){e.preventDefault();var i=$("#sqi"),t=i.value.trim(),m=/(\d+(?:[.,]\d{1,2})?)/.exec(t);if(!m||!(c100(m[1])>0)){toast("Scrivi importo e descrizione, per esempio 12 caffè");i.focus();return}
-var N=CFG.ppl,CT=cats(),hr=new Date().getHours(),dc=hr<11?"co":hr<16?"pr":"ce";if(!CT.some(function(c){return c[0]===dc}))dc="ex";var c=SP.lc&&CT.some(function(z){return z[0]===SP.lc})?SP.lc:dc;
-var d=t.replace(m[0],"").replace(/^[\s€:\-–,]+|[\s€:\-–,]+$/g,"").trim();var o={id:uid(),d:d||catName(c),a:c100(m[1])/100,p:N>1?Math.min(N-1,SP.lp||0):0,c:c,m:"eq",w:null,t:Date.now()};
-SP.x=SP.x||[];SP.x.push(o);saveSP();renderSpeseBody();i.value="";toast("Spesa aggiunta: "+eur(o.a))})})();
+var QC=false;
+function guessCat(t,dc,CT){var s=t.toLowerCase(),R=[["tr",/taxi|metro|bus|treno|biglietto (bus|metro)|tram|navetta|uber|parcheggio|benzina|traghetto|ticket/],["mu",/museo|musei|mostra|galleria|ingresso|biglietto|visita|castello|tour/],["co",/colazione|cornetto|brioche|cappuccino/],["pr",/pranzo|panino|kebab|pizza al taglio|trattoria/],["ce",/cena|ristorante|osteria|birreria|pizzeria/],["sp",/caff[eè]|gelato|spuntino|snack|acqua|birra|drink|aperitivo|dolce|pasticcini|bibita/],["al",/hotel|alloggio|notte|airbnb|b&b/],["vo",/volo|bagaglio|aereo/],["ex",/souvenir|regalo|magnete|cartolina|negozio|shopping|farmacia/]];
+for(var i=0;i<R.length;i++)if(R[i][1].test(s)&&CT.some(function(c){return c[0]===R[i][0]}))return R[i][0];return dc}
+function addQuick(o){SP.x=SP.x||[];SP.x.push(o);SP.lc=o.c;if(o.p>=0)SP.lp=o.p;saveSP();renderSpeseBody();toast("Spesa aggiunta: "+eur(o.a))}
+function renderRecent(){var box=$("#sqr");if(!box)return;var seen={},r=[],X=(SP.x||[]).slice().sort(function(a,b){return (b.t||0)-(a.t||0)});
+X.forEach(function(x){var k=(x.d||"")+"|"+x.a;if(r.length<4&&!seen[k]&&x.d){seen[k]=1;r.push(x)}});
+box.hidden=!r.length;box.innerHTML=r.map(function(x,i){return '<button type="button" data-i="'+i+'"><i>'+(CI[x.c]||"💶")+'</i>'+esc(x.d)+' <b>'+eur(x.a)+'</b></button>'}).join("");
+$$("#sqr button").forEach(function(b){b.addEventListener("click",function(){var x=r[+b.dataset.i],o={};["d","a","p","c","m","w","s","xv","o"].forEach(function(k){if(x[k]!=null)o[k]=JSON.parse(JSON.stringify(x[k]))});o.id=uid();o.t=Date.now();addQuick(o)})})}
+(function(){var f=$("#sq");if(!f)return;var cb=$("#sqc");
+cb.addEventListener("click",function(){QC=!QC;cb.textContent=QC&&PD.CUR?PD.CUR.s:"€";cb.classList.toggle("on",QC)});
+window.__sqcRefresh=function(){var cu=PD&&PD.CUR;cb.hidden=!cu;if(!cu)QC=false;cb.textContent=QC&&cu?cu.s:"€"};
+f.addEventListener("submit",function(e){e.preventDefault();var i=$("#sqi"),t=i.value.trim(),m=/(\d+(?:[.,]\d{1,2})?)/.exec(t);if(!m||!(c100(m[1])>0)){toast("Scrivi importo e descrizione, per esempio 12 caffè");i.focus();return}
+var N=CFG.ppl,CT=cats(),hr=new Date().getHours(),dc=hr<11?"co":hr<16?"pr":"ce";if(!CT.some(function(c){return c[0]===dc}))dc="ex";
+var d=t.replace(m[0],"").replace(/^[\s€:\-–,]+|[\s€:\-–,]+$/g,"").trim(),c=guessCat(d,SP.lc&&CT.some(function(z){return z[0]===SP.lc})?SP.lc:dc,CT);
+var v=c100(m[1])/100,CU=PD.CUR,o={id:uid(),d:d||catName(c),a:v,p:N>1?Math.min(N-1,SP.lp||0):0,c:c,m:"eq",w:null,t:Date.now()};
+if(QC&&CU){o.a=Math.round(v*(CU.e||1)*100)/100;o.o={v:v,c:CU.c,s:CU.s}}
+addQuick(o);i.value=""})})();
 function openExp(id){var N=CFG.ppl,x=id?(SP.x||[]).filter(function(z){return z.id===id})[0]:null,nm=names(),CU=PD.CUR,CT=cats();
 var hr=new Date().getHours(),dc=hr<11?"co":hr<16?"pr":"ce";if(!CT.some(function(c){return c[0]===dc}))dc="ex";
 var st={m:x?(x.m||"eq"):"eq",w:x&&x.w&&x.w.length?x.w.slice():allIdx(N),p:x?Math.min(N-1,x.p||0):Math.min(N-1,SP.lp||0),xv:x&&x.xv?x.xv.slice():[],cu:x&&x.o?x.o.c:"EUR",c:x?x.c:(SP.lc&&CT.some(function(c){return c[0]===SP.lc})?SP.lc:dc)};
