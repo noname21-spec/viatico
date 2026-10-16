@@ -1342,3 +1342,18 @@ html.lite .stp{animation:none}
 .stp.lk small{font-size:.4rem}
 .stp.lk i{font-size:1.15rem}
 .stp::before{inset:3px}
+
+/* v154 scheda "Adesso" e riepilogo condivisibile */
+.live{padding:18px 18px 16px!important;border-radius:28px!important}
+.live .lk{display:block;margin:0 0 4px;font:800 .7rem Outfit,system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--ga)}
+.live .lt b{font-size:1.25rem!important;line-height:1.2;display:block}
+.live .lt span{display:block;margin-top:4px}
+.live .lpg{display:block;height:6px;border-radius:99px;background:color-mix(in srgb,var(--ink) 10%,transparent);margin:12px 0 2px;overflow:hidden}
+.live .lpg i{display:block;height:100%;border-radius:99px;background:var(--ga);transition:width .6s ease}
+.live .lact{margin-top:12px}
+.live .lb{min-height:44px;padding:0 16px}
+.rcap{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.6)}
+.rcap .rcc{width:min(420px,100%);max-height:100%;overflow:auto;background:var(--bg);border-radius:28px;padding:16px;display:flex;flex-direction:column;gap:10px;text-align:center}
+.rcap img{width:100%;height:auto;border-radius:18px;display:block}
+.rcap p{margin:0;font-size:.85rem;color:var(--mute)}
+.rcap .btn{justify-content:center;text-decoration:none}
