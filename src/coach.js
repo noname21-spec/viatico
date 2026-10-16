@@ -13,9 +13,9 @@ home:function(){var tr=($("#dhc")||{}).dataset&&$("#dhc").dataset.mode==="trip";
  ["#dsb","Sorprendimi","Non sai dove andare? Ti propongo una meta nuova."],
  ["#dgear","Impostazioni","Notifiche, tema, lingua e questa guida, che puoi rivedere quando vuoi."]]},
 trip:function(){return[
- ["#appt","Il tuo viaggio","Qui vedi la città e le date del viaggio. Per tornare ai tuoi viaggi o cercare, usa il ventaglio della barra in basso."],
+ ["#appt","Il tuo viaggio","Qui vedi la città e le date del viaggio. Per tornare ai tuoi viaggi o cercare, tieni premuto il tasto al centro della barra in basso."],
  ["#wx","Meteo di adesso","Tocca per vedere le previsioni dei prossimi giorni."],
- [".tabbar","La barra delle sezioni","Toccala per l'azione della sezione (Portami lì, Aggiungi spesa). Trascinala di lato per cambiare sezione. Tienila premuta per aprire il ventaglio: sezioni, Home e ricerca."]]}};
+ [".nbar","La barra delle sezioni","Tocca una sezione per aprirla. Il tasto al centro fa l'azione giusta per la sezione (Portami lì, Aggiungi spesa). Tienilo premuto per cercare o tornare ai viaggi."]]}};
 function vis(el){if(!el)return null;var r=el.getBoundingClientRect();if(r.width<4||r.height<4||r.bottom<0||r.top>innerHeight)return null;var cs=getComputedStyle(el);if(cs.visibility==="hidden"||cs.display==="none")return null;return r}
 function run(k,force){if(act||!STEPS[k])return false;
  var all=STEPS[k](),st=all.filter(function(s){var e=$(s[0]);if(e)try{e.scrollIntoView({block:"nearest"})}catch(x){}return vis($(s[0]))});if(!st.length)return false;
@@ -46,7 +46,7 @@ function busy(){return act||$(".tour")||$("#sheet.on")||$(".tkm")||$("#gs.on")||
 function tour(){try{return localStorage.getItem("via-tour")==="1"}catch(e){return true}}
 function tick(){if(got("home")&&got("trip")){clearInterval(iv);return}
  if(busy()||!tour()||document.hidden){ok=0;return}
- var k=homeOn()?"home":(!$("#dest")||$("#dest").getAttribute("aria-hidden")==="true")&&vis($(".tabbar"))?"trip":"";
+ var k=homeOn()?"home":(!$("#dest")||$("#dest").getAttribute("aria-hidden")==="true")&&vis($(".nbar"))?"trip":"";
  if(!k||got(k)){ok=0;return}
  if(k!==pk){pk=k;ok=1;return}
  if(++ok>=2){ok=0;run(k)}}
