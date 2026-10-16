@@ -544,20 +544,21 @@ sd.textContent=t===0?"Previsto: "+eur(EST)+(N>1?" in "+N:""):over?"Sopra il prev
 sd.classList.toggle("warn",!over&&EST>0&&t/EST>=.85);sb.classList.toggle("warn",!over&&EST>0&&t/EST>=.85);
 (function(){var sp=$("#space"),ln=[];if(EST>0&&TRIP&&TRIP.n){var n=TRIP.n,ti=todayIdx(),last=TRIP.days[n-1].date,pd=paris().d,dE=EST/n;
 if(pd>last){if(t>0)ln.push("Viaggio finito: hai speso "+eur(t)+(N>1?", cioè "+eur(t/N)+" a persona":"")+", "+(t<=EST?eur(EST-t)+" sotto":eur(t-EST)+" sopra")+" il previsto.")}
-else if(ti>=0){var left=n-ti;if(t<=EST)ln.push(left===1?"Ti restano "+eur(EST-t)+" per oggi.":"Puoi spendere circa "+eur((EST-t)/left)+" al giorno nei "+left+" giorni che restano.");
+else if(ti>=0){var left=n-ti;if(t<=EST&&left>1)ln.push("Puoi spendere circa "+eur((EST-t)/left)+" al giorno nei "+left+" giorni che restano.");
 if(ti>0&&t>0){var av=t/ti;ln.push("Finora "+eur(av)+" al giorno, previsto "+eur(dE)+" ("+(av<=dE?"in linea":"sopra ritmo")+").")}}}
 sp.hidden=!ln.length;sp.innerHTML=ln.map(function(x){return '<p>'+esc(x)+'</p>'}).join("")})();
 /* categorie */
 var bc={};X.forEach(function(x){bc[x.c]=(bc[x.c]||0)+c100(x.a)});
-var ks=Object.keys(bc).sort(function(a,b){return bc[b]-bc[a]}),tt=ks.reduce(function(q,k){return q+bc[k]},0),CC={tr:"#3b82c4",vo:"#7b5fc7",co:"#e0a030",pr:"#d9622b",ce:"#b83a4b",sp:"#e58aa6",ex:"#2f9c8a",mu:"#8a6d3b",al:"#5c7a8f"};
-var scb=$("#scb");scb.hidden=!ks.length;scb.innerHTML=ks.map(function(k){return '<i style="flex:'+bc[k]+';background:'+(CC[k]||"#888")+'" title="'+esc(catName(k))+'"></i>'}).join("");
+var ks=Object.keys(bc).sort(function(a,b){return bc[b]-bc[a]}),tt=ks.reduce(function(q,k){return q+bc[k]},0),CC={tr:"#4f7fa8",vo:"#7a68b0",co:"#d9a441",pr:"#d4743a",ce:"#a8323f",sp:"#d98aa0",ex:"#4f9a86",mu:"#8a6d3b",al:"#6d8594"};
+var scb=$("#scb");$("#scw").hidden=!ks.length;scb.innerHTML=ks.map(function(k){return '<i style="flex:'+bc[k]+';background:'+(CC[k]||"#888")+'" title="'+esc(catName(k))+'"></i>'}).join("");
 $("#scat").innerHTML=ks.map(function(k){return '<span class="scp"><i style="--cc:'+(CC[k]||"#888")+'">'+(CI[k]||"💶")+'</i>'+esc(catName(k))+' <b>'+ec(bc[k])+'</b><em>'+Math.round(bc[k]/tt*100)+'%</em></span>'}).join("");
 renderRecent();
 /* elenco */
 var list=X.map(function(x){return{t:x.t||0,x:x}}).concat(SP.q.map(function(q){return{t:q.t||0,q:q}})).sort(function(a,b){return b.t-a.t}),last="",h="";
-list.forEach(function(r){var d=dayTxt(r.t);if(d!==last){h+='<div class="sday">'+esc(d)+'</div>';last=d}
+var dt={};X.forEach(function(x){var k=dayTxt(x.t||0);dt[k]=(dt[k]||0)+c100(x.a)});
+list.forEach(function(r){var d=dayTxt(r.t);if(d!==last){h+='<div class="sday"><span>'+esc(d)+'</span>'+(dt[d]?'<b>'+ec(dt[d])+'</b>':'')+'</div>';last=d}
 if(r.x){var x=r.x,p=Math.min(N-1,x.p||0),w=(x.w&&x.w.length?x.w:allIdx(N)).filter(function(i){return i<N}),who2=N<2?catName(x.c):(x.s?"importi diversi":(w.length>=N?"tra tutti":"tra "+w.map(function(i){return nm[i]}).join(", ")));
-h+='<button type="button" class="xr" data-id="'+esc(x.id)+'"><i>'+(CI[x.c]||"💶")+'</i><span class="xd"><b>'+esc(x.d||catName(x.c))+'</b>'+(N>1?'<small>Ha pagato '+esc(nm[p])+' · '+esc(who2)+'</small>':'<small>'+esc(catName(x.c))+'</small>')+'</span><span class="xa">'+eur(x.a)+(x.o?'<small>'+esc(Number(x.o.v).toLocaleString("it-IT"))+' '+esc(x.o.s||x.o.c)+'</small>':'')+'</span></button>'}
+h+='<button type="button" class="xr" data-id="'+esc(x.id)+'"><i style="--cc:'+(CC[x.c]||"#888")+'">'+(CI[x.c]||"💶")+'</i><span class="xd"><b>'+esc(x.d||catName(x.c))+'</b>'+(N>1?'<small>Ha pagato '+esc(nm[p])+' · '+esc(who2)+'</small>':'<small>'+esc(catName(x.c))+'</small>')+'</span><span class="xa">'+eur(x.a)+(x.o?'<small>'+esc(Number(x.o.v).toLocaleString("it-IT"))+' '+esc(x.o.s||x.o.c)+'</small>':'')+'</span></button>'}
 else{var q=r.q;h+='<button type="button" class="xr xq" data-q="'+esc(q.id)+'"><i>🤝</i><span class="xd"><b>'+esc(nm[Math.min(N-1,q.f)])+' ha dato '+eur(q.a)+' a '+esc(nm[Math.min(N-1,q.to)])+'</b><small>Rimborso</small></span><span class="xa">'+eur(q.a)+'</span></button>'}});
 $("#slist").innerHTML=h||'<div class="sxe"><svg class="sxi" viewBox="0 0 48 48" width="56" height="56" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 6h28v36l-5-3.5-4.5 3.5-4.5-3.5-4.5 3.5-4.5-3.5L10 42Z"/><path d="M17 15h14M17 22h14M17 29h8"/><circle cx="33" cy="29" r="1.2" fill="currentColor"/></svg><b>Ancora nessuna spesa</b><small>Segna qui quello che paghi: il conto con gli altri si fa da solo.</small></div>';
 $$("#slist .xr[data-id]").forEach(function(b){b.addEventListener("click",function(){openExp(b.dataset.id)})});
