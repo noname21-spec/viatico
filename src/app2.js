@@ -146,6 +146,9 @@ el.hidden=false;map=L.map(el,{zoomControl:false,attributionControl:true,zoomSnap
 gRoute=L.layerGroup().addTo(map);gStops=L.layerGroup().addTo(map);gFood=L.layerGroup();gPh=L.layerGroup();gWater=L.layerGroup();
 setTiles();map.setView(PD.LL,13);
 map.on("zoomend",function(){el.classList.toggle("far",map.getZoom()<13.5)});
+var dcT=0;function declutter(){var els=[].slice.call(el.querySelectorAll(".leaflet-tooltip.lst"));els.forEach(function(t){t.style.visibility=""});var kept=[];els.sort(function(a,b){return (b.classList.contains("key")?1:0)-(a.classList.contains("key")?1:0)}).forEach(function(t){if(getComputedStyle(t).display==="none")return;var r=t.getBoundingClientRect();for(var i=0;i<kept.length;i++){var k=kept[i];if(r.left<k.right+3&&r.right>k.left-3&&r.top<k.bottom+2&&r.bottom>k.top-2){t.style.visibility="hidden";return}}kept.push(r)})}
+function soon(){clearTimeout(dcT);dcT=setTimeout(function(){requestAnimationFrame(declutter)},120)}
+map.on("zoomend moveend layeradd layerremove",soon);soon();
 document.querySelector(".mc-tr").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
 if(b.id==="zi")map.zoomIn();else if(b.id==="zo")map.zoomOut();else if(b.id==="zr"&&bnds)map.flyToBounds(bnds,{paddingTopLeft:[16,24],paddingBottomRight:[48,24],maxZoom:15,duration:.8});else if(b.id==="fs"){setTimeout(function(){map.invalidateSize()},350);setTimeout(function(){map.invalidateSize()},800)}});
 var dm=document.getElementById("dm");if(dm)dm.addEventListener("change",function(){setTimeout(function(){restyle();draw()},50)});try{mq.addEventListener("change",function(){restyle();draw()})}catch(e){}
