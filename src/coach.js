@@ -13,9 +13,9 @@ home:function(){var tr=($("#dhc")||{}).dataset&&$("#dhc").dataset.mode==="trip";
  ["#dsb","Sorprendimi","Non sai dove andare? Ti propongo una meta nuova."],
  ["#dgear","Impostazioni","Notifiche, tema, lingua e questa guida, che puoi rivedere quando vuoi."]]},
 trip:function(){return[
- ["#appt","Il tuo viaggio","Qui vedi la città e le date del viaggio. Per tornare ai tuoi viaggi o cercare, tieni premuto il tasto al centro della barra in basso."],
+ ["#appt","Il tuo viaggio","Qui vedi la città e le date del viaggio. Per tornare ai tuoi viaggi o cercare, tieni premuto il tasto in basso a destra."],
  ["#wx","Meteo di adesso","Tocca per vedere le previsioni dei prossimi giorni."],
- [".nbar","La barra delle sezioni","Tocca una sezione per aprirla. Il tasto al centro fa l'azione giusta per la sezione (Portami lì, Aggiungi spesa). Tienilo premuto per cercare o tornare ai viaggi."]]}};
+ [".nbar","La barra delle sezioni","Tocca una sezione per aprirla. Il tasto in basso a destra fa l'azione giusta per la sezione (Portami lì, Aggiungi spesa). Tienilo premuto per cercare o tornare ai viaggi."]]}};
 function vis(el){if(!el)return null;var r=el.getBoundingClientRect();if(r.width<4||r.height<4||r.bottom<0||r.top>innerHeight)return null;var cs=getComputedStyle(el);if(cs.visibility==="hidden"||cs.display==="none")return null;return r}
 function run(k,force){if(act||!STEPS[k])return false;
  var all=STEPS[k](),st=all.filter(function(s){var e=$(s[0]);if(e)try{e.scrollIntoView({block:"nearest"})}catch(x){}return vis($(s[0]))});if(!st.length)return false;

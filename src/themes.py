@@ -93,7 +93,7 @@ def css_for(cid):
     c1l=t['L']['c1'];c1d=t['D']['c1']
     lb='radial-gradient(60%% 42%% at 8%% 0%%,color-mix(in srgb,%s 20%%,transparent),transparent 72%%),radial-gradient(52%% 38%% at 100%% 100%%,color-mix(in srgb,%s 12%%,transparent),transparent 72%%)'%(c1l,c1l)
     db='radial-gradient(60%% 42%% at 8%% 0%%,color-mix(in srgb,%s 26%%,transparent),transparent 72%%),radial-gradient(52%% 38%% at 100%% 100%%,color-mix(in srgb,%s 12%%,transparent),transparent 72%%)'%(t['D']['c1'],t['D']['c1'])
-    tabs=['itinerario','voli','mappa','mangiare','costi','consigli'];tb=[t['L']['c3']]*7
+    tabs=['itinerario','mappa','mangiare','costi','consigli'];tb=[t['L']['c3']]*7
     css=S+'{'+base(L,0)+'}\n'
     css+='@media (prefers-color-scheme:dark){'+S+':not([data-theme="light"]){'+base(D,1)+'}}\n'
     css+=S+'[data-theme="dark"],'+S+':has(#dm:checked){'+base(D,1)+'}\n'

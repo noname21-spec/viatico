@@ -28,8 +28,8 @@ var AT='<svg viewBox="0 0 240 170" aria-hidden="true"><g class="tl"><path d="M24
 ART.splice(2,0,AH);ART.splice(4,0,AB);ART.splice(5,0,AS);ART.splice(6,0,AT);
 S[1][1]="Tocca una delle città europee e, con il cuoricino, tieni le preferite in cima. Poi inserisci le date: «Crea subito» ti basta per iniziare, voli e alloggio si aggiungono dopo.";
 S.splice(2,0,["La pagina principale","In alto a sinistra il logo apre i tuoi viaggi. Condividi e Impostazioni sono sempre in alto a destra. Qui sotto trovi la parola del giorno, il tuo anno in viaggio e il pulsante per pianificare."]);
-S.splice(4,0,["La barra in basso","Le sezioni sono sempre sotto il pollice. Il tasto tondo al centro fa l'azione giusta per la sezione (Portami lì, Aggiungi spesa). Tienilo premuto per cercare o tornare ai tuoi viaggi. Puoi anche scorrere la pagina di lato per cambiare sezione."]);
-S.splice(5,0,["Le sei sezioni","Tappe: orari e luoghi. Voli: aeroporti e orari. Mappa: percorso e posizione. Pasti: dove mangiare. Costi: stime e spese da dividere. Consigli: frasi e trucchi utili."]);
+S.splice(4,0,["La barra in basso","Le cinque sezioni sono sempre sotto il pollice. Il tasto in basso a destra fa l'azione giusta per la sezione (Portami lì, Aggiungi spesa). Tienilo premuto per cercare o tornare ai tuoi viaggi. Puoi anche scorrere la pagina di lato per cambiare sezione."]);
+S.splice(5,0,["Le cinque sezioni","Tappe: orari, luoghi e voli. Mappa: percorso e posizione. Pasti: dove mangiare. Costi: stime e spese da dividere. Consigli: frasi e trucchi utili."]);
 S.splice(6,0,["Cerca, meteo e impostazioni","In alto trovi il meteo, la lente per cercare tappe, locali e consigli di tutto il viaggio e l'ingranaggio per tema, lingua e assistenza."]);
 var el=null,idx=0,done=null,last=null;
 function close(ok){if(!el)return;mark();var e=el;el=null;e.classList.remove("on");e.classList.add("bye");document.removeEventListener("keydown",key,true);setTimeout(function(){e.remove();if(last&&last.focus)try{last.focus()}catch(x){}if(ok&&done)done();done=null},red?0:320)}

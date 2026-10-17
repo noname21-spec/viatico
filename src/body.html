@@ -1,7 +1,7 @@
 <body class="showall">
 <div id="zin" class="zov" aria-hidden="true"><div class="zbg"></div><div class="zcol"><span class="zchip"></span><b class="zn"></b></div></div><script>(function(){try{var z=sessionStorage.getItem("via-zoom");if(!z)return;sessionStorage.removeItem("via-zoom");z=JSON.parse(z);var e=document.getElementById("zin");e.querySelector(".zchip").textContent=z.c;var zn=e.querySelector(".zn");zn.textContent=z.n;zn.style.setProperty("--l",Math.max(5,z.n.length));e.style.cssText="--a:"+z.a+";--z:"+z.z;e.setAttribute("data-id",z.id);if(z.s){var w=document.createElement("div");w.innerHTML=z.s;var sv=w.firstChild;if(sv)e.querySelector(".zcol").appendChild(sv)}e.className="zov on";window.__zin=e;var rd=0,mn=0,gone=0;function out(){if(gone||!e.parentNode)return;gone=1;e.className="zov out";setTimeout(function(){if(e.parentNode)e.remove()},700)}function chk(){if(rd&&mn)out()}window.__zinReady=function(){setTimeout(function(){rd=1;chk()},250)};setTimeout(function(){mn=1;chk()},1700);setTimeout(out,4500)}catch(x){}})()</script>
 <!--SPLASH-->
-<input class="tabr" type="radio" name="tab" id="t-itinerario" checked aria-label="Tappe"><input class="tabr" type="radio" name="tab" id="t-voli" aria-label="Voli"><input class="tabr" type="radio" name="tab" id="t-mappa" aria-label="Mappa"><input class="tabr" type="radio" name="tab" id="t-mangiare" aria-label="Pasti"><input class="tabr" type="radio" name="tab" id="t-costi" aria-label="Costi"><input class="tabr" type="radio" name="tab" id="t-consigli" aria-label="Consigli">
+<input class="tabr" type="radio" name="tab" id="t-itinerario" checked aria-label="Tappe"><input class="tabr" type="radio" name="tab" id="t-mappa" aria-label="Mappa"><input class="tabr" type="radio" name="tab" id="t-mangiare" aria-label="Pasti"><input class="tabr" type="radio" name="tab" id="t-costi" aria-label="Costi"><input class="tabr" type="radio" name="tab" id="t-consigli" aria-label="Consigli">
 <input class="dmin" type="checkbox" id="dm" aria-label="Modalità scura">
 <main>
 
@@ -30,21 +30,16 @@
 <div id="live" class="live" hidden></div>
 <div id="avv" class="avv" hidden></div>
 <div id="stay" class="stay" hidden></div>
-<div class="dtiles"><label for="t-voli" class="golink"><span>✈️</span><b>Voli</b><small>Orari, costi e pagine degli aeroporti</small><i>›</i></label>
-<div id="meteo" class="meteo"><span class="mi">🌤️</span><div><b>Meteo</b><span>Caricamento…</span></div></div></div>
-<h2 class="sec" id="ith">Itinerario</h2>
-<p id="short" class="short" hidden></p>
-<ol class="steps" id="steps"></ol>
-</section>
-
-<section class="blk" id="voli">
-<h2 class="sec">Voli</h2>
+<details class="vdet" id="vdet"><summary><span class="vds" aria-hidden="true">✈️</span><span class="vdt"><b>Voli</b><small id="vsum">Orari e aeroporti</small></span></summary>
 <div class="voli" id="vcard">
 <div class="vh2"><b>I tuoi voli</b><button type="button" class="vbtn" data-edit="1">✏️ Modifica</button></div>
 <div class="vgrid" id="vgrid"></div>
 </div>
-<div class="voli vcost" id="vcost"></div>
-<div class="zones" id="vtips"></div>
+<div class="zones" id="vtips"></div></details>
+<div class="dtiles"><div id="meteo" class="meteo"><span class="mi">🌤️</span><div><b>Meteo</b><span>Caricamento…</span></div></div></div>
+<h2 class="sec" id="ith">Itinerario</h2>
+<p id="short" class="short" hidden></p>
+<ol class="steps" id="steps"></ol>
 </section>
 
 <section class="blk" id="mappa">
@@ -94,6 +89,7 @@
 <div id="cdonut"></div>
 <div class="meta" id="cnote"></div>
 <button type="button" class="btn ghost ccpdf" id="ccpdf">📄 Scarica i costi in PDF</button>
+<div class="voli vcost" id="vcost"></div>
 <div class="spese"><h3>💳 Speso <small id="sppl"></small></h3>
 <div class="who" id="who"></div>
 <div class="shero"><div class="stot"><div><b id="stot">0 €</b><span>spesi finora</span></div><div class="sbar"><i id="sbar"></i></div><span id="sdiff"></span></div>
@@ -120,7 +116,7 @@
 <div class="appbar"><button type="button" class="ahome" id="ahome" aria-label="Tutti i viaggi: torna alla pagina principale"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/></svg></button><span class="appt" id="appt">Parigi</span><span class="offl" id="offl" hidden>📴 Offline</span><span class="wx" id="wx" aria-live="polite"><i class="wxi" aria-hidden="true">🌤️</i><b id="wxt">--°</b><small class="wxd" id="wxd"></small></span></div>
 <button type="button" class="gear gsb" id="gsb" aria-label="Cerca nel viaggio">🔎</button><button type="button" class="gear" id="gear" aria-label="Impostazioni">⚙️</button>
 <label for="dm" class="iosw" title="Modalità chiara/scura"><span class="trk"><b class="ic sun" aria-hidden="true">☀️</b><b class="ic moon" aria-hidden="true">🌙</b><i class="knob"></i></span><span class="vh">Modalità scura</span></label>
-<nav class="tabbar" aria-label="Sezioni"><i class="tbind" aria-hidden="true"></i><label for="t-itinerario"><b class="em em-spin" aria-hidden="true">🕗</b><span>Itinerario</span></label><label for="t-voli"><b class="em em-fly" aria-hidden="true">✈️</b><span>Voli</span></label><label for="t-mappa"><b class="em em-unfold" aria-hidden="true">🗺️</b><span>Mappa</span></label><label for="t-mangiare"><b class="em em-bob" aria-hidden="true">🥐</b><span>Pasti</span></label><label for="t-costi"><b class="em em-flip" aria-hidden="true">💶</b><span>Costi</span></label><label for="t-consigli"><b class="em em-glow" aria-hidden="true">💡</b><span>Consigli</span></label><img class="tbicon" src="icon-mark-192.png" alt="" aria-hidden="true" draggable="false"><i class="tbdots" aria-hidden="true">🕗</i></nav>
+<nav class="tabbar" aria-label="Sezioni"><i class="tbind" aria-hidden="true"></i><label for="t-itinerario"><b class="em em-spin" aria-hidden="true">🕗</b><span>Itinerario</span></label><label for="t-mappa"><b class="em em-unfold" aria-hidden="true">🗺️</b><span>Mappa</span></label><label for="t-mangiare"><b class="em em-bob" aria-hidden="true">🥐</b><span>Pasti</span></label><label for="t-costi"><b class="em em-flip" aria-hidden="true">💶</b><span>Costi</span></label><label for="t-consigli"><b class="em em-glow" aria-hidden="true">💡</b><span>Consigli</span></label><img class="tbicon" src="icon-mark-192.png" alt="" aria-hidden="true" draggable="false"><i class="tbdots" aria-hidden="true">🕗</i></nav>
 
 <div id="sheet" aria-hidden="true"><div class="shc" role="dialog" aria-label="Impostazioni">
 <h3>Impostazioni</h3>

@@ -406,7 +406,8 @@ var rows=a?[["Data",cap(dateLong(dt))],["Numero volo",num||"—"],["Partenza",c.
 var lk=a?[[F.url,"🛫 Partenze "+F.name],[A.url,"🛬 Arrivi "+A.n]]:[[RA.url,"🛫 Partenze "+RA.n],[F.url,"🛬 Arrivi "+F.name]];
 var nr=rows.length;rows=rows.filter(function(r){return r[1]&&r[1]!=="—"});var miss=rows.length<nr;
 return '<div class="vcard"><div class="vleg"><span class="iata">'+esc(o==="—"?"?":o)+'</span><i class="pl">✈︎</i><span class="iata">'+esc(d==="—"?"?":d)+'</span> '+(a?"Andata":"Ritorno")+'</div>'+rows.map(function(r){return '<div class="vrw"><span>'+r[0]+'</span><b>'+esc(r[1])+'</b></div>'}).join("")+'<div class="vlinks">'+lk.filter(function(x){return x[0]}).map(function(x){return '<a class="vch" target="_blank" rel="noopener" href="'+esc(x[0])+'">'+esc(x[1])+' ↗︎</a>'}).join("")+fr(num)+'</div>'+(miss?'<button type="button" class="vadd" data-edit="1">＋ Aggiungi numero volo e orari</button>':'')+'</div>'}
-$("#vgrid").innerHTML=card("a")+card("r");$$("#vgrid [data-edit]").forEach(function(b){b.addEventListener("click",function(){openSetup(false,+b.dataset.edit||0)})});
+$("#vgrid").innerHTML=card("a")+card("r");var vs=$("#vsum");if(vs){var pp=[];if(c.a_arr)pp.push("Andata · arrivo "+c.a_arr);if(c.r_dep)pp.push("Ritorno · partenza "+c.r_dep);vs.textContent=pp.join("  ·  ")||"Orari e aeroporti"}
+var vd=$("#vdet");if(vd){if(!vd.__w){vd.__w=1;vd.addEventListener("toggle",function(){if(!vd.__a)vd.dataset.u="1"})}if(!vd.dataset.u){var ti=todayIdx();vd.__a=1;vd.open=(ti===0||ti===TRIP.n-1);setTimeout(function(){vd.__a=0},0)}}$$("#vgrid [data-edit]").forEach(function(b){b.addEventListener("click",function(){openSetup(false,+b.dataset.edit||0)})});
 renderVcost();
 $("#vtips").innerHTML='<details><summary>🛬 Dall\'aeroporto di '+esc(A.n)+(TRIP.multi?' all\'alloggio':' al centro')+'</summary><ul><li>'+esc(A.arr)+'</li><li>'+esc(A.tk)+'</li>'+(PD.fx.voliTip?PD.fx.voliTip(E):(A.vt?'<li>'+esc(A.vt)+'</li>':''))+'</ul></details><details><summary>🛫 Ritorno in aeroporto'+(RA!==A?' ('+esc(RA.n)+')':'')+'</summary><ul>'+(RA!==A?'<li>Il volo di ritorno parte da '+esc(RA.n)+', non da '+esc(A.n)+'. '+esc(RA.tk)+'</li>':'')+'<li>'+(TRIP.multi?"L'ultimo giorno parti alle "+fmt(DL.leave)+". ":"Parti dall'ultima tappa alle "+fmt(DL.leave)+". ")+esc(DL.items[DL.items.length-1].ret.txt)+'</li><li>Calcolo l\'arrivo in aeroporto almeno '+fdur(RA.buf)+' prima del decollo'+(DL.imb!=null?' e 45 minuti prima dell\'apertura dell\'imbarco':'')+'.</li></ul></details>'}
 
@@ -500,7 +501,7 @@ if(op){d.open=true;d.classList.add("op");CCOL[g]=false;if(rm)return;h=c.offsetHe
 else{d.classList.remove("op");CCOL[g]=true;if(rm){d.open=false;return}h=c.offsetHeight;var a=d.__a=c.animate([{height:h+"px",paddingBottom:"8px",opacity:1},{height:"0px",paddingBottom:"0px",opacity:0}],{duration:Math.round(du*.8),easing:"cubic-bezier(.4,0,.6,1)"});a.onfinish=function(){if(d.__a===a){d.open=false;d.__a=null}}}})});
 $$("#ctab [data-hotel]").forEach(function(b){b.addEventListener("click",function(){openSetup(false,2);setTimeout(function(){var p=form.sprice;if(p&&!$("#stayin").hidden)try{p.focus({preventScroll:true});p.scrollIntoView({block:"center"})}catch(e){}},350)})});
 $$("#ctab input[data-o]").forEach(function(x){x.addEventListener("change",function(){COPT[x.dataset.o]=x.checked?1:0;ls("via-copt",JSON.stringify(COPT));renderCosti(false);renderSpese()})});
-var nt=(M.V.length?"Voli inclusi come li hai inseriti. ":"Voli esclusi: puoi aggiungerne il costo nella sezione Voli. ")+"Tutte le attrazioni sono facoltative: togli la spunta a quelle che non ti interessano e il totale si aggiorna. ";
+var nt=(M.V.length?"Voli inclusi come li hai inseriti. ":"Voli esclusi: puoi aggiungerne il costo qui sotto, in «Costo dei voli». ")+"Tutte le attrazioni sono facoltative: togli la spunta a quelle che non ti interessano e il totale si aggiorna. ";
 if(PD.fx.costNote)nt+=PD.fx.costNote(E,M);else{nt+=(M.bn?M.bn+" ":M.best==="single"?"Con poche corse i biglietti singoli costano meno degli abbonamenti. ":"")+(M.alt.length?"Alternative: "+M.alt.join(", ")+". ":"")+PD.TR.note+(PD.T.foodNote?" "+PD.T.foodNote:"");if(TRIP.multi&&PD.T.taxNote)nt+=" "+PD.T.taxNote}
 var cn=$("#cnote"),wo=anim===false&&cn.querySelector("details")&&cn.querySelector("details").open;cn.innerHTML=moreHtml(esc(nt),wo);
 window.PAREST=tot*N}
@@ -1144,7 +1145,7 @@ if(!form.a_arr.value)form.a_arr.value=m?"11:00":"09:30";if(!form.r_dep.value)for
 var er2=verr(3);if(er2){showErr(er2);return}FAST=1;var L=stepList();showStep(L[L.length-1],0);
 if(form.requestSubmit)form.requestSubmit();else form.dispatchEvent(new Event("submit",{cancelable:true}))});
 /* ===== ricerca in tutto il viaggio ===== */
-(function(){var gs=$("#gs"),q=$("#gsq"),r=$("#gsr"),TABS={itinerario:"Tappe",voli:"Voli",mappa:"Mappa",mangiare:"Pasti",costi:"Costi",consigli:"Consigli"};
+(function(){var gs=$("#gs"),q=$("#gsq"),r=$("#gsr"),TABS={itinerario:"Tappe",mappa:"Mappa",mangiare:"Pasti",costi:"Costi",consigli:"Consigli"};
 function open(){if(!CFG){toast("Imposta prima il tuo viaggio");return}gs.hidden=false;q.value="";r.innerHTML='<p class="gse">Scrivi un nome: tappa, locale, frase, consiglio.</p>';setTimeout(function(){q.focus()},60)}
 function close(){gs.hidden=true;q.blur()}
 function norm(x){return String(x).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
