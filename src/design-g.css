@@ -268,8 +268,8 @@ html{background:radial-gradient(var(--dotc) 1px,transparent 1.3px) 0 0/12px 12px
 .tbdots{box-shadow:var(--gsm)}
 
 /* --- blocco della città: sfumato, con la luce dell'orizzonte --- */
-.hero{--hon:#fff;--glo:.3;--hsh:color-mix(in srgb,var(--ga) 42%,transparent);
- --h1:color-mix(in srgb,var(--ga) 76%,#fff);--h2:color-mix(in srgb,var(--ga) 94%,#000);
+.hero{--hon:#fff;--glo:.1;--hsh:color-mix(in srgb,var(--ga) 42%,transparent);
+ --h1:color-mix(in srgb,var(--ga) 90%,#fff);--h2:color-mix(in srgb,var(--ga) 94%,#000);
  --hz:color-mix(in srgb,var(--gz) 95%,transparent);--hz2:color-mix(in srgb,var(--gz) 45%,transparent);
  --far:#fff;--farOp:.16;--sun:color-mix(in srgb,var(--gz) 45%,#fff);--sunHalo:color-mix(in srgb,var(--gz) 65%,#fff);--cloud:rgba(255,255,255,.22);--moonc:transparent;
  --f1:#fff;--f2:color-mix(in srgb,#fff 78%,var(--gz));--side:color-mix(in srgb,var(--gz) 72%,var(--ga));--rim:rgba(255,255,255,.9);
@@ -1498,3 +1498,17 @@ html.sa .nbar{bottom:auto;top:calc(var(--apph) - 72px - env(safe-area-inset-bott
 .vdet>.voli{margin:0 12px 12px;background:var(--surf)!important}
 .vdet>.zones{margin:0 12px 12px}
 .dtiles{grid-template-columns:minmax(0,1fr)!important}
+
+/* v160: scheda del viaggio più compatta, barra della giornata viva */
+.hero .hch{display:flex;flex-wrap:wrap;gap:6px}
+.hero .hch span{background:rgba(255,255,255,.18);border-radius:99px;padding:4px 10px;font-size:.8rem;font-weight:500;line-height:1.2}
+#hsub{margin:12px 0 18px!important}
+.hero .bar.hl i{opacity:.3!important}
+.hero .bar.hl i.dn{opacity:.95!important}
+.hero .bar.hl i.nw{opacity:1!important;transform:scaleY(1.5);background:linear-gradient(90deg,var(--hon) var(--p),rgba(255,255,255,.6) var(--p))!important;box-shadow:0 0 0 2px rgba(255,255,255,.3)}
+.hero .ends{display:flex;justify-content:space-between;gap:8px}
+.hero .ends #hc{flex:1;white-space:nowrap;text-align:center;font-weight:600}
+.hero .ends #hc:empty{display:none}
+/* v160: skyline a tutta larghezza, senza bordi tagliati */
+.hero{padding-bottom:0!important}
+.hero .sky{width:calc(100% + 8px)!important;margin:4px -4px 0!important;-webkit-mask-image:none;mask-image:none}
