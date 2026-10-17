@@ -375,9 +375,10 @@ else hit=TRIP.days.some(function(d){if(!inR(a,d.date))return false;if(a.wd&&a.wd
 if(hit&&!res.some(function(r){return r.t===a.t}))res.push(a)});return res}
 var AVVOPEN=false;
 function moreHtml(h,open){return '<details class="more"'+(open?" open":"")+'><summary>Ulteriori informazioni<i aria-hidden="true">›</i></summary><div class="mb">'+h+'</div></details>'}window.moreHtml=moreHtml;
-function renderAvv(){var el=$("#avv"),L=avvList();el.hidden=!L.length;if(!L.length){el.innerHTML="";return}
-el.innerHTML='<details'+(AVVOPEN?" open":"")+'><summary><span class="avs"><b>⚠️ '+(L.length===1?"Un avviso per il tuo viaggio":L.length+" avvisi per il tuo viaggio")+'</b><small>'+esc(L.length===1?L[0].t:L.map(function(a){return a.t}).join(" · "))+'</small></span><i class="avc" aria-hidden="true">›</i></summary><div class="avl">'+L.map(function(a){return '<div class="avi"><b>'+esc(a.t)+'</b><p>'+esc(a.x)+'</p></div>'}).join("")+'</div></details>';
-var d=el.querySelector("details");d.addEventListener("toggle",function(){AVVOPEN=d.open})}
+function renderAvv(){var el=$("#avv"),L=avvList(),tb=document.querySelector('.tg[data-p="avv"]'),nb=$("#tgavn");el.hidden=!L.length;if(tb)tb.hidden=!L.length;
+if(!L.length){el.innerHTML="";if(window.__tgClose&&tb&&tb.getAttribute("aria-expanded")==="true")__tgClose();return}
+if(nb)nb.textContent=L.length;
+el.innerHTML='<div class="avl">'+L.map(function(a){return '<div class="avi"><b>'+esc(a.t)+'</b><p>'+esc(a.x)+'</p></div>'}).join("")+'</div>'}
 
 /* meteo dei giorni del viaggio */
 function wxKind(c){return c===0?["☀️","sun"]:c<=2?["🌤️","sun"]:c===3?["☁️","cloud"]:c<=48?["🌫️","fog"]:c<=67?["🌧️","rain"]:c<=77?["🌨️","snow"]:c<=82?["🌦️","rain"]:["⛈️","storm"]}
@@ -415,7 +416,7 @@ var lk=a?[[F.url,"🛫 Partenze "+F.name],[A.url,"🛬 Arrivi "+A.n]]:[[RA.url,"
 var nr=rows.length;rows=rows.filter(function(r){return r[1]&&r[1]!=="—"});var miss=rows.length<nr;
 return '<div class="vcard"><div class="vleg"><span class="iata">'+esc(o==="—"?"?":o)+'</span><i class="pl">✈︎</i><span class="iata">'+esc(d==="—"?"?":d)+'</span> '+(a?"Andata":"Ritorno")+'</div>'+rows.map(function(r){return '<div class="vrw"><span>'+r[0]+'</span><b>'+esc(r[1])+'</b></div>'}).join("")+'<div class="vlinks">'+lk.filter(function(x){return x[0]}).map(function(x){return '<a class="vch" target="_blank" rel="noopener" href="'+esc(x[0])+'">'+esc(x[1])+' ↗︎</a>'}).join("")+fr(num)+'</div>'+(miss?'<button type="button" class="vadd" data-edit="1">＋ Aggiungi numero volo e orari</button>':'')+'</div>'}
 $("#vgrid").innerHTML=card("a")+card("r");var vs=$("#vsum");if(vs){var pp=[];if(c.a_arr)pp.push("Andata · arrivo "+c.a_arr);if(c.r_dep)pp.push("Ritorno · partenza "+c.r_dep);vs.textContent=pp.join("  ·  ")||"Orari e aeroporti"}
-var vd=$("#vdet");if(vd){if(!vd.__w){vd.__w=1;vd.addEventListener("toggle",function(){if(!vd.__a)vd.dataset.u="1"})}if(!vd.dataset.u){var ti=todayIdx();vd.__a=1;vd.open=(ti===0||ti===TRIP.n-1);setTimeout(function(){vd.__a=0},0)}}$$("#vgrid [data-edit]").forEach(function(b){b.addEventListener("click",function(){openSetup(false,+b.dataset.edit||0)})});
+var vt=document.querySelector('.tg[data-p="voli"]');if(vt){var ti=todayIdx();vt.classList.toggle("hot",ti===0||ti===TRIP.n-1)}$$("#vgrid [data-edit]").forEach(function(b){b.addEventListener("click",function(){openSetup(false,+b.dataset.edit||0)})});
 renderVcost();
 $("#vtips").innerHTML='<details><summary>🛬 Dall\'aeroporto di '+esc(A.n)+(TRIP.multi?' all\'alloggio':' al centro')+'</summary><ul><li>'+esc(A.arr)+'</li><li>'+esc(A.tk)+'</li>'+(PD.fx.voliTip?PD.fx.voliTip(E):(A.vt?'<li>'+esc(A.vt)+'</li>':''))+'</ul></details><details><summary>🛫 Ritorno in aeroporto'+(RA!==A?' ('+esc(RA.n)+')':'')+'</summary><ul>'+(RA!==A?'<li>Il volo di ritorno parte da '+esc(RA.n)+', non da '+esc(A.n)+'. '+esc(RA.tk)+'</li>':'')+'<li>'+(TRIP.multi?"L'ultimo giorno parti alle "+fmt(DL.leave)+". ":"Parti dall'ultima tappa alle "+fmt(DL.leave)+". ")+esc(DL.items[DL.items.length-1].ret.txt)+'</li><li>Calcolo l\'arrivo in aeroporto almeno '+fdur(RA.buf)+' prima del decollo'+(DL.imb!=null?' e 45 minuti prima dell\'apertura dell\'imbarco':'')+'.</li></ul></details>'}
 

@@ -269,6 +269,18 @@ requestAnimationFrame(function(){if(pop)pop.classList.add("on")});wx.setAttribut
 function tg(){pop?close():open()}
 wx.addEventListener("click",tg);wx.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();tg()}})})();
 
+/* avvisi, voli e meteo: tre tasti sotto lo stato del viaggio, ognuno apre una finestra richiudibile */
+(function(){var bar=document.getElementById("tgr"),w=document.getElementById("tgw");if(!bar||!w)return;var cur="",TT={avv:"Avvisi per il tuo viaggio",voli:"I tuoi voli",meteo:"Previsioni meteo"};
+function show(p){cur=p;[].forEach.call(bar.querySelectorAll(".tg"),function(b){var on=b.dataset.p===p;b.setAttribute("aria-expanded",on?"true":"false")});
+w.hidden=!p;[].forEach.call(w.querySelectorAll(".tgc"),function(c){c.hidden=c.dataset.p!==p});
+if(p){document.getElementById("tgt").textContent=TT[p];w.style.animation="none";void w.offsetWidth;w.style.animation=""}}
+bar.addEventListener("click",function(e){var b=e.target.closest(".tg");if(!b)return;show(cur===b.dataset.p?"":b.dataset.p);try{navigator.vibrate&&navigator.vibrate(8)}catch(x){}});
+w.querySelector(".tgx").addEventListener("click",function(){show("")});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&cur)show("")});
+window.__tgClose=function(){show("")};
+var me=document.getElementById("meteo"),ti=document.getElementById("tgmi");function sy(){var m=me&&me.querySelector(".mi");if(m&&ti&&m.textContent)ti.textContent=m.textContent}
+if(me&&window.MutationObserver)new MutationObserver(sy).observe(me,{childList:true,subtree:true,characterData:true});sy()})();
+
 /* la finestra si dissolve in alto e in basso mentre scorre */
 (function(){var bl=[].slice.call(document.querySelectorAll(".blk")),tk=0;
 function fade(b){var y=b.scrollTop,mx=b.scrollHeight-b.clientHeight,t=y>4?Math.min(30,y*2):0,m=mx-y>4?Math.min(44,(mx-y)*2):0;b.style.setProperty("--mt",t+"px");b.style.setProperty("--mb",m+"px")}

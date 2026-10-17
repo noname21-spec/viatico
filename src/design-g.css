@@ -1511,4 +1511,27 @@ html.sa .nbar{bottom:auto;top:calc(var(--apph) - 72px - env(safe-area-inset-bott
 .hero .ends #hc:empty{display:none}
 /* v160: skyline a tutta larghezza, senza bordi tagliati */
 .hero{padding-bottom:0!important}
-.hero .sky{width:calc(100% + 8px)!important;margin:4px -4px 0!important;-webkit-mask-image:none;mask-image:none}
+.hero .sky{width:calc(100% + 44px)!important;margin:2px -22px 0!important;-webkit-mask-image:none;mask-image:none}
+
+/* v161: avvisi, voli e meteo come tre tasti con finestra richiudibile */
+.tgr{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:8px;margin:0 0 12px}
+.tg{position:relative;display:flex;align-items:center;justify-content:center;gap:7px;min-height:48px;padding:0 10px;border:0;border-radius:16px;background:var(--surf2);color:inherit;font:600 .88rem Outfit,system-ui,sans-serif;cursor:pointer;transition:background .2s,color .2s}
+.tg svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.tg .tgi{font-size:1.15rem;line-height:1}
+.tg .tgb{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--ga);color:var(--gon,#fff);font-size:.7rem;font-weight:700;display:grid;place-items:center}
+.tg[aria-expanded="true"]{background:var(--ga);color:var(--gon,#fff)}
+.tg[aria-expanded="true"] .tgb{background:var(--gon,#fff);color:var(--ga)}
+.tg.hot::after{content:"";position:absolute;top:7px;right:9px;width:8px;height:8px;border-radius:50%;background:var(--ga)}
+.tg.hot[aria-expanded="true"]::after{background:var(--gon,#fff)}
+.tgw{margin:0 0 14px;border-radius:var(--cardR,24px);background:var(--surf2);overflow:hidden;animation:tgin .22s ease}
+@keyframes tgin{from{opacity:0;transform:translateY(-6px)}}
+.tgh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 8px 0 16px}
+.tgh b{font-size:1rem;font-weight:700}
+.tgx{width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:inherit;font-size:1rem;cursor:pointer}
+.tgc{padding:2px 12px 12px}
+.tgc .avv,.tgc .meteo,.tgc .voli{margin:0!important;background:var(--surf)!important;box-shadow:none!important}
+.tgc .avv{padding:12px 14px!important}
+.tgc .avl{padding:0}
+.tgc .vsm{margin:0 4px 10px;font-size:.85rem;color:var(--mute)}
+.tgc .meteo{display:flex}
+@media (prefers-reduced-motion:reduce){.tgw{animation:none}}

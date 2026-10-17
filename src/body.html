@@ -28,15 +28,21 @@
 </header>
 <div class="dsel" id="dsel1" hidden></div>
 <div id="live" class="live" hidden></div>
-<div id="avv" class="avv" hidden></div>
-<div id="stay" class="stay" hidden></div>
-<details class="vdet" id="vdet"><summary><span class="vds" aria-hidden="true">✈️</span><span class="vdt"><b>Voli</b><small id="vsum">Orari e aeroporti</small></span></summary>
-<div class="voli" id="vcard">
+<div class="tgr" id="tgr" role="group" aria-label="Avvisi, voli e meteo">
+<button type="button" class="tg" data-p="avv" aria-expanded="false" aria-controls="tgw" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 3 19h18z"/><path d="M12 10v4M12 16.6v.1"/></svg><span>Avvisi</span><b class="tgb" id="tgavn"></b></button>
+<button type="button" class="tg" data-p="voli" aria-expanded="false" aria-controls="tgw"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 13.5 3 11l1.5-1.5 9 .5 4-4a1.6 1.6 0 0 1 2.3 2.3l-4 4 .5 9L19 19.5l-2.5-7.5"/><path d="M10.5 13.5 8 17l-3 1 1-3 3.5-2.5"/></svg><span>Voli</span></button>
+<button type="button" class="tg" data-p="meteo" aria-expanded="false" aria-controls="tgw"><span class="tgi" id="tgmi" aria-hidden="true">🌤️</span><span>Meteo</span></button>
+</div>
+<section class="tgw" id="tgw" hidden aria-label="Dettagli del viaggio"><div class="tgh"><b id="tgt"></b><button type="button" class="tgx" aria-label="Chiudi">✕</button></div>
+<div class="tgc" data-p="avv" hidden><div id="avv" class="avv" hidden></div></div>
+<div class="tgc" data-p="voli" hidden><p class="vsm" id="vsum">Orari e aeroporti</p><div class="voli" id="vcard">
 <div class="vh2"><b>I tuoi voli</b><button type="button" class="vbtn" data-edit="1">✏️ Modifica</button></div>
 <div class="vgrid" id="vgrid"></div>
 </div>
-<div class="zones" id="vtips"></div></details>
-<div class="dtiles"><div id="meteo" class="meteo"><span class="mi">🌤️</span><div><b>Meteo</b><span>Caricamento…</span></div></div></div>
+<div class="zones" id="vtips"></div></div>
+<div class="tgc" data-p="meteo" hidden><div id="meteo" class="meteo"><span class="mi">🌤️</span><div><b>Meteo</b><span>Caricamento…</span></div></div></div>
+</section>
+<div id="stay" class="stay" hidden></div>
 <h2 class="sec" id="ith">Itinerario</h2>
 <p id="short" class="short" hidden></p>
 <ol class="steps" id="steps"></ol>
