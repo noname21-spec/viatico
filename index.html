@@ -2963,6 +2963,22 @@ body.scrolled .appt .apc .apv{width:7px;height:7px}
 @media (prefers-reduced-motion:reduce){.tsw{transition:none}}
 .tg[hidden],.tgw[hidden],.tgc[hidden]{display:none!important}
 
+/* v164: barra alta più bassa e scritte più leggibili */
+:root{--abh:94px}
+body.scrolled{--abh:60px}
+.appbar{padding-top:calc(env(safe-area-inset-top,0px) + 18px)}
+.gear{top:calc(25px + env(safe-area-inset-top,0px))}
+.appt{gap:3px;padding-top:0}
+.appt .apc{font:800 1.7rem/1.05 Outfit,system-ui,sans-serif;letter-spacing:-.03em}
+.appt .apd{font:600 .86rem/1.2 Outfit,system-ui,sans-serif;color:color-mix(in srgb,var(--ink) 62%,var(--bg))}
+.appt .aps{font:700 .84rem/1.25 Outfit,system-ui,sans-serif}
+.appt .apc .apv{width:9px;height:9px;border-width:2.6px;margin-top:-4px;border-color:color-mix(in srgb,var(--ink) 55%,var(--bg))}
+.appt .apc[aria-expanded="true"] .apv{margin-top:4px}
+body.scrolled .appt .apc{font-size:1.3rem}
+.wx{font-size:1.06rem}
+.wx b{font-weight:800}
+.wx .wxd{font:600 .8rem Outfit,system-ui,sans-serif;color:color-mix(in srgb,var(--ink) 62%,var(--bg))}
+
 </style>
 </head>
 <body class="showall">
