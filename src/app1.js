@@ -276,7 +276,7 @@ ch.push(c.ppl===1?"1 persona":c.ppl+" persone");
 ch.push(one?A.n+" "+fmt(toMin(c.a_arr))+" → "+fmt(toMin(c.r_dep)):"arrivo "+fmt(toMin(c.a_arr))+" · ritorno "+fmt(toMin(c.r_dep)));
 ch.push(n>1?"alloggio in "+home().where:PD.T.move);if(sx)ch.push(sx);
 $("#hsub").innerHTML='<span class="hch">'+ch.map(function(t){return '<span>'+esc(t)+'</span>'}).join("")+'</span>'})();
-$("#appt").innerHTML='<span class="apc">'+esc(PD.n)+'</span><span class="apd">'+esc(apdTxt())+'</span><span class="aps" hidden></span>';window.__apPaint&&__apPaint();
+$("#appt").innerHTML='<span class="apc" role="button" tabindex="0" aria-haspopup="menu" aria-expanded="false"><span class="apn">'+esc(PD.n)+'</span><i class="apv" aria-hidden="true"></i></span><span class="apd">'+esc(apdTxt())+'</span><span class="aps" hidden></span>';window.__apPaint&&__apPaint();
 $("#sps").textContent=PD.n+" · "+rangeTxt();
 document.title="Viaticum · "+ttl}
 function renderBar(){var it=P.items,segs=[],end=P.kind==="single"||P.kind==="last"?P.dep:(P.end||P.leave);
@@ -1035,6 +1035,23 @@ zoomGo(b,d,function(){if(d.id!==PD.id){goCity(d.id,"setup");return}setCity(d.id)
 $("#sback").addEventListener("click",function(){openDest()});
 $("#shdest").addEventListener("click",function(){openDest()});
 $("#ahome").addEventListener("click",function(){openDest()});
+/* il nome della città apre l'elenco dei viaggi: cambia viaggio o torna a tutti i viaggi */
+(function(){var ap=$("#appt"),pop=null;if(!ap)return;
+function close(){if(!pop)return;var p=pop;pop=null;p.classList.remove("on");setTimeout(function(){p.remove()},160);var c=$(".apc",ap);if(c)c.setAttribute("aria-expanded","false");document.removeEventListener("pointerdown",out,true);document.removeEventListener("keydown",key)}
+function out(e){if(pop&&!pop.contains(e.target)&&!ap.contains(e.target))close()}
+function key(e){if(e.key==="Escape")close()}
+function row(d,t,sub,cur,i){return '<button type="button" role="menuitem" class="tsw-i'+(cur?' cur':'')+'" data-i="'+i+'"><span class="tsw-e" aria-hidden="true">'+(d.e||"")+'</span><span class="tsw-t"><b>'+esc(d.n)+'</b><small>'+esc(sub)+'</small></span>'+(cur?'<i class="tsw-ok" aria-hidden="true">✓</i>':'')+'</button>'}
+function open(){if(pop||!CFG)return;var a=trips(),h='<div class="tsw-h">I tuoi viaggi</div>'+row(dOf(CFG.dest),CFG,rangeOf(CFG),true,-1);
+ a.forEach(function(t,i){h+=row(dOf(t.cfg.dest),t.cfg,rangeOf(t.cfg),false,i)});
+ h+='<button type="button" role="menuitem" class="tsw-all" data-i="all"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/></svg>Tutti i viaggi</button>';
+ pop=document.createElement("div");pop.className="tsw";pop.setAttribute("role","menu");pop.setAttribute("aria-label","I tuoi viaggi");pop.innerHTML=h;document.body.appendChild(pop);
+ var c=$(".apc",ap),r=ap.getBoundingClientRect();pop.style.top=Math.round(r.top+(c?c.offsetHeight:30)+10)+"px";pop.style.left=Math.max(12,Math.round(r.left-2))+"px";
+ if(c)c.setAttribute("aria-expanded","true");requestAnimationFrame(function(){if(pop)pop.classList.add("on")});
+ pop.addEventListener("click",function(e){var b=e.target.closest("[data-i]");if(!b)return;var i=b.dataset.i;close();if(i==="all")openDest();else if(i!=="-1")switchTrip(+i)});
+ document.addEventListener("pointerdown",out,true);document.addEventListener("keydown",key)}
+ap.addEventListener("click",function(e){if(!e.target.closest(".apc"))return;pop?close():open()});
+ap.addEventListener("keydown",function(e){if((e.key==="Enter"||e.key===" ")&&e.target.closest&&e.target.closest(".apc")){e.preventDefault();pop?close():open()}})})();
+
 PAR.openSetup=openSetup;
 $$("[data-st]",form).forEach(function(b){b.addEventListener("click",function(){var o=$("#ppl"),v=Math.max(1,Math.min(10,(+o.textContent||2)+ +b.dataset.st));o.textContent=v})});
 $("#scancel").addEventListener("click",function(){closeSetup();if(CFG)setCity(PD.id)});
