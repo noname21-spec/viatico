@@ -28,7 +28,7 @@ cfgp=os.path.join(d,'supabase.json')
 SBC=json.load(open(cfgp)) if os.path.exists(cfgp) else {}
 SYNC=r('sync.js').replace('__SB_URL__',SBC.get('url','')).replace('__SB_KEY__',SBC.get('key',''))
 supp=json.load(open(os.path.join(d,'support.json'))) if os.path.exists(os.path.join(d,'support.json')) else {}
-body=r('body.html').replace('__SUPPORT__',supp.get('email','')).replace('__BUILD__',datetime.date.today().strftime('%d/%m/%Y'))
+body=r('body.html').replace('__SUPPORT__',supp.get('email','')).replace('__BUILD__',__import__('re').search(r'via-v(\d+)',open('sw.js').read()).group(1)+' · '+datetime.date.today().strftime('%d/%m/%Y'))
 head=r('head.html')
 assert head.count('</style>\n</head>')==1
 head=head.replace('</style>\n</head>',r('design-g.css')+'\n</style>\n</head>')
