@@ -342,7 +342,7 @@ if(n.d>DN.date){set("calm","Com'è andata a "+PD.n+"? "+PD.flag,"L'itinerario re
 var di=todayIdx(),T=TRIP.days[di];if(!T)return;
 var i=-1;T.items.forEach(function(s,k){if(n.m>=s.t)i=k});hbarLive();LB={a:T.items.map(function(s){return s.t}),e:T.kind==="single"||T.kind==="last"?T.dep:(T.end||T.leave),m:n.m};
 if(di===SEL){steps.forEach(function(li,k){li.classList.toggle("now",k===i)});if(WH.items){WH.items.forEach(function(w,k){w.classList.toggle("now",k===i)});if(i!==lastNow){lastNow=i;if(i>=0)try{WH.go(i)}catch(e){}}}}
-var nm=function(s){return s?stepTitle(T,s):""};
+var nm=function(s){if(!s)return"";var t=stepTitle(T,s),pk=s.k==="meal"?mPickD(di,s):null;return pk?t+" · "+pk.n:t};
 if(T.kind==="single"||T.kind==="last"){
 var LV=(window.PARLIVE||{}).r,rdep=c.r_dep,gt=LV&&LV.gate?" · Gate "+LV.gate:"",rnum=c.r_num?" "+c.r_num:"";if(LV&&(LV.dR||LV.dS))rdep=LV.dR||LV.dS;
 if(LV&&LV.st==="Canceled"){set("alert","Volo"+rnum+" cancellato","Controlla subito l'app o il sito della compagnia aerea.");return}
@@ -358,7 +358,7 @@ if(T.kind==="first"&&n.m<T.land){set("","Oggi si parte! ✈️",(c.a_num?"Volo "
 if(T.kind==="mid"&&n.m<T.c0){set("calm","Buongiorno! Giorno "+(di+1),"Si parte alle "+fmt(T.c0)+(T.acts.length?": "+T.acts.map(function(id){return S[id].t}).join(", ")+".":"."));return}
 var L=T.items[T.items.length-1];if(L.k==="night"&&n.m>=L.t+L.d){var nx=TRIP.days[di+1];set("calm","Buonanotte! 🌙",nx?"Domani si riparte alle "+fmt(nx.c0)+(nx.acts.length?" con "+S[nx.acts[0]].t+".":"."):"");return}}
 var cur=T.items[i],nx2=T.items[i+1];
-function acts(j,k){if(di!==SEL)return;var s=steps[k],l=s&&s.querySelector("a.go"),h='<div class="lact"><button type="button" class="lb" data-j="'+j+'">Vai alla tappa</button>'+(l?'<a class="lb lb2" href="'+esc(l.getAttribute("href"))+'" target="_blank" rel="noopener">🧭 Portami lì</a>':"")+'</div>';$(".lt",live).insertAdjacentHTML("beforeend",h)}
+function acts(j,k){if(di!==SEL)return;var s=steps[k],l=s&&s.querySelector("a.go"),pk=T.items[j]&&T.items[j].k==="meal"?mPickD(di,T.items[j]):null,hr=pk?mGo(pk):(l?l.getAttribute("href"):""),h='<div class="lact"><button type="button" class="lb" data-j="'+j+'">Vai alla tappa</button>'+(hr?'<a class="lb lb2" href="'+esc(hr)+'" target="_blank" rel="noopener">🧭 Portami lì</a>':"")+'</div>';$(".lt",live).insertAdjacentHTML("beforeend",h)}
 if(i<0){set("","Prima tappa: "+nm(T.items[0]),"Alle "+fmt(T.items[0].t)+", tra "+fdur(T.items[0].t-n.m));acts(0,0);return}
 set("","Ora: "+nm(cur),nx2?"Prossima: "+nm(nx2)+" tra "+fdur(nx2.t-n.m):"");if(nx2&&nx2.t>cur.t){var pg=Math.max(0,Math.min(1,(n.m-cur.t)/(nx2.t-cur.t)));$(".lt",live).insertAdjacentHTML("beforeend",'<i class="lpg" aria-hidden="true"><i style="width:'+Math.round(pg*100)+'%"></i></i>')}acts(i,nx2?i+1:i)}
 $("#live").addEventListener("click",function(e){var b=e.target.closest(".lb");if(!b||b.tagName==="A")return;if(b.classList.contains("lrecap")){window.__recap&&window.__recap();return}var s=$$("#steps .step")[+b.dataset.j];if(s)s.scrollIntoView({behavior:"smooth",block:"center"})});
@@ -421,63 +421,96 @@ renderVcost();
 $("#vtips").innerHTML='<details><summary>🛬 Dall\'aeroporto di '+esc(A.n)+(TRIP.multi?' all\'alloggio':' al centro')+'</summary><ul><li>'+esc(A.arr)+'</li><li>'+esc(A.tk)+'</li>'+(PD.fx.voliTip?PD.fx.voliTip(E):(A.vt?'<li>'+esc(A.vt)+'</li>':''))+'</ul></details><details><summary>🛫 Ritorno in aeroporto'+(RA!==A?' ('+esc(RA.n)+')':'')+'</summary><ul>'+(RA!==A?'<li>Il volo di ritorno parte da '+esc(RA.n)+', non da '+esc(A.n)+'. '+esc(RA.tk)+'</li>':'')+'<li>'+(TRIP.multi?"L'ultimo giorno parti alle "+fmt(DL.leave)+". ":"Parti dall'ultima tappa alle "+fmt(DL.leave)+". ")+esc(DL.items[DL.items.length-1].ret.txt)+'</li><li>Calcolo l\'arrivo in aeroporto almeno '+fdur(RA.buf)+' prima del decollo'+(DL.imb!=null?' e 45 minuti prima dell\'apertura dell\'imbarco':'')+'.</li></ul></details>'}
 
 /* ===== pasti ===== */
-var MEALS=lj("via-meals",{}),PS={tab:null,foc:{},add:null,sug:0,pop:null,anim:"",prev:0,L:[],btw:"",day:-1};
-function mSave(){var e=!(MEALS.h&&MEALS.h.length)&&!Object.keys(MEALS.c||{}).length&&!Object.keys(MEALS.o||{}).length;ls("via-meals",e?null:JSON.stringify(MEALS))}
+var MEALS=lj("via-meals",{}),PS={tab:null,foc:{},add:null,rep:null,sug:0,pop:null,anim:"",prev:0,L:[],btw:"",day:-1,geo:null,gt:0,hh:""};
+function mSave(){var e=!(MEALS.h&&MEALS.h.length);["c","o","s","r"].forEach(function(k){if(Object.keys(MEALS[k]||{}).length)e=false});ls("via-meals",e?null:JSON.stringify(MEALS))}
 function mHid(id){return !!(MEALS.h&&MEALS.h.indexOf(id)>=0)}
 function mFind(id){if(V[id])return V[id];var r=null;Object.keys(MEALS.o||{}).forEach(function(k){MEALS.o[k].forEach(function(x){if(x.id===id)r=x})});return r}
-function mPick(it){var id=MEALS.c&&MEALS.c[P.i+"|"+(it.k==="snk"?"snk":it.m)];return id?mFind(id):null}
+function mKeyOf(it){return it.k==="snk"?"snk":it.m}
+function mPickD(di,it){var id=MEALS.c&&MEALS.c[di+"|"+mKeyOf(it)];return id?mFind(id):null}
+function mPick(it){return mPickD(P.i,it)}
+function mRes(di,it){return (MEALS.r&&MEALS.r[di+"|"+mKeyOf(it)])||""}
 function mGo(v){return v.own?(/^https?:\/\//i.test(v.l||"")?v.l:gdir(v.l||v.n,"walking")):gdir(vq(v),"walking")}
-function mPickBlock(it,first){var v=mPick(it);if(v)return '<p class="pickl">✓ Hai scelto <b>'+esc(v.n)+'</b></p><a class="go" href="'+esc(mGo(v))+'" target="_blank" rel="noopener"><span>🚶</span> Portami lì</a>';return first?goBtn(vq(first.v),"walking","Portami lì","🚶"):""}
-function pmeals(){var out=[];P.items.forEach(function(x){if(x.k!=="meal"&&x.k!=="snk")return;var sn=x.k==="snk",mm=sn?"snk":x.m,ids=sn?(PD.MEAL.snk[x.z]||(x.z==="X"?null:PD.MEAL.snk.A)):mealIds(x.m,x.z);
-out.push({it:x,mm:mm,key:P.i+"|"+mm,ids:ids,ttl:sn?"Ultimo assaggio":mealTitle(x),nm:sn?"Assaggio":MN[x.m],hotel:!!x.hotel,sel:!x.hotel&&!!ids})});return out}
-function pHero(L){var n=paris(),td=TRIP.days[SEL].date===n.d,i;if(td)for(i=0;i<L.length;i++)if(L[i].sel&&L[i].it.t+(L[i].it.d||45)>n.m)return i;for(i=0;i<L.length;i++)if(L[i].sel)return i;return -1}
-function pList(m){return prefList(m.ids,WD,m.it.t,m.mm,m.it.z)}
+function mTime(di,it){var n=paris();return TRIP.days[di].date===n.d?Math.max(it.t,n.m):it.t}
+function mOrig(di,it){try{var n=paris();if(PS.geo&&Date.now()-PS.geo.t<6e5&&TRIP.days[di].date===n.d)return{pos:PS.geo.p,l:"da dove sei"};
+var d=TRIP.days[di],i=d.items.indexOf(it),k,x;for(k=i-1;k>=0;k--){x=d.items[k];if(x.k==="act"&&S[x.id])return{pos:S[x.id].pos,l:"dalla tappa prima"};if(x.k==="home"&&TRIP.multi)return{pos:home().pos,l:"dall'alloggio"}}
+return{pos:TRIP.multi?home().pos:PD.START,l:TRIP.multi?"dall'alloggio":"dal punto di arrivo"}}catch(e){return{pos:null,l:""}}}
+function mWalk(v,o){return v&&!v.own&&v.pos&&o&&o.pos?access(o.pos,v.pos):null}
+function mWalkTxt(w,o){return w?(w.mode==="walk"?"🚶 ":"🚇 ")+w.min+" min "+o.l:""}
+function mWarn(di,it,v,o){if(!v||v.own||!v.h)return"";var w=mWalk(v,o),ar=mTime(di,it)+(w?w.min:0),st=vStat(v,TRIP.days[di].wd,ar);if(st.c==="ok")return"";return "⚠️ "+st.t+" · ci arrivi verso le "+fmt(ar)}
+window.PAR.mealInfo=function(di,it){var v=mPickD(di,it);if(!v)return null;return{n:v.n,res:mRes(di,it),warn:mWarn(di,it,v,mOrig(di,it)).replace("⚠️ ","")}};
+function mPickBlock(it,first){var v=mPick(it);if(v){var r=mRes(P.i,it),w=mWarn(P.i,it,v,mOrig(P.i,it));return '<p class="pickl">✓ Hai scelto <b>'+esc(v.n)+'</b>'+(r?' · 📅 prenotato alle '+esc(r):'')+'</p>'+(w?'<p class="pmw">'+esc(w)+'</p>':'')+'<a class="go" href="'+esc(mGo(v))+'" target="_blank" rel="noopener"><span>🚶</span> Portami lì</a>'}return first?goBtn(vq(first.v),"walking","Portami lì","🚶"):""}
+/* spesa stimata in Costi */
+var PCAT={col:"co",pra:"pr",cen:"ce",snk:"sp"};
+function mPrice(v){var m=/(\d+(?:[.,]\d+)?)\s*(?:[–-]\s*(\d+(?:[.,]\d+)?))?\s*€/.exec(v.pr||"");if(!m)return 0;var a=parseFloat(m[1].replace(",",".")),b=m[2]?parseFloat(m[2].replace(",",".")):a;return Math.round((a+b)/2*100)/100}
+function mExpDel(key){var n0=(SP.x||[]).length;SP.x=(SP.x||[]).filter(function(x){return x.mk!==key});return SP.x.length!==n0}
+function mExpSet(key,v,mm){var ch=mExpDel(key),p=v&&!v.own?mPrice(v):0,add=false;if(p>0&&CFG){SP.x.push({id:"mk"+key.replace(/\W/g,""),d:(MN[mm]||"Spuntino")+" · "+v.n+" (stima)",a:Math.round(p*(CFG.ppl||1)*100)/100,p:0,w:null,m:"eq",c:PCAT[mm]||"ex",t:Date.now(),mk:key});add=true}
+if(ch||add){saveSP();try{renderCosti(false);renderSpese()}catch(e){}}return add}
+/* elenco pasti del giorno */
+function pmeals(){var out=[];P.items.forEach(function(x){if(x.k!=="meal"&&x.k!=="snk")return;var sn=x.k==="snk",mm=sn?"snk":x.m,ids=sn?(PD.MEAL.snk[x.z]||(x.z==="X"?null:PD.MEAL.snk.A)):mealIds(x.m,x.z),key=P.i+"|"+mm;
+out.push({it:x,mm:mm,key:key,ids:ids,ttl:sn?"Ultimo assaggio":mealTitle(x),nm:sn?"Assaggio":MN[x.m],hotel:!!x.hotel,sel:!x.hotel&&!!ids,done:!!(MEALS.s&&MEALS.s[key])})});return out}
+function pHero(L){var n=paris(),td=TRIP.days[SEL].date===n.d,i;if(td)for(i=0;i<L.length;i++)if(L[i].sel&&!L[i].done&&L[i].it.t+(L[i].it.d||45)>n.m)return i;for(i=0;i<L.length;i++)if(L[i].sel&&!L[i].done)return i;return -1}
+function pList(m){var di=P.i,pl=prefList(m.ids,WD,mTime(di,m.it),m.mm,m.it.z);
+if(!fprefOn()&&ST.th!=="eno"){var o=mOrig(di,m.it),so={ok:0,mid:1,ko:2};pl.main=pl.main.map(function(x,i){var w=mWalk(x.v,o);x.w=w?w.min:99;x.i0=i;return x}).sort(function(a,b){return so[a.s.c]-so[b.s.c]||a.w-b.w||a.i0-b.i0})}return pl}
 function pStat(o){return '<span class="st '+o.s.c+'">'+(o.s.c==="ok"?"✓ ":o.s.c==="ko"?"⚠️ ":"⏱ ")+esc(o.s.t)+'</span>'}
-function pMeta(v,wd){return (v.r?'<span>★ '+esc(String(v.r))+'</span>':'')+(v.h&&v.h.length?'<span>🕐 '+esc(hrsTxt(v,wd))+'</span>':'')}
-function pHeroHTML(L,hi){if(hi<0)return"";var m=L[hi],n=paris(),td=TRIP.days[SEL].date===n.d,pk=MEALS.c&&MEALS.c[m.key],lk,body,btn;
-var cands=pList(m).main.filter(function(o){return o.s.c!=="ko"});if(!cands.length)cands=pList(m).main;
-if(td)lk=(m.it.t<=n.m?"Adesso":"Prossimo")+" · "+m.nm+(m.it.t>n.m?" alle "+fmt(m.it.t):"");else lk=(hi===0?"Primo pasto":m.nm)+" · "+fmt(m.it.t);
-var v,id,o=null;if(pk&&mFind(pk)){id=pk;v=mFind(pk);lk="Hai scelto · "+m.nm}else if(cands.length){o=cands[PS.sug%cands.length];id=o.id;v=o.v;lk+=" · consigliato"}else return"";
-var go=mGo(v);
-btn=pk?'<a class="pmbt" href="'+esc(go)+'" target="_blank" rel="noopener">Portami lì</a><button class="pmbt s" data-a="un" data-k="'+esc(m.key)+'">Cambia</button>':'<button class="pmbt" data-a="ch" data-k="'+esc(m.key)+'" data-v="'+esc(id)+'">Scelgo questo</button>'+(cands.length>1?'<button class="pmbt s" data-a="sug">Un altro</button>':'')+'<button class="pmbt s" data-a="tab" data-k="'+esc(m.key)+'">Tutti i locali</button>';
-var d=v.own?(v.d||""):(v.a?v.a+". ":"")+(v.d||"");
-return '<div class="pmh'+(PS.anim==="h"?" fl":"")+'"><span class="lk">'+esc(lk)+'</span><h3>'+esc(v.n)+'</h3><div class="pmm">'+(o?'<span>'+pStatTxt(o)+'</span>':'')+(v.own?'':pMeta(v,WD))+'</div>'+(d?'<p>'+esc(d)+'</p>':'')+(v.pr?'<p>'+esc(v.pr)+'</p>':'')+'<div class="pmb2">'+btn+'</div></div>'}
 function pStatTxt(o){return (o.s.c==="ok"?"✓ ":o.s.c==="ko"?"⚠️ ":"⏱ ")+esc(o.s.t)}
-function pPanel(m){var h='<div class="pmph"><b>'+fmt(m.it.t)+' · '+esc(m.ttl)+'</b>';
+function pMeta(v,wd){return (v.r?'<span>★ '+esc(String(v.r))+'</span>':'')+(v.h&&v.h.length?'<span>🕐 '+esc(hrsTxt(v,wd))+'</span>':'')}
+function pBook(m,v){if(!v||v.own||(m.mm!=="pra"&&m.mm!=="cen"))return"";var r=parseFloat(String(v.r).replace(",","."));return (r>=4.6||/prenot/i.test((v.d||"")+" "+(v.pr||"")))?'<p class="pmbk">📅 Meglio prenotare: è molto apprezzato e può esserci fila (indicazione di massima).</p>':""}
+function pMore(m){var o=mOrig(P.i,m.it),k=m.mm==="col"?"breakfast cafe":m.mm==="snk"?"snack":"restaurant",loc=o.pos?o.pos.join(","):PD.hub.n+" "+PD.n;return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(fpWords()+k+" near "+loc)}
+function pHeroHTML(L,hi,fl){if(hi<0)return"";var m=L[hi],di=P.i,n=paris(),td=TRIP.days[SEL].date===n.d,pk=MEALS.c&&MEALS.c[m.key],lk,btn,o=null,v,id,pl=pList(m);
+var cands=pl.main.filter(function(x){return x.s.c!=="ko"});if(!cands.length)cands=pl.main;
+if(td)lk=(m.it.t<=n.m?"Adesso":"Prossimo")+" · "+m.nm+(m.it.t>n.m?" alle "+fmt(m.it.t):"");else lk=(hi===0?"Primo pasto":m.nm)+" · "+fmt(m.it.t);
+if(pk&&mFind(pk)){id=pk;v=mFind(pk);lk="Hai scelto · "+m.nm}else if(cands.length){o=cands[PS.sug%cands.length];id=o.id;v=o.v;lk+=" · consigliato"}else return"";
+var og=mOrig(di,m.it),w=mWalk(v,og),res=mRes(di,m.it),warn=pk?mWarn(di,m.it,v,og):"";
+btn=pk?'<a class="pmbt" href="'+esc(mGo(v))+'" target="_blank" rel="noopener">Portami lì</a><button class="pmbt s" data-a="un" data-k="'+esc(m.key)+'">Cambia</button>':'<button class="pmbt" data-a="ch" data-k="'+esc(m.key)+'" data-v="'+esc(id)+'">Scelgo questo</button>'+(cands.length>1?'<button class="pmbt s" data-a="sug">Un altro</button>':'')+'<button class="pmbt s" data-a="tab" data-k="'+esc(m.key)+'">Tutti i locali</button>';
+var d=v.own?(v.d||""):(v.a?v.a+". ":"")+(v.d||"");
+return '<div class="pmh m-'+m.mm+(fl?" fl":"")+'"><span class="lk">'+esc(lk)+'</span><h3>'+esc(v.n)+'</h3><div class="pmm">'+(w?'<span>'+mWalkTxt(w,og)+'</span>':'')+(o?'<span>'+pStatTxt(o)+'</span>':'')+(res?'<span>📅 '+esc(res)+'</span>':'')+(v.own?'':pMeta(v,WD))+'</div>'+(warn?'<p class="pmw">'+esc(warn)+'</p>':'')+(d?'<p>'+esc(d)+'</p>':'')+(v.pr?'<p>'+esc(v.pr)+'</p>':'')+'<div class="pmb2">'+btn+'</div></div>'}
+function pPanel(m){var di=P.i,h='<div class="pmph"><b>'+fmt(m.it.t)+' · '+esc(m.ttl)+'</b>';
 if(m.hotel)return h+'</div>'+hotelBf();
 if(!m.ids)return h+'</div>'+nearBox(m.mm==="snk"?"snk":m.mm);
-var pl=pList(m),own=(MEALS.o&&MEALS.o[m.key])||[],ch=MEALS.c&&MEALS.c[m.key],fo=PS.foc[m.key]||ch,hid=m.ids.filter(mHid).length;
-function chip(id,name,ko){return '<button class="pmc'+(ch===id?" on":"")+(fo===id&&ch!==id?" fo":"")+(ko?" ko":"")+(PS.pop===id?" pop":"")+'" data-a="chip" data-k="'+esc(m.key)+'" data-v="'+esc(id)+'" aria-pressed="'+(ch===id)+'">'+(ch===id?'<i aria-hidden="true">✓</i>':'')+esc(name)+'</button>'}
-h+='<span class="pmtag'+(ch?" ok":"")+'">'+(ch?"Scelto":"Da scegliere")+'</span></div><div class="pmcw">'+own.map(function(x){return chip(x.id,x.n)}).join("")+pl.main.map(function(o){return chip(o.id,o.v.n,o.s.c==="ko")}).join("")+'<button class="pmc add" data-a="addo" data-k="'+esc(m.key)+'">+ Tuo</button></div>';
-if(pl.rest.length)h+='<details class="fprest"><summary>Altri '+pl.rest.length+' locali (non adatti o da verificare)</summary><div class="pmcw">'+pl.rest.map(function(o){return chip(o.id,o.v.n,1)}).join("")+'</div></details>';
+var pl=pList(m),own=(MEALS.o&&MEALS.o[m.key])||[],ch=MEALS.c&&MEALS.c[m.key],fo=PS.foc[m.key]||ch,hid=m.ids.filter(mHid).length,og=mOrig(di,m.it);
+function chip(id,name,ko,v){var t=ftag(id),w=mWalk(v,og);return '<button class="pmc'+(ch===id?" on":"")+(fo===id&&ch!==id?" fo":"")+(ko?" ko":"")+(PS.pop===id?" pop":"")+'" data-a="chip" data-k="'+esc(m.key)+'" data-v="'+esc(id)+'" aria-pressed="'+(ch===id)+'">'+(ch===id?'<i aria-hidden="true">✓</i>':'<span class="pme" aria-hidden="true">'+(t?FKE[t.k]:"📍")+'</span>')+esc(name)+(w?'<em>'+w.min+'′</em>':'')+'</button>'}
+h+='<span class="pmtag'+(m.done?"":ch?" ok":"")+'">'+(m.done?"Fatto":ch?"Scelto":"Da scegliere")+'</span></div><div class="pmcw">'+own.map(function(x){return chip(x.id,x.n,0,x)}).join("")+pl.main.map(function(o){return chip(o.id,o.v.n,o.s.c==="ko",o.v)}).join("")+'<button class="pmc add" data-a="addo" data-k="'+esc(m.key)+'">+ Tuo</button></div>';
+if(pl.rest.length)h+='<details class="fprest"><summary>Altri '+pl.rest.length+' locali (non adatti o da verificare)</summary><div class="pmcw">'+pl.rest.map(function(o){return chip(o.id,o.v.n,1,o.v)}).join("")+'</div></details>';
 if(PS.add===m.key)h+='<form class="pmf" data-k="'+esc(m.key)+'"><label>Nome<input name="n" autocomplete="off" maxlength="60" placeholder="Per esempio: Da Enzo al 29"></label><label>Link o indirizzo<input name="l" autocomplete="off" maxlength="300" placeholder="Link di Google Maps o via"></label><label>Nota<input name="t" autocomplete="off" maxlength="140" placeholder="Prenotato per le 13"></label><div class="pmb2"><button class="pmbt" type="submit">Aggiungi</button><button class="pmbt g" type="button" data-a="adc">Annulla</button></div></form>';
-else if(fo&&mFind(fo)){var v=mFind(fo),o=pl.main.concat(pl.rest).filter(function(x){return x.id===fo})[0],q=v.own?"":vq(v);
-h+='<div class="pmd'+(PS.anim==="d"?" in":"")+'"><div class="vhd"><b>'+(v.own?esc(v.n):'<a target="_blank" rel="noopener" href="'+esc(PD.G(q))+'">'+esc(v.n)+'</a>')+'</b>'+(o?pStat(o):'<span class="st ok">Tuo</span>')+'</div>'+(v.own?(v.d?'<p class="vd">'+esc(v.d)+'</p>':'')+(v.l&&!/^https?:\/\//i.test(v.l)?'<p class="vp">'+esc(v.l)+'</p>':''):'<p class="vd">'+esc(v.a)+'. '+esc(v.d)+'</p><div class="vm"><span class="vr">★ '+esc(String(v.r))+'</span><span class="hrs">🕐 '+esc(hrsTxt(v,WD))+'</span></div><p class="vp">'+esc(v.pr)+'</p>'+fbadge(fo,o&&o.extra))+
-'<div class="pmb2">'+(ch===fo?'<button class="pmbt s" data-a="un" data-k="'+esc(m.key)+'">Togli</button>':'<button class="pmbt" data-a="ch" data-k="'+esc(m.key)+'" data-v="'+esc(fo)+'">Scelgo questo</button>')+'<a class="pmbt s" href="'+esc(mGo(v))+'" target="_blank" rel="noopener">Portami lì</a><button class="pmbt g" data-a="'+(v.own?"rm":"hide")+'" data-k="'+esc(m.key)+'" data-v="'+esc(fo)+'">'+(v.own?"Rimuovi":"Nascondi")+'</button></div></div>'}
+else if(fo&&mFind(fo)){var v=mFind(fo),o=pl.main.concat(pl.rest).filter(function(x){return x.id===fo})[0],q=v.own?"":vq(v),w=mWalk(v,og),res=mRes(di,m.it),warn=ch===fo?mWarn(di,m.it,v,og):"";
+h+='<div class="pmd'+(PS.anim==="d"?" in":"")+'"><div class="vhd"><b>'+(v.own?esc(v.n):'<a target="_blank" rel="noopener" href="'+esc(PD.G(q))+'">'+esc(v.n)+'</a>')+'</b>'+(o?pStat(o):'<span class="st ok">Tuo</span>')+'</div>'+(w?'<div class="vm"><span>'+mWalkTxt(w,og)+'</span></div>':'')+(warn?'<p class="pmw">'+esc(warn)+'</p>':'')+
+(v.own?(v.d?'<p class="vd">'+esc(v.d)+'</p>':'')+(v.l&&!/^https?:\/\//i.test(v.l)?'<p class="vp">'+esc(v.l)+'</p>':''):'<p class="vd">'+esc(v.a)+'. '+esc(v.d)+'</p><div class="vm"><span class="vr">★ '+esc(String(v.r))+'</span><span class="hrs">🕐 '+esc(hrsTxt(v,WD))+'</span></div><p class="vp">'+esc(v.pr)+'</p>'+fbadge(fo,o&&o.extra)+pBook(m,v))+
+(ch===fo?'<label class="pmr"><span>📅 Prenotazione</span><input type="time" data-a="res" data-k="'+esc(m.key)+'" value="'+esc(res)+'" aria-label="Orario della prenotazione"></label>':'')+
+'<div class="pmb2">'+(ch===fo?'<button class="pmbt s" data-a="un" data-k="'+esc(m.key)+'">Togli</button>':'<button class="pmbt" data-a="ch" data-k="'+esc(m.key)+'" data-v="'+esc(fo)+'">Scelgo questo</button>')+'<a class="pmbt s" href="'+esc(mGo(v))+'" target="_blank" rel="noopener">Portami lì</a><button class="pmbt g" data-a="'+(v.own?"rm":"hide")+'" data-k="'+esc(m.key)+'" data-v="'+esc(fo)+'">'+(v.own?"Rimuovi":"Nascondi")+'</button>'+(v.own?'':'<button class="pmbt g" data-a="rep" data-k="'+esc(m.key)+'" data-v="'+esc(fo)+'">Segnala un errore</button>')+'</div>'+(PS.rep===fo&&!v.own?pRep(m,v):'')+'</div>'}
 else h+='<p class="pmhint">Tocca un locale per leggere la descrizione.</p>';
 if(hid)h+='<div class="pmhid">'+hid+(hid===1?" nascosto":" nascosti")+' <button data-a="unhide" data-k="'+esc(m.key)+'">Ripristina</button></div>';
 if(m.it.k==="meal"&&PD.ORD&&PD.ORD[m.mm])h+='<details class="pmo"><summary>🍽️ Cosa ordinare</summary>'+ordBox(m.mm)+'</details>';
+h+='<div class="pmb2 pmft"><a class="pmbt s" href="'+esc(pMore(m))+'" target="_blank" rel="noopener">🔎 Cerca altri locali qui</a><button class="pmbt g" data-a="done" data-k="'+esc(m.key)+'">'+(m.done?"Rimetti in lista":"Già fatto o saltato")+'</button></div>';
 return h+fpNote()}
-function pDraw(){var g=$("#mgrid"),L=PS.L;if(!g)return;var hi=pHero(L),ti=Math.max(0,L.map(function(m){return m.key}).indexOf(PS.tab)),m=L[ti],y=window.scrollY,h=pHeroHTML(L,hi);
-h+='<div class="pmtabs" role="tablist" aria-label="Pasti" style="--n:'+L.length+'"><i class="pmind" aria-hidden="true" style="transform:translateX('+(PS.prev*100)+'%)"></i>'+L.map(function(x,i){var c=MEALS.c&&MEALS.c[x.key],v=c&&mFind(c);return '<button class="pmt'+(v?" ok":"")+'" role="tab" aria-selected="'+(i===ti)+'" data-a="tab" data-k="'+esc(x.key)+'"><span>'+esc(x.nm)+'</span><small>'+(v?esc(v.n):fmt(x.it.t))+'</small></button>'}).join("")+'</div>';
+function pRep(m,v){var a=(($("#hlmail")||{}).getAttribute&&$("#hlmail").getAttribute("href"))||"",ad=a.indexOf("mailto:")===0?a.slice(7).split("?")[0]:"";if(!ad)return"";
+var L=[["Chiuso per sempre","Il locale risulta chiuso definitivamente"],["Orari diversi","Gli orari indicati non sono corretti"],["Prezzo diverso","Il prezzo indicato non è corretto"],["Altro","Altro problema"]];
+return '<div class="pmrep"><span>Cosa non torna?</span><div class="pmcw">'+L.map(function(x){return '<a class="pmc" href="'+esc("mailto:"+ad+"?subject="+encodeURIComponent("Viaticum · segnalazione locale: "+v.n)+"&body="+encodeURIComponent("Locale: "+v.n+" ("+v.a+", "+PD.n+")\nProblema: "+x[1]+"\n\nDettagli (facoltativi): "))+'">'+esc(x[0])+'</a>'}).join("")+'</div></div>'}
+function pDraw(){var g=$("#mgrid"),L=PS.L;if(!g||!L.length)return;L.forEach(function(x){x.done=!!(MEALS.s&&MEALS.s[x.key])});var hi=pHero(L),ti=Math.max(0,L.map(function(m){return m.key}).indexOf(PS.tab)),m=L[ti],y=window.scrollY,h=pHeroHTML(L,hi,PS.anim==="h");PS.hh=pHeroHTML(L,hi,false);
+h+='<div class="pmtabs" role="tablist" aria-label="Pasti" style="--n:'+L.length+'"><i class="pmind" aria-hidden="true" style="transform:translateX('+(PS.prev*100)+'%)"></i>'+L.map(function(x,i){var c=MEALS.c&&MEALS.c[x.key],v=c&&mFind(c);return '<button class="pmt'+(v&&!x.done?" ok":"")+(x.done?" dn":"")+'" role="tab" aria-selected="'+(i===ti)+'" data-a="tab" data-k="'+esc(x.key)+'"><span>'+esc(x.nm)+'</span><small>'+(x.done?"✓ fatto":v?esc(v.n):fmt(x.it.t))+'</small></button>'}).join("")+'</div>';
 h+='<section class="pmp'+(PS.anim==="r"?" inR":PS.anim==="l"?" inL":"")+'" role="tabpanel">'+pPanel(m)+'</section>'+(PS.btw?'<div class="pmbtw"><h3 class="pmsub">Lungo il percorso</h3>'+PS.btw+'</div>':'');
 g.innerHTML=h;window.scrollTo(0,y);var ind=g.querySelector(".pmind");if(ind){requestAnimationFrame(function(){requestAnimationFrame(function(){ind.style.transform="translateX("+(ti*100)+"%)"})})}
 PS.prev=ti;PS.anim="";PS.pop=null}
-function pAct(a,k,v){var m=PS.L.filter(function(x){return x.key===k})[0];MEALS.c=MEALS.c||{};MEALS.o=MEALS.o||{};
+function pAct(a,k,v){var m=PS.L.filter(function(x){return x.key===k})[0];MEALS.c=MEALS.c||{};MEALS.o=MEALS.o||{};MEALS.s=MEALS.s||{};MEALS.r=MEALS.r||{};
 if(a==="tab"){var ni=PS.L.indexOf(m),oi=PS.L.map(function(x){return x.key}).indexOf(PS.tab);if(k===PS.tab&&oi>=0){var pp=document.querySelector(".pmp");if(pp)pp.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth",block:"center"});return}PS.tab=k;PS.anim=ni>oi?"r":"l";PS.add=null;pDraw();return}
 if(a==="chip"){PS.foc[k]=v;PS.anim="d";PS.add=null;pDraw();return}
 if(a==="sug"){PS.sug++;PS.anim="h";pDraw();return}
 if(a==="addo"){PS.add=k;PS.tab=k;pDraw();var f=document.querySelector(".pmf input");if(f)f.focus();return}
 if(a==="adc"){PS.add=null;pDraw();return}
-if(a==="ch"){MEALS.c[k]=v;PS.pop=v;PS.foc[k]=v;PS.anim="h";mSave();pDraw();renderItin();var o=mFind(v);if(o)toast("Scelto: "+o.n);return}
-if(a==="un"){delete MEALS.c[k];PS.anim="h";mSave();pDraw();renderItin();return}
+if(a==="rep"){PS.rep=PS.rep===v?null:v;pDraw();return}
+if(a==="done"){if(MEALS.s[k])delete MEALS.s[k];else MEALS.s[k]=1;PS.anim="h";mSave();var hi=pHero(PS.L);pDraw();toast(MEALS.s[k]?"Segnato come fatto":"Rimesso in lista");return}
+if(a==="ch"){MEALS.c[k]=v;PS.pop=v;PS.foc[k]=v;PS.anim="h";delete MEALS.s[k];mSave();var o=mFind(v),ex=mExpSet(k,o,m.mm);pDraw();renderItin();if(o)toast("Scelto: "+o.n+(ex?" · spesa stimata aggiunta":""));return}
+if(a==="un"){delete MEALS.c[k];delete MEALS.r[k];PS.anim="h";mSave();if(mExpDel(k)){saveSP();try{renderCosti(false);renderSpese()}catch(e){}}pDraw();renderItin();return}
 if(a==="unhide"){MEALS.h=(MEALS.h||[]).filter(function(id){return (m.ids||[]).indexOf(id)<0});mSave();pDraw();renderItin();toast("Locali ripristinati");return}
 if(a==="hide"||a==="rm"){var el=document.querySelector('.pmc[data-v="'+v+'"]');var done=function(){if(a==="hide"){MEALS.h=MEALS.h||[];if(MEALS.h.indexOf(v)<0)MEALS.h.push(v)}else{MEALS.o[k]=(MEALS.o[k]||[]).filter(function(x){return x.id!==v})}
-Object.keys(MEALS.c).forEach(function(kk){if(MEALS.c[kk]===v)delete MEALS.c[kk]});delete PS.foc[k];PS.anim="h";mSave();pDraw();renderItin();toast(a==="hide"?"Nascosto. Lo ritrovi sotto con «Ripristina»":"Rimosso")};
+Object.keys(MEALS.c).forEach(function(kk){if(MEALS.c[kk]===v){delete MEALS.c[kk];delete MEALS.r[kk];mExpDel(kk);saveSP()}});delete PS.foc[k];PS.anim="h";mSave();pDraw();try{renderCosti(false);renderSpese()}catch(e){}renderItin();toast(a==="hide"?"Nascosto. Lo ritrovi sotto con «Ripristina»":"Rimosso")};
 if(el&&!matchMedia("(prefers-reduced-motion:reduce)").matches){el.classList.add("out");setTimeout(done,200)}else done()}}
-(function(){var g=$("#mgrid");if(!g)return;g.addEventListener("click",function(e){var b=e.target.closest("[data-a]");if(!b||!g.contains(b))return;e.preventDefault();pAct(b.dataset.a,b.dataset.k,b.dataset.v)});
+function pGeo(){if(!navigator.geolocation||!navigator.permissions||Date.now()-PS.gt<12e4||!TRIP||!TRIP.days[SEL]||TRIP.days[SEL].date!==paris().d)return;PS.gt=Date.now();
+navigator.permissions.query({name:"geolocation"}).then(function(p){if(p.state!=="granted")return;navigator.geolocation.getCurrentPosition(function(r){var q=[r.coords.latitude,r.coords.longitude],s=PD.START;if(s&&hav(q,s)>40)return;PS.geo={p:q,t:Date.now()};var t=$("#t-mangiare");if(t&&t.checked&&!PS.add)pDraw()},function(){},{maximumAge:120000,timeout:8000})}).catch(function(){})}
+(function(){var g=$("#mgrid");if(!g)return;g.addEventListener("click",function(e){var b=e.target.closest("[data-a]");if(!b||!g.contains(b)||b.tagName==="INPUT")return;if(b.tagName==="A")return;e.preventDefault();pAct(b.dataset.a,b.dataset.k,b.dataset.v)});
+g.addEventListener("change",function(e){var i=e.target.closest("input[data-a=res]");if(!i)return;MEALS.r=MEALS.r||{};if(i.value)MEALS.r[i.dataset.k]=i.value;else delete MEALS.r[i.dataset.k];mSave();PS.anim="h";pDraw();renderItin();toast(i.value?"Prenotazione salvata: "+i.value:"Prenotazione tolta")});
 g.addEventListener("submit",function(e){var f=e.target.closest(".pmf");if(!f)return;e.preventDefault();var k=f.dataset.k,n=f.n.value.trim();if(!n){f.n.focus();f.classList.remove("shk");void f.offsetWidth;f.classList.add("shk");return}
-var id="u"+Date.now().toString(36);MEALS.o=MEALS.o||{};(MEALS.o[k]=MEALS.o[k]||[]).unshift({id:id,n:n,l:f.l.value.trim(),d:f.t.value.trim(),own:1});MEALS.c=MEALS.c||{};MEALS.c[k]=id;PS.foc[k]=id;PS.add=null;PS.pop=id;PS.anim="h";mSave();pDraw();renderItin();toast("Aggiunto: "+n)})})();
+var id="u"+Date.now().toString(36);MEALS.o=MEALS.o||{};(MEALS.o[k]=MEALS.o[k]||[]).unshift({id:id,n:n,l:f.l.value.trim(),d:f.t.value.trim(),own:1});MEALS.c=MEALS.c||{};MEALS.c[k]=id;PS.foc[k]=id;PS.add=null;PS.pop=id;PS.anim="h";mSave();mExpDel(k);saveSP();pDraw();renderItin();toast("Aggiunto: "+n)});
+setInterval(function(){if(document.hidden||!TRIP||!P||!PS.L.length)return;var t=$("#t-mangiare");if(!t||!t.checked||PS.add)return;pGeo();var a=document.activeElement;if(a&&a.closest&&a.closest("#mgrid")&&/INPUT/.test(a.tagName))return;var s=pHeroHTML(PS.L,pHero(PS.L),false);if(s!==PS.hh){PS.anim="h";pDraw()}},60000)})();
 function renderPasti(){var hb=$("#hbt");if(hb){hb.hidden=!(TRIP&&TRIP.multi);$("#hbc").checked=COPT.hb===1}if(PD.T.mcrit)$("#mcrit").textContent=PD.T.mcrit;var it=P.items,meals=it.filter(function(x){return x.k==="meal"||x.k==="snk"}),h="";
 $("#mlead").textContent=TRIP.multi?"Giorno "+(P.i+1)+", "+dateLong(P.date)+": scegli dove mangiare e, nel mezzo, cosa assaggiare lungo il percorso.":"Scegli dove mangiare: i pasti in ordine e, nel mezzo, cosa assaggiare lungo il percorso.";
 if(!meals.length){$("#mgrid").innerHTML='<p class="meta">Con questi orari non ci sono pasti in città.</p>';return}
@@ -489,8 +522,8 @@ prevT=m.t});
 var tail=acts(prevT,1e9);if(tail.length)h+=bw(btw(tail,meals[meals.length-1],null));
 if(P.kind==="single"||P.kind==="last")h+=bw('<div class="btw"><div class="btwh"><span class="btwi">⏳</span><div><small>'+fmt(P.leave)+' · Ritorno</small><b>Prima dell\'aeroporto</b></div></div><ul class="btwt"><li><span>🛫</span><p>In aeroporto si spende di più: se volete qualcosa per il volo, prendetelo in città.</p></li><li><span>🧴</span><p>Ai controlli non passano liquidi oltre i 100 ml: portate la borraccia vuota e riempitela dopo.</p></li></ul></div>');
 else h+=bw('<div class="btw"><div class="btwh"><span class="btwi">🌙</span><div><small>Dopo cena</small><b>Prima di dormire</b></div></div><ul class="btwt">'+PD.T.night.map(function(t){return '<li><span>'+t[0]+'</span><p>'+esc(t[1])+'</p></li>'}).join("")+'</ul></div>');
-var L=pmeals();PS.L=L;PS.btw=h;if(PS.day!==SEL||L.map(function(x){return x.key}).indexOf(PS.tab)<0){PS.day=SEL;PS.sug=0;PS.add=null;PS.anim="";var hi=pHero(L);PS.tab=L[hi>=0?hi:0].key;PS.prev=Math.max(0,L.map(function(x){return x.key}).indexOf(PS.tab))}
-pDraw();
+var L=pmeals();PS.L=L;PS.btw=h;if(PS.day!==SEL||L.map(function(x){return x.key}).indexOf(PS.tab)<0){PS.day=SEL;PS.sug=0;PS.add=null;PS.rep=null;PS.anim="";var hi=pHero(L);PS.tab=L[hi>=0?hi:0].key;PS.prev=Math.max(0,L.map(function(x){return x.key}).indexOf(PS.tab))}
+pDraw();pGeo();
 function bw(s){var mt=/<small>([\s\S]*?)<\/small><b>([\s\S]*?)<\/b>/.exec(s);return '<details class="btwd"><summary><span class="btwi">'+(/🌙/.test(s.slice(0,120))?"🌙":"⏳")+'</span><span class="bs"><small>'+(mt?mt[1]:"")+'</small><b>'+(mt?mt[2]:"")+'</b></span></summary>'+s+'</details>'}
 function btw(between,a,b){var zs=[];between.forEach(function(x){var z=S[x.id].z;if(zs.indexOf(z)<0)zs.push(z)});
 var ids=[];zs.forEach(function(z){(PD.MEAL.snk[z]||[]).forEach(function(id){if(ids.indexOf(id)<0&&!mHid(id))ids.push(id)})});

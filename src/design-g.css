@@ -1663,3 +1663,27 @@ body.scrolled .appt .apc{font-size:1.3rem}
 @media (prefers-reduced-motion:reduce){.pmh.fl,.pmp.inR,.pmp.inL,.pmd.in,.pmc.pop,.pmc.out,.pmf,.pmf.shk,.btwd>.btw,.pmp .fprest[open]>.pmcw{animation:none!important}.pmind,.pmt,.pmc,.pmbt,.pmtag{transition:none!important}}
 .btwd>summary .btwi{position:static!important;flex:none;box-shadow:none!important;animation:none}
 .btwd>summary .bs{min-width:0}
+/* ===== v167 Pasti: avvisi, prenotazione, segnalazioni, colori per pasto ===== */
+.pmh.m-col{background:linear-gradient(160deg,color-mix(in srgb,var(--ga) 62%,#f2a93b),color-mix(in srgb,var(--ga) 40%,#a85a00))}
+.pmh.m-cen,.pmh.m-snk{background:linear-gradient(160deg,color-mix(in srgb,var(--ga) 62%,#8b6fd6),color-mix(in srgb,var(--ga) 42%,#2c1a5c))}
+:root[data-theme="dark"] .pmh.m-pra,:root:has(#dm:checked) .pmh.m-pra{background:linear-gradient(160deg,var(--ga),color-mix(in srgb,var(--ga) 78%,#fff))}
+:root[data-theme="dark"] .pmh.m-col,:root:has(#dm:checked) .pmh.m-col{background:linear-gradient(160deg,color-mix(in srgb,var(--ga) 60%,#f2a93b),color-mix(in srgb,var(--ga) 55%,#ffd9a0))}
+:root[data-theme="dark"] .pmh.m-cen,:root[data-theme="dark"] .pmh.m-snk,:root:has(#dm:checked) .pmh.m-cen,:root:has(#dm:checked) .pmh.m-snk{background:linear-gradient(160deg,color-mix(in srgb,var(--ga) 60%,#b9a6ff),color-mix(in srgb,var(--ga) 55%,#e2d9ff))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pmh.m-pra{background:linear-gradient(160deg,var(--ga),color-mix(in srgb,var(--ga) 78%,#fff))}
+:root:not([data-theme="light"]) .pmh.m-col{background:linear-gradient(160deg,color-mix(in srgb,var(--ga) 60%,#f2a93b),color-mix(in srgb,var(--ga) 55%,#ffd9a0))}
+:root:not([data-theme="light"]) .pmh.m-cen,:root:not([data-theme="light"]) .pmh.m-snk{background:linear-gradient(160deg,color-mix(in srgb,var(--ga) 60%,#b9a6ff),color-mix(in srgb,var(--ga) 55%,#e2d9ff))}}
+.pmw{margin:0;padding:8px 12px;border-radius:14px;background:color-mix(in srgb,#e0a100 20%,transparent);color:inherit;font-weight:600;font-size:.84rem;line-height:1.4}
+.pmh .pmw{background:color-mix(in srgb,var(--gon) 24%,transparent);opacity:1}
+.pmd .pmw{color:var(--ink)}
+.pmbk{margin:0;color:var(--mute);font-size:.8rem}
+.pmr{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px;padding:0 4px;font:600 .86rem Outfit,system-ui,sans-serif}
+.pmr input{min-height:44px;padding:0 10px;border-radius:12px;border:1.5px solid color-mix(in srgb,var(--ink) 16%,transparent);background:var(--surf);color:var(--ink);font:600 .95rem Outfit,system-ui,sans-serif}
+.pmrep{display:grid;gap:8px;padding-top:6px;font-size:.82rem;color:var(--mute);animation:pmUp .3s ease both}
+.pmrep a.pmc{text-decoration:none}
+.pmc .pme{font-size:1rem;line-height:1}
+.pmc em{font-style:normal;font-weight:500;font-size:.72rem;opacity:.7}
+.pmc.on em{opacity:.85}
+.pmt.dn small{color:var(--mute);text-decoration:none}
+.pmt.dn span{text-decoration:line-through;opacity:.6}
+.pmft{margin-top:2px}
+@media (prefers-reduced-motion:reduce){.pmrep{animation:none!important}}

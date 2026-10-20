@@ -34,7 +34,7 @@ function build(){
   var acts=[];
   (d.items||[]).forEach(function(it,j){
    if(it.k==="act"&&S[it.id]){acts.push(S[it.id].t);add("tappe","t"+i+"_"+j,d.date,it.t-lead,"📍 Tra "+lead+" minuti: "+S[it.id].t,"Alle "+hhmm(it.t)+"."+(it.leg&&it.leg.txt?" "+short(it.leg.txt):""),{grace:25*6e4})}
-   else if(it.k==="meal"&&MN[it.m]){add("pasti","p"+i+"_"+j,d.date,it.t-lead,"🍽️ "+MN[it.m]+" tra "+lead+" minuti","Alle "+hhmm(it.t)+": apri la sezione Pasti per i posti consigliati.",{grace:25*6e4})}
+   else if(it.k==="meal"&&MN[it.m]){var mi=P.mealInfo&&P.mealInfo(i,it);add("pasti","p"+i+"_"+j,d.date,it.t-lead,"🍽️ "+MN[it.m]+" tra "+lead+" minuti",mi?"Alle "+hhmm(it.t)+": hai scelto "+mi.n+(mi.res?" (prenotato alle "+mi.res+")":"")+"."+(mi.warn?" Attenzione: "+mi.warn+".":""):"Alle "+hhmm(it.t)+": apri la sezione Pasti per i posti consigliati.",{grace:25*6e4});if(mi&&mi.res&&tm(mi.res)!=null)add("pasti","r"+i+"_"+j,d.date,tm(mi.res)-60,"📅 Prenotazione alle "+mi.res,mi.n+": hai prenotato per le "+mi.res+". Parti in tempo.",{grace:40*6e4})}
   });
   var first=(d.items||[]).filter(function(x){return x.k==="act"})[0];
   var body=acts.length?"Oggi: "+acts.slice(0,acts.length>4?3:4).join(", ")+(acts.length>4?" e altre "+(acts.length-3):acts.length===4?" e "+acts[3]:"")+".":"Oggi niente di fisso: goditi la città.";
