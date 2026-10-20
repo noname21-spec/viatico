@@ -1908,3 +1908,19 @@ html.npgo #sheet{visibility:hidden}
 #itinerario .stay{margin-top:14px}
 #itinerario>h2.sec#ith{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 #itinerario .wbox .vsw{margin-top:2px}
+
+/* v184 barra: pillola di vetro più larga e alta, la sezione attiva mostra il nome */
+:root{--tb:106px}
+.nbar{height:84px;max-width:620px;padding:0 10px 8px}
+html.sa .nbar{top:calc(var(--apph) - 84px - env(safe-area-inset-bottom,0px)*.45)}
+.nbrow{height:74px;display:flex;gap:4px;padding:7px;border-radius:999px;background:color-mix(in srgb,var(--surf) 58%,transparent);-webkit-backdrop-filter:blur(22px) saturate(1.7);backdrop-filter:blur(22px) saturate(1.7);border:1px solid color-mix(in srgb,var(--surf) 75%,transparent);box-shadow:0 12px 32px rgba(30,20,10,.18),inset 0 1px 0 rgba(255,255,255,.55)}
+.nind{display:none}
+.nt{flex:1 1 0;min-width:0;flex-direction:row;gap:0;border-radius:999px;transition:flex-grow .38s cubic-bezier(.3,1.15,.4,1),background-color .3s,color .25s,transform .15s}
+.nt svg{width:26px;height:26px;flex:none}
+.nt span{max-width:0;opacity:0;margin-left:0;font-size:.86rem;font-weight:700;letter-spacing:.005em;transition:max-width .38s cubic-bezier(.3,1.15,.4,1),opacity .25s,margin .38s}
+.nt[aria-current=page]{flex-grow:2.3;background:var(--ga);color:var(--gon);box-shadow:0 4px 14px color-mix(in srgb,var(--ga) 40%,transparent)}
+.nt[aria-current=page] span{max-width:90px;opacity:1;margin-left:8px}
+.nfab{bottom:98px}
+.nmenu{bottom:162px}
+@media (max-width:350px){.nt[aria-current=page] span{font-size:.78rem}.nt[aria-current=page]{flex-grow:2.6}}
+@media (prefers-reduced-motion:reduce){.nt,.nt span{transition:none}}
