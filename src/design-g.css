@@ -1856,3 +1856,8 @@ html.npgo #sheet{visibility:hidden}
 .maphint.on{opacity:1;transform:translate(-50%,0)}
 .map.fs .maphint{display:none}
 @media (prefers-reduced-motion:reduce){.maphint{transition:none}}
+
+/* v180 · impostazioni: maniglia e chiusura con lo swipe */
+.shgrab{display:block;width:40px;height:5px;margin:0 auto 10px;border-radius:9px;background:color-mix(in srgb,var(--ink) 22%,transparent)}
+#sheet.sdis{opacity:0!important;transition:none!important}
+#sheet.on{background:color-mix(in srgb,#000 calc(22% * var(--sd,1)),transparent)}

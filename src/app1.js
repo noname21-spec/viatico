@@ -1275,6 +1275,18 @@ $("#gear").addEventListener("click",function(){sheet.classList.remove("home");sh
 $("#dgear").addEventListener("click",function(){sheet.classList.add("home","on");sheet.setAttribute("aria-hidden","false")});
 $("#shclose").addEventListener("click",closeSheet);
 sheet.addEventListener("click",function(e){if(e.target===sheet)closeSheet()});
+/* chiusura con lo swipe verso il basso */
+(function(){var c=sheet.querySelector(".shc");if(!c)return;var y0=0,x0=0,dy=0,on=0,t0=0,busy=false;
+var g=document.createElement("i");g.className="shgrab";g.setAttribute("aria-hidden","true");c.insertBefore(g,c.firstChild);
+function tr(v){if(v)c.style.setProperty("transition",v,"important");else c.style.removeProperty("transition")}
+function reset(){c.style.translate="";tr("");sheet.style.removeProperty("--sd")}
+c.addEventListener("touchstart",function(e){if(busy||e.touches.length!==1||c.scrollTop>0&&!e.target.closest(".shgrab")){on=-1;return}y0=e.touches[0].clientY;x0=e.touches[0].clientX;dy=0;on=0;t0=Date.now();tr("none")},{passive:true});
+c.addEventListener("touchmove",function(e){if(on<0||busy)return;var t=e.touches[0],d=t.clientY-y0,dx=t.clientX-x0;if(!on){if(d>8&&d>Math.abs(dx)*1.3&&c.scrollTop<=0)on=1;else if(Math.abs(dx)>10||d<-8){on=-1;tr("");return}else return}
+dy=Math.max(0,d);c.style.translate="0 "+dy+"px";sheet.style.setProperty("--sd",String(Math.max(.2,1-dy/420)));if(e.cancelable)e.preventDefault()},{passive:false});
+function end(){if(on!==1){if(on===0)tr("");return}on=0;var v=dy/Math.max(1,Date.now()-t0);
+if(dy>110||v>.6){busy=true;tr("translate .22s ease");c.style.translate="0 "+(c.offsetHeight+20)+"px";setTimeout(function(){sheet.classList.add("sdis");closeSheet();reset();setTimeout(function(){sheet.classList.remove("sdis");busy=false},620)},230)}
+else{tr("translate .35s cubic-bezier(.2,1.2,.35,1)");c.style.translate="0 0";sheet.style.removeProperty("--sd");setTimeout(function(){tr("");c.style.translate=""},360)}}
+c.addEventListener("touchend",end);c.addEventListener("touchcancel",end)})();
 $$("[data-edit]").forEach(function(b){b.addEventListener("click",function(){openSetup(false,+b.dataset.edit||0)})});
 ["via-adb-key","par-adb-key","via-vlive","via-vlive-n"].forEach(function(k){try{localStorage.removeItem(k)}catch(e){}});
 $("#shreset").addEventListener("click",function(){if(!confirm("Cancellare TUTTI i viaggi, spese, liste e la chiave salvati su questo telefono?"))return;
