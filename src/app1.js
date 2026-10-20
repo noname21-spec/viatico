@@ -421,7 +421,7 @@ renderVcost();
 $("#vtips").innerHTML='<details><summary>🛬 Dall\'aeroporto di '+esc(A.n)+(TRIP.multi?' all\'alloggio':' al centro')+'</summary><ul><li>'+esc(A.arr)+'</li><li>'+esc(A.tk)+'</li>'+(PD.fx.voliTip?PD.fx.voliTip(E):(A.vt?'<li>'+esc(A.vt)+'</li>':''))+'</ul></details><details><summary>🛫 Ritorno in aeroporto'+(RA!==A?' ('+esc(RA.n)+')':'')+'</summary><ul>'+(RA!==A?'<li>Il volo di ritorno parte da '+esc(RA.n)+', non da '+esc(A.n)+'. '+esc(RA.tk)+'</li>':'')+'<li>'+(TRIP.multi?"L'ultimo giorno parti alle "+fmt(DL.leave)+". ":"Parti dall'ultima tappa alle "+fmt(DL.leave)+". ")+esc(DL.items[DL.items.length-1].ret.txt)+'</li><li>Calcolo l\'arrivo in aeroporto almeno '+fdur(RA.buf)+' prima del decollo'+(DL.imb!=null?' e 45 minuti prima dell\'apertura dell\'imbarco':'')+'.</li></ul></details>'}
 
 /* ===== pasti ===== */
-var MEALS=lj("via-meals",{}),PS={tab:null,foc:{},add:null,rep:null,sug:0,pop:null,anim:"",prev:0,L:[],btw:"",day:-1,geo:null,gt:0,hh:""};
+var MEALS=lj("via-meals",{}),PS={open:{},menu:null,fil:false,hrow:false,foc:{},add:null,pop:null,anim:"",L:[],day:-1,geo:null,gt:0,hh:""};
 function mSave(){var e=!(MEALS.h&&MEALS.h.length);["c","o","s","r"].forEach(function(k){if(Object.keys(MEALS[k]||{}).length)e=false});ls("via-meals",e?null:JSON.stringify(MEALS))}
 function mHid(id){return !!(MEALS.h&&MEALS.h.indexOf(id)>=0)}
 function mFind(id){if(V[id])return V[id];var r=null;Object.keys(MEALS.o||{}).forEach(function(k){MEALS.o[k].forEach(function(x){if(x.id===id)r=x})});return r}
@@ -456,66 +456,92 @@ function pStatTxt(o){return (o.s.c==="ok"?"✓ ":o.s.c==="ko"?"⚠️ ":"⏱ ")+
 function pMeta(v,wd){return (v.r?'<span>★ '+esc(String(v.r))+'</span>':'')+(v.h&&v.h.length?'<span>🕐 '+esc(hrsTxt(v,wd))+'</span>':'')}
 function pBook(m,v){if(!v||v.own||(m.mm!=="pra"&&m.mm!=="cen"))return"";var r=parseFloat(String(v.r).replace(",","."));return (r>=4.6||/prenot/i.test((v.d||"")+" "+(v.pr||"")))?'<p class="pmbk">📅 Meglio prenotare: è molto apprezzato e può esserci fila (indicazione di massima).</p>':""}
 function pMore(m){var o=mOrig(P.i,m.it),k=m.mm==="col"?"breakfast cafe":m.mm==="snk"?"snack":"restaurant",loc=o.pos?o.pos.join(","):PD.hub.n+" "+PD.n;return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(fpWords()+(FP.p===1?"cheap ":FP.p===2?"affordable ":"")+k+" near "+loc)}
-function pHeroHTML(L,hi,fl){if(hi<0)return"";var m=L[hi],di=P.i,n=paris(),td=TRIP.days[SEL].date===n.d,pk=MEALS.c&&MEALS.c[m.key],lk,btn,o=null,v,id,pl=pList(m);
-var cands=pl.main.filter(function(x){return x.s.c!=="ko"});if(!cands.length)cands=pl.main;
-if(td)lk=(m.it.t<=n.m?"Adesso":"Prossimo")+" · "+m.nm+(m.it.t>n.m?" alle "+fmt(m.it.t):"");else lk=(hi===0?"Primo pasto":m.nm)+" · "+fmt(m.it.t);
-if(pk&&mFind(pk)){id=pk;v=mFind(pk);lk="Hai scelto · "+m.nm}else if(cands.length){o=cands[PS.sug%cands.length];id=o.id;v=o.v;lk+=" · consigliato"}else return"";
-var og=mOrig(di,m.it),w=mWalk(v,og),res=mRes(di,m.it),warn=pk?mWarn(di,m.it,v,og):"";
-btn=pk?'<a class="pmbt" href="'+esc(mGo(v))+'" target="_blank" rel="noopener">Portami lì</a><button class="pmbt s" data-a="un" data-k="'+esc(m.key)+'">Cambia</button>':'<button class="pmbt" data-a="ch" data-k="'+esc(m.key)+'" data-v="'+esc(id)+'">Scelgo questo</button>'+(cands.length>1?'<button class="pmbt s" data-a="sug">Un altro</button>':'')+'<button class="pmbt s" data-a="tab" data-k="'+esc(m.key)+'">Tutti i locali</button>';
-var d=v.own?(v.d||""):(v.a?v.a+". ":"")+(v.d||"");
-return '<div class="pmh m-'+m.mm+(fl?" fl":"")+'"><span class="lk">'+esc(lk)+'</span><h3>'+esc(v.n)+'</h3><div class="pmm">'+(w?'<span>'+mWalkTxt(w,og)+'</span>':'')+(o?'<span>'+pStatTxt(o)+'</span>':'')+(res?'<span>📅 '+esc(res)+'</span>':'')+(v.own?'':pMeta(v,WD))+'</div>'+(warn?'<p class="pmw">'+esc(warn)+'</p>':'')+(d?'<p>'+esc(d)+'</p>':'')+(v.pr?'<p>'+esc(v.pr)+'</p>':'')+'<div class="pmb2">'+btn+'</div></div>'}
-function pPanel(m){var di=P.i,h='<div class="pmph"><b>'+fmt(m.it.t)+' · '+esc(m.ttl)+'</b>';
-if(m.hotel)return h+'</div>'+hotelBf();
-if(!m.ids)return h+'</div>'+nearBox(m.mm==="snk"?"snk":m.mm);
-var pl=pList(m),own=(MEALS.o&&MEALS.o[m.key])||[],ch=MEALS.c&&MEALS.c[m.key],fo=PS.foc[m.key]||ch,hid=m.ids.filter(mHid).length,og=mOrig(di,m.it);
-function chip(id,name,ko,v){var t=ftag(id),w=mWalk(v,og);return '<button class="pmc'+(ch===id?" on":"")+(fo===id&&ch!==id?" fo":"")+(ko?" ko":"")+(PS.pop===id?" pop":"")+'" data-a="chip" data-k="'+esc(m.key)+'" data-v="'+esc(id)+'" aria-pressed="'+(ch===id)+'">'+(ch===id?'<i aria-hidden="true">✓</i>':'<span class="pme" aria-hidden="true">'+(t?FKE[t.k]:"📍")+'</span>')+esc(name)+(w?'<em>'+w.min+'′</em>':'')+'</button>'}
-h+='<span class="pmtag'+(m.done?"":ch?" ok":"")+'">'+(m.done?"Fatto":ch?"Scelto":"Da scegliere")+'</span></div><div class="pmcw">'+own.map(function(x){return chip(x.id,x.n,0,x)}).join("")+pl.main.map(function(o){return chip(o.id,o.v.n,o.s.c==="ko",o.v)}).join("")+'<button class="pmc add" data-a="addo" data-k="'+esc(m.key)+'">+ Tuo</button></div>';
-if(pl.rest.length)h+='<details class="fprest"><summary>Altri '+pl.rest.length+' locali (non adatti o da verificare)</summary><div class="pmcw">'+pl.rest.map(function(o){return chip(o.id,o.v.n,1,o.v)}).join("")+'</div></details>';
-if(PS.add===m.key)h+='<form class="pmf" data-k="'+esc(m.key)+'"><label>Nome<input name="n" autocomplete="off" maxlength="60" placeholder="Per esempio: Da Enzo al 29"></label><label>Link o indirizzo<input name="l" autocomplete="off" maxlength="300" placeholder="Link di Google Maps o via"></label><label>Nota<input name="t" autocomplete="off" maxlength="140" placeholder="Prenotato per le 13"></label><div class="pmb2"><button class="pmbt" type="submit">Aggiungi</button><button class="pmbt g" type="button" data-a="adc">Annulla</button></div></form>';
-else if(fo&&mFind(fo)){var v=mFind(fo),o=pl.main.concat(pl.rest).filter(function(x){return x.id===fo})[0],q=v.own?"":vq(v),w=mWalk(v,og),res=mRes(di,m.it),warn=ch===fo?mWarn(di,m.it,v,og):"";
-h+='<div class="pmd'+(PS.anim==="d"?" in":"")+'"><div class="vhd"><b>'+(v.own?esc(v.n):'<a target="_blank" rel="noopener" href="'+esc(PD.G(q))+'">'+esc(v.n)+'</a>')+'</b>'+(o?pStat(o):'<span class="st ok">Tuo</span>')+'</div>'+(w?'<div class="vm"><span>'+mWalkTxt(w,og)+'</span></div>':'')+(warn?'<p class="pmw">'+esc(warn)+'</p>':'')+
-(v.own?(v.d?'<p class="vd">'+esc(v.d)+'</p>':'')+(v.l&&!/^https?:\/\//i.test(v.l)?'<p class="vp">'+esc(v.l)+'</p>':''):'<p class="vd">'+esc(v.a)+'. '+esc(v.d)+'</p><div class="vm"><span class="vr">★ '+esc(String(v.r))+'</span><span class="hrs">🕐 '+esc(hrsTxt(v,WD))+'</span></div><p class="vp">'+esc(v.pr)+'</p>'+fbadge(fo,o&&o.extra)+pBook(m,v))+
+function pBanner(L,hi){if(hi<0)return"";var m=L[hi],di=P.i,n=paris(),td=TRIP.days[SEL].date===n.d,ch=MEALS.c&&MEALS.c[m.key],v=ch&&mFind(ch),og=mOrig(di,m.it),
+lk=(td?(m.it.t<=n.m?"Adesso":"Prossimo"):(hi===0?"Primo pasto":"Pasto"))+" · "+m.nm+(td&&m.it.t>n.m?" alle "+fmt(m.it.t):""),warn=v?mWarn(di,m.it,v,og):"";
+return '<div class="pban"><div class="pbx"><small>'+esc(lk)+'</small><b>'+(v?esc(v.n):"Da scegliere")+'</b></div>'+(v?'<a class="pbb" href="'+esc(mGo(v))+'" target="_blank" rel="noopener">Portami lì</a>':'<button type="button" class="pbb" data-a="open" data-k="'+esc(m.key)+'">Scegli</button>')+'</div>'+(warn?'<p class="pmw">'+esc(warn)+'</p>':'')}
+function pVsub(o,v,og){var w=mWalk(v,og);return (w?w.min+" min · ":"")+(v.r?"★ "+v.r+" · ":"")+(o?o.s.t:"")}
+function pRow(m,id,o,og){var ch=MEALS.c&&MEALS.c[m.key],v=mFind(id);if(!v)return"";var sb=v.own?(v.d||"Il tuo posto"):pVsub(o,v,og);
+return '<div class="pvr'+(ch===id?" on":"")+(o&&o.s.c==="ko"?" ko":"")+(PS.pop===id?" pop":"")+'" data-vid="'+esc(id)+'"><button type="button" class="pk" data-a="pick" data-k="'+esc(m.key)+'" data-v="'+esc(id)+'" aria-pressed="'+(ch===id)+'"><i class="rd" aria-hidden="true"></i><span><b>'+esc(v.n)+'</b><span class="psb">'+esc(sb)+'</span></span></button><button type="button" class="mo" data-a="more" data-k="'+esc(m.key)+'" data-v="'+esc(id)+'" aria-label="Altro su '+esc(v.n)+'" aria-haspopup="dialog">⋯</button></div>'}
+function pDet(m,fo,o,og,pl){var di=P.i,v=mFind(fo),ch=MEALS.c&&MEALS.c[m.key],res=mRes(di,m.it),warn=ch===fo?mWarn(di,m.it,v,og):"",q=v.own?"":vq(v),w=mWalk(v,og);
+return '<div class="pdt'+(PS.anim==="d"||PS.anim==="h"?" in":"")+'"><div class="vhd"><b>'+(v.own?esc(v.n):'<a target="_blank" rel="noopener" href="'+esc(PD.G(q))+'">'+esc(v.n)+'</a>')+'</b>'+(ch===fo?'<span class="tag ok">Scelto</span>':'')+'</div>'+
+(v.own?'<p>'+esc(v.d||"")+'</p>'+(v.l&&!/^https?:\/\//i.test(v.l)?'<p class="dm">'+esc(v.l)+'</p>':''):'<p class="dm">'+esc((w?w.min+" min "+og.l+" · ":"")+(o?o.s.t:"")+" · ★ "+v.r+" · "+hrsTxt(v,WD))+'</p><p>'+esc(v.a)+'. '+esc(v.d)+' '+esc(v.pr)+'</p>'+fbadge(fo,o&&o.extra)+pBook(m,v))+
+(warn?'<p class="pmw">'+esc(warn)+'</p>':'')+
 (ch===fo?'<label class="pmr"><span>📅 Prenotazione</span><input type="time" data-a="res" data-k="'+esc(m.key)+'" value="'+esc(res)+'" aria-label="Orario della prenotazione"></label>':'')+
-'<div class="pmb2">'+(ch===fo?'<button class="pmbt s" data-a="un" data-k="'+esc(m.key)+'">Togli</button>':'<button class="pmbt" data-a="ch" data-k="'+esc(m.key)+'" data-v="'+esc(fo)+'">Scelgo questo</button>')+'<a class="pmbt s" href="'+esc(mGo(v))+'" target="_blank" rel="noopener">Portami lì</a><button class="pmbt g" data-a="'+(v.own?"rm":"hide")+'" data-k="'+esc(m.key)+'" data-v="'+esc(fo)+'">'+(v.own?"Rimuovi":"Nascondi")+'</button>'+(v.own?'':'<button class="pmbt g" data-a="rep" data-k="'+esc(m.key)+'" data-v="'+esc(fo)+'">Segnala un errore</button>')+'</div>'+(PS.rep===fo&&!v.own?pRep(m,v):'')+'</div>'}
-else h+='<p class="pmhint">Tocca un locale per leggere la descrizione.</p>';
-if(hid)h+='<div class="pmhid">'+hid+(hid===1?" nascosto":" nascosti")+' <button data-a="unhide" data-k="'+esc(m.key)+'">Ripristina</button></div>';
-if(m.it.k==="meal"&&PD.ORD&&PD.ORD[m.mm])h+='<details class="pmo"><summary>🍽️ Cosa ordinare</summary>'+ordBox(m.mm)+'</details>';
-h+='<div class="pmb2 pmft"><a class="pmbt s" href="'+esc(pMore(m))+'" target="_blank" rel="noopener">🔎 Cerca altri locali qui</a><button class="pmbt g" data-a="done" data-k="'+esc(m.key)+'">'+(m.done?"Rimetti in lista":"Già fatto o saltato")+'</button></div>';
-return h+fpNote()}
-function pRep(m,v){var a=(($("#hlmail")||{}).getAttribute&&$("#hlmail").getAttribute("href"))||"",ad=a.indexOf("mailto:")===0?a.slice(7).split("?")[0]:"";if(!ad)return"";
-var L=[["Chiuso per sempre","Il locale risulta chiuso definitivamente"],["Orari diversi","Gli orari indicati non sono corretti"],["Prezzo diverso","Il prezzo indicato non è corretto"],["Altro","Altro problema"]];
-return '<div class="pmrep"><span>Cosa non torna?</span><div class="pmcw">'+L.map(function(x){return '<a class="pmc" href="'+esc("mailto:"+ad+"?subject="+encodeURIComponent("Viaticum · segnalazione locale: "+v.n)+"&body="+encodeURIComponent("Locale: "+v.n+" ("+v.a+", "+PD.n+")\nProblema: "+x[1]+"\n\nDettagli (facoltativi): "))+'">'+esc(x[0])+'</a>'}).join("")+'</div></div>'}
+'<div class="prw">'+(ch===fo?'<a class="pbt" href="'+esc(mGo(v))+'" target="_blank" rel="noopener">Portami lì</a><button type="button" class="pbt s" data-a="un" data-k="'+esc(m.key)+'">Togli</button>':'<button type="button" class="pbt" data-a="pick" data-k="'+esc(m.key)+'" data-v="'+esc(fo)+'">Scelgo questo</button><a class="pbt s" href="'+esc(mGo(v))+'" target="_blank" rel="noopener">Portami lì</a>')+'<button type="button" class="pbt ib" data-a="more" data-k="'+esc(m.key)+'" data-v="'+esc(fo)+'" aria-label="Altro" aria-haspopup="dialog">⋯</button></div></div>'}
+function pBody(m,i,hi,last){var di=P.i,h="",ch=MEALS.c&&MEALS.c[m.key];
+if(PS.pre&&PS.pre[m.key]&&!(PS.hrow&&i===hi))h+=pBw(PS.pre[m.key],"pre|"+m.key,"","in");
+if(m.hotel)h+='<div class="ptx">'+hotelBf()+'</div>';
+else if(!m.ids)h+='<div class="ptx pnear">'+nearBox(m.mm==="snk"?"snk":m.mm)+'</div>';
+else{var pl=pList(m),og=mOrig(di,m.it),own=(MEALS.o&&MEALS.o[m.key])||[],fo=PS.foc[m.key]||ch,hid=m.ids.filter(mHid).length,all=pl.main.concat(pl.rest),byId={};all.forEach(function(o){byId[o.id]=o});
+var rows=own.map(function(x){return x.id}).concat(pl.main.map(function(o){return o.id})).filter(function(id){return id!==fo});
+if(fo&&mFind(fo))h+=pDet(m,fo,byId[fo],og,pl)+(rows.length?'<span class="pmt2">Altre opzioni</span>':'');
+h+=rows.map(function(id){return pRow(m,id,byId[id],og)}).join("");
+if(!rows.length&&!(fo&&mFind(fo)))h+='<p class="pmhint">Nessun locale con questi filtri.</p>';
+if(pl.rest.length)h+='<details class="fprest"><summary>Altri '+pl.rest.length+' locali (non adatti o da verificare)</summary>'+pl.rest.filter(function(o){return o.id!==fo}).map(function(o){return pRow(m,o.id,o,og)}).join("")+'</details>';
+if(PS.add===m.key)h+='<form class="pmf" data-k="'+esc(m.key)+'"><label>Nome<input name="n" autocomplete="off" maxlength="60" placeholder="Per esempio: Da Enzo al 29"></label><label>Link o indirizzo<input name="l" autocomplete="off" maxlength="300" placeholder="Link di Google Maps o via"></label><label>Nota<input name="t" autocomplete="off" maxlength="140" placeholder="Prenotato per le 13"></label><div class="prw"><button class="pbt" type="submit">Aggiungi</button><button class="pbt g" type="button" data-a="adc">Annulla</button></div></form>';
+else h+='<div class="prw pft"><button type="button" class="padd" data-a="addo" data-k="'+esc(m.key)+'">+ Un posto tuo</button>'+(hid?'<span class="pmhid">'+hid+(hid===1?" nascosto":" nascosti")+' <button type="button" data-a="unhide" data-k="'+esc(m.key)+'">Ripristina</button></span>':'')+(rows.length||fo?'':'<a class="padd" href="'+esc(pMore(m))+'" target="_blank" rel="noopener">🔎 Cerca altri locali qui</a>')+'</div>';
+if(m.it.k==="meal"&&PD.ORD&&PD.ORD[m.mm])h+='<details class="pmo"><summary>🍽️ Cosa ordinare</summary>'+ordBox(m.mm)+'</details>'}
+if(last&&PS.post&&PS.post.length)h+='<h3 class="pmsub">Dopo questo pasto</h3>'+PS.post.map(function(x,j){return pBw(x,"post|"+j,"","in")}).join("");
+return h}
+function pRep(v){var a=(($("#hlmail")||{}).getAttribute&&$("#hlmail").getAttribute("href"))||"",ad=a.indexOf("mailto:")===0?a.slice(7).split("?")[0]:"";if(!ad)return"";
+return [["Chiuso per sempre","Il locale risulta chiuso definitivamente"],["Orari diversi","Gli orari indicati non sono corretti"],["Prezzo diverso","Il prezzo indicato non è corretto"],["Altro","Altro problema"]].map(function(x){return '<a class="pmi psub" role="menuitem" href="'+esc("mailto:"+ad+"?subject="+encodeURIComponent("Viaticum · segnalazione locale: "+v.n)+"&body="+encodeURIComponent("Locale: "+v.n+" ("+v.a+", "+PD.n+")\nProblema: "+x[1]+"\n\nDettagli (facoltativi): "))+'">'+esc(x[0])+'</a>'}).join("")}
 function pBw(s,id,small,cls){var mt=/<small>([\s\S]*?)<\/small><b>([\s\S]*?)<\/b>/.exec(s);return '<details class="btwd'+(cls?" "+cls:"")+'" data-b="'+esc(id)+'"'+(PS.bo&&PS.bo[id]?" open":"")+'><summary><span class="btwi">'+(/🌙/.test(s.slice(0,120))?"🌙":"⏳")+'</span><span class="bs"><small>'+(small||(mt?mt[1]:""))+'</small><b>'+(mt?mt[2]:"")+'</b></span></summary>'+s+'</details>'}
-function pDraw(){var g=$("#mgrid"),L=PS.L;if(!g||!L.length)return;L.forEach(function(x){x.done=!!(MEALS.s&&MEALS.s[x.key])});var hi=pHero(L),ti=Math.max(0,L.map(function(m){return m.key}).indexOf(PS.tab)),m=L[ti],y=window.scrollY,h=pHeroHTML(L,hi,PS.anim==="h");PS.hh=pHeroHTML(L,hi,false);
-var hm=hi>=0?L[hi]:null,nw=paris(),hrow=!!(hm&&PS.pre&&PS.pre[hm.key]&&TRIP.days[SEL].date===nw.d&&hm.it.t>nw.m);
-if(hrow)h+='<div class="pmnow">'+pBw(PS.pre[hm.key],"hero|"+hm.key,"Nel frattempo · tra "+fdur(hm.it.t-nw.m)+" si mangia")+'</div>';
-h+='<div class="pmtabs" role="tablist" aria-label="Pasti" style="--n:'+L.length+'"><i class="pmind" aria-hidden="true" style="transform:translateX('+(PS.prev*100)+'%)"></i>'+L.map(function(x,i){var c=MEALS.c&&MEALS.c[x.key],v=c&&mFind(c);return '<button class="pmt'+(v&&!x.done?" ok":"")+(x.done?" dn":"")+'" role="tab" aria-selected="'+(i===ti)+'" data-a="tab" data-k="'+esc(x.key)+'"><span>'+esc(x.nm)+'</span><small>'+(x.done?"✓ fatto":v?esc(v.n):fmt(x.it.t))+'</small></button>'}).join("")+'</div>';
-var pr=(PS.pre&&PS.pre[m.key]&&!(hrow&&hm.key===m.key))?pBw(PS.pre[m.key],"pre|"+m.key,"","in"):"",po=(ti===L.length-1&&PS.post&&PS.post.length)?'<h3 class="pmsub">Dopo questo pasto</h3>'+PS.post.map(function(x,i){return pBw(x,"post|"+i,"","in")}).join(""):"";
-h+='<section class="pmp'+(PS.anim==="r"?" inR":PS.anim==="l"?" inL":"")+'" role="tabpanel">'+pr+pPanel(m)+po+'</section>';
-g.innerHTML=h;window.scrollTo(0,y);var ind=g.querySelector(".pmind");if(ind){requestAnimationFrame(function(){requestAnimationFrame(function(){ind.style.transform="translateX("+(ti*100)+"%)"})})}
-PS.prev=ti;PS.anim="";PS.pop=null}
+function pDraw(){var g=$("#mgrid"),L=PS.L;if(!g||!L.length)return;L.forEach(function(x){x.done=!!(MEALS.s&&MEALS.s[x.key])});var hi=pHero(L),y=window.scrollY,nw=paris(),hm=hi>=0?L[hi]:null,
+h=pBanner(L,hi);PS.hh=h;PS.hrow=!!(hm&&PS.pre&&PS.pre[hm.key]&&TRIP.days[SEL].date===nw.d&&hm.it.t>nw.m);
+if(PS.hrow)h+='<div class="pmnow">'+pBw(PS.pre[hm.key],"hero|"+hm.key,"Nel frattempo · tra "+fdur(hm.it.t-nw.m)+" si mangia")+'</div>';
+L.forEach(function(m,i){var op=!!PS.open[m.key],ch=MEALS.c&&MEALS.c[m.key],v=ch&&mFind(ch),sb,pl;
+if(m.done)sb="✓ Già fatto";else if(v)sb="✓ "+v.n;else if(m.hotel)sb="Colazione in hotel";else if(!m.ids)sb="Vicino all'alloggio";else{pl=pList(m);sb="Da scegliere · "+(pl.main.length+((MEALS.o&&MEALS.o[m.key])||[]).length)+" locali"}
+h+='<section class="pmrow'+(op?" op":"")+'" data-row="'+esc(m.key)+'"><button type="button" class="prh" data-a="tg" data-k="'+esc(m.key)+'" aria-expanded="'+op+'"><span class="ptm">'+fmt(m.it.t)+'</span><span><b>'+esc(m.nm)+(i===hi&&TRIP.days[SEL].date===nw.d&&m.it.t<=nw.m?" · adesso":"")+'</b><span class="psb'+((v||m.done)?" ok":"")+'">'+esc(sb)+'</span></span><i class="cv" aria-hidden="true"></i></button>'+(op?'<div class="prb">'+pBody(m,i,hi,i===L.length-1)+'</div>':'')+'</section>'});
+g.innerHTML=h;window.scrollTo(0,y);PS.anim="";PS.pop=null;pOv()}
+function pChoose(k,v){var m=PS.L.filter(function(x){return x.key===k})[0];MEALS.c[k]=v;PS.pop=v;PS.foc[k]=v;PS.anim="h";delete MEALS.s[k];mSave();var o=mFind(v),ex=mExpSet(k,o,m.mm);pDraw();renderItin();if(o)toast("Scelto: "+o.n+(ex?" · spesa stimata aggiunta":""))}
+function pUn(k){delete MEALS.c[k];delete MEALS.r[k];PS.anim="h";mSave();if(mExpDel(k)){saveSP();try{renderCosti(false);renderSpese()}catch(e){}}pDraw();renderItin()}
 function pAct(a,k,v){var m=PS.L.filter(function(x){return x.key===k})[0];MEALS.c=MEALS.c||{};MEALS.o=MEALS.o||{};MEALS.s=MEALS.s||{};MEALS.r=MEALS.r||{};
-if(a==="tab"){var ni=PS.L.indexOf(m),oi=PS.L.map(function(x){return x.key}).indexOf(PS.tab);if(k===PS.tab&&oi>=0){var pp=document.querySelector(".pmp");if(pp)pp.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth",block:"center"});return}PS.tab=k;PS.anim=ni>oi?"r":"l";PS.add=null;pDraw();return}
-if(a==="chip"){PS.foc[k]=v;PS.anim="d";PS.add=null;pDraw();return}
-if(a==="sug"){PS.sug++;PS.anim="h";pDraw();return}
-if(a==="addo"){PS.add=k;PS.tab=k;pDraw();var f=document.querySelector(".pmf input");if(f)f.focus();return}
+if(a==="tg"){PS.open[k]=!PS.open[k];pDraw();return}
+if(a==="open"){PS.open[k]=true;pDraw();var r=document.querySelector('[data-row="'+k+'"]');if(r)r.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth",block:"start"});return}
+if(a==="pick"){if(MEALS.c[k]===v)pUn(k);else pChoose(k,v);return}
+if(a==="un"){pUn(k);return}
+if(a==="more"){PS.menu={k:k,v:v,rep:false};pOv();return}
+if(a==="xm"){PS.menu=null;PS.fil=false;pOv();return}
+if(a==="det"){PS.foc[k]=v;PS.open[k]=true;PS.menu=null;PS.anim="d";pDraw();return}
+if(a==="rep"){PS.menu.rep=!PS.menu.rep;pOv();return}
+if(a==="addo"){PS.add=k;PS.open[k]=true;pDraw();var f=document.querySelector(".pmf input");if(f)f.focus();return}
 if(a==="adc"){PS.add=null;pDraw();return}
-if(a==="rep"){PS.rep=PS.rep===v?null:v;pDraw();return}
-if(a==="done"){if(MEALS.s[k])delete MEALS.s[k];else MEALS.s[k]=1;PS.anim="h";mSave();var hi=pHero(PS.L);pDraw();toast(MEALS.s[k]?"Segnato come fatto":"Rimesso in lista");return}
-if(a==="ch"){MEALS.c[k]=v;PS.pop=v;PS.foc[k]=v;PS.anim="h";delete MEALS.s[k];mSave();var o=mFind(v),ex=mExpSet(k,o,m.mm);pDraw();renderItin();if(o)toast("Scelto: "+o.n+(ex?" · spesa stimata aggiunta":""));return}
-if(a==="un"){delete MEALS.c[k];delete MEALS.r[k];PS.anim="h";mSave();if(mExpDel(k)){saveSP();try{renderCosti(false);renderSpese()}catch(e){}}pDraw();renderItin();return}
+if(a==="done"){PS.menu=null;if(MEALS.s[k]){delete MEALS.s[k]}else{MEALS.s[k]=1;PS.open[k]=false}PS.anim="h";mSave();pDraw();toast(MEALS.s[k]?"Segnato come fatto":"Rimesso in lista");return}
 if(a==="unhide"){MEALS.h=(MEALS.h||[]).filter(function(id){return (m.ids||[]).indexOf(id)<0});mSave();pDraw();renderItin();toast("Locali ripristinati");return}
-if(a==="hide"||a==="rm"){var el=document.querySelector('.pmc[data-v="'+v+'"]');var done=function(){if(a==="hide"){MEALS.h=MEALS.h||[];if(MEALS.h.indexOf(v)<0)MEALS.h.push(v)}else{MEALS.o[k]=(MEALS.o[k]||[]).filter(function(x){return x.id!==v})}
+if(a==="hide"||a==="rm"){PS.menu=null;pOv();var el=document.querySelector('.pvr[data-vid="'+v+'"]');var done=function(){if(a==="hide"){MEALS.h=MEALS.h||[];if(MEALS.h.indexOf(v)<0)MEALS.h.push(v)}else{MEALS.o[k]=(MEALS.o[k]||[]).filter(function(x){return x.id!==v})}
 Object.keys(MEALS.c).forEach(function(kk){if(MEALS.c[kk]===v){delete MEALS.c[kk];delete MEALS.r[kk];mExpDel(kk);saveSP()}});delete PS.foc[k];PS.anim="h";mSave();pDraw();try{renderCosti(false);renderSpese()}catch(e){}renderItin();toast(a==="hide"?"Nascosto. Lo ritrovi sotto con «Ripristina»":"Rimosso")};
 if(el&&!matchMedia("(prefers-reduced-motion:reduce)").matches){el.classList.add("out");setTimeout(done,200)}else done()}}
+/* menu ⋯ e filtri: fogli dal basso */
+var FOPT={d:[["veg","🥦","Vegetariano"],["vegan","🌱","Vegano"],["gf","🌾","Senza glutine"]],p:[["0","💶","Qualsiasi"],["1","€","Economico"],["2","€€","Medio o meno"]]};
+function pOv(){var o=$("#pov");if(!o){o=document.createElement("div");o.id="pov";document.body.appendChild(o)}var h="",s=PS.menu,had=o.firstChild;
+if(s){var m=PS.L.filter(function(x){return x.key===s.k})[0],v=mFind(s.v),own=v&&v.own,ch=MEALS.c&&MEALS.c[s.k];
+if(m&&v)h='<div class="pbg" data-a="xm"></div><div class="psh" role="dialog" aria-label="Azioni su '+esc(v.n)+'"><i class="hd" aria-hidden="true"></i><div class="pst"><b>'+esc(v.n)+'</b><button type="button" data-a="xm" aria-label="Chiudi">✕</button></div>'+
+(((PS.foc[s.k]||ch)!==s.v)?'<button type="button" class="pmi" role="menuitem" data-a="det" data-k="'+esc(s.k)+'" data-v="'+esc(s.v)+'">ℹ️ Dettagli</button>':'')+
+'<a class="pmi" role="menuitem" href="'+esc(mGo(v))+'" target="_blank" rel="noopener">🧭 Portami lì</a>'+
+'<button type="button" class="pmi" role="menuitem" data-a="'+(own?"rm":"hide")+'" data-k="'+esc(s.k)+'" data-v="'+esc(s.v)+'">'+(own?"🗑️ Rimuovi questo posto":"🙈 Nascondi questo locale")+'</button>'+
+'<button type="button" class="pmi" role="menuitem" data-a="done" data-k="'+esc(s.k)+'">'+(m.done?"↩︎ Rimetti il pasto in lista":"✅ Segna il pasto come fatto")+'</button>'+
+(own?'':'<button type="button" class="pmi" role="menuitem" data-a="rep" aria-expanded="'+!!s.rep+'">🚩 Segnala un errore</button>'+(s.rep?pRep(v):''))+
+'<a class="pmi" role="menuitem" href="'+esc(pMore(m))+'" target="_blank" rel="noopener">🔎 Cerca altri locali qui</a></div>'}
+else if(PS.fil){h='<div class="pbg" data-a="xm"></div><div class="psh" role="dialog" aria-label="Filtri"><i class="hd" aria-hidden="true"></i><div class="pst"><b>Filtra i locali</b><button type="button" data-a="xm" aria-label="Chiudi">✕</button></div><h4>Alimentazione</h4><div class="pfc">'+FOPT.d.map(function(x){return '<button type="button" class="'+(FP.d.indexOf(x[0])>=0?"on":"")+'" data-a="fd" data-v="'+x[0]+'" aria-pressed="'+(FP.d.indexOf(x[0])>=0)+'">'+x[1]+" "+x[2]+'</button>'}).join("")+'</div>'+(FP.d.indexOf("gf")>=0?'<p class="pmn">Per celiachia e allergie chiedi sempre al locale: da qui non posso verificare contaminazioni e ingredienti.</p>':'')+'<h4>Prezzo</h4><div class="pfc">'+FOPT.p.map(function(x){return '<button type="button" class="'+(FP.p===+x[0]?"on":"")+'" data-a="fp" data-v="'+x[0]+'" aria-pressed="'+(FP.p===+x[0])+'">'+x[1]+" "+x[2]+'</button>'}).join("")+'</div><h4>Gusti</h4><div class="pfc">'+Object.keys(FKN).map(function(k){return '<button type="button" class="'+(FP.k.indexOf(k)>=0?"on":"")+'" data-a="fk" data-v="'+k+'" aria-pressed="'+(FP.k.indexOf(k)>=0)+'">'+FKE[k]+" "+FKN[k]+'</button>'}).join("")+'</div><p class="pmn">«Da chiedere» significa che di solito ci sono opzioni, ma non è confermato. La fascia di prezzo è relativa alla città.</p><div class="prw"><button type="button" class="pbt" data-a="xm">Fatto</button>'+(fprefOn()?'<button type="button" class="pbt g" data-a="fz">Azzera</button>':'')+'</div></div>'}
+var same=!!had===!!h;o.innerHTML=h;if(h&&!same){var f=$(".pmi,.pfc button",o);if(f)try{f.focus({preventScroll:true})}catch(e){}}}
+function pFilt(a,v){if(a==="fd"){var i=FP.d.indexOf(v);if(i>=0)FP.d.splice(i,1);else FP.d.push(v)}else if(a==="fp")FP.p=+v;else if(a==="fk"){var k=FP.k.indexOf(v);if(k>=0)FP.k.splice(k,1);else FP.k.push(v)}else{FP.d=[];FP.p=0;FP.k=[]}
+ls("via-fp",fprefOn()?JSON.stringify(FP):null);pFpaint();if(CFG&&P){renderItin();renderPasti()}}
+function pFpaint(){var b=$("#fbtn");if(!b)return;var n=(FP.d.length?1:0)+(FP.p?1:0)+(FP.k.length?1:0),c=$(".fbn",b);c.hidden=!n;c.textContent=n||"";b.classList.toggle("on",n>0);pOv()}
 function pGeo(){if(!navigator.geolocation||!navigator.permissions||Date.now()-PS.gt<12e4||!TRIP||!TRIP.days[SEL]||TRIP.days[SEL].date!==paris().d)return;PS.gt=Date.now();
-navigator.permissions.query({name:"geolocation"}).then(function(p){if(p.state!=="granted")return;navigator.geolocation.getCurrentPosition(function(r){var q=[r.coords.latitude,r.coords.longitude],s=PD.START;if(s&&hav(q,s)>40)return;PS.geo={p:q,t:Date.now()};var t=$("#t-mangiare");if(t&&t.checked&&!PS.add)pDraw()},function(){},{maximumAge:120000,timeout:8000})}).catch(function(){})}
-(function(){var g=$("#mgrid");if(!g)return;g.addEventListener("click",function(e){var b=e.target.closest("[data-a]");if(!b||!g.contains(b)||b.tagName==="INPUT")return;if(b.tagName==="A")return;e.preventDefault();pAct(b.dataset.a,b.dataset.k,b.dataset.v)});
+navigator.permissions.query({name:"geolocation"}).then(function(p){if(p.state!=="granted")return;navigator.geolocation.getCurrentPosition(function(r){var q=[r.coords.latitude,r.coords.longitude],s=PD.START;if(s&&hav(q,s)>40)return;PS.geo={p:q,t:Date.now()};var t=$("#t-mangiare");if(t&&t.checked&&!PS.add&&!PS.menu&&!PS.fil)pDraw()},function(){},{maximumAge:120000,timeout:8000})}).catch(function(){})}
+(function(){var g=$("#mgrid");if(!g)return;
+function click(e){var b=e.target.closest("[data-a]");if(!b||b.tagName==="INPUT"||b.tagName==="A")return;e.preventDefault();var a=b.dataset.a;if(a==="fd"||a==="fp"||a==="fk"||a==="fz"){pFilt(a,b.dataset.v);return}pAct(a,b.dataset.k,b.dataset.v)}
+g.addEventListener("click",function(e){if(g.contains(e.target))click(e)});
+document.addEventListener("click",function(e){var o=$("#pov");if(o&&o.contains(e.target))click(e)});
+var fb=$("#fbtn");if(fb)fb.addEventListener("click",function(){PS.fil=true;PS.menu=null;pOv()});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&(PS.menu||PS.fil)){var f=PS.fil;PS.menu=null;PS.fil=false;pOv();if(f&&fb)fb.focus()}});
 g.addEventListener("toggle",function(e){var d=e.target;if(d.classList&&d.classList.contains("btwd")&&d.dataset.b){PS.bo=PS.bo||{};PS.bo[d.dataset.b]=d.open}},true);
 g.addEventListener("change",function(e){var i=e.target.closest("input[data-a=res]");if(!i)return;MEALS.r=MEALS.r||{};if(i.value)MEALS.r[i.dataset.k]=i.value;else delete MEALS.r[i.dataset.k];mSave();PS.anim="h";pDraw();renderItin();toast(i.value?"Prenotazione salvata: "+i.value:"Prenotazione tolta")});
 g.addEventListener("submit",function(e){var f=e.target.closest(".pmf");if(!f)return;e.preventDefault();var k=f.dataset.k,n=f.n.value.trim();if(!n){f.n.focus();f.classList.remove("shk");void f.offsetWidth;f.classList.add("shk");return}
 var id="u"+Date.now().toString(36);MEALS.o=MEALS.o||{};(MEALS.o[k]=MEALS.o[k]||[]).unshift({id:id,n:n,l:f.l.value.trim(),d:f.t.value.trim(),own:1});MEALS.c=MEALS.c||{};MEALS.c[k]=id;PS.foc[k]=id;PS.add=null;PS.pop=id;PS.anim="h";mSave();mExpDel(k);saveSP();pDraw();renderItin();toast("Aggiunto: "+n)});
-setInterval(function(){if(document.hidden||!TRIP||!P||!PS.L.length)return;var t=$("#t-mangiare");if(!t||!t.checked||PS.add)return;pGeo();var a=document.activeElement;if(a&&a.closest&&a.closest("#mgrid")&&/INPUT/.test(a.tagName))return;var s=pHeroHTML(PS.L,pHero(PS.L),false);if(s!==PS.hh){PS.anim="h";pDraw()}},60000)})();
+document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest(".fplink");if(!a)return;e.preventDefault();var t=$("#t-mangiare");if(t){t.checked=true;t.dispatchEvent(new Event("change",{bubbles:true}))}setTimeout(function(){PS.fil=true;PS.menu=null;pOv()},120)});
+setInterval(function(){if(document.hidden||!TRIP||!P||!PS.L.length)return;var t=$("#t-mangiare");if(!t||!t.checked||PS.add||PS.menu||PS.fil)return;pGeo();var a=document.activeElement;if(a&&a.closest&&a.closest("#mgrid")&&/INPUT/.test(a.tagName))return;if(pBanner(PS.L,pHero(PS.L))!==PS.hh){PS.anim="h";pDraw()}},60000);
+PAR.fpPaint=pFpaint})();
 function renderPasti(){var hb=$("#hbt");if(hb){hb.hidden=!(TRIP&&TRIP.multi);$("#hbc").checked=COPT.hb===1}if(PD.T.mcrit)$("#mcrit").textContent=PD.T.mcrit;var it=P.items,meals=it.filter(function(x){return x.k==="meal"||x.k==="snk"}),h="";
 $("#mlead").textContent=TRIP.multi?"Giorno "+(P.i+1)+", "+dateLong(P.date)+": scegli dove mangiare e, nel mezzo, cosa assaggiare lungo il percorso.":"Scegli dove mangiare: i pasti in ordine e, nel mezzo, cosa assaggiare lungo il percorso.";
 if(!meals.length){$("#mgrid").innerHTML='<p class="meta">Con questi orari non ci sono pasti in città.</p>';return}
@@ -527,7 +553,7 @@ prevT=m.t});
 var tail=acts(prevT,1e9);if(tail.length)post.push(btw(tail,meals[meals.length-1],null));
 if(P.kind==="single"||P.kind==="last")post.push('<div class="btw"><div class="btwh"><span class="btwi">⏳</span><div><small>'+fmt(P.leave)+' · Ritorno</small><b>Prima dell\'aeroporto</b></div></div><ul class="btwt"><li><span>🛫</span><p>In aeroporto si spende di più: se volete qualcosa per il volo, prendetelo in città.</p></li><li><span>🧴</span><p>Ai controlli non passano liquidi oltre i 100 ml: portate la borraccia vuota e riempitela dopo.</p></li></ul></div>');
 else post.push('<div class="btw"><div class="btwh"><span class="btwi">🌙</span><div><small>Dopo cena</small><b>Prima di dormire</b></div></div><ul class="btwt">'+PD.T.night.map(function(t){return '<li><span>'+t[0]+'</span><p>'+esc(t[1])+'</p></li>'}).join("")+'</ul></div>');
-PS.L=L;PS.pre=pre;PS.post=post;if(PS.day!==SEL||L.map(function(x){return x.key}).indexOf(PS.tab)<0){PS.day=SEL;PS.sug=0;PS.add=null;PS.rep=null;PS.anim="";var hi=pHero(L);PS.tab=L[hi>=0?hi:0].key;PS.prev=Math.max(0,L.map(function(x){return x.key}).indexOf(PS.tab))}
+PS.L=L;PS.pre=pre;PS.post=post;if(PS.day!==SEL){PS.day=SEL;PS.add=null;PS.menu=null;PS.anim="";PS.open={};var hi=pHero(L);if(hi>=0)PS.open[L[hi].key]=true;else if(L.length)PS.open[L[0].key]=true}
 pDraw();pGeo();
 function btw(between,a,b){var zs=[];between.forEach(function(x){var z=S[x.id].z;if(zs.indexOf(z)<0)zs.push(z)});
 var ids=[];zs.forEach(function(z){(PD.MEAL.snk[z]||[]).forEach(function(id){if(ids.indexOf(id)<0&&!mHid(id))ids.push(id)})});
@@ -541,28 +567,7 @@ return '<div class="btw"><div class="btwh"><span class="btwi">⏳</span><div><sm
 
 /* ===== costi ===== */
 var COPT=lj("via-copt",{});
-(function(){var box=$("#fp");if(!box)return;var menu=$("#fpm"),cur=null,GN={d:"Alimentazione",p:"Prezzo",k:"Gusti"},OPT={d:[["veg","🥦","Vegetariano"],["vegan","🌱","Vegano"],["gf","🌾","Senza glutine"]],p:[["0","💶","Qualsiasi"],["1","€","Economico"],["2","€€","Medio o meno"]],k:Object.keys(FKN).map(function(k){return[k,FKE[k],FKN[k]]})};
-function isOn(g,v){return g==="d"?FP.d.indexOf(v)>=0:g==="p"?FP.p===+v:FP.k.indexOf(v)>=0}
-function anyOn(g){return g==="d"?FP.d.length>0:g==="p"?FP.p>0:FP.k.length>0}
-function sumOf(g){var a;if(g==="p")return FP.p?(FP.p===1?"Economico":"Medio o meno"):"Qualsiasi";a=(g==="d"?FP.d.map(function(d){return FDN[d]}):FP.k.map(function(k){return FKN[k]}));return a.length?a[0]+(a.length>1?" +"+(a.length-1):""):(g==="d"?"Tutte":"Tutti")}
-function fill(){var g=cur,rd=g==="p";menu.innerHTML='<div class="fpmh"><b>'+GN[g]+'</b><button type="button" class="fpmd" data-a="close">Fatto</button></div><div class="fpml g-'+g+'">'+OPT[g].map(function(x){return '<button type="button" class="fpo" role="'+(rd?"menuitemradio":"menuitemcheckbox")+'" aria-checked="'+isOn(g,x[0])+'" data-v="'+x[0]+'"><span class="fpoi" aria-hidden="true">'+x[1]+'</span><span class="fpot">'+x[2]+'</span><i aria-hidden="true"></i></button>'}).join("")+'</div>'+
-(g==="d"?'<p class="fpmn">«Da chiedere» significa che di solito ci sono opzioni, ma non è confermato.'+(FP.d.indexOf("gf")>=0?' Per celiachia e allergie chiedi sempre al locale: da qui non posso verificare contaminazioni e ingredienti.':'')+'</p>':g==="p"?'<p class="fpmn">La fascia di prezzo è relativa alla città.</p>':'<p class="fpmn">Se nella zona non c\'è nulla di adatto, ti propongo la ricerca su Maps.</p>')+(anyOn(g)?'<button type="button" class="fpmr" data-a="clr">Azzera questo filtro</button>':'')}
-function paint(){$$(".fpk[data-g]",box).forEach(function(b){var g=b.dataset.g;b.classList.toggle("on",anyOn(g));$("small",b).textContent=sumOf(g)});$("#fpx").hidden=!fprefOn();box.classList.toggle("act",fprefOn());if(cur)fill()}
-function save(){ls("via-fp",fprefOn()?JSON.stringify(FP):null);paint();if(CFG&&P){renderItin();renderPasti()}}
-function place(btn){var w=Math.min(box.clientWidth,330),br=btn.getBoundingClientRect(),xr=box.getBoundingClientRect(),cx=br.left-xr.left+br.width/2,l=Math.max(0,Math.min(cx-w/2,xr.width-w));menu.style.width=w+"px";menu.style.left=l+"px";menu.style.top=(br.bottom-xr.top+10)+"px";menu.style.setProperty("--ax",Math.max(24,Math.min(w-24,cx-l))+"px")}
-function close(back){if(!cur)return;var b=$('.fpk[data-g="'+cur+'"]',box);cur=null;menu.hidden=true;$$(".fpk",box).forEach(function(x){x.setAttribute("aria-expanded","false")});if(back&&b)b.focus()}
-function open(g,btn){cur=g;fill();place(btn);$$(".fpk",box).forEach(function(x){x.setAttribute("aria-expanded",x===btn?"true":"false")});menu.hidden=false;menu.classList.remove("in");void menu.offsetWidth;menu.classList.add("in");var f=$(".fpo",menu);if(f)try{f.focus({preventScroll:true})}catch(e){}}
-box.addEventListener("click",function(e){var k=e.target.closest(".fpk[data-g]");if(k){if(cur===k.dataset.g)close(true);else open(k.dataset.g,k);return}});
-$("#fpx").addEventListener("click",function(){close();FP.d=[];FP.p=0;FP.k=[];save()});
-menu.addEventListener("click",function(e){var o=e.target.closest(".fpo"),a=e.target.closest("[data-a]");
-if(o){var g=cur,v=o.dataset.v;if(g==="d"){var i=FP.d.indexOf(v);if(i>=0)FP.d.splice(i,1);else FP.d.push(v)}else if(g==="p"){FP.p=+v;save();close(true);return}else{var k=FP.k.indexOf(v);if(k>=0)FP.k.splice(k,1);else FP.k.push(v)}save();return}
-if(a&&a.dataset.a==="close")close(true);else if(a&&a.dataset.a==="clr"){if(cur==="d")FP.d=[];else if(cur==="p")FP.p=0;else FP.k=[];save()}});
-menu.addEventListener("keydown",function(e){var L=$$(".fpo",menu),i=L.indexOf(document.activeElement),n=-1;if(e.key==="ArrowDown"||e.key==="ArrowRight")n=(i+1)%L.length;else if(e.key==="ArrowUp"||e.key==="ArrowLeft")n=(i-1+L.length)%L.length;if(n>=0){e.preventDefault();L[n].focus()}});
-document.addEventListener("keydown",function(e){if(e.key==="Escape")close(true)});
-document.addEventListener("click",function(e){if(cur&&e.target.isConnected&&!box.contains(e.target))close()});
-$(".fpcar",box).addEventListener("scroll",function(){close()},{passive:true});
-document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest(".fplink");if(!a)return;e.preventDefault();var t=$("#t-mangiare");if(t){t.checked=true;t.dispatchEvent(new Event("change",{bubbles:true}))}setTimeout(function(){try{box.scrollIntoView({behavior:"smooth",block:"center"})}catch(x){}var b=$('.fpk[data-g="d"]',box);if(b)setTimeout(function(){open("d",b)},350)},80)});
-PAR.fpPaint=paint;paint()})();
+pFpaint();
 $("#hbc").addEventListener("change",function(){COPT.hb=this.checked?1:0;ls("via-copt",JSON.stringify(COPT));if(CFG)renderAll()});
 
 function allActs(){var a=[];TRIP.days.forEach(function(d){d.acts.forEach(function(x){if(a.indexOf(x)<0)a.push(x)})});return a}
