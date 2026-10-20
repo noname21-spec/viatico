@@ -537,15 +537,27 @@ return '<div class="btw"><div class="btwh"><span class="btwi">⏳</span><div><sm
 
 /* ===== costi ===== */
 var COPT=lj("via-copt",{});
-(function(){var box=$("#fp");if(!box)return;
-function paint(){$$("#fp .fpc").forEach(function(c){var g=c.dataset.g;[].forEach.call(c.children,function(b){var v=b.dataset.v,on=g==="d"?FP.d.indexOf(v)>=0:g==="p"?FP.p===+v:FP.k.indexOf(v)>=0;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on?"true":"false")})});
-$("#fpsum").textContent=fprefOn()?fpSum():"Nessuna: mostro tutti i locali";box.classList.toggle("act",fprefOn());$("#fpwarn").hidden=FP.d.indexOf("gf")<0}
+(function(){var box=$("#fp");if(!box)return;var menu=$("#fpm"),cur=null,GN={d:"Alimentazione",p:"Prezzo",k:"Gusti"},OPT={d:[["veg","🥦","Vegetariano"],["vegan","🌱","Vegano"],["gf","🌾","Senza glutine"]],p:[["0","💶","Qualsiasi"],["1","€","Economico"],["2","€€","Medio o meno"]],k:Object.keys(FKN).map(function(k){return[k,FKE[k],FKN[k]]})};
+function isOn(g,v){return g==="d"?FP.d.indexOf(v)>=0:g==="p"?FP.p===+v:FP.k.indexOf(v)>=0}
+function anyOn(g){return g==="d"?FP.d.length>0:g==="p"?FP.p>0:FP.k.length>0}
+function sumOf(g){var a;if(g==="p")return FP.p?(FP.p===1?"Economico":"Medio o meno"):"Qualsiasi";a=(g==="d"?FP.d.map(function(d){return FDN[d]}):FP.k.map(function(k){return FKN[k]}));return a.length?a[0]+(a.length>1?" +"+(a.length-1):""):(g==="d"?"Tutte":"Tutti")}
+function fill(){var g=cur,rd=g==="p";menu.innerHTML='<div class="fpmh"><b>'+GN[g]+'</b><button type="button" class="fpmd" data-a="close">Fatto</button></div><div class="fpml g-'+g+'">'+OPT[g].map(function(x){return '<button type="button" class="fpo" role="'+(rd?"menuitemradio":"menuitemcheckbox")+'" aria-checked="'+isOn(g,x[0])+'" data-v="'+x[0]+'"><span class="fpoi" aria-hidden="true">'+x[1]+'</span><span class="fpot">'+x[2]+'</span><i aria-hidden="true"></i></button>'}).join("")+'</div>'+
+(g==="d"?'<p class="fpmn">«Da chiedere» significa che di solito ci sono opzioni, ma non è confermato.'+(FP.d.indexOf("gf")>=0?' Per celiachia e allergie chiedi sempre al locale: da qui non posso verificare contaminazioni e ingredienti.':'')+'</p>':g==="p"?'<p class="fpmn">La fascia di prezzo è relativa alla città.</p>':'<p class="fpmn">Se nella zona non c\'è nulla di adatto, ti propongo la ricerca su Maps.</p>')+(anyOn(g)?'<button type="button" class="fpmr" data-a="clr">Azzera questo filtro</button>':'')}
+function paint(){$$(".fpk[data-g]",box).forEach(function(b){var g=b.dataset.g;b.classList.toggle("on",anyOn(g));$("small",b).textContent=sumOf(g)});$("#fpx").hidden=!fprefOn();box.classList.toggle("act",fprefOn());if(cur)fill()}
 function save(){ls("via-fp",fprefOn()?JSON.stringify(FP):null);paint();if(CFG&&P){renderItin();renderPasti()}}
-box.addEventListener("click",function(e){var b=e.target.closest(".fpc button");if(!b)return;var g=b.parentNode.dataset.g,v=b.dataset.v;
-if(g==="d"){var i=FP.d.indexOf(v);if(i>=0)FP.d.splice(i,1);else FP.d.push(v)}
-else if(g==="p")FP.p=+v;else{var k=FP.k.indexOf(v);if(k>=0)FP.k.splice(k,1);else FP.k.push(v)}save()});
-$("#fpx").addEventListener("click",function(){FP.d=[];FP.p=0;FP.k=[];save()});
-document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest(".fplink");if(!a)return;e.preventDefault();var t=$("#t-mangiare");if(t){t.checked=true;t.dispatchEvent(new Event("change",{bubbles:true}))}box.open=true;setTimeout(function(){try{box.scrollIntoView({behavior:"smooth",block:"start"})}catch(x){}},80)});
+function place(btn){var w=Math.min(box.clientWidth,330),br=btn.getBoundingClientRect(),xr=box.getBoundingClientRect(),cx=br.left-xr.left+br.width/2,l=Math.max(0,Math.min(cx-w/2,xr.width-w));menu.style.width=w+"px";menu.style.left=l+"px";menu.style.top=(br.bottom-xr.top+10)+"px";menu.style.setProperty("--ax",Math.max(24,Math.min(w-24,cx-l))+"px")}
+function close(back){if(!cur)return;var b=$('.fpk[data-g="'+cur+'"]',box);cur=null;menu.hidden=true;$$(".fpk",box).forEach(function(x){x.setAttribute("aria-expanded","false")});if(back&&b)b.focus()}
+function open(g,btn){cur=g;fill();place(btn);$$(".fpk",box).forEach(function(x){x.setAttribute("aria-expanded",x===btn?"true":"false")});menu.hidden=false;menu.classList.remove("in");void menu.offsetWidth;menu.classList.add("in");var f=$(".fpo",menu);if(f)try{f.focus({preventScroll:true})}catch(e){}}
+box.addEventListener("click",function(e){var k=e.target.closest(".fpk[data-g]");if(k){if(cur===k.dataset.g)close(true);else open(k.dataset.g,k);return}});
+$("#fpx").addEventListener("click",function(){close();FP.d=[];FP.p=0;FP.k=[];save()});
+menu.addEventListener("click",function(e){var o=e.target.closest(".fpo"),a=e.target.closest("[data-a]");
+if(o){var g=cur,v=o.dataset.v;if(g==="d"){var i=FP.d.indexOf(v);if(i>=0)FP.d.splice(i,1);else FP.d.push(v)}else if(g==="p"){FP.p=+v;save();close(true);return}else{var k=FP.k.indexOf(v);if(k>=0)FP.k.splice(k,1);else FP.k.push(v)}save();return}
+if(a&&a.dataset.a==="close")close(true);else if(a&&a.dataset.a==="clr"){if(cur==="d")FP.d=[];else if(cur==="p")FP.p=0;else FP.k=[];save()}});
+menu.addEventListener("keydown",function(e){var L=$$(".fpo",menu),i=L.indexOf(document.activeElement),n=-1;if(e.key==="ArrowDown"||e.key==="ArrowRight")n=(i+1)%L.length;else if(e.key==="ArrowUp"||e.key==="ArrowLeft")n=(i-1+L.length)%L.length;if(n>=0){e.preventDefault();L[n].focus()}});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")close(true)});
+document.addEventListener("click",function(e){if(cur&&e.target.isConnected&&!box.contains(e.target))close()});
+$(".fpcar",box).addEventListener("scroll",function(){close()},{passive:true});
+document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest(".fplink");if(!a)return;e.preventDefault();var t=$("#t-mangiare");if(t){t.checked=true;t.dispatchEvent(new Event("change",{bubbles:true}))}setTimeout(function(){try{box.scrollIntoView({behavior:"smooth",block:"center"})}catch(x){}var b=$('.fpk[data-g="d"]',box);if(b)setTimeout(function(){open("d",b)},350)},80)});
 PAR.fpPaint=paint;paint()})();
 $("#hbc").addEventListener("change",function(){COPT.hb=this.checked?1:0;ls("via-copt",JSON.stringify(COPT));if(CFG)renderAll()});
 
