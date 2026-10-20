@@ -1724,3 +1724,8 @@ body.scrolled .appt .apc{font-size:1.3rem}
 .fpmn{position:relative;margin:0;color:var(--mute);font-size:.76rem;line-height:1.45}
 .fpmr{position:relative;justify-self:start;min-height:44px;padding:0 4px;border:0;background:none;color:var(--mute);font:700 .82rem Outfit,system-ui,sans-serif;text-decoration:underline;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.fpm.in{animation:none!important}.fpk,.fpo,.fpo i{transition:none!important}}
+/* ===== v170 "Lungo il percorso" dentro la scheda del pasto ===== */
+.pmnow{display:grid}
+.pmp .btwd.in{background:var(--surf2,color-mix(in srgb,var(--ink) 6%,transparent));box-shadow:none}
+.pmp .pmsub{margin:6px 2px 0}
+.pmp>.btwd.in+.pmph,.pmp>.btwd.in:last-of-type{margin-bottom:0}

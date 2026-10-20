@@ -485,9 +485,13 @@ return h+fpNote()}
 function pRep(m,v){var a=(($("#hlmail")||{}).getAttribute&&$("#hlmail").getAttribute("href"))||"",ad=a.indexOf("mailto:")===0?a.slice(7).split("?")[0]:"";if(!ad)return"";
 var L=[["Chiuso per sempre","Il locale risulta chiuso definitivamente"],["Orari diversi","Gli orari indicati non sono corretti"],["Prezzo diverso","Il prezzo indicato non è corretto"],["Altro","Altro problema"]];
 return '<div class="pmrep"><span>Cosa non torna?</span><div class="pmcw">'+L.map(function(x){return '<a class="pmc" href="'+esc("mailto:"+ad+"?subject="+encodeURIComponent("Viaticum · segnalazione locale: "+v.n)+"&body="+encodeURIComponent("Locale: "+v.n+" ("+v.a+", "+PD.n+")\nProblema: "+x[1]+"\n\nDettagli (facoltativi): "))+'">'+esc(x[0])+'</a>'}).join("")+'</div></div>'}
+function pBw(s,id,small,cls){var mt=/<small>([\s\S]*?)<\/small><b>([\s\S]*?)<\/b>/.exec(s);return '<details class="btwd'+(cls?" "+cls:"")+'" data-b="'+esc(id)+'"'+(PS.bo&&PS.bo[id]?" open":"")+'><summary><span class="btwi">'+(/🌙/.test(s.slice(0,120))?"🌙":"⏳")+'</span><span class="bs"><small>'+(small||(mt?mt[1]:""))+'</small><b>'+(mt?mt[2]:"")+'</b></span></summary>'+s+'</details>'}
 function pDraw(){var g=$("#mgrid"),L=PS.L;if(!g||!L.length)return;L.forEach(function(x){x.done=!!(MEALS.s&&MEALS.s[x.key])});var hi=pHero(L),ti=Math.max(0,L.map(function(m){return m.key}).indexOf(PS.tab)),m=L[ti],y=window.scrollY,h=pHeroHTML(L,hi,PS.anim==="h");PS.hh=pHeroHTML(L,hi,false);
+var hm=hi>=0?L[hi]:null,nw=paris(),hrow=!!(hm&&PS.pre&&PS.pre[hm.key]&&TRIP.days[SEL].date===nw.d&&hm.it.t>nw.m);
+if(hrow)h+='<div class="pmnow">'+pBw(PS.pre[hm.key],"hero|"+hm.key,"Nel frattempo · tra "+fdur(hm.it.t-nw.m)+" si mangia")+'</div>';
 h+='<div class="pmtabs" role="tablist" aria-label="Pasti" style="--n:'+L.length+'"><i class="pmind" aria-hidden="true" style="transform:translateX('+(PS.prev*100)+'%)"></i>'+L.map(function(x,i){var c=MEALS.c&&MEALS.c[x.key],v=c&&mFind(c);return '<button class="pmt'+(v&&!x.done?" ok":"")+(x.done?" dn":"")+'" role="tab" aria-selected="'+(i===ti)+'" data-a="tab" data-k="'+esc(x.key)+'"><span>'+esc(x.nm)+'</span><small>'+(x.done?"✓ fatto":v?esc(v.n):fmt(x.it.t))+'</small></button>'}).join("")+'</div>';
-h+='<section class="pmp'+(PS.anim==="r"?" inR":PS.anim==="l"?" inL":"")+'" role="tabpanel">'+pPanel(m)+'</section>'+(PS.btw?'<div class="pmbtw"><h3 class="pmsub">Lungo il percorso</h3>'+PS.btw+'</div>':'');
+var pr=(PS.pre&&PS.pre[m.key]&&!(hrow&&hm.key===m.key))?pBw(PS.pre[m.key],"pre|"+m.key,"","in"):"",po=(ti===L.length-1&&PS.post&&PS.post.length)?'<h3 class="pmsub">Dopo questo pasto</h3>'+PS.post.map(function(x,i){return pBw(x,"post|"+i,"","in")}).join(""):"";
+h+='<section class="pmp'+(PS.anim==="r"?" inR":PS.anim==="l"?" inL":"")+'" role="tabpanel">'+pr+pPanel(m)+po+'</section>';
 g.innerHTML=h;window.scrollTo(0,y);var ind=g.querySelector(".pmind");if(ind){requestAnimationFrame(function(){requestAnimationFrame(function(){ind.style.transform="translateX("+(ti*100)+"%)"})})}
 PS.prev=ti;PS.anim="";PS.pop=null}
 function pAct(a,k,v){var m=PS.L.filter(function(x){return x.key===k})[0];MEALS.c=MEALS.c||{};MEALS.o=MEALS.o||{};MEALS.s=MEALS.s||{};MEALS.r=MEALS.r||{};
@@ -507,6 +511,7 @@ if(el&&!matchMedia("(prefers-reduced-motion:reduce)").matches){el.classList.add(
 function pGeo(){if(!navigator.geolocation||!navigator.permissions||Date.now()-PS.gt<12e4||!TRIP||!TRIP.days[SEL]||TRIP.days[SEL].date!==paris().d)return;PS.gt=Date.now();
 navigator.permissions.query({name:"geolocation"}).then(function(p){if(p.state!=="granted")return;navigator.geolocation.getCurrentPosition(function(r){var q=[r.coords.latitude,r.coords.longitude],s=PD.START;if(s&&hav(q,s)>40)return;PS.geo={p:q,t:Date.now()};var t=$("#t-mangiare");if(t&&t.checked&&!PS.add)pDraw()},function(){},{maximumAge:120000,timeout:8000})}).catch(function(){})}
 (function(){var g=$("#mgrid");if(!g)return;g.addEventListener("click",function(e){var b=e.target.closest("[data-a]");if(!b||!g.contains(b)||b.tagName==="INPUT")return;if(b.tagName==="A")return;e.preventDefault();pAct(b.dataset.a,b.dataset.k,b.dataset.v)});
+g.addEventListener("toggle",function(e){var d=e.target;if(d.classList&&d.classList.contains("btwd")&&d.dataset.b){PS.bo=PS.bo||{};PS.bo[d.dataset.b]=d.open}},true);
 g.addEventListener("change",function(e){var i=e.target.closest("input[data-a=res]");if(!i)return;MEALS.r=MEALS.r||{};if(i.value)MEALS.r[i.dataset.k]=i.value;else delete MEALS.r[i.dataset.k];mSave();PS.anim="h";pDraw();renderItin();toast(i.value?"Prenotazione salvata: "+i.value:"Prenotazione tolta")});
 g.addEventListener("submit",function(e){var f=e.target.closest(".pmf");if(!f)return;e.preventDefault();var k=f.dataset.k,n=f.n.value.trim();if(!n){f.n.focus();f.classList.remove("shk");void f.offsetWidth;f.classList.add("shk");return}
 var id="u"+Date.now().toString(36);MEALS.o=MEALS.o||{};(MEALS.o[k]=MEALS.o[k]||[]).unshift({id:id,n:n,l:f.l.value.trim(),d:f.t.value.trim(),own:1});MEALS.c=MEALS.c||{};MEALS.c[k]=id;PS.foc[k]=id;PS.add=null;PS.pop=id;PS.anim="h";mSave();mExpDel(k);saveSP();pDraw();renderItin();toast("Aggiunto: "+n)});
@@ -515,16 +520,15 @@ function renderPasti(){var hb=$("#hbt");if(hb){hb.hidden=!(TRIP&&TRIP.multi);$("
 $("#mlead").textContent=TRIP.multi?"Giorno "+(P.i+1)+", "+dateLong(P.date)+": scegli dove mangiare e, nel mezzo, cosa assaggiare lungo il percorso.":"Scegli dove mangiare: i pasti in ordine e, nel mezzo, cosa assaggiare lungo il percorso.";
 if(!meals.length){$("#mgrid").innerHTML='<p class="meta">Con questi orari non ci sono pasti in città.</p>';return}
 var acts=function(a,b){return it.filter(function(x){return x.k==="act"&&x.t>a&&x.t<b})};
-var prevT=P.c0;
+var L=pmeals(),pre={},post=[],prevT=P.c0;
 meals.forEach(function(m,mi){var between=acts(prevT,m.t);
-if(mi>0||(!P.B&&between.length)){h+=bw(btw(between,meals[mi-1],m))}
+if(mi>0||(!P.B&&between.length))pre[L[mi].key]=btw(between,meals[mi-1],m);
 prevT=m.t});
-var tail=acts(prevT,1e9);if(tail.length)h+=bw(btw(tail,meals[meals.length-1],null));
-if(P.kind==="single"||P.kind==="last")h+=bw('<div class="btw"><div class="btwh"><span class="btwi">⏳</span><div><small>'+fmt(P.leave)+' · Ritorno</small><b>Prima dell\'aeroporto</b></div></div><ul class="btwt"><li><span>🛫</span><p>In aeroporto si spende di più: se volete qualcosa per il volo, prendetelo in città.</p></li><li><span>🧴</span><p>Ai controlli non passano liquidi oltre i 100 ml: portate la borraccia vuota e riempitela dopo.</p></li></ul></div>');
-else h+=bw('<div class="btw"><div class="btwh"><span class="btwi">🌙</span><div><small>Dopo cena</small><b>Prima di dormire</b></div></div><ul class="btwt">'+PD.T.night.map(function(t){return '<li><span>'+t[0]+'</span><p>'+esc(t[1])+'</p></li>'}).join("")+'</ul></div>');
-var L=pmeals();PS.L=L;PS.btw=h;if(PS.day!==SEL||L.map(function(x){return x.key}).indexOf(PS.tab)<0){PS.day=SEL;PS.sug=0;PS.add=null;PS.rep=null;PS.anim="";var hi=pHero(L);PS.tab=L[hi>=0?hi:0].key;PS.prev=Math.max(0,L.map(function(x){return x.key}).indexOf(PS.tab))}
+var tail=acts(prevT,1e9);if(tail.length)post.push(btw(tail,meals[meals.length-1],null));
+if(P.kind==="single"||P.kind==="last")post.push('<div class="btw"><div class="btwh"><span class="btwi">⏳</span><div><small>'+fmt(P.leave)+' · Ritorno</small><b>Prima dell\'aeroporto</b></div></div><ul class="btwt"><li><span>🛫</span><p>In aeroporto si spende di più: se volete qualcosa per il volo, prendetelo in città.</p></li><li><span>🧴</span><p>Ai controlli non passano liquidi oltre i 100 ml: portate la borraccia vuota e riempitela dopo.</p></li></ul></div>');
+else post.push('<div class="btw"><div class="btwh"><span class="btwi">🌙</span><div><small>Dopo cena</small><b>Prima di dormire</b></div></div><ul class="btwt">'+PD.T.night.map(function(t){return '<li><span>'+t[0]+'</span><p>'+esc(t[1])+'</p></li>'}).join("")+'</ul></div>');
+PS.L=L;PS.pre=pre;PS.post=post;if(PS.day!==SEL||L.map(function(x){return x.key}).indexOf(PS.tab)<0){PS.day=SEL;PS.sug=0;PS.add=null;PS.rep=null;PS.anim="";var hi=pHero(L);PS.tab=L[hi>=0?hi:0].key;PS.prev=Math.max(0,L.map(function(x){return x.key}).indexOf(PS.tab))}
 pDraw();pGeo();
-function bw(s){var mt=/<small>([\s\S]*?)<\/small><b>([\s\S]*?)<\/b>/.exec(s);return '<details class="btwd"><summary><span class="btwi">'+(/🌙/.test(s.slice(0,120))?"🌙":"⏳")+'</span><span class="bs"><small>'+(mt?mt[1]:"")+'</small><b>'+(mt?mt[2]:"")+'</b></span></summary>'+s+'</details>'}
 function btw(between,a,b){var zs=[];between.forEach(function(x){var z=S[x.id].z;if(zs.indexOf(z)<0)zs.push(z)});
 var ids=[];zs.forEach(function(z){(PD.MEAL.snk[z]||[]).forEach(function(id){if(ids.indexOf(id)<0&&!mHid(id))ids.push(id)})});
 var t0=between.length?between[0].t:(a?a.t:P.c0),t1=b?b.t:P.leave,mid=(t0+t1)/2,tips=[];
