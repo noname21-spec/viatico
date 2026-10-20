@@ -293,7 +293,7 @@ if(P.none){t.push(P.kind==="single"?"Con questi orari non resta tempo per entrar
 else{if(P.dropped.length)t.push("Il tempo è poco, quindi ho tolto: "+P.dropped.map(function(id){return S[id].t}).join(", ")+".");
 if(P.shrunk.length&&!P.dropped.length)t.push("Il tempo è stretto: ho accorciato "+P.shrunk.map(function(id){return S[id].t}).join(", ")+".")}
 if(TRIP.multi&&SEL===0&&TRIP.left.length)t.push("In "+TRIP.n+" giorni non ci stanno: "+TRIP.left.map(function(b){return b.t}).join(", ")+". Allunga il viaggio per aggiungerli.");
-el.hidden=!t.length;el.textContent=t.length?"⏳ "+t.join(" "):""}
+el.hidden=!t.length;el.textContent=t.length?"⏳ "+t.join(" "):"";el.classList.remove("open");if(!el.__t){el.__t=1;el.setAttribute("role","button");el.tabIndex=0;el.addEventListener("click",function(){el.classList.toggle("open")})}}
 
 /* selettore dei giorni */
 function dayIcon(d){var I=PD.DICON||{};for(var k in I)if(d.acts.indexOf(k)>=0)return I[k];return "🚶"}
