@@ -455,7 +455,7 @@ function pStat(o){return '<span class="st '+o.s.c+'">'+(o.s.c==="ok"?"✓ ":o.s.
 function pStatTxt(o){return (o.s.c==="ok"?"✓ ":o.s.c==="ko"?"⚠️ ":"⏱ ")+esc(o.s.t)}
 function pMeta(v,wd){return (v.r?'<span>★ '+esc(String(v.r))+'</span>':'')+(v.h&&v.h.length?'<span>🕐 '+esc(hrsTxt(v,wd))+'</span>':'')}
 function pBook(m,v){if(!v||v.own||(m.mm!=="pra"&&m.mm!=="cen"))return"";var r=parseFloat(String(v.r).replace(",","."));return (r>=4.6||/prenot/i.test((v.d||"")+" "+(v.pr||"")))?'<p class="pmbk">📅 Meglio prenotare: è molto apprezzato e può esserci fila (indicazione di massima).</p>':""}
-function pMore(m){var o=mOrig(P.i,m.it),k=m.mm==="col"?"breakfast cafe":m.mm==="snk"?"snack":"restaurant",loc=o.pos?o.pos.join(","):PD.hub.n+" "+PD.n;return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(fpWords()+k+" near "+loc)}
+function pMore(m){var o=mOrig(P.i,m.it),k=m.mm==="col"?"breakfast cafe":m.mm==="snk"?"snack":"restaurant",loc=o.pos?o.pos.join(","):PD.hub.n+" "+PD.n;return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(fpWords()+(FP.p===1?"cheap ":FP.p===2?"affordable ":"")+k+" near "+loc)}
 function pHeroHTML(L,hi,fl){if(hi<0)return"";var m=L[hi],di=P.i,n=paris(),td=TRIP.days[SEL].date===n.d,pk=MEALS.c&&MEALS.c[m.key],lk,btn,o=null,v,id,pl=pList(m);
 var cands=pl.main.filter(function(x){return x.s.c!=="ko"});if(!cands.length)cands=pl.main;
 if(td)lk=(m.it.t<=n.m?"Adesso":"Prossimo")+" · "+m.nm+(m.it.t>n.m?" alle "+fmt(m.it.t):"");else lk=(hi===0?"Primo pasto":m.nm)+" · "+fmt(m.it.t);
