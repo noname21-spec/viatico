@@ -3381,6 +3381,15 @@ html.sa .nbar{top:calc(var(--apph) - 116px - env(safe-area-inset-bottom,0px)*.45
 .nt svg{width:28px;height:28px}
 .nmenu{bottom:126px}
 
+/* v188 forme coerenti con le schede dell'app: raggio delle card fuori, 18-20px dentro */
+.nbrow{border-radius:var(--gr)}
+.nhm{border-radius:16px}
+.ntl .nfab{border-radius:16px}
+.nt{border-radius:18px}
+.nind::before{inset:3px 2px 3px;left:2px;right:2px;top:3px;bottom:3px;width:auto;height:auto;margin:0;border-radius:18px;background:color-mix(in srgb,var(--ga) 14%,transparent)}
+.nind::after{display:none}
+.nind{width:0}
+
 </style>
 </head>
 <body>
@@ -3614,7 +3623,7 @@ html.sa .nbar{top:calc(var(--apph) - 116px - env(safe-area-inset-bottom,0px)*.45
 <details><summary>Come cancello i miei dati?</summary><p>Dalle impostazioni, «Cancella tutti i dati» elimina viaggi, spese e liste da questo telefono. Per cancellare anche i dati dell'account scrivi all'assistenza.</p></details>
 </div>
 <div class="qrb"><a class="btn" id="hlmail" href="mailto:support.viaticum@gmail.com" translate="no">✉️ Scrivi all'assistenza</a><button type="button" class="btn ghost" id="hlcopy">📋 Copia i dettagli tecnici</button><a class="btn ghost" href="privacy.html" target="_blank" rel="noopener">🔒 Privacy e condizioni</a></div>
-<p class="hlver" id="hlver" translate="no">Viaticum · versione 187 · 20/10/2026</p>
+<p class="hlver" id="hlver" translate="no">Viaticum · versione 188 · 20/10/2026</p>
 <button type="button" class="btn ghost cls" id="hlclose">Chiudi</button></div></div>
 <div id="gtx" translate="no" aria-hidden="true"></div>
 <div id="exp" aria-hidden="true"><div class="qrc xcard" role="dialog" aria-label="Spesa"><div id="xbody"></div></div></div>

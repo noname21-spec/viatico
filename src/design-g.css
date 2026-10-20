@@ -1978,3 +1978,12 @@ html.sa .nbar{top:calc(var(--apph) - 116px - env(safe-area-inset-bottom,0px)*.45
 .ntr{padding:0 4px}
 .nt svg{width:28px;height:28px}
 .nmenu{bottom:126px}
+
+/* v188 forme coerenti con le schede dell'app: raggio delle card fuori, 18-20px dentro */
+.nbrow{border-radius:var(--gr)}
+.nhm{border-radius:16px}
+.ntl .nfab{border-radius:16px}
+.nt{border-radius:18px}
+.nind::before{inset:3px 2px 3px;left:2px;right:2px;top:3px;bottom:3px;width:auto;height:auto;margin:0;border-radius:18px;background:color-mix(in srgb,var(--ga) 14%,transparent)}
+.nind::after{display:none}
+.nind{width:0}
