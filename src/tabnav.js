@@ -12,7 +12,7 @@ function clk(s){var b=$(s);if(b){b.click();return true}return false}
 function srch(){clk("#gsb")}
 /* l'azione giusta per ogni sezione */
 function act(i){
- if(i===0){var a=$("#detail a.go");if(a)return{e:"🧭",t:"Portami lì",f:function(){var h=$("#detail a.go");if(h)window.open(h.href,"_blank","noopener")}};return{e:"🔎",t:"Cerca nel viaggio",f:srch}}
+ if(i===0){var a=$("#itinerario .wc.sel a.go");if(a)return{e:"🧭",t:"Portami lì",f:function(){var h=$("#itinerario .wc.sel a.go");if(h)window.open(h.href,"_blank","noopener")}};return{e:"🔎",t:"Cerca nel viaggio",f:srch}}
  if(i===1){var l=$("#loc");return l&&!l.hidden?{e:"📍",t:"Dove sono",f:function(){l.click()}}:{e:"🔎",t:"Cerca un luogo",f:srch}}
  if(i===2)return{e:"🔎",t:"Cerca un locale",f:srch};
  if(i===3)return{e:"＋",t:"Aggiungi spesa",f:function(){clk("#sadd")}};

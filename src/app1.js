@@ -315,19 +315,40 @@ $("[data-edit]",el).addEventListener("click",function(){openSetup(false,2)})}
 function renderItin(){$("#ith").textContent=TRIP.multi?"Giorno "+(SEL+1)+" · "+DAYS[P.wd]+" "+dateObj(P.date).getUTCDate():"Itinerario";$("#steps").innerHTML=P.items.map(stepHTML).join("");buildWheel()}
 
 /* ghiera scorrevole */
-var WH={};
+var WH={},WSEL={d:-1,i:0},WNOW=-1;
+function wDone(it){if(it.k==="meal"||it.k==="snk")return !!(MEALS.s&&MEALS.s[P.i+"|"+mKeyOf(it)]);return !!(MEALS.v&&MEALS.v["d"+P.i+"|"+it.t])}
+function wStamp(it){var on=!wDone(it);if(it.k==="meal"||it.k==="snk"){var k=P.i+"|"+mKeyOf(it);MEALS.s=MEALS.s||{};if(on)MEALS.s[k]=1;else delete MEALS.s[k]}else{var k2="d"+P.i+"|"+it.t;MEALS.v=MEALS.v||{};if(on)MEALS.v[k2]=1;else delete MEALS.v[k2]}mSave();try{renderPasti()}catch(e){}return on}
 function buildWheel(){var ol=$("#steps");var old=$("#itinerario .wbox");if(old)old.remove();
-var steps=$$(".step",ol),box=document.createElement("section");box.className="wbox";
-var sa0=document.body.classList.contains("showall");box.innerHTML='<div class="vsw" role="tablist" aria-label="Come vedere le tappe"><button type="button" role="tab" data-v="w" aria-selected="'+!sa0+'" class="'+(sa0?"":"on")+'"><i aria-hidden="true">◎</i>Ghiera</button><button type="button" role="tab" data-v="l" aria-selected="'+sa0+'" class="'+(sa0?"on":"")+'"><i aria-hidden="true">☰</i>Elenco</button></div><div class="wheelwrap"><div class="wheel" id="wheel" tabindex="0" role="listbox" aria-label="Tappe della giornata"></div></div><div id="detail" aria-live="polite"></div>';
+var steps=$$(".step",ol),N=steps.length,box=document.createElement("section");box.className="wbox";
+var sa0=document.body.classList.contains("showall"),its=P.items;
+box.innerHTML='<div class="vsw" role="tablist" aria-label="Come vedere le tappe"><button type="button" role="tab" data-v="w" aria-selected="'+!sa0+'" class="'+(sa0?"":"on")+'"><i aria-hidden="true">▭</i>Schede</button><button type="button" role="tab" data-v="l" aria-selected="'+sa0+'" class="'+(sa0?"on":"")+'"><i aria-hidden="true">☰</i>Elenco</button></div><div class="wcw"><div class="wsg" role="group" aria-label="Tappe della giornata"></div><div class="wcar" tabindex="0" aria-roledescription="carosello" aria-label="Tappe: scorri a destra e a sinistra"></div><p class="wht" aria-hidden="true">‹ Scorri per cambiare tappa ›</p><div class="wls"></div><p class="wcn" aria-live="polite"></p></div>';
 ol.parentNode.insertBefore(box,ol);
-var wheel=$("#wheel",box),detail=$("#detail",box),H=44,cur=-1,tick=0;
-var items=steps.map(function(li,i){var b=document.createElement("button");b.type="button";b.className="wi";b.setAttribute("role","option");b.innerHTML='<span class="wt"></span><span class="wn"></span>';b.children[0].textContent=$(".t",li).textContent;b.children[1].textContent=$("h2",li).textContent;b.addEventListener("click",function(){wheel.scrollTo({top:i*H,behavior:"smooth"})});wheel.appendChild(b);return b});
-function upd(){var y=wheel.scrollTop,idx=Math.max(0,Math.min(items.length-1,Math.round(y/H)));items.forEach(function(b,i){var d=Math.min(3,Math.abs(y/H-i));b.style.opacity=1-d*0.28;b.style.transform="scale("+(1-d*0.06)+")";b.classList.toggle("sel",i===idx);b.setAttribute("aria-selected",i===idx)});
-if(idx!==cur){cur=idx;detail.innerHTML=$(".body",steps[idx]).innerHTML;$$("[data-edit]",detail).forEach(function(x){x.addEventListener("click",function(){openSetup(false)})})}}
-wheel.addEventListener("scroll",function(){if(!tick)tick=requestAnimationFrame(function(){tick=0;upd()})});
-wheel.addEventListener("keydown",function(e){if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();wheel.scrollTo({top:(cur+(e.key==="ArrowDown"?1:-1))*H,behavior:"smooth"})}});
-$$(".vsw button",box).forEach(function(b){b.addEventListener("click",function(){var all=b.dataset.v==="l";document.body.classList.toggle("showall",all);$$(".vsw button",box).forEach(function(x){var on=x===b;x.classList.toggle("on",on);x.setAttribute("aria-selected",on)})})});
-WH={wheel:wheel,items:items,go:function(i){wheel.scrollTop=i*H;upd()}};upd()}
+var sg=$(".wsg",box),car=$(".wcar",box),ls_=$(".wls",box),cn=$(".wcn",box),cards=[],segs=[],rows=[],tick=0;
+function tt(i){return $("h2",steps[i]).textContent}
+its.forEach(function(it,i){
+var c=document.createElement("article");c.className="wc";c.setAttribute("aria-label","Tappa "+(i+1)+" di "+N+": "+tt(i));
+c.innerHTML='<div class="wch"><span>Tappa '+(i+1)+' di '+N+'</span><b class="wcp"></b></div><div class="wct"></div><div class="wcb"></div><div class="wca"><button type="button" class="wcs"></button></div><div class="wcst" aria-hidden="true">VISTO</div>';
+$(".wct",c).textContent=$(".t",steps[i]).textContent;
+var b=$(".wcb",c);b.innerHTML=$(".body",steps[i]).innerHTML;
+var ac=$(".wca",c),eat=$(".eat",b);if(eat){b.insertBefore(ac,eat);ac.style.margin="4px 0 12px"}$$("a.go",b).reverse().forEach(function(g){g.parentNode.removeChild(g);ac.insertBefore(g,ac.firstChild)});
+$$("[data-edit]",c).forEach(function(x){x.addEventListener("click",function(){openSetup(false)})});
+$(".wcs",c).addEventListener("click",function(){var on=wStamp(it);paint();if(on&&i<N-1)setTimeout(function(){if(WSEL.i===i&&WSEL.d===P.i)go2(i+1,1)},800)});
+car.appendChild(c);cards.push(c);
+var s=document.createElement("button");s.type="button";s.className="wsb";s.innerHTML="<i></i>";s.addEventListener("click",function(){go2(i,1)});sg.appendChild(s);segs.push(s);
+var r=document.createElement("button");r.type="button";r.className="wr";r.innerHTML='<span class="wrt"></span><span class="wrn"></span><span class="wrs"></span>';$(".wrt",r).textContent=$(".t",steps[i]).textContent;$(".wrn",r).textContent=tt(i);r.addEventListener("click",function(){go2(i,1)});ls_.appendChild(r);rows.push(r)});
+function W(){return cards[0]?cards[0].offsetWidth+10:1}
+function paint(){var i=WSEL.i,d=0;
+cards.forEach(function(c,k){var dn=wDone(its[k]),nw=k===WNOW&&!dn;if(dn)d++;c.classList.toggle("dn",dn);c.classList.toggle("sel",k===i);c.classList.toggle("now",k===WNOW);$(".wcp",c).textContent=dn?"Fatto":nw?"Adesso":"";$(".wcp",c).className="wcp"+(dn?" dn":nw?" nw":"");var bt=$(".wcs",c);bt.textContent=dn?"Annulla timbro":"Timbra";bt.setAttribute("aria-pressed",dn);c.setAttribute("aria-hidden",k===i?"false":"true");
+segs[k].className="wsb"+(dn?" dn":"")+(k===i?" sel":"");segs[k].setAttribute("aria-label","Tappa "+(k+1)+": "+tt(k)+(dn?", fatta":""));segs[k].setAttribute("aria-current",k===i);
+rows[k].className="wr"+(dn?" dn":"")+(k===WNOW&&!dn?" now":"")+(k===i?" sel":"");$(".wrs",rows[k]).textContent=dn?"Visto":k===WNOW?"Adesso":"";rows[k].setAttribute("aria-current",k===i)});
+cn.textContent=d+" su "+N+" tappe fatte";if(cards[i]){var hh=cards[i].offsetHeight;car.style.height=hh>0?hh+"px":""}}
+function go2(i,smooth){i=Math.max(0,Math.min(N-1,i));WSEL={d:P.i,i:i};paint();try{car.scrollTo({left:i*W(),behavior:smooth&&!matchMedia("(prefers-reduced-motion:reduce)").matches?"smooth":"auto"})}catch(e){car.scrollLeft=i*W()}}
+var tm=0;car.addEventListener("scroll",function(){clearTimeout(tm);tm=setTimeout(function(){var k=Math.max(0,Math.min(N-1,Math.round(car.scrollLeft/W())));if(k!==WSEL.i){WSEL={d:P.i,i:k};paint()}},120)},{passive:true});
+car.addEventListener("keydown",function(e){if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();go2(WSEL.i+(e.key==="ArrowRight"?1:-1),1)}});
+$$(".vsw button",box).forEach(function(b){b.addEventListener("click",function(){var all=b.dataset.v==="l";document.body.classList.toggle("showall",all);$$(".vsw button",box).forEach(function(x){var on=x===b;x.classList.toggle("on",on);x.setAttribute("aria-selected",on)});if(!all)requestAnimationFrame(function(){go2(WSEL.i)})})});
+var st=WSEL.d===P.i?WSEL.i:(todayIdx()===SEL&&WNOW>=0?WNOW:0);WSEL={d:P.i,i:Math.min(st,N-1)};
+WH={paint:paint,go:function(i){go2(i,1)},setNow:function(i){WNOW=i;paint()}};
+paint();car.scrollLeft=WSEL.i*W();window.addEventListener("resize",function(){if(car.isConnected)go2(WSEL.i)})}
 
 /* banner dal vivo */
 var lastNow=-2,LB=null;
@@ -336,12 +357,12 @@ var lastDay=null;
 function liveTick(){if(document.hidden)return;var live=$("#live");if(!TRIP||!CFG){live.hidden=true;return}var dd=paris().d;if(lastDay&&dd!==lastDay){lastDay=dd;try{renderAll()}catch(e){console.error(e)}return}lastDay=dd;
 var n=paris(),c=CFG,A=TRIP.A,D0=TRIP.days[0],DN=TRIP.days[TRIP.n-1];
 function set(cls,b,sp){try{localStorage.setItem("via-live",JSON.stringify({k:c.dest+c.date,b:b,s:sp,t:Date.now(),bar:LB}))}catch(e){}live.className="live "+cls;var lk="",tt=b,mm=/^(Ora|Prima tappa): /.exec(b);if(mm){lk=mm[1]==="Ora"?"Adesso":"Prima tappa";tt=b.slice(mm[0].length)}live.innerHTML='<i class="dot"></i><div class="lt">'+(lk?'<small class="lk"></small>':'')+'<b></b><span></span></div>';if(lk)$(".lk",live).textContent=lk;$("b",live).textContent=tt;$("span",live).textContent=sp;live.hidden=false;window.__apPaint&&__apPaint(/^Prossima:/.test(sp)?"":b)}
-var steps=$$("#steps .step");steps.forEach(function(li){li.classList.remove("now")});if(WH.items)WH.items.forEach(function(w){w.classList.remove("now")});
+var steps=$$("#steps .step");steps.forEach(function(li){li.classList.remove("now")});
 if(n.d<D0.date){var d=Math.round((dateObj(D0.date)-dateObj(n.d))/864e5);set("calm",d===1?"Domani si parte! ✈️":"Mancano "+d+" giorni al viaggio",(c.a_num?"Volo "+c.a_num+(c.a_dep?" alle "+c.a_dep:"")+". ":"")+"Atterraggio a "+A.n+" alle "+c.a_arr+"."+(d<=2&&PD.T.remind?" "+PD.T.remind:""));return}
 if(n.d>DN.date){set("calm","Com'è andata a "+PD.n+"? "+PD.flag,"L'itinerario resta qui come ricordo.");$(".lt",live).insertAdjacentHTML("beforeend",'<div class="lact"><button type="button" class="lb lb2 lrecap">Condividi il riepilogo</button></div>');return}
 var di=todayIdx(),T=TRIP.days[di];if(!T)return;
 var i=-1;T.items.forEach(function(s,k){if(n.m>=s.t)i=k});hbarLive();LB={a:T.items.map(function(s){return s.t}),e:T.kind==="single"||T.kind==="last"?T.dep:(T.end||T.leave),m:n.m};
-if(di===SEL){steps.forEach(function(li,k){li.classList.toggle("now",k===i)});if(WH.items){WH.items.forEach(function(w,k){w.classList.toggle("now",k===i)});if(i!==lastNow){lastNow=i;if(i>=0)try{WH.go(i)}catch(e){}}}}
+if(di===SEL){steps.forEach(function(li,k){li.classList.toggle("now",k===i)});if(WH.setNow){WH.setNow(i);if(i!==lastNow){lastNow=i;if(i>=0)try{WH.go(i)}catch(e){}}}}
 var nm=function(s){if(!s)return"";var t=stepTitle(T,s),pk=s.k==="meal"?mPickD(di,s):null;return pk?t+" · "+pk.n:t};
 if(T.kind==="single"||T.kind==="last"){
 var LV=(window.PARLIVE||{}).r,rdep=c.r_dep,gt=LV&&LV.gate?" · Gate "+LV.gate:"",rnum=c.r_num?" "+c.r_num:"";if(LV&&(LV.dR||LV.dS))rdep=LV.dR||LV.dS;
@@ -422,7 +443,7 @@ $("#vtips").innerHTML='<details><summary>🛬 Dall\'aeroporto di '+esc(A.n)+(TRI
 
 /* ===== pasti ===== */
 var MEALS=lj("via-meals",{}),PS={open:{},menu:null,fil:false,hrow:false,foc:{},add:null,pop:null,anim:"",L:[],day:-1,geo:null,gt:0,hh:""};
-function mSave(){var e=!(MEALS.h&&MEALS.h.length);["c","o","s","r"].forEach(function(k){if(Object.keys(MEALS[k]||{}).length)e=false});ls("via-meals",e?null:JSON.stringify(MEALS))}
+function mSave(){var e=!(MEALS.h&&MEALS.h.length);["c","o","s","r","v"].forEach(function(k){if(Object.keys(MEALS[k]||{}).length)e=false});ls("via-meals",e?null:JSON.stringify(MEALS));try{WH.paint&&WH.paint()}catch(x){}}
 function mHid(id){return !!(MEALS.h&&MEALS.h.indexOf(id)>=0)}
 function mFind(id){if(V[id])return V[id];var r=null;Object.keys(MEALS.o||{}).forEach(function(k){MEALS.o[k].forEach(function(x){if(x.id===id)r=x})});return r}
 function mKeyOf(it){return it.k==="snk"?"snk":it.m}
