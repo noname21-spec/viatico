@@ -39,7 +39,7 @@ Viaggi e informazioni locali
 Viaggi · Itinerario · Mappe e navigazione · Spese di viaggio
 
 ## Contatti
-Email: devincentimatteo@gmail.com
+Email: support.viaticum@gmail.com
 Sito / pagina privacy: https://noname21-spec.github.io/viatico/privacy.html
 
 ## Note della versione (max 500 caratteri)

@@ -41,7 +41,7 @@ Nessuna pubblicità, nessuna vendita dei dati, nessun account obbligatorio: i vi
 - Privacy: dati sul dispositivo, accesso facoltativo. Informativa: https://noname21-spec.github.io/viatico/privacy.html
 - Sito / web app: https://noname21-spec.github.io/viatico/
 - Google Play: [link da inserire quando l'app è pubblicata]
-- Contatto: devincentimatteo@gmail.com
+- Contatto: support.viaticum@gmail.com
 - Autore: Matteo De Vincenti
 
 ## La storia (per post e interviste)
