@@ -1963,3 +1963,18 @@ html.sa .nbar{top:calc(var(--apph) - 104px - env(safe-area-inset-bottom,0px)*.45
 .ntl .nfab svg{width:18px;height:18px}
 .nmenu{bottom:114px;right:12px}
 .nhm:focus-visible,.nsr:focus-visible{outline:3px solid var(--ga);outline-offset:2px}
+
+/* v187 barra più tonda e alta, Home e azione in evidenza */
+:root{--tb:138px}
+.nbar{height:116px}
+html.sa .nbar{top:calc(var(--apph) - 116px - env(safe-area-inset-bottom,0px)*.45)}
+.nbrow{height:108px;padding:0 12px 8px;border-radius:54px}
+.ntl{height:56px;padding:8px 0 0;gap:10px}
+.nhm{width:44px;height:44px;border-radius:50%;background:var(--ink);color:var(--bg);box-shadow:0 5px 14px rgba(30,20,10,.28)}
+.nhm svg{width:23px;height:23px}
+.nhm:hover{color:var(--bg)}
+.ntl .nfab{min-height:44px;height:44px;padding:0 18px 0 14px;gap:8px;font-size:.84rem;box-shadow:0 7px 18px color-mix(in srgb,var(--ga) 50%,transparent)}
+.ntl .nfab svg{width:20px;height:20px}
+.ntr{padding:0 4px}
+.nt svg{width:28px;height:28px}
+.nmenu{bottom:126px}
