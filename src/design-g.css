@@ -1816,3 +1816,6 @@ body.scrolled .appt .apc{font-size:1.3rem}
 @keyframes wcs{0%{transform:scale(2.6) rotate(-30deg);opacity:0}100%{transform:rotate(-14deg);opacity:.85}}
 @media (prefers-reduced-motion:reduce){.wcar,.wc,.wsb i,.wr{transition:none}.wcp.nw,.wr.now .wrs,.wc.dn .wcst{animation:none}}
 .showall .wcw{display:none}
+.wca .wcp2{display:inline-flex;align-items:center;gap:8px;font:700 .88rem Outfit,system-ui,sans-serif;min-height:48px;padding:0 20px;border:0;border-radius:999px;background:var(--ga);color:var(--gon);cursor:pointer;transition:transform .15s}
+.wca .wcp2:active{transform:scale(.95)}
+.wca .wcp2:focus-visible{outline:3px solid var(--ga);outline-offset:2px}
