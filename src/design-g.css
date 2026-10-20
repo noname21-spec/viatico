@@ -1850,3 +1850,9 @@ html.npgo #sheet{visibility:hidden}
 .hero[data-tod="dusk"]{--hz:color-mix(in srgb,#ff7a45 85%,transparent);--hz2:color-mix(in srgb,#c2417a 40%,transparent);--h2:color-mix(in srgb,var(--ga) 78%,#2a0f2e)}
 .hero[data-tod="night"]{--h1:color-mix(in srgb,var(--ga) 36%,#0b1020);--h2:color-mix(in srgb,var(--ga) 14%,#05070f);--sun:#F3EBD8;--sunHalo:#F3EBD8;--moonc:color-mix(in srgb,var(--ga) 36%,#0b1020);--cloud:rgba(255,255,255,.07);--farOp:.08;--hz:color-mix(in srgb,var(--gz) 20%,transparent);--hz2:transparent;--hsh:rgba(0,0,0,.45)}
 @media (prefers-reduced-motion:reduce){.hero .sky .sunG{transition:none}}
+
+/* v180 · mappa più bassa: un dito scorre la pagina, due dita muovono la mappa */
+.maphint{position:absolute;left:50%;bottom:14px;z-index:500;transform:translate(-50%,8px);padding:8px 14px;border-radius:99px;background:color-mix(in srgb,var(--ink) 82%,transparent);color:var(--surf);font:600 .8rem Outfit,system-ui,sans-serif;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s var(--spring);white-space:nowrap}
+.maphint.on{opacity:1;transform:translate(-50%,0)}
+.map.fs .maphint{display:none}
+@media (prefers-reduced-motion:reduce){.maphint{transition:none}}

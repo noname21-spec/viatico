@@ -143,6 +143,10 @@ addEventListener("pagehide",function(){if(wid!=null)try{navigator.geolocation.cl
 paintBtn()}
 function init(){if(!window.L){off.textContent="La mappa non si è caricata: serve una connessione. Riprova quando sei online.";return}
 el.hidden=false;map=L.map(el,{zoomControl:false,attributionControl:true,zoomSnap:.25});
+var coarse=false;try{coarse=matchMedia("(pointer:coarse)").matches}catch(e){}
+if(coarse){map.dragging.disable();var hint=document.createElement("div");hint.className="maphint";hint.setAttribute("aria-hidden","true");hint.textContent="Due dita per muovere la mappa";el.parentNode.appendChild(hint);var hT=0,seen=false;
+el.addEventListener("touchmove",function(e){if(e.touches.length!==1||map.dragging.enabled()||seen)return;seen=true;hint.classList.add("on");clearTimeout(hT);hT=setTimeout(function(){hint.classList.remove("on");seen=false},1800)},{passive:true})}
+window.__mapCoarse=function(on){if(!coarse)return;if(on)map.dragging.enable();else map.dragging.disable()};
 gRoute=L.layerGroup().addTo(map);gStops=L.layerGroup().addTo(map);gFood=L.layerGroup();gPh=L.layerGroup();gWater=L.layerGroup();
 setTiles();map.setView(PD.LL,13);
 map.on("zoomend",function(){el.classList.toggle("far",map.getZoom()<13.5)});
@@ -166,7 +170,7 @@ lg.addEventListener("click",function(e){e.stopPropagation();var open=lgp.hidden;
 document.addEventListener("click",function(e){if(!lgp.hidden&&!lgp.contains(e.target)&&e.target!==lg){lgp.hidden=true;lg.setAttribute("aria-expanded",false)}});
 var fsb=document.getElementById("fs"),box=document.getElementById("mapbox"),ph=document.createComment("map"),isFs=false;
 function setFs(on){if(on===isFs)return;isFs=on;if(on){box.parentNode.insertBefore(ph,box);document.body.appendChild(box)}else{ph.parentNode.insertBefore(box,ph);ph.parentNode.removeChild(ph)}
-box.classList.toggle("fs",on);document.body.classList.toggle("fsmap",on);fsb.classList.toggle("on",on);fsb.setAttribute("aria-label",on?"Esci da schermo intero":"Schermo intero")}
+if(window.__mapCoarse)__mapCoarse(on);box.classList.toggle("fs",on);document.body.classList.toggle("fsmap",on);fsb.classList.toggle("on",on);fsb.setAttribute("aria-label",on?"Esci da schermo intero":"Schermo intero")}
 fsb.addEventListener("click",function(){setFs(!isFs)});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&isFs)setFs(false)});
 /* foto, mezzi in ordine, percorsi in Google Maps */
