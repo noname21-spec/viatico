@@ -66,8 +66,8 @@ Viaggio in 3 tocchi. Itinerario, spese divise e tutto anche senza rete. Gratis, 
 6. Prima e dopo: un viaggio organizzato con note sparse contro lo stesso viaggio con Viaticum.
 
 ## Immagini
-La cartella `immagini/` contiene il logo (512×512), la copertina (1024×500) e cinque schermate (1080×1920): itinerario, elenco tappe, pasti, spese, consigli.
-Le schermate mostrano una gita a Roma di esempio. Usa le immagini così come sono; non cambiare i colori del logo.
+La cartella `immagini/` contiene il logo (512×512), la copertina (1024×500) e sei schermate: itinerario, elenco tappe, pasti, spese, consigli (1080×1920) e mappa (1080×2190, una gita a Barcellona).
+Le prime cinque schermate mostrano una gita a Roma di esempio. Usa le immagini così come sono; non cambiare i colori del logo.
 
 ## Cosa non dire
 - Non promettere orari o prezzi esatti: sono indicativi.
