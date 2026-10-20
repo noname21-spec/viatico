@@ -2,7 +2,7 @@
 (function(){
 var SB={url:"__SB_URL__",key:"__SB_KEY__"};
 var ok=/^https:\/\//.test(SB.url)&&SB.key.length>20;
-var KEYS=["via-trip","via-trips","via-spese","via-check","via-copt"],TK=["via-spese","via-check","via-copt"],SESS=null,UID=null,CL=null,busy=false,applying=false,timer=0,lastPull=0;
+var KEYS=["via-trip","via-trips","via-spese","via-check","via-copt","via-meals"],TK=["via-spese","via-check","via-copt","via-meals"],SESS=null,UID=null,CL=null,busy=false,applying=false,timer=0,lastPull=0;
 function g(k){try{return localStorage.getItem(k)}catch(e){return null}}
 function p(k,v){try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){}}
 function j(k,d){try{return JSON.parse(g(k)||"null")||d}catch(e){return d}}
