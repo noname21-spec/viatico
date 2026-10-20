@@ -87,8 +87,19 @@ function label(){
  if(p==="denied")m="Le notifiche sono bloccate per Viaticum: puoi riattivarle dalle impostazioni del telefono o del browser. Nel frattempo i promemoria compaiono dentro l'app. "+m;
  note.textContent=m}
 function sync(){on.checked=!!ST.on;[].forEach.call(box.querySelectorAll(".nsw[data-k]"),function(c){c.checked=!!ST[c.dataset.k]});lead.value=String(ST.lead);label()}
-function save(){sv(KEY,ST);sigNow="";label()}
-btn.addEventListener("click",function(){var o=box.hidden;box.hidden=!o;btn.setAttribute("aria-expanded",String(o));if(o)setTimeout(function(){try{box.scrollIntoView({block:"nearest",behavior:"smooth"})}catch(e){}},60)});
+function save(){sv(KEY,ST);sigNow="";label();if(!box.hidden)renderNext()}
+document.body.appendChild(box);box.classList.add("npage");box.setAttribute("role","dialog");box.setAttribute("aria-label","Notifiche e promemoria");
+box.insertAdjacentHTML("afterbegin",'<div class="npg-h"><button type="button" class="npg-b" aria-label="Torna alle impostazioni"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span>Impostazioni</span></button><h3>Notifiche e promemoria</h3></div>');
+var nb=box.querySelector(".nbtns");nb.insertAdjacentHTML("beforebegin",'<div class="nnext"><h4>Prossimi promemoria</h4><ul id="nnext"></ul></div>');
+var back=box.querySelector(".npg-b"),nxt=$("#nnext");
+function renderNext(){var h="";if(!ST.on)h='<li class="nne">Attiva i promemoria per vedere quelli in arrivo.</li>';else{refresh();var now=Date.now(),f=fired(),tz=(window.PD&&PD.TZ)||"Europe/Rome",fm;try{fm=new Intl.DateTimeFormat("it-IT",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",timeZone:tz})}catch(e){fm=null}
+ var L=list.filter(function(e){return e.at>now&&!f[e.id]}).sort(function(a,b){return a.at-b.at}).slice(0,5);
+ h=L.length?L.map(function(e){return '<li><b>'+(fm?fm.format(new Date(e.at)):"")+'</b><span>'+String(e.title).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c]})+'</span></li>'}).join(""):'<li class="nne">Nessun promemoria in programma per questo viaggio.</li>'}
+ nxt.innerHTML=h}
+function openP(){box.hidden=false;box.scrollTop=0;btn.setAttribute("aria-expanded","true");document.documentElement.classList.add("npgo");renderNext();setTimeout(function(){back.focus()},50)}
+function closeP(){box.hidden=true;btn.setAttribute("aria-expanded","false");document.documentElement.classList.remove("npgo");try{btn.focus()}catch(e){}}
+btn.addEventListener("click",openP);back.addEventListener("click",closeP);
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!box.hidden){e.stopPropagation();e.preventDefault();closeP()}},true);
 function ask(){if(!supported||Notification.permission!=="default")return Promise.resolve(perm());
  try{var r=Notification.requestPermission(function(){});return Promise.resolve(r).then(function(){return perm()})}catch(e){return Promise.resolve(perm())}}
 on.addEventListener("change",function(){

@@ -1819,3 +1819,34 @@ body.scrolled .appt .apc{font-size:1.3rem}
 .wca .wcp2{display:inline-flex;align-items:center;gap:8px;font:700 .88rem Outfit,system-ui,sans-serif;min-height:48px;padding:0 20px;border:0;border-radius:999px;background:var(--ga);color:var(--gon);cursor:pointer;transition:transform .15s}
 .wca .wcp2:active{transform:scale(.95)}
 .wca .wcp2:focus-visible{outline:3px solid var(--ga);outline-offset:2px}
+
+/* v176 · notifiche: pagina a sé */
+.nbox.npage{position:fixed!important;inset:0;z-index:150;margin:0!important;border:0!important;border-radius:0!important;padding:calc(env(safe-area-inset-top,0px) + 8px) max(16px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))!important;overflow-y:auto;background:var(--bg,var(--paper))!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;max-width:580px;margin-inline:auto!important;animation:npin .3s var(--spring) both}
+.nbox.npage[hidden]{display:none!important}
+html.npgo #sheet{visibility:hidden}
+.npg-h{position:sticky;top:0;z-index:2;display:grid;gap:2px;padding:4px 0 12px;margin:0 0 6px;background:var(--bg,var(--paper))}
+.npg-b{display:inline-flex;align-items:center;gap:2px;min-height:44px;padding:0 12px 0 4px;margin-left:-4px;border:0;background:none;color:var(--ga);font:600 .95rem Outfit,system-ui,sans-serif;cursor:pointer;justify-self:start}
+.npg-b:focus-visible{outline:3px solid var(--ga);outline-offset:2px;border-radius:12px}
+.npg-h h3{margin:0;font-size:1.7rem;letter-spacing:-.03em}
+.nbox.npage .nrow{background:var(--surf);padding:6px 16px}
+.nbox.npage .nmain{border-radius:var(--gr2) var(--gr2) 0 0;margin-top:4px}
+.nbox.npage #nopts{border-radius:0 0 var(--gr2) var(--gr2);overflow:hidden;background:var(--surf);margin-bottom:14px}
+.nbox.npage .nlead{padding:10px 16px 14px;margin:0}
+.nnext{margin:14px 0 4px;padding:14px 16px;border-radius:var(--gr2);background:var(--surf)}
+.nnext h4{margin:0 0 8px;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.nnext ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.nnext li{display:grid;grid-template-columns:96px 1fr;gap:10px;font-size:.88rem;line-height:1.35}
+.nnext li b{color:var(--ga);font-variant-numeric:tabular-nums;font-size:.78rem;padding-top:1px}
+.nnext li.nne{display:block;color:var(--mute)}
+@keyframes npin{from{opacity:0;transform:translateX(24px)}}
+@media (prefers-reduced-motion:reduce){.nbox.npage{animation:none}}
+
+/* v176 · cielo secondo l'ora della città */
+.hero .sky .sunG{translate:0 var(--sy,0px);transition:translate 1.2s var(--spring)}
+.hero[data-tod="dawn"]{--sy:15px}
+.hero[data-tod="dusk"]{--sy:19px}
+.hero[data-tod="night"]{--sy:-3px}
+.hero[data-tod="dawn"]{--hz:color-mix(in srgb,#ff9a6b 78%,transparent);--hz2:color-mix(in srgb,#ff7aa8 32%,transparent)}
+.hero[data-tod="dusk"]{--hz:color-mix(in srgb,#ff7a45 85%,transparent);--hz2:color-mix(in srgb,#c2417a 40%,transparent);--h2:color-mix(in srgb,var(--ga) 78%,#2a0f2e)}
+.hero[data-tod="night"]{--h1:color-mix(in srgb,var(--ga) 36%,#0b1020);--h2:color-mix(in srgb,var(--ga) 14%,#05070f);--sun:#F3EBD8;--sunHalo:#F3EBD8;--moonc:color-mix(in srgb,var(--ga) 36%,#0b1020);--cloud:rgba(255,255,255,.07);--farOp:.08;--hz:color-mix(in srgb,var(--gz) 20%,transparent);--hz2:transparent;--hsh:rgba(0,0,0,.45)}
+@media (prefers-reduced-motion:reduce){.hero .sky .sunG{transition:none}}

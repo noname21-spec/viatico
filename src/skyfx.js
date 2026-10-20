@@ -6,6 +6,11 @@ var Z={paris:"#F2B84B",bcn:"#E8B21C",roma:"#F2B33D",londra:"#E0313F",amsterdam:"
 if(window.PD&&Z[PD.id])root.style.setProperty("--gz",Z[PD.id]);
 window.SKYZ=Z;window.zSky=zSky;
 var svg=document.querySelector("svg.sky:not(.zsk)");if(!svg||!window.PD||!PD.SKY)return;
+/* il cielo segue l'ora della città: alba, giorno, tramonto, notte */
+(function(){var hero=document.getElementById("hero");if(!hero)return;
+function hr(){try{var p=new Intl.DateTimeFormat("en-GB",{hour:"2-digit",minute:"2-digit",hourCycle:"h23",timeZone:PD.TZ||"Europe/Rome"}).formatToParts(new Date()),h=0,m=0;p.forEach(function(x){if(x.type==="hour")h=+x.value;if(x.type==="minute")m=+x.value});return h+m/60}catch(e){var d=new Date();return d.getHours()+d.getMinutes()/60}}
+function set(){var h=hr(),t=h>=5.5&&h<8?"dawn":h>=8&&h<17.5?"day":h>=17.5&&h<20.5?"dusk":"night";if(hero.getAttribute("data-tod")!==t)hero.setAttribute("data-tod",t)}
+set();setInterval(set,300000);document.addEventListener("visibilitychange",function(){if(!document.hidden)set()})})();
 var reduce=matchMedia("(prefers-reduced-motion: reduce)"),exts=[],px=0,tx=null,raf=0,vis=true;
 function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
 function build(svg,sfx,sky,lite){

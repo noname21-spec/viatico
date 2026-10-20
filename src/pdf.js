@@ -249,7 +249,7 @@ if(pdfBtn){pdfBtn.addEventListener("click",function(){
   if(file&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:r.D.title}).catch(function(){})}
   else download(r.blob,r.name);
   pdfS.textContent="Fatto: "+r.name;toast("PDF pronto")})
- .catch(function(){pdfS.textContent="Non sono riuscito a creare il PDF";toast("Errore nel PDF")})
+ .catch(function(){pdfS.textContent="Non sono riuscito a creare il PDF. Riprova tra poco.";toast("Il PDF non si è creato: riprova tra poco")})
  .then(function(){busy(pdfBtn,false);setTimeout(function(){pdfS.textContent=pdfS0},5000)})})}
 
 /* ---------- calendario (.ics) ---------- */
@@ -277,7 +277,7 @@ if(cpBtn){cpBtn.addEventListener("click",function(){
  var h1=T($("#itinerario h1"))||"Costi",city=(h1.split(/\s+in\s+/)[0]||h1),D={title:"Costi stimati · "+city,city:city,sub:T($("#hsub")),days:[],costs:grabCosts(),only:1},name="Viaticum-"+slug(city)+"-costi.pdf";
  try{var blob=makePdf(D),file;if(isIOS&&window.File&&navigator.canShare){try{file=new File([blob],name,{type:"application/pdf"})}catch(e){}}
   if(file&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:D.title}).catch(function(){})}else download(blob,name);toast("PDF dei costi pronto")}
- catch(e){toast("Errore nel PDF")}
+ catch(e){toast("Il PDF non si è creato: riprova tra poco")}
  cpBtn.textContent=lab;busy(cpBtn,false)})}
 var calBtn=$("#shcal"),calS=$("#shcals"),calS0=calS&&calS.textContent;
 if(calBtn){calBtn.addEventListener("click",function(){
@@ -286,7 +286,7 @@ if(calBtn){calBtn.addEventListener("click",function(){
   if(window.File&&navigator.canShare){try{file=new File([blob],name,{type:"text/calendar"})}catch(e){}}
   if(isIOS&&file&&navigator.canShare({files:[file]}))navigator.share({files:[file],title:D.title}).catch(function(){});else download(blob,name);
   calS.textContent="Fatto: apri il file per aggiungere gli eventi";toast("Calendario pronto")})
- .catch(function(){calS.textContent="Non sono riuscito a creare il calendario";toast("Errore nel calendario")})
+ .catch(function(){calS.textContent="Non sono riuscito a creare il calendario. Riprova tra poco.";toast("Il calendario non si è creato: riprova tra poco")})
  .then(function(){busy(calBtn,false);setTimeout(function(){calS.textContent=calS0},6000)})})}
 window.VIATICO_ICS=mkIcs;
 var shBtn=$("#shsit");
@@ -297,6 +297,6 @@ if(shBtn){shBtn.addEventListener("click",function(){
   if(file&&navigator.canShare&&navigator.canShare({files:[file]}))return navigator.share({files:[file],title:r.D.title,text:"Il mio itinerario con Viaticum"}).catch(function(){});
   if(navigator.share)return navigator.share({title:r.D.title,text:summary(r.D)}).catch(function(){});
   return copyText(summary(r.D)).then(function(){toast("Itinerario copiato")},function(){download(r.blob,r.name);toast("PDF scaricato")})})
- .catch(function(){toast("Errore nella condivisione")})
+ .catch(function(){toast("Condivisione non riuscita: riprova o copia il link")})
  .then(function(){busy(shBtn,false)})})}
 })();
