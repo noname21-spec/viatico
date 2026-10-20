@@ -344,12 +344,18 @@ segs[k].className="wsb"+(dn?" dn":"")+(k===i?" sel":"");segs[k].setAttribute("ar
 rows[k].className="wr"+(dn?" dn":"")+(k===WNOW&&!dn?" now":"")+(k===i?" sel":"");$(".wrs",rows[k]).textContent=dn?"Visto":k===WNOW?"Adesso":"";rows[k].setAttribute("aria-current",k===i)});
 cn.textContent=d+" su "+N+" tappe fatte";if(cards[i]){var hh=cards[i].offsetHeight;car.style.height=hh>0?hh+"px":""}}
 function go2(i,smooth){i=Math.max(0,Math.min(N-1,i));WSEL={d:P.i,i:i};paint();try{car.scrollTo({left:i*W(),behavior:smooth&&!matchMedia("(prefers-reduced-motion:reduce)").matches?"smooth":"auto"})}catch(e){car.scrollLeft=i*W()}}
-var tm=0;car.addEventListener("scroll",function(){clearTimeout(tm);tm=setTimeout(function(){var k=Math.max(0,Math.min(N-1,Math.round(car.scrollLeft/W())));if(k!==WSEL.i){WSEL={d:P.i,i:k};paint()}},120)},{passive:true});
+var drag=0,sx=0,sy=0,sl=0,lk=0,t0=0,lx=0;car.setAttribute("data-noswipe","");
+car.addEventListener("pointerdown",function(e){if(e.pointerType==="mouse"&&e.button!==0)return;sx=e.clientX;sy=e.clientY;sl=car.scrollLeft;lk=0;t0=Date.now();lx=0;drag=1});
+car.addEventListener("pointermove",function(e){if(!drag)return;var dx=e.clientX-sx,dy=e.clientY-sy;lx=dx;if(!lk){if(Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy)*1.25){lk=1;try{car.setPointerCapture(e.pointerId)}catch(x){}}else if(Math.abs(dy)>10){lk=-1}}if(lk===1)car.scrollLeft=sl-dx});
+function endD(cancel){if(!drag)return;drag=0;if(lk!==1)return;var dx=lx,v=Math.abs(dx)/Math.max(1,Date.now()-t0),i=WSEL.i;if(!cancel&&(Math.abs(dx)>W()*.2||v>.5))i+=dx<0?1:-1;go2(i,1)}
+car.addEventListener("pointerup",function(){endD(0)});car.addEventListener("pointercancel",function(){endD(1)});
+var wt=0;car.addEventListener("wheel",function(e){if(Math.abs(e.deltaX)>Math.abs(e.deltaY)*1.2){e.preventDefault();if(wt)return;wt=1;setTimeout(function(){wt=0},450);go2(WSEL.i+(e.deltaX>0?1:-1),1)}},{passive:false});
+var tm=0;car.addEventListener("scroll",function(){if(drag&&lk===1)return;clearTimeout(tm);tm=setTimeout(function(){var k=Math.max(0,Math.min(N-1,Math.round(car.scrollLeft/W())));if(k!==WSEL.i){WSEL={d:P.i,i:k};paint()}},120)},{passive:true});
 car.addEventListener("keydown",function(e){if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();go2(WSEL.i+(e.key==="ArrowRight"?1:-1),1)}});
 $$(".vsw button",box).forEach(function(b){b.addEventListener("click",function(){var all=b.dataset.v==="l";document.body.classList.toggle("showall",all);$$(".vsw button",box).forEach(function(x){var on=x===b;x.classList.toggle("on",on);x.setAttribute("aria-selected",on)});if(!all)requestAnimationFrame(function(){go2(WSEL.i)})})});
 var st=WSEL.d===P.i?WSEL.i:(todayIdx()===SEL&&WNOW>=0?WNOW:0);WSEL={d:P.i,i:Math.min(st,N-1)};
 WH={paint:paint,go:function(i){go2(i,1)},setNow:function(i){WNOW=i;paint()}};
-paint();car.scrollLeft=WSEL.i*W();window.addEventListener("resize",function(){if(car.isConnected)go2(WSEL.i)})}
+paint();car.scrollLeft=WSEL.i*W();window.addEventListener("resize",function(){if(car.isConnected)go2(WSEL.i)});if(window.ResizeObserver){var ro=new ResizeObserver(function(){if(!car.isConnected){ro.disconnect();return}var c=cards[WSEL.i];if(c&&c.offsetHeight>0)car.style.height=c.offsetHeight+"px"});cards.forEach(function(c){ro.observe(c)})}if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){if(car.isConnected)paint()})}
 
 /* banner dal vivo */
 var lastNow=-2,LB=null;
