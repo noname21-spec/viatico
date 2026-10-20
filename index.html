@@ -3390,6 +3390,17 @@ html.sa .nbar{top:calc(var(--apph) - 116px - env(safe-area-inset-bottom,0px)*.45
 .nind::after{display:none}
 .nind{width:0}
 
+/* v189 barra più alta, più aria tra riga in alto e sezioni; la sfumatura di fine pagina scende dietro la barra */
+:root{--tb:156px}
+.nbar{height:136px}
+html.sa .nbar{top:calc(var(--apph) - 136px - env(safe-area-inset-bottom,0px)*.45)}
+.nbrow{height:128px}
+.ntl{height:64px;padding-top:10px}
+.ntr{padding-top:4px}
+.nmenu{bottom:146px}
+.blk{bottom:calc(env(safe-area-inset-bottom,0px)*.3 + 4px + var(--tb) - 44px);padding-bottom:80px;scroll-padding-bottom:80px}
+html.sa .blk{height:calc(var(--apph) - var(--abh) - 4px - env(safe-area-inset-top,0px) - var(--tb) - 24px + 58px - env(safe-area-inset-bottom,0px)*.45)}
+
 </style>
 </head>
 <body>
@@ -3623,7 +3634,7 @@ html.sa .nbar{top:calc(var(--apph) - 116px - env(safe-area-inset-bottom,0px)*.45
 <details><summary>Come cancello i miei dati?</summary><p>Dalle impostazioni, «Cancella tutti i dati» elimina viaggi, spese e liste da questo telefono. Per cancellare anche i dati dell'account scrivi all'assistenza.</p></details>
 </div>
 <div class="qrb"><a class="btn" id="hlmail" href="mailto:support.viaticum@gmail.com" translate="no">✉️ Scrivi all'assistenza</a><button type="button" class="btn ghost" id="hlcopy">📋 Copia i dettagli tecnici</button><a class="btn ghost" href="privacy.html" target="_blank" rel="noopener">🔒 Privacy e condizioni</a></div>
-<p class="hlver" id="hlver" translate="no">Viaticum · versione 188 · 20/10/2026</p>
+<p class="hlver" id="hlver" translate="no">Viaticum · versione 189 · 20/10/2026</p>
 <button type="button" class="btn ghost cls" id="hlclose">Chiudi</button></div></div>
 <div id="gtx" translate="no" aria-hidden="true"></div>
 <div id="exp" aria-hidden="true"><div class="qrc xcard" role="dialog" aria-label="Spesa"><div id="xbody"></div></div></div>

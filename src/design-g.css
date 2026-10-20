@@ -1987,3 +1987,14 @@ html.sa .nbar{top:calc(var(--apph) - 116px - env(safe-area-inset-bottom,0px)*.45
 .nind::before{inset:3px 2px 3px;left:2px;right:2px;top:3px;bottom:3px;width:auto;height:auto;margin:0;border-radius:18px;background:color-mix(in srgb,var(--ga) 14%,transparent)}
 .nind::after{display:none}
 .nind{width:0}
+
+/* v189 barra più alta, più aria tra riga in alto e sezioni; la sfumatura di fine pagina scende dietro la barra */
+:root{--tb:156px}
+.nbar{height:136px}
+html.sa .nbar{top:calc(var(--apph) - 136px - env(safe-area-inset-bottom,0px)*.45)}
+.nbrow{height:128px}
+.ntl{height:64px;padding-top:10px}
+.ntr{padding-top:4px}
+.nmenu{bottom:146px}
+.blk{bottom:calc(env(safe-area-inset-bottom,0px)*.3 + 4px + var(--tb) - 44px);padding-bottom:80px;scroll-padding-bottom:80px}
+html.sa .blk{height:calc(var(--apph) - var(--abh) - 4px - env(safe-area-inset-top,0px) - var(--tb) - 24px + 58px - env(safe-area-inset-bottom,0px)*.45)}
