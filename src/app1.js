@@ -1270,7 +1270,7 @@ if(!CFG||!CFG.stay||CFG.stay.addr!==s.addr)return;CFG.stay.pos=p;CFG.stay.geo=1;
 var sheet=$("#sheet");
 function closeSheet(){sheet.classList.remove("on");sheet.setAttribute("aria-hidden","true")}
 /* offerta volontaria: solo nella versione web (le regole di Google Play per l'app richiedono Play Billing). Inserire qui il link della pagina di donazione */
-(function(){var URL_CAFFE="",b=$("#shcof");if(!b||!URL_CAFFE||window.__IS_APP)return;b.hidden=false;b.addEventListener("click",function(){window.open(URL_CAFFE,"_blank","noopener")})})();
+(function(){var URL_CAFFE="https://buymeacoffee.com/viaticum",b=$("#shcof");if(!b||!URL_CAFFE||window.__IS_APP)return;b.hidden=false;b.addEventListener("click",function(){window.open(URL_CAFFE,"_blank","noopener")})})();
 $("#gear").addEventListener("click",function(){sheet.classList.remove("home");sheet.classList.add("on");sheet.setAttribute("aria-hidden","false")});
 $("#dgear").addEventListener("click",function(){sheet.classList.add("home","on");sheet.setAttribute("aria-hidden","false")});
 $("#shclose").addEventListener("click",closeSheet);
