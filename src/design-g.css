@@ -1944,3 +1944,22 @@ html.sa .nbar{top:calc(var(--apph) - 98px - env(safe-area-inset-bottom,0px)*.45)
 .nfab{bottom:112px}
 .nmenu{bottom:176px}
 @media (prefers-reduced-motion:reduce){.nind{transition:none}}
+
+/* v186 barra: isola con titolo, home, azione e cerca dentro la barra */
+:root{--tb:126px}
+.nbar{height:104px}
+html.sa .nbar{top:calc(var(--apph) - 104px - env(safe-area-inset-bottom,0px)*.45)}
+.nbrow{height:96px;padding:0 8px 6px;border-radius:30px}
+.ntl{height:44px;align-items:center;justify-content:flex-start;gap:8px;padding:6px 0 0}
+.ntl .ntn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:800 .66rem/1 Outfit,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.ntl .ntw{display:none}
+.nhm,.nsr{flex:none;display:grid;place-items:center;border:0;background:none;color:var(--mute);cursor:pointer;border-radius:50%;-webkit-tap-highlight-color:transparent;transition:color .2s,transform .15s}
+.nhm{width:38px;height:36px}
+.nhm:active,.nsr:active{transform:scale(.9)}
+.nhm:hover,.nsr:hover{color:var(--ga)}
+.nsr{flex:0 0 52px;height:100%}
+.nsr svg{width:25px;height:25px}
+.ntl .nfab{position:static;flex:none;min-height:36px;height:36px;padding:0 14px 0 11px;gap:6px;font-size:.76rem;box-shadow:0 4px 12px color-mix(in srgb,var(--ga) 38%,transparent)}
+.ntl .nfab svg{width:18px;height:18px}
+.nmenu{bottom:114px;right:12px}
+.nhm:focus-visible,.nsr:focus-visible{outline:3px solid var(--ga);outline-offset:2px}
