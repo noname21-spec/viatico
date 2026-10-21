@@ -2085,3 +2085,9 @@ html.sa .blk{height:calc(var(--apph) - var(--abh) - 4px - env(safe-area-inset-to
 .hero .live .lb{background:rgba(255,255,255,.2);color:#fff;border:0}
 .hero .live .lb2{background:#fff;color:var(--ga)}
 .hero .live .lpg{background:rgba(255,255,255,.28)}.hero .live .lpg i{background:#fff}
+/* v194 pasti: righe "tra" come pasti, ricerca su Maps in evidenza */
+.pmrow.bt .btwh{display:none}
+.pmrow.bt .prb{padding-top:4px}
+.pmaps{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;margin:12px 0 0;border-radius:16px;background:var(--ga);color:var(--gon,#fff)!important;font:700 .92rem Outfit,system-ui,sans-serif;text-decoration:none}
+.pmaps:active{transform:scale(.98)}
+.pmaps:focus-visible{outline:3px solid var(--ga);outline-offset:2px}
