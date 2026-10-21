@@ -94,10 +94,9 @@ function preHero(){var h=$("#hero"),o=$("#hcd");if(!h)return;var n=paris(),D0=TR
 if(!o){o=document.createElement("div");o.id="hcd";o.className="hcd";var det=$(".wdet",h);h.insertBefore(o,det||null)}
 var c=CFG,tm=c.a_dep||"",lab=tm?"al decollo":"all'atterraggio";if(!tm)tm=c.a_arr||"09:00";var p=tm.split(":"),ms=new Date(D0.date+"T"+("0"+p[0]).slice(-2)+":"+("0"+(p[1]||0)).slice(-2)+":00").getTime()-Date.now();
 var mins=Math.max(0,Math.floor(ms/6e4)),dd=Math.floor(mins/1440),hh=Math.floor(mins%1440/60),mm=mins%60;
-var todo=window.PARCKI?PARCKI().slice(0,3):null;
+var todo=window.PARCKI?PARCKI():null;
 o.innerHTML='<small>Mancano '+lab+'</small><div class="hcn"><span><b>'+dd+'</b>'+(dd===1?"giorno":"giorni")+'</span><span><b>'+hh+'</b>'+(hh===1?"ora":"ore")+'</span><span><b>'+mm+'</b>min</span></div>'+
-(!todo?'':todo.length?'<ul class="hct">'+todo.map(function(t){return '<li>'+esc(t)+'</li>'}).join("")+'</ul>':'<p class="hct0">Lista «Prima di partire» completata ✓</p>')+
-'<div class="hcb"><button type="button" class="hck">Apri la lista</button><button type="button" class="hcf">Vedi la prima tappa</button></div>';
+'<div class="hcb">'+(!todo?'':'<button type="button" class="hck">'+(todo.length?'<b>'+todo.length+'</b> '+(todo.length===1?"cosa da preparare":"cose da preparare")+' ›':"Lista pronta ✓")+'</button>')+'<button type="button" class="hcf">Vedi la prima tappa</button></div>';
 $(".hck",o).addEventListener("click",function(){var t=$("#t-consigli");if(t){t.checked=true;t.dispatchEvent(new Event("change",{bubbles:true}))}setTimeout(function(){var b=$("#ckopen");if(b)b.click()},200)});
 $(".hcf",o).addEventListener("click",function(){PREOFF=true;h.classList.remove("pre")})}
 var PREOFF=false;
@@ -1170,7 +1169,10 @@ el.innerHTML='<span class="dwi"><span class="dwf dwa">'+(STK>1?'<em class="dwc">
 function skySet(){var h=$("#dhero"),sk=$("#dsk");if(!h||!sk||!h.dataset.id||sk.firstChild)return;var z=window.zSky?zSky(h.dataset.id,"h"):null;if(z)sk.appendChild(z)}
 window.__homeSky=skySet;
 var HCL={k:"",items:[],i:0,at:0,nc:0};
-function heroPaint(it){var h=$("#dhero"),hc=$("#dhc");if(!h||!hc)return;var d=dOf(it.id);hc.dataset.mode=it.mode;hc.dataset.id=it.id;$("#dhl").textContent=it.lab;var hn=$("#dhn");hn.textContent=d.n;hn.style.setProperty("--l",Math.max(5,d.n.length));$("#dbn").textContent=d.n;$("#dhs").textContent=it.sub;
+function heroPaint(it){var h=$("#dhero"),hc=$("#dhc");if(!h||!hc)return;var d=dOf(it.id);hc.dataset.mode=it.mode;hc.dataset.id=it.id;$("#dhl").textContent=it.lab;var hn=$("#dhn");hn.textContent=d.n;hn.style.setProperty("--l",Math.max(5,d.n.length));$("#dbn").textContent=d.n;$("#dhs").textContent=it.sub;if(!$(".dhfx",h)){var fx=document.createElement("div");fx.className="dhfx";fx.setAttribute("aria-hidden","true");fx.innerHTML='<i class="dfr"></i><i class="dfs1"></i><i class="dfs2"></i><i class="dfsh"></i><i class="dfg"></i><i class="dfw"></i>';h.insertBefore(fx,h.firstChild)}
+var C=CITIES[it.id],hx=$("#dhx");if(!hx){hx=document.createElement("span");hx.id="dhx";hx.className="dhx";hc.appendChild(hx)}
+var lt="";try{if(C&&C.TZ)lt=new Intl.DateTimeFormat("it-IT",{timeZone:C.TZ,hour:"2-digit",minute:"2-digit"}).format(new Date())}catch(e){}
+hx.innerHTML='<span>'+((C&&C.flag)||d.e)+' '+esc(d.c||"")+'</span>'+(lt?'<span>🕐 '+lt+' ora locale</span>':'')+(d.ok?'<span class="ok">✓ Guida completa</span>':'<span>In arrivo</span>');
 h.style.setProperty("--a",d.col[0]);h.style.setProperty("--z",(window.SKYZ&&SKYZ[it.id])||d.col[1]);var fu=$("#dfull");if(fu){fu.style.setProperty("--a",d.col[0]);fu.style.setProperty("--z",(window.SKYZ&&SKYZ[it.id])||d.col[1])}
 if(h.dataset.id!==it.id){h.dataset.id=it.id;var sk=$("#dsk");sk.innerHTML="";skySet()}
 var dt=$("#dhd");if(dt){dt.hidden=HCL.items.length<2;dt.innerHTML=HCL.items.length<2?"":HCL.items.map(function(x,k){return '<button type="button" data-k="'+k+'" aria-label="'+esc(dOf(x.id).n)+'"'+(k===HCL.i?' class="on" aria-current="true"':'')+'></button>'}).join("")}}
