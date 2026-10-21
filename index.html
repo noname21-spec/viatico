@@ -3478,6 +3478,15 @@ html.sa .blk{height:calc(var(--apph) - var(--abh) - 4px - env(safe-area-inset-to
 .hero .wcb .leg *{color:#fff!important}
 .hero .wca .wcd{margin-left:auto}
 .hero .wca{align-items:center}
+/* v193 banner dentro la scheda grande */
+.hero .live{background:transparent!important;border:0!important;box-shadow:none!important;padding:10px 0 6px!important;margin:0!important;color:#fff;display:flex;gap:10px;align-items:flex-start}
+.hero .live[hidden]{display:none!important}
+.hero .live .dot{background:#fff!important;flex:none;margin-top:.5em}
+.hero .live .lt b,.hero .live.alert .lt b{color:#fff!important;font-size:1.3rem!important;line-height:1.15}
+.hero .live .lt span,.hero .live .lk{color:rgba(255,255,255,.85)!important}
+.hero .live .lb{background:rgba(255,255,255,.2);color:#fff;border:0}
+.hero .live .lb2{background:#fff;color:var(--ga)}
+.hero .live .lpg{background:rgba(255,255,255,.28)}.hero .live .lpg i{background:#fff}
 
 </style>
 </head>
@@ -3490,6 +3499,7 @@ html.sa .blk{height:calc(var(--apph) - var(--abh) - 4px - env(safe-area-inset-to
 
 <section class="blk on" id="itinerario">
 <header class="hero" id="hero"><h1>Parigi in un giorno</h1>
+<div id="live" class="live" hidden></div>
 <p class="sub" id="hsub">Imposta il tuo viaggio per vedere l'itinerario.</p>
 <div class="bar" id="hbar" role="img" aria-label="La giornata"></div>
 <div class="ends"><span id="hs"></span><span id="hc"></span><span id="he"></span></div>
@@ -3510,7 +3520,6 @@ html.sa .blk{height:calc(var(--apph) - var(--abh) - 4px - env(safe-area-inset-to
 
 </header>
 <div class="dsel" id="dsel1" hidden></div>
-<div id="live" class="live" hidden></div>
 <div class="tgr" id="tgr" role="group" aria-label="Avvisi, voli e meteo">
 <button type="button" class="tg" data-p="avv" aria-expanded="false" aria-controls="tgw" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 3 19h18z"/><path d="M12 10v4M12 16.6v.1"/></svg><span>Avvisi</span><b class="tgb" id="tgavn"></b></button>
 <button type="button" class="tg" data-p="voli" aria-expanded="false" aria-controls="tgw"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 13.5 3 11l1.5-1.5 9 .5 4-4a1.6 1.6 0 0 1 2.3 2.3l-4 4 .5 9L19 19.5l-2.5-7.5"/><path d="M10.5 13.5 8 17l-3 1 1-3 3.5-2.5"/></svg><span>Voli</span></button>
@@ -3712,7 +3721,7 @@ html.sa .blk{height:calc(var(--apph) - var(--abh) - 4px - env(safe-area-inset-to
 <details><summary>Come cancello i miei dati?</summary><p>Dalle impostazioni, «Cancella tutti i dati» elimina viaggi, spese e liste da questo telefono. Per cancellare anche i dati dell'account scrivi all'assistenza.</p></details>
 </div>
 <div class="qrb"><a class="btn" id="hlmail" href="mailto:support.viaticum@gmail.com" translate="no">✉️ Scrivi all'assistenza</a><button type="button" class="btn ghost" id="hlcopy">📋 Copia i dettagli tecnici</button><a class="btn ghost" href="privacy.html" target="_blank" rel="noopener">🔒 Privacy e condizioni</a></div>
-<p class="hlver" id="hlver" translate="no">Viaticum · versione 192 · 21/10/2026</p>
+<p class="hlver" id="hlver" translate="no">Viaticum · versione 193 · 21/10/2026</p>
 <button type="button" class="btn ghost cls" id="hlclose">Chiudi</button></div></div>
 <div id="gtx" translate="no" aria-hidden="true"></div>
 <div id="exp" aria-hidden="true"><div class="qrc xcard" role="dialog" aria-label="Spesa"><div id="xbody"></div></div></div>

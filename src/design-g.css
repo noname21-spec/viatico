@@ -2076,3 +2076,12 @@ html.sa .blk{height:calc(var(--apph) - var(--abh) - 4px - env(safe-area-inset-to
 .hero .wcb .leg *{color:#fff!important}
 .hero .wca .wcd{margin-left:auto}
 .hero .wca{align-items:center}
+/* v193 banner dentro la scheda grande */
+.hero .live{background:transparent!important;border:0!important;box-shadow:none!important;padding:10px 0 6px!important;margin:0!important;color:#fff;display:flex;gap:10px;align-items:flex-start}
+.hero .live[hidden]{display:none!important}
+.hero .live .dot{background:#fff!important;flex:none;margin-top:.5em}
+.hero .live .lt b,.hero .live.alert .lt b{color:#fff!important;font-size:1.3rem!important;line-height:1.15}
+.hero .live .lt span,.hero .live .lk{color:rgba(255,255,255,.85)!important}
+.hero .live .lb{background:rgba(255,255,255,.2);color:#fff;border:0}
+.hero .live .lb2{background:#fff;color:var(--ga)}
+.hero .live .lpg{background:rgba(255,255,255,.28)}.hero .live .lpg i{background:#fff}
