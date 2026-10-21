@@ -58,9 +58,9 @@ CONN=["'self'","https://api.open-meteo.com","https://nominatim.openstreetmap.org
 CSP="; ".join([
  "default-src 'self'",
  "script-src 'self' "+" ".join("'sha256-%s'"%h for h in shs)+" 'unsafe-eval' https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.gstatic.com",  # unsafe-eval: lo richiede il widget di Google Traduttore
- "style-src 'self' 'unsafe-inline' https://www.gstatic.com https://translate.googleapis.com https://fonts.googleapis.com",
- "font-src 'self' data: https://fonts.gstatic.com https://www.gstatic.com",
- "img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://www.gstatic.com https://translate.google.com https://translate.googleapis.com https://www.google.com",
+ "style-src 'self' 'unsafe-inline' https://*.gstatic.com https://translate.googleapis.com https://fonts.googleapis.com",
+ "font-src 'self' data: https://*.gstatic.com",
+ "img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.gstatic.com https://translate.google.com https://translate.googleapis.com https://www.google.com https://*.google.com",
  "connect-src "+" ".join(CONN),
  "frame-src https://translate.google.com",
  "worker-src 'self'","manifest-src 'self'","object-src 'none'","base-uri 'self'","form-action 'self'"])

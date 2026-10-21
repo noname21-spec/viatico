@@ -13,7 +13,7 @@ tryLoad()}
 var viol=[];document.addEventListener("securitypolicyviolation",function(e){viol.push((e.violatedDirective||"")+" "+String(e.blockedURI||"").slice(0,70))});
 var cur=LS(),sel=document.getElementById("shlang");
 if(sel)sel.value=cur;
-function verify(){setTimeout(function(){var h=document.documentElement.classList;if(!h.contains("translated-ltr")&&!h.contains("translated-rtl"))toast("Traduzione non riuscita"+(viol.length?" ("+viol[0]+")":": controlla la connessione"))},10000)}
+function verify(){setTimeout(function(){var h=document.documentElement.classList;if(!h.contains("translated-ltr")&&!h.contains("translated-rtl"))toast("Traduzione non riuscita"+(viol.length?" ("+viol.filter(function(v,i){return viol.indexOf(v)===i}).slice(0,3).join("; ")+")":": controlla la connessione"))},10000)}
 if(cur!=="it"){document.documentElement.setAttribute("data-lang",cur);cookie(cur);load();verify()}
 if(sel)sel.addEventListener("change",function(){var l=sel.value;try{localStorage.setItem(KEY,l)}catch(e){}cookie(l);toast(l==="it"?"Torno all'italiano…":"Traduco l'app…");setTimeout(function(){location.reload()},450)});
 /* supporto */
