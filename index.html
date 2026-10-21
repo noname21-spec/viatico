@@ -3581,6 +3581,11 @@ html.sa #sheet{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px)*.45)!im
 body:has(#sheet.on) .nbar{pointer-events:none}
 body:has(#sheet.on) .ntl,body:has(#sheet.on) .ntr{opacity:0;transform:translateY(10px);transition:opacity .16s ease,transform .22s ease}
 @media (prefers-reduced-motion:reduce){.shc,#sheet.on .shc{clip-path:none!important;transition:none!important}.ntl,.ntr{transition:none!important}}
+/* v202 chiusura pulita: tutto il contenuto sfuma subito; sfondo sfocato a impostazioni aperte */
+#sheet:not(.on) .shc>*{opacity:0!important;transform:translateY(10px)!important;animation:none!important;transition:opacity .12s ease,transform .12s ease!important}
+#sheet{-webkit-backdrop-filter:blur(0px)!important;backdrop-filter:blur(0px)!important;transition:background-color .35s ease,backdrop-filter .35s ease,-webkit-backdrop-filter .35s ease,visibility 0s linear .6s!important}
+#sheet.on{-webkit-backdrop-filter:blur(12px) saturate(1.1)!important;backdrop-filter:blur(12px) saturate(1.1)!important;transition:background-color .3s ease,backdrop-filter .4s ease,-webkit-backdrop-filter .4s ease,visibility 0s!important}
+html.lite #sheet.on{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 
 </style>
 </head>
@@ -3816,7 +3821,7 @@ body:has(#sheet.on) .ntl,body:has(#sheet.on) .ntr{opacity:0;transform:translateY
 <details><summary>Come cancello i miei dati?</summary><p>Dalle impostazioni, «Cancella tutti i dati» elimina viaggi, spese e liste da questo telefono. Per cancellare anche i dati dell'account scrivi all'assistenza.</p></details>
 </div>
 <div class="qrb"><a class="btn" id="hlmail" href="mailto:support.viaticum@gmail.com" translate="no">✉️ Scrivi all'assistenza</a><button type="button" class="btn ghost" id="hlcopy">📋 Copia i dettagli tecnici</button><a class="btn ghost" href="privacy.html" target="_blank" rel="noopener">🔒 Privacy e condizioni</a></div>
-<p class="hlver" id="hlver" translate="no">Viaticum · versione 201 · 21/10/2026</p>
+<p class="hlver" id="hlver" translate="no">Viaticum · versione 202 · 21/10/2026</p>
 <button type="button" class="btn ghost cls" id="hlclose">Chiudi</button></div></div>
 <div id="gtx" translate="no" aria-hidden="true"></div>
 <div id="exp" aria-hidden="true"><div class="qrc xcard" role="dialog" aria-label="Spesa"><div id="xbody"></div></div></div>
