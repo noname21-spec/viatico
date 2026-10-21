@@ -200,7 +200,8 @@ D = {
 'Salisburgo': 'Salzburg', 'Lubiana': 'Ljubljana', 'Zagabria': 'Zagreb', 'Bucarest': 'Bucharest', 'Istanbul': 'Istanbul',
 'Valencia': 'Valencia', 'Madrid': 'Madrid', 'Porto': 'Porto', 'Malaga': 'Malaga',
 'es. Bologna (BLQ)': 'e.g. Bologna (BLQ)', 'es. 12 rue de Turenne, 75004': 'e.g. 12 rue de Turenne, 75004',
-'Viaticum.': 'Viaticum.', 'Come vedere le tappe': 'How to view the stops', 'Scegli': 'Choose', 'Cambia': 'Change', 'Annulla\u200b': 'Undo', 'Come calcolo i costi': 'How I calculate costs',
+'Viaticum.': 'Viaticum.', 'Come vedere le tappe': 'How to view the stops', 'Buongiorno': 'Good morning', 'Buon pomeriggio': 'Good afternoon', 'Buonasera': 'Good evening', 'Buonanotte': 'Good night',
+'Gestisci': 'Manage', 'Nuovo': 'New', 'viaggio': 'trip', 'In corso': 'In progress', 'Fatto ✓': 'Done ✓', 'Oggi': 'Today', 'Domani': 'Tomorrow', 'Scegli': 'Choose', 'Cambia': 'Change', 'Annulla\u200b': 'Undo', 'Come calcolo i costi': 'How I calculate costs',
 'Promemoria per volo, tappe e pasti': 'Reminders for flight, stops and meals', 'Sono in ritardo': 'I\'m running late', 'Sei in ritardo?': 'Running late?',
 'Sposto in avanti le prossime tappe di oggi. Il volo e il rientro in aeroporto restano come sono.': 'I\'ll push back today\'s next stops. Your flight and the trip back to the airport stay as they are.',
 'Torna agli orari previsti': 'Back to the planned times', 'Orari previsti ripristinati': 'Planned times restored', 'Saltare questa tappa?': 'Skip this stop?',
@@ -242,6 +243,7 @@ D = {
 }
 # frammenti per testi composti (applicati solo a testi brevi)
 F = [
+(r'^Tra (\d+) giorni$', r'In \1 days'), (r'^(\d+)° a (.+)$', r'\1° in \2'),
 (r'^In ritardo di (\d+) min · modifica$', r'Running \1 min late · change'), (r'^Prossime tappe spostate di (\d+) minuti$', r'Next stops moved by \1 minutes'),
 (r'^1 tappa saltata: ', '1 stop skipped: '), (r'^(\d+) tappe saltate: ', r'\1 stops skipped: '),
 (r'^(.+): la tolgo dal giorno e ricalcolo gli orari delle tappe dopo\. Puoi rimetterla quando vuoi\.$', r'\1: I\'ll remove it from the day and recalculate the times of the later stops. You can put it back whenever you like.'),
