@@ -54,12 +54,12 @@ assert not re.search(r'<script\b[^>]+>',html), 'script con attributi: non copert
 shs=sorted(set(b64h(m) for m in re.findall(r'<script>(.*?)</script>',html,re.S)))
 sbu=SBC.get('url','')
 sbh=re.sub(r'^https?://','',sbu)
-CONN=["'self'","https://api.open-meteo.com","https://nominatim.openstreetmap.org","https://overpass-api.de","https://routing.openstreetmap.de","https://opendata.paris.fr","https://tile.openstreetmap.org","https://*.tile.openstreetmap.org","https://translate.googleapis.com"]+([sbu,'wss://'+sbh] if sbu else [])
+CONN=["'self'","https://api.open-meteo.com","https://nominatim.openstreetmap.org","https://overpass-api.de","https://routing.openstreetmap.de","https://opendata.paris.fr","https://tile.openstreetmap.org","https://*.tile.openstreetmap.org","https://translate.googleapis.com","https://translate-pa.googleapis.com","https://*.googleapis.com","https://translate.google.com"]+([sbu,'wss://'+sbh] if sbu else [])
 CSP="; ".join([
  "default-src 'self'",
- "script-src 'self' "+" ".join("'sha256-%s'"%h for h in shs)+" 'unsafe-eval' https://translate.google.com https://translate.googleapis.com https://www.gstatic.com",  # unsafe-eval: lo richiede il widget di Google Traduttore
- "style-src 'self' 'unsafe-inline' https://www.gstatic.com https://translate.googleapis.com",
- "font-src 'self' data:",
+ "script-src 'self' "+" ".join("'sha256-%s'"%h for h in shs)+" 'unsafe-eval' https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.gstatic.com",  # unsafe-eval: lo richiede il widget di Google Traduttore
+ "style-src 'self' 'unsafe-inline' https://www.gstatic.com https://translate.googleapis.com https://fonts.googleapis.com",
+ "font-src 'self' data: https://fonts.gstatic.com https://www.gstatic.com",
  "img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://www.gstatic.com https://translate.google.com https://translate.googleapis.com https://www.google.com",
  "connect-src "+" ".join(CONN),
  "frame-src https://translate.google.com",
