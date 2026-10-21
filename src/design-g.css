@@ -1998,3 +1998,6 @@ html.sa .nbar{top:calc(var(--apph) - 136px - env(safe-area-inset-bottom,0px)*.45
 .nmenu{bottom:146px}
 .blk{bottom:calc(env(safe-area-inset-bottom,0px)*.3 + 4px + var(--tb) - 44px);padding-bottom:80px;scroll-padding-bottom:80px}
 html.sa .blk{height:calc(var(--apph) - var(--abh) - 4px - env(safe-area-inset-top,0px) - var(--tb) - 24px + 58px - env(safe-area-inset-bottom,0px)*.45)}
+
+/* v190 niente barra scorrevole del tempo sopra il tamburo */
+.wbox .gb{display:none!important}
