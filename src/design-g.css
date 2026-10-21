@@ -2377,3 +2377,12 @@ html.lite .dhero .dhfx .dfr,html.lite .dhero .dhfx .dfw::before,html.lite .dhero
 body:has(#sheet.on) .nbrow{transform:perspective(700px) rotateX(-90deg);opacity:.3;transition:transform .18s cubic-bezier(.5,0,.75,0),opacity .18s ease}
 body:has(#sheet.on) .ntl,body:has(#sheet.on) .ntr{opacity:1!important;transform:none!important}
 @media (prefers-reduced-motion:reduce){.shc,#sheet.on .shc{transform:none!important;transition:opacity .15s!important}.nbrow,body:has(#sheet.on) .nbrow{transform:none;transition:none}}
+/* v218 tessere dei consigli compatte */
+.ctiles{gap:8px!important}
+.ctile{flex-direction:row!important;align-items:center!important;gap:10px!important;min-height:0!important;height:auto!important;aspect-ratio:auto!important;padding:10px 12px!important;border-radius:var(--gr2,16px)!important}
+.ctile .cic{width:36px!important;height:36px!important;flex:none}
+.ctile .cic svg{width:19px!important;height:19px!important}
+.ctile .ct{gap:1px!important}
+.ctile .ct b{font-size:.86rem!important;line-height:1.15!important}
+.ctile .ct small{font-size:.72rem!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.ctile .ct{min-height:0!important;padding:0!important;background:none!important;box-shadow:none!important;border-radius:0!important;justify-content:center!important;flex:1;cursor:inherit}
