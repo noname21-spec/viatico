@@ -2207,3 +2207,9 @@ h2.sec.mh{font-size:1.25rem!important}
 .hero .wca .wcs{flex:0 0 96px;width:96px;min-width:96px;padding-left:0;padding-right:0;white-space:nowrap;text-align:center;justify-content:center}
 .hero .wca .wcd{flex:none;margin-left:0}
 @media (max-width:400px){.hero .wca{gap:6px}.hero .wca .go{padding-left:10px;padding-right:10px;font-size:.84rem;gap:6px}.hero .wca .wcs{flex-basis:78px;width:78px;min-width:78px;font-size:.84rem}.hero .wca .wcd{width:40px;min-width:40px}}
+/* v211 testi CSS in inglese */
+html.en #dal[data-go="1"]::after{content:" Open the list ›"}
+html.en.offl::before{content:"📴 You're offline · saved trips and guides are still available"}
+html.en .who::before{content:"Travellers · tap to change a name"}
+html.en .dp.today small::after{content:" · today"}
+html.en .wi.now .wn::after{content:"now"}

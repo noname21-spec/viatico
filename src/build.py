@@ -45,7 +45,11 @@ assert head.count(mark)==1
 head=head.replace(mark,theme+mark)
 assert '<!--SPLASH-->' in body
 body=body.replace('<!--SPLASH-->',r('splash.html'),1)
-html=head+body+'<script>\n'+r('guard.js')+'\n</script>\n<script>\n'+icons_js+'\n</script>\n<script>\n'+cities+boot+'\n</script>\n<script>\n'+r('app1.js')+'\n</script>\n<script>\n'+r('app2.js')+'\n</script>\n<script>\n'+r('skyfx.js')+'\n</script>\n<script>\n'+r('anim.js')+'\n</script>\n<script>\n'+r('tabnav.js')+'\n</script>\n<script>\n'+r('season.js')+'\n</script>\n<script>\n'+r('pdf.js')+'\n</script>\n<script>\n'+SYNC+'\n</script>\n<script>\n'+r('offline.js')+'\n</script>\n<script>\n'+r('help.js')+'\n</script>\n<script>\n'+r('tutorial.js')+'\n</script>\n<script>\n'+r('coach.js')+'\n</script>\n<script>\n'+r('notify.js')+'\n</script>\n<script>\nwindow.__viaOK=1;try{window.__zinReady&&window.__zinReady()}catch(e){}\n</script>\n</body>\n</html>\n'
+import importlib.util as _iu,json as _js
+_sp=_iu.spec_from_file_location("i18n_en","/home/claude/viatico/src/i18n_en.py");_m=_iu.module_from_spec(_sp);_sp.loader.exec_module(_m)
+_F=[[a,re.sub(r'\\(\d)',r'$\1',b)] for a,b in _m.F]
+I18N='window.__I18N='+_js.dumps({'D':_m.D,'F':_F,'MON':_m.MON,'DAY':_m.DAY,'DAB':_m.DAB},ensure_ascii=False).replace('</','<\\/')+';'
+html=head+body+'<script>\n'+r('guard.js')+'\n</script>\n<script>\n'+I18N+'\n'+r('i18n.js')+'\n</script>\n<script>\n'+icons_js+'\n</script>\n<script>\n'+cities+boot+'\n</script>\n<script>\n'+r('app1.js')+'\n</script>\n<script>\n'+r('app2.js')+'\n</script>\n<script>\n'+r('skyfx.js')+'\n</script>\n<script>\n'+r('anim.js')+'\n</script>\n<script>\n'+r('tabnav.js')+'\n</script>\n<script>\n'+r('season.js')+'\n</script>\n<script>\n'+r('pdf.js')+'\n</script>\n<script>\n'+SYNC+'\n</script>\n<script>\n'+r('offline.js')+'\n</script>\n<script>\n'+r('help.js')+'\n</script>\n<script>\n'+r('tutorial.js')+'\n</script>\n<script>\n'+r('coach.js')+'\n</script>\n<script>\n'+r('notify.js')+'\n</script>\n<script>\nwindow.__viaOK=1;try{window.__zinReady&&window.__zinReady()}catch(e){}\n</script>\n</body>\n</html>\n'
 # Content-Security-Policy: hash di ogni script inline, niente 'unsafe-inline' per gli script
 import hashlib
 def b64h(t): return base64.b64encode(hashlib.sha256(t.encode('utf-8')).digest()).decode()
@@ -54,15 +58,15 @@ assert not re.search(r'<script\b[^>]+>',html), 'script con attributi: non copert
 shs=sorted(set(b64h(m) for m in re.findall(r'<script>(.*?)</script>',html,re.S)))
 sbu=SBC.get('url','')
 sbh=re.sub(r'^https?://','',sbu)
-CONN=["'self'","https://api.open-meteo.com","https://nominatim.openstreetmap.org","https://overpass-api.de","https://routing.openstreetmap.de","https://opendata.paris.fr","https://tile.openstreetmap.org","https://*.tile.openstreetmap.org","https://translate.googleapis.com","https://translate-pa.googleapis.com","https://*.googleapis.com","https://translate.google.com"]+([sbu,'wss://'+sbh] if sbu else [])
+CONN=["'self'","https://api.open-meteo.com","https://nominatim.openstreetmap.org","https://overpass-api.de","https://routing.openstreetmap.de","https://opendata.paris.fr","https://tile.openstreetmap.org","https://*.tile.openstreetmap.org"]+([sbu,'wss://'+sbh] if sbu else [])
 CSP="; ".join([
  "default-src 'self'",
- "script-src 'self' "+" ".join("'sha256-%s'"%h for h in shs)+" 'unsafe-eval' https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.gstatic.com",  # unsafe-eval: lo richiede il widget di Google Traduttore
- "style-src 'self' 'unsafe-inline' https://*.gstatic.com https://translate.googleapis.com https://fonts.googleapis.com",
- "font-src 'self' data: https://*.gstatic.com",
- "img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.gstatic.com https://translate.google.com https://translate.googleapis.com https://www.google.com https://*.google.com",
+ "script-src 'self' "+" ".join("'sha256-%s'"%h for h in shs)+"",
+ "style-src 'self' 'unsafe-inline'",
+ "font-src 'self' data:",
+ "img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org",
  "connect-src "+" ".join(CONN),
- "frame-src https://translate.google.com",
+
  "worker-src 'self'","manifest-src 'self'","object-src 'none'","base-uri 'self'","form-action 'self'"])
 mk='<meta name="color-scheme" content="light dark">'
 assert html.count(mk)==1
