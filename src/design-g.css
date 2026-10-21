@@ -2435,3 +2435,27 @@ html{background:var(--topoL,none) 0 0/480px 480px fixed,radial-gradient(130% 60%
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .leaflet-tile-pane::after{mix-blend-mode:soft-light;opacity:.25}}
 @media (prefers-reduced-motion:reduce){.blk.ent>*,.wc.jst .wcst{animation:none!important}.gds::after{transition:none}}
 .gdr.sel{box-shadow:inset 0 0 0 2px var(--ga)!important}
+/* v220 elenco dei viaggi chiaro */
+#dest.lst :is(.dpass,#drow,#didea,.dchips,.dtg,#dsr,.dyear,.dstat,.dmap,.dnext,#dal,.dex){display:none!important}
+#dest.lst #dmine #dnew{display:none!important}
+.tlh{display:flex;align-items:baseline;justify-content:space-between;margin:4px 4px 10px}
+.tlh b{font:800 1.4rem Outfit,system-ui,sans-serif;color:var(--ink)}
+.tlh span{font-size:.82rem;color:var(--mute)}
+#dmine .tsec{font:800 .66rem Outfit,system-ui,sans-serif!important;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)!important;margin:14px 4px 8px!important}
+#dmine .tk{margin:0 0 8px!important}
+#dmine .tkb{display:flex!important;align-items:center!important;gap:12px;width:100%;padding:12px 12px 12px 18px!important;border:0!important;border-radius:20px!important;background:var(--surf)!important;box-shadow:inset 6px 0 0 var(--a),var(--sh1)!important;-webkit-mask:none!important;mask:none!important;text-align:left;overflow:hidden}
+#dmine .tkb::before,#dmine .tkb::after{display:none!important}
+#dmine .tkb .tm{flex:1;min-width:0;display:flex!important;flex-direction:column;gap:2px;padding:0!important}
+#dmine .tkb .tm>small{order:2;font:500 .76rem Outfit,system-ui,sans-serif!important;letter-spacing:0!important;text-transform:none!important;color:var(--mute)!important}
+#dmine .tkb .tm>b{order:0;font:800 1.08rem Outfit,system-ui,sans-serif!important;color:var(--ink)!important}
+#dmine .tkb .tm>span:not([class]){order:1;font-size:.84rem;color:var(--ink);opacity:.8}
+#dmine .tkb .tm>.tkx{order:3;font-size:.74rem}
+#dmine .tkb .ts{flex:none;display:flex!important;flex-direction:row!important;align-items:baseline;gap:3px;width:auto!important;min-width:0!important;height:auto!important;padding:6px 11px!important;border:0!important;border-radius:999px!important;background:color-mix(in srgb,var(--a) 14%,var(--surf))!important;color:var(--ink)!important;font-size:.74rem}
+#dmine .tkb .ts b{font:800 .95rem Outfit,system-ui,sans-serif!important;color:inherit!important}
+#dmine .tkb .ts span{color:inherit!important;font-size:.74rem!important}
+#dmine .tkb .ts.nw{background:var(--a)!important;color:#fff!important}
+#dmine .tk.dn .tkb{opacity:.82}
+#dmine .tk.dn .tkb .stamp{transform:scale(.7) rotate(-12deg);right:70px}
+#dest .dpass .pcd small{font:700 .9rem Outfit,system-ui,sans-serif!important;letter-spacing:0!important;text-transform:none!important;opacity:1!important}
+#dest .dpass .pcd em{flex:0 0 100%;order:9;font:600 .78rem Outfit,system-ui,sans-serif;font-style:normal;opacity:.8;margin-top:-2px}
+#dest.lst .dmy b{display:none!important}

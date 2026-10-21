@@ -201,7 +201,7 @@ D = {
 'Valencia': 'Valencia', 'Madrid': 'Madrid', 'Porto': 'Porto', 'Malaga': 'Malaga',
 'es. Bologna (BLQ)': 'e.g. Bologna (BLQ)', 'es. 12 rue de Turenne, 75004': 'e.g. 12 rue de Turenne, 75004',
 'Viaticum.': 'Viaticum.', 'Come vedere le tappe': 'How to view the stops', 'Buongiorno': 'Good morning', 'Buon pomeriggio': 'Good afternoon', 'Buonasera': 'Good evening', 'Buonanotte': 'Good night',
-'Gestisci': 'Manage', 'Lista pronta ✓': 'List ready ✓', 'cose da preparare ›': 'things to prepare ›', 'cosa da preparare ›': 'thing to prepare ›', '✓ Guida completa': '✓ Full guide', 'In arrivo': 'Coming soon', 'Nuovo': 'New', 'viaggio': 'trip', 'In corso': 'In progress', 'Fatto ✓': 'Done ✓', 'Oggi': 'Today', 'Domani': 'Tomorrow', 'Scegli': 'Choose', 'Cambia': 'Change', 'Annulla\u200b': 'Undo', 'Come calcolo i costi': 'How I calculate costs',
+'Gestisci': 'Manage', '‹ Indietro': '‹ Back', '＋ Nuovo viaggio': '＋ New trip', 'al decollo': 'until take-off', 'all\'atterraggio': 'until landing', 'Lista pronta ✓': 'List ready ✓', 'cose da preparare ›': 'things to prepare ›', 'cosa da preparare ›': 'thing to prepare ›', '✓ Guida completa': '✓ Full guide', 'In arrivo': 'Coming soon', 'Nuovo': 'New', 'viaggio': 'trip', 'In corso': 'In progress', 'Fatto ✓': 'Done ✓', 'Oggi': 'Today', 'Domani': 'Tomorrow', 'Scegli': 'Choose', 'Cambia': 'Change', 'Annulla\u200b': 'Undo', 'Come calcolo i costi': 'How I calculate costs',
 'Promemoria per volo, tappe e pasti': 'Reminders for flight, stops and meals', 'Sono in ritardo': 'I\'m running late', 'Sei in ritardo?': 'Running late?',
 'Sposto in avanti le prossime tappe di oggi. Il volo e il rientro in aeroporto restano come sono.': 'I\'ll push back today\'s next stops. Your flight and the trip back to the airport stay as they are.',
 'Torna agli orari previsti': 'Back to the planned times', 'Orari previsti ripristinati': 'Planned times restored', 'Saltare questa tappa?': 'Skip this stop?',
@@ -243,6 +243,7 @@ D = {
 }
 # frammenti per testi composti (applicati solo a testi brevi)
 F = [
+(r'^(\d+) viaggi$', r'\1 trips'), (r'^1 viaggio$', '1 trip'),
 (r'^🕐 (\d{1,2}:\d{2}) ora locale$', r'🕐 \1 local time'), (r'^Città di (\w+)$', r'City of the month'),
 (r'^Tra (\d+) giorni$', r'In \1 days'), (r'^(\d+)° a (.+)$', r'\1° in \2'),
 (r'^In ritardo di (\d+) min · modifica$', r'Running \1 min late · change'), (r'^Prossime tappe spostate di (\d+) minuti$', r'Next stops moved by \1 minutes'),
