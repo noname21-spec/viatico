@@ -117,7 +117,7 @@ window.VNOT={list:function(){refresh();return list},state:function(){return ST},
 (function(){var n=0,iv=setInterval(function(){if(++n>30){clearInterval(iv);return}
  var seen=false;try{seen=!!localStorage.getItem("via-nprompt")}catch(e){}if(seen||ST.on||!supported||perm()==="denied"||(ios&&!standalone)){clearInterval(iv);return}
  var P=window.PAR,cfg=P&&P.cfg,tg=$("#tgr");if(!cfg||!tg||!window.PD)return;clearInterval(iv);
- if($("#nprompt"))return;var d=document.createElement("div");d.id="nprompt";d.className="nprompt";d.innerHTML='<span><b>Promemoria</b>Ti avviso prima del volo, delle tappe e dei pasti.</span><div><button type="button" class="npy">Attiva</button><button type="button" class="npn" aria-label="Non ora">Non ora</button></div>';tg.parentNode.insertBefore(d,tg);
+ if($("#nprompt"))return;var d=document.createElement("div");d.id="nprompt";d.className="nprompt";d.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20a2 2 0 0 0 4 0"/></svg><span>Promemoria per volo, tappe e pasti</span><button type="button" class="npy">Attiva</button><button type="button" class="npn" aria-label="Non ora">✕</button>';tg.parentNode.insertBefore(d,tg);
  function done(){try{localStorage.setItem("via-nprompt","1")}catch(e){}d.remove()}
  $(".npy",d).addEventListener("click",function(){done();var c=$("#non");if(c){c.checked=true;c.dispatchEvent(new Event("change",{bubbles:true}))}});
  $(".npn",d).addEventListener("click",done)},1500)})();
