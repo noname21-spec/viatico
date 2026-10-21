@@ -373,7 +373,7 @@ function up(){if(!drag)return;drag=false;thumb(pos(WSEL.i,.5),true,fmt(its[WSEL.
 gnow.addEventListener("click",function(){if(WNOW>=0)pick(WNOW,"drum")});
 $$(".vsw button",box).forEach(function(b){b.addEventListener("click",function(){var all=b.dataset.v==="l";document.body.classList.toggle("showall",all);$$(".vsw button",box).forEach(function(x){var on=x===b;x.classList.toggle("on",on);x.setAttribute("aria-selected",on)});if(!all)requestAnimationFrame(function(){ds.scrollLeft=WSEL.i*H;fish()})})});
 var st=WSEL.d===P.i?WSEL.i:(todayIdx()===SEL&&WNOW>=0?WNOW:0);WSEL={d:P.i,i:Math.min(st,N-1)};
-WH={paint:paint,go:function(i){pick(i,"drum")},setNow:function(i){WNOW=i;window.VNOW=i>=0&&its[i]?{t:fmt(its[i].t),n:tt(i)}:null;try{document.dispatchEvent(new Event("vnow"))}catch(e){}paint()}};
+WH={paint:paint,go:function(i){pick(i,"drum")},setNow:function(i){WNOW=i;window.VNOW=i>=0&&its[i]?{t:fmt(its[i].t),n:tt(i),nx:its[i+1]?{t:fmt(its[i+1].t),n:tt(i+1)}:null}:null;try{document.dispatchEvent(new Event("vnow"))}catch(e){}paint()}};
 paint();ds.scrollLeft=WSEL.i*H;fish()}
 
 /* banner dal vivo */

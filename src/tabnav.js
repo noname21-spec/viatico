@@ -21,15 +21,22 @@ function act(i){
 var old=$(".tabbar");if(old)old.setAttribute("aria-hidden","true");
 var bar=document.createElement("nav");bar.className="nbar";bar.setAttribute("aria-label","Sezioni");
 function tab(i){return '<button type="button" class="nt" data-i="'+i+'" aria-label="'+FULL[i]+'">'+svg(IC[i])+'<span>'+SHORT[i]+'</span></button>'}
-bar.innerHTML='<div class="nbrow"><div class="ntl"><button type="button" class="nhm" aria-label="Tutti i viaggi">'+svg("M3.5 11 12 4l8.5 7M5.5 9.5V20h13V9.5M10 20v-5.5h4V20",22)+'</button><span class="ntn"></span><b class="ntw"></b></div><div class="ntr"><i class="nind" aria-hidden="true"></i>'+tab(0)+tab(1)+tab(2)+tab(3)+tab(4)+'</div></div><button type="button" class="nfab"><span class="nfi"></span><span class="nfc"></span></button><div class="nmenu" hidden role="menu"><button type="button" role="menuitem" data-m="s">'+svg(AI["🔎"],20)+'Cerca nel viaggio</button><button type="button" role="menuitem" data-m="h">'+svg("M3.5 11 12 4l8.5 7M5.5 9.5V20h13V9.5M10 20v-5.5h4V20",20)+'Tutti i viaggi</button></div>';
+bar.innerHTML='<div class="nbrow"><div class="ntl"><i class="ndot" aria-hidden="true"></i><div class="ntx" aria-live="polite"><small class="ntn"></small><b class="ntw"></b></div></div><div class="ntr"><button type="button" class="nhm" aria-label="Tutti i viaggi">'+svg("M3.5 11 12 4l8.5 7M5.5 9.5V20h13V9.5M10 20v-5.5h4V20",22)+'<span>Home</span></button><i class="nind" aria-hidden="true"></i>'+tab(0)+tab(1)+tab(2)+tab(3)+tab(4)+'</div></div><button type="button" class="nfab"><span class="nfi"></span><span class="nfc"></span></button><div class="nmenu" hidden role="menu"><button type="button" role="menuitem" data-m="s">'+svg(AI["🔎"],20)+'Cerca nel viaggio</button><button type="button" role="menuitem" data-m="h">'+svg("M3.5 11 12 4l8.5 7M5.5 9.5V20h13V9.5M10 20v-5.5h4V20",20)+'Tutti i viaggi</button></div>';
 document.body.appendChild(bar);
 var row=$(".nbrow",bar),ind=$(".nind",bar),tabs=[].slice.call(bar.querySelectorAll(".nt")),fab=$(".nfab",bar),fi=$(".nfi",bar),fc=$(".nfc",bar),menu=$(".nmenu",bar),lastI=-1,lastE="";
 $(".ntl",bar).appendChild(fab);$(".nhm",bar).addEventListener("click",function(){clk("#shdest")||clk("#ahome")});
 function place(){var c=curI(),b=tabs[c];if(!b||!b.offsetWidth)return;ind.style.width=b.offsetWidth-6+"px";ind.style.transform="translateX("+(b.offsetLeft+3)+"px)"}
 function render(){var c=curI(),a=act(c);tabs.forEach(function(b,i){if(i===c)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});place();
  if(lastE!==a.e+a.t){lastE=a.e+a.t;fi.innerHTML=svg(AI[a.e]||AI["🔎"],22);fc.textContent=a.t;fab.setAttribute("aria-label",a.t);if(lastI!==-1&&lastI!==c){fab.classList.remove("pop");void fab.offsetWidth;fab.classList.add("pop")}}
- lastI=c;bar.setAttribute("data-sec",FULL[c]);$(".ntn",bar).textContent=FULL[c];nowTxt()}
-function nowTxt(){var v=window.VNOW,e=$(".ntw",bar);if(e)e.textContent=v?"Adesso · "+v.t:""}
+ lastI=c;bar.setAttribute("data-sec",FULL[c]);nowTxt()}
+function liveTx(c){var v=window.VNOW,q=function(x){return $(x)},t;
+ if(c===0&&v&&v.nx)return["Dopo · "+v.nx.t,v.nx.n];
+ if(c<=1){if(v)return["Adesso · "+v.t,v.n];var a=q("#itinerario .gdr .a"),b=q("#itinerario .gdr .b");if(a&&b)return["Prima tappa · "+a.textContent,b.textContent];return[FULL[c],"Imposta il tuo viaggio"]}
+ if(c===2){var s=q("#mgrid .pban small"),n=q("#mgrid .pban b");if(s&&n)return[s.textContent,n.textContent];return["Pasti","Scegli dove mangiare"]}
+ if(c===3)return["Costi","Spese del viaggio"];
+ return["Consigli","Da sapere prima di partire"]}
+var lastT="";
+function nowTxt(){var c=curI(),t=liveTx(c),k=t[0]+"|"+t[1],x=$(".ntx",bar);if(!x||k===lastT)return;lastT=k;$(".ntn",bar).textContent=t[0];$(".ntw",bar).textContent=t[1];x.classList.remove("ntchg");void x.offsetWidth;x.classList.add("ntchg")}
 document.addEventListener("vnow",nowTxt);
 tabs.forEach(function(b){b.addEventListener("click",function(){var i=+b.dataset.i;if(i===curI()){var bl=document.getElementById(FULL[i]==="Itinerario"?"itinerario":rs[i].id.replace(/^t-/,""));if(bl&&bl.scrollTo)bl.scrollTo({top:0,behavior:"smooth"});return}setI(i)})});
 /* tasto centrale: tocco = azione, pressione lunga = cerca o tutti i viaggi */
