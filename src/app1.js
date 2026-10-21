@@ -312,7 +312,28 @@ var bk="https://www.booking.com/searchresults.it.html?ss="+encodeURIComponent(h.
 el.innerHTML='<span class="se">🏨</span><div><b>'+esc(h.name)+'</b><small>'+(h.addr&&!h.alt?'Zona '+esc(h.zn)+' · ':'')+nights+(nights===1?" notte":" notti")+' · check-in dalle '+esc(h.cin)+' · check-out entro le '+esc(h.cout)+'</small><small>'+(h.geo?"📍 Posizione presa dall'indirizzo":h.addr?"📍 Indirizzo non trovato sulla mappa: uso il centro della zona":"📍 Posizione indicativa: centro della zona")+'</small><div class="lpa">'+'<a class="go sm" target="_blank" rel="noopener" href="'+esc(gdir(h.q,"transit"))+'">↗︎ Portami all\'alloggio</a>'+(h.addr?'':'<a class="go sm" target="_blank" rel="noopener" href="'+esc(bk)+'">🔎 Cerca su Booking</a>')+'<button type="button" class="go sm" data-edit>✏️ Modifica</button></div></div>';
 $("[data-edit]",el).addEventListener("click",function(){openSetup(false,2)})}
 
-function renderItin(){$("#ith").textContent=TRIP.multi?"Giorno "+(SEL+1)+" · "+DAYS[P.wd]+" "+dateObj(P.date).getUTCDate():"Itinerario";$("#steps").innerHTML=P.items.map(stepHTML).join("");buildWheel()}
+function renderItin(){$("#ith").textContent=TRIP.multi?"Giorno "+(SEL+1)+" · "+DAYS[P.wd]+" "+dateObj(P.date).getUTCDate():"Itinerario";$("#steps").innerHTML=P.items.map(stepHTML).join("");buildWheel();buildCru()}
+
+/* cruscotto: riquadri meteo e alloggio sopra le tappe */
+function buildCru(){var it=$("#itinerario"),c=$("#cru");
+if(!c){c=document.createElement("div");c.id="cru";c.className="cru";
+c.innerHTML='<button type="button" class="ct cmt" aria-label="Apri il meteo"><span class="cl">Meteo</span><b class="cv"><i class="cmi"></i><span class="cmd"></span></b><small class="cs"></small></button><button type="button" class="ct cst" aria-label="Mostra l\'alloggio"><span class="cl">Alloggio</span><b class="cv cn"></b><small class="cs"></small></button>';
+var tg=$("#tgr");tg.parentNode.insertBefore(c,tg);
+$(".cmt",c).addEventListener("click",function(){var b=$('.tg[data-p="meteo"]');if(b)b.click()});
+$(".cst",c).addEventListener("click",function(){var st=$("#stay");st.classList.toggle("cx");$(".cst",c).setAttribute("aria-expanded",!st.classList.contains("cx"))});
+var me=$("#meteo");if(me)new MutationObserver(cruUpd).observe(me,{childList:true,subtree:true,characterData:true})}
+var st=$("#stay");if(st&&st.previousElementSibling!==c){c.parentNode.insertBefore(st,$("#tgr"))}
+if(st&&!st.__cx){st.__cx=1;st.classList.add("cx")}
+cruUpd()}
+function cruUpd(){var c=$("#cru");if(!c)return;var me=$("#meteo"),mi=me&&me.querySelector(".mi"),sp=me&&me.querySelector("div span"),b=me&&me.querySelector("div b");
+var txt=((b&&b.textContent)||"").replace(/^Meteo\s*/i,"");
+$(".cmi",c).textContent=mi?mi.textContent:"🌤️";
+var t=sp?sp.textContent:"";var m=t.match(/-?\d+\s*°/);
+$(".cmd",c).textContent=m?m[0].replace(/\s/g,""):"–";
+$(".cmt .cs",c).textContent=t&&!/Caricamento/.test(t)?t.replace(/-?\d+\s*°C?/,"").replace(/^[\s·,:\-–]+/,"").slice(0,34):"Tocca per i dettagli";
+var st=$("#stay"),on=st&&!st.hidden&&st.querySelector("b");
+$(".cst",c).hidden=!on;c.classList.toggle("solo",!on);
+if(on){$(".cst .cn",c).textContent=st.querySelector("b").textContent;var sm=st.querySelector("small"),mm=sm&&sm.textContent.match(/check-in dalle (\d{1,2}[:.]\d{2})/);$(".cst .cs",c).textContent=mm?"Check-in dalle "+mm[1]:"Tocca per i dettagli"}}
 
 /* ghiera scorrevole */
 var WH={},WSEL={d:-1,i:0},WNOW=-1;
@@ -321,7 +342,7 @@ function wToPasti(it){var k=P.i+"|"+mKeyOf(it),t=$("#t-mangiare");if(!t)return;t
 function wStamp(it){var on=!wDone(it);if(it.k==="meal"||it.k==="snk"){var k=P.i+"|"+mKeyOf(it);MEALS.s=MEALS.s||{};if(on)MEALS.s[k]=1;else delete MEALS.s[k]}else{var k2="d"+P.i+"|"+it.t;MEALS.v=MEALS.v||{};if(on)MEALS.v[k2]=1;else delete MEALS.v[k2]}mSave();try{renderPasti()}catch(e){}return on}
 function buildWheel(){var ol=$("#steps");var old=$("#itinerario .wbox");if(old)old.remove();
 var steps=$$(".step",ol),N=steps.length,box=document.createElement("section");box.className="wbox";
-var sa0=document.body.classList.contains("showall"),its=P.items,H=52;
+var sa0=document.body.classList.contains("showall"),its=P.items,H=148;
 var end=P.kind==="single"||P.kind==="last"?P.dep:(P.end||P.leave),lens=[],real=[],cum=[],tot=0;
 its.forEach(function(it,i){var r=Math.max(1,(its[i+1]?its[i+1].t:end)-it.t);real.push(r);var l=Math.max(10,r);cum.push(tot);lens.push(l);tot+=l});
 box.innerHTML='<div class="vsw" role="tablist" aria-label="Come vedere le tappe"><button type="button" role="tab" data-v="w" aria-selected="'+!sa0+'" class="'+(sa0?"":"on")+'"><i aria-hidden="true">◎</i>Ghiera</button><button type="button" role="tab" data-v="l" aria-selected="'+sa0+'" class="'+(sa0?"on":"")+'"><i aria-hidden="true">☰</i>Elenco</button></div><div class="wcw"><div class="gb" aria-hidden="true"><div class="gbub"></div><div class="gbt"></div><div class="gnm" hidden></div><div class="gbth"></div><div class="gbe"><span></span><span></span></div></div><div class="gd"><div class="gds" tabindex="0" role="listbox" aria-label="Tappe della giornata"></div></div><div class="gct"><button type="button" class="gnow">↺ Vai ad Adesso</button><span class="wcn" aria-live="polite"></span></div><div class="wdet"></div></div>';
@@ -353,19 +374,19 @@ cn.textContent="Tappa "+(i+1)+" di "+N+(d?" · "+d+(d===1?" fatta":" fatte"):"")
 gnow.hidden=m<0;
 if(m>=0&&WNOW>=0&&its[WNOW]){nm.hidden=false;nm.style.left=pos(WNOW,Math.max(0,Math.min(1,(m-its[WNOW].t)/real[WNOW])))+"%"}else nm.hidden=true;
 if(!drag)thumb(pos(i,.5),true,fmt(its[i].t))}
-function fish(){var y=ds.scrollTop;rows.forEach(function(r,i){var q=Math.max(-3,Math.min(3,(i*H-y)/H)),a=Math.min(1,Math.abs(q));r.style.transform=reduce?"none":"rotateX("+(-q*22)+"deg) scale("+(1-a*.12)+")";r.style.opacity=1-a*.35})}
-function pick(i,from){i=Math.max(0,Math.min(N-1,i));if(i===WSEL.i&&from!=="init")return;WSEL={d:P.i,i:i};paint();if(from==="bar"||from==="drum"){lock=1;ds.scrollTo({top:i*H,behavior:from==="bar"||reduce?"auto":"smooth"});setTimeout(function(){lock=0},from==="bar"?60:450)}}
-var tk=0;ds.addEventListener("scroll",function(){if(!tk)tk=requestAnimationFrame(function(){tk=0;fish();if(lock)return;var i=Math.max(0,Math.min(N-1,Math.round(ds.scrollTop/H)));if(i!==WSEL.i){WSEL={d:P.i,i:i};paint()}})},{passive:true});
+function fish(){}
+function pick(i,from){i=Math.max(0,Math.min(N-1,i));if(i===WSEL.i&&from!=="init")return;WSEL={d:P.i,i:i};paint();if(from==="bar"||from==="drum"){lock=1;ds.scrollTo({left:i*H,behavior:from==="bar"||reduce?"auto":"smooth"});setTimeout(function(){lock=0},from==="bar"?60:450)}}
+var tk=0;ds.addEventListener("scroll",function(){if(!tk)tk=requestAnimationFrame(function(){tk=0;fish();if(lock)return;var i=Math.max(0,Math.min(N-1,Math.round(ds.scrollLeft/H)));if(i!==WSEL.i){WSEL={d:P.i,i:i};paint()}})},{passive:true});
 function frac(e){var r=gb.getBoundingClientRect(),f=Math.max(0,Math.min(1,(e.clientX-r.left)/Math.max(1,r.width)))*tot,k=0;for(var j=0;j<N;j++)if(f>=cum[j])k=j;return{k:k,f:Math.max(0,Math.min(1,(f-cum[k])/lens[k])),p:f/tot*100}}
 function mv(e){var q=frac(e);thumb(q.p,false,fmt(its[q.k].t+Math.round(q.f*real[q.k])));if(q.k!==WSEL.i)pick(q.k,"bar")}
 gb.setAttribute("data-noswipe","");gb.style.touchAction="none";
 gb.addEventListener("pointerdown",function(e){drag=true;try{gb.setPointerCapture(e.pointerId)}catch(x){}mv(e)});gb.addEventListener("pointermove",function(e){if(drag)mv(e)});
 function up(){if(!drag)return;drag=false;thumb(pos(WSEL.i,.5),true,fmt(its[WSEL.i].t))}gb.addEventListener("pointerup",up);gb.addEventListener("pointercancel",up);
 gnow.addEventListener("click",function(){if(WNOW>=0)pick(WNOW,"drum")});
-$$(".vsw button",box).forEach(function(b){b.addEventListener("click",function(){var all=b.dataset.v==="l";document.body.classList.toggle("showall",all);$$(".vsw button",box).forEach(function(x){var on=x===b;x.classList.toggle("on",on);x.setAttribute("aria-selected",on)});if(!all)requestAnimationFrame(function(){ds.scrollTop=WSEL.i*H;fish()})})});
+$$(".vsw button",box).forEach(function(b){b.addEventListener("click",function(){var all=b.dataset.v==="l";document.body.classList.toggle("showall",all);$$(".vsw button",box).forEach(function(x){var on=x===b;x.classList.toggle("on",on);x.setAttribute("aria-selected",on)});if(!all)requestAnimationFrame(function(){ds.scrollLeft=WSEL.i*H;fish()})})});
 var st=WSEL.d===P.i?WSEL.i:(todayIdx()===SEL&&WNOW>=0?WNOW:0);WSEL={d:P.i,i:Math.min(st,N-1)};
 WH={paint:paint,go:function(i){pick(i,"drum")},setNow:function(i){WNOW=i;window.VNOW=i>=0&&its[i]?{t:fmt(its[i].t),n:tt(i)}:null;try{document.dispatchEvent(new Event("vnow"))}catch(e){}paint()}};
-paint();ds.scrollTop=WSEL.i*H;fish()}
+paint();ds.scrollLeft=WSEL.i*H;fish()}
 
 /* banner dal vivo */
 var lastNow=-2,LB=null;
