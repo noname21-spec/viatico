@@ -2110,3 +2110,5 @@ html.sa .blk{height:calc(var(--apph) - var(--abh) - 4px - env(safe-area-inset-to
 .hero .wca .wcd::after{content:"";position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-7px 0 0 -5px;border-right:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:rotate(45deg);transition:transform .25s}
 .hero .wc.open .wca .wcd::after{transform:rotate(-135deg);margin-top:-2px}
 .hero .wca .go{min-width:0;flex:0 1 auto;white-space:nowrap}
+/* v198 legenda in basso a sinistra, sopra l'attribuzione della mappa */
+.mc-bl{bottom:30px!important}
