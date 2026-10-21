@@ -2386,3 +2386,52 @@ body:has(#sheet.on) .ntl,body:has(#sheet.on) .ntr{opacity:1!important;transform:
 .ctile .ct b{font-size:.86rem!important;line-height:1.15!important}
 .ctile .ct small{font-size:.72rem!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .ctile .ct{min-height:0!important;padding:0!important;background:none!important;box-shadow:none!important;border-radius:0!important;justify-content:center!important;flex:1;cursor:inherit}
+/* v219 rifiniture estetiche */
+/* 1. ombre su due livelli, tinte dal colore della città */
+:root{--sh1:0 1px 2px color-mix(in srgb,var(--ga) 10%,transparent),0 6px 18px color-mix(in srgb,var(--ga) 9%,rgba(0,0,0,.05));--sh2:0 2px 4px color-mix(in srgb,var(--ga) 12%,transparent),0 16px 36px color-mix(in srgb,var(--ga) 18%,rgba(0,0,0,.08))}
+:is(.gdr,.ctile,.tg,.nprompt,.fpq,.pmrow,.btw,.skl,.drc,.dsel,.shgrp,.stay,.meteo,.voli,.ithw .dsbn,.dnext,.dic,.drc2.drn2,#dest .dword,#dest .dsb,#dest .dchips button):not(.sel):not(.on){box-shadow:var(--sh1)!important}
+:is(.hero,.chero,#dest .dpass,.drc2:not(.drn2)){box-shadow:inset 0 1px 0 rgba(255,255,255,.3),var(--sh2)!important}
+/* 2. sfondo con linee topografiche */
+html{background:var(--topoL,none) 0 0/480px 480px fixed,radial-gradient(130% 60% at 50% 0%,var(--bgT) 0%,var(--bgB) 100%) fixed,var(--bg)!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){background:var(--topoD,none) 0 0/480px 480px fixed,radial-gradient(130% 60% at 50% 0%,var(--bgT) 0%,var(--bgB) 100%) fixed,var(--bg)!important}}
+:root[data-theme="dark"],:root:has(#dm:checked){background:var(--topoD,none) 0 0/480px 480px fixed,radial-gradient(130% 60% at 50% 0%,var(--bgT) 0%,var(--bgB) 100%) fixed,var(--bg)!important}
+/* 3. skyline negli hero di Costi e Consigli */
+.chero{position:relative;overflow:hidden}
+.chero>.csky{position:absolute;left:0;right:0;bottom:-4px;width:100%;height:auto;opacity:.16;pointer-events:none;z-index:0;-webkit-mask:linear-gradient(transparent,#000 70%);mask:linear-gradient(transparent,#000 70%)}
+.chero>*:not(.csky){position:relative;z-index:1}
+/* 4. icone a due tonalità: il segno nel colore della città accanto al testo */
+.blk :is(p,li,small,.leg span,.pdx,.mb,.ct,.btwh,.vsm) .ic{color:var(--ga)}
+.hero .ic,.chero .ic,.pmw .ic{color:inherit!important}
+/* 5. entrata a cascata */
+.blk.ent>*{animation:eUp .48s cubic-bezier(.2,.9,.3,1) both;animation-delay:calc(var(--ei,0)*45ms)}
+@keyframes eUp{from{opacity:0;transform:translateY(14px)}}
+/* 6. linea della timeline che si colora fino ad adesso */
+.gds::after{content:"";position:absolute;left:9px;top:12px;width:2px;height:var(--tlp,0px);border-radius:2px;background:linear-gradient(180deg,var(--ga),var(--c2,var(--ga)));transition:height .6s cubic-bezier(.2,.9,.3,1);z-index:0}
+.gdr{z-index:1}
+/* 7. timbro che cade e rimbalza; coriandoli */
+.wcst small{display:block;font:700 .55rem/1.2 Outfit,system-ui,sans-serif;letter-spacing:.08em;margin-top:2px;opacity:.9}
+.wc.jst .wcst{animation:stDrop .62s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes stDrop{0%{opacity:0;transform:rotate(-14deg) scale(2.2)}55%{opacity:1;transform:rotate(-12deg) scale(.92)}100%{transform:rotate(-12deg) scale(1)}}
+.cfx{position:fixed;inset:0;width:100%;height:100%;z-index:900;pointer-events:none}
+/* 8. selettore dei giorni con meteo e avanzamento */
+.dp .dpx{display:flex;align-items:center;justify-content:center;gap:3px;margin-top:2px;font-style:normal;min-height:14px}
+.dp .dpx svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
+.dp .dpx b{font:700 .62rem Outfit,system-ui,sans-serif;opacity:.85}
+.dp .dpx s{display:block;width:12px;height:12px;border-radius:50%;background:conic-gradient(var(--ga) calc(var(--p)*360deg),color-mix(in srgb,currentColor 22%,transparent) 0);-webkit-mask:radial-gradient(circle,transparent 3.2px,#000 3.6px);mask:radial-gradient(circle,transparent 3.2px,#000 3.6px)}
+.dp.on .dpx s{background:conic-gradient(currentColor calc(var(--p)*360deg),color-mix(in srgb,currentColor 28%,transparent) 0)}
+.dp>em{display:none!important}
+/* 9. mappa nei colori della città */
+.leaflet-tile-pane{filter:saturate(.8) sepia(.08)}
+.leaflet-tile-pane::after{content:"";position:absolute;left:-6000px;top:-6000px;width:12000px;height:12000px;background:var(--ga);opacity:.09;mix-blend-mode:multiply;pointer-events:none}
+/* 10. schermate vuote illustrate */
+.sxe{position:relative}
+.sxe::before{content:"";display:block;width:150px;height:58px;margin:0 auto 6px;background:var(--ga);opacity:.5;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 58'%3E%3Cg fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 56h146M10 56V36h14v20M24 56V22h10l4-8 4 8h10v34M52 56V30h18v26M70 56V12l6-8 6 8v44M82 56V34h16v22M98 56V26c0-6 10-10 14-10s14 4 14 10v30M126 56V40h16v16'/%3E%3Ccircle cx='132' cy='14' r='6'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 58'%3E%3Cg fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 56h146M10 56V36h14v20M24 56V22h10l4-8 4 8h10v34M52 56V30h18v26M70 56V12l6-8 6 8v44M82 56V34h16v22M98 56V26c0-6 10-10 14-10s14 4 14 10v30M126 56V40h16v16'/%3E%3Ccircle cx='132' cy='14' r='6'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat}
+/* 11. tema scuro "notturno": bordo luminoso del colore della città */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(.gdr,.ctile,.tg,.nprompt,.fpq,.pmrow,.btw,.dsel,.shgrp,.dic,#dest .dword,#dest .dsb){box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ga) 22%,transparent),0 8px 24px color-mix(in srgb,var(--ga) 10%,transparent)!important}
+:root:not([data-theme="light"]) :is(.hero,.chero,#dest .dpass){box-shadow:inset 0 0 0 1px color-mix(in srgb,#fff 12%,transparent),0 0 0 1px color-mix(in srgb,var(--ga) 30%,transparent),0 18px 44px color-mix(in srgb,var(--ga) 22%,transparent)!important}}
+:root[data-theme="dark"] :is(.gdr,.ctile,.tg,.nprompt,.fpq,.pmrow,.btw,.dsel,.shgrp,.dic,#dest .dword,#dest .dsb),:root:has(#dm:checked) :is(.gdr,.ctile,.tg,.nprompt,.fpq,.pmrow,.btw,.dsel,.shgrp,.dic){box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ga) 22%,transparent),0 8px 24px color-mix(in srgb,var(--ga) 10%,transparent)!important}
+:root[data-theme="dark"] :is(.hero,.chero,#dest .dpass),:root:has(#dm:checked) :is(.hero,.chero){box-shadow:inset 0 0 0 1px color-mix(in srgb,#fff 12%,transparent),0 0 0 1px color-mix(in srgb,var(--ga) 30%,transparent),0 18px 44px color-mix(in srgb,var(--ga) 22%,transparent)!important}
+:root[data-theme="dark"] .leaflet-tile-pane::after,:root:has(#dm:checked) .leaflet-tile-pane::after{mix-blend-mode:soft-light;opacity:.25}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .leaflet-tile-pane::after{mix-blend-mode:soft-light;opacity:.25}}
+@media (prefers-reduced-motion:reduce){.blk.ent>*,.wc.jst .wcst{animation:none!important}.gds::after{transition:none}}
+.gdr.sel{box-shadow:inset 0 0 0 2px var(--ga)!important}
