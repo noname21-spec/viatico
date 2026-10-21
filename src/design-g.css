@@ -2105,3 +2105,8 @@ html.sa .blk{height:calc(var(--apph) - var(--abh) - 4px - env(safe-area-inset-to
 /* v196 respiro tra selettore colazione in hotel e banner del pasto */
 .hbt{margin-bottom:14px!important}
 .pban{margin-top:0}
+/* v197 tasto dettagli compatto sulla stessa riga */
+.hero .wca .wcd{font-size:0;width:44px;padding:0;flex:none;position:relative;margin-left:auto}
+.hero .wca .wcd::after{content:"";position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-7px 0 0 -5px;border-right:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:rotate(45deg);transition:transform .25s}
+.hero .wc.open .wca .wcd::after{transform:rotate(-135deg);margin-top:-2px}
+.hero .wca .go{min-width:0;flex:0 1 auto;white-space:nowrap}

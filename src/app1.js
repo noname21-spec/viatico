@@ -344,7 +344,7 @@ c.innerHTML='<div class="wch"><span>Tappa '+(i+1)+' di '+N+'</span><b class="wcp
 $(".wct",c).textContent=$(".t",steps[i]).textContent;
 var b=$(".wcb",c);b.innerHTML=$(".body",steps[i]).innerHTML;
 var ac=$(".wca",c),eat=$(".eat",b);if(eat)eat.parentNode.removeChild(eat);$$("a.go",b).filter(function(g){return g.parentNode===b}).reverse().forEach(function(g){g.parentNode.removeChild(g);ac.insertBefore(g,ac.firstChild)});if(eat){var pb=document.createElement("button");pb.type="button";pb.className="wcp2";pb.innerHTML="<span aria-hidden=\"true\">🍽️</span> "+(mPick(it)?"Cambia in Pasti":"Scegli in Pasti");pb.addEventListener("click",function(){wToPasti(it)});ac.insertBefore(pb,ac.firstChild)}
-if($("p",b)){var dt=document.createElement("button");dt.type="button";dt.className="wcd";dt.setAttribute("aria-expanded","false");dt.textContent="Dettagli";dt.addEventListener("click",function(){var o=c.classList.toggle("open");dt.textContent=o?"Meno":"Dettagli";dt.setAttribute("aria-expanded",o)});ac.appendChild(dt)}
+if($("p",b)){var dt=document.createElement("button");dt.type="button";dt.className="wcd";dt.setAttribute("aria-expanded","false");dt.setAttribute("aria-label","Mostra i dettagli");dt.addEventListener("click",function(){var o=c.classList.toggle("open");dt.setAttribute("aria-label",o?"Nascondi i dettagli":"Mostra i dettagli");dt.setAttribute("aria-expanded",o)});ac.appendChild(dt)}
 $$("[data-edit]",c).forEach(function(x){x.addEventListener("click",function(){openSetup(false)})});
 $(".wcs",c).addEventListener("click",function(){var on=wStamp(it);paint();if(on&&i<N-1)setTimeout(function(){if(WSEL.i===i&&WSEL.d===P.i)pick(i,"drum")},800)});
 cards.push(c);
