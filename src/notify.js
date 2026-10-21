@@ -113,4 +113,12 @@ $("#ntest").addEventListener("click",function(){
 $("#ncal").addEventListener("click",function(){var c=$("#shcal");if(c)c.click()});
 sync();if(ST.on)start();
 window.VNOT={list:function(){refresh();return list},state:function(){return ST},tick:tick,build:build,reset:function(){sv(FK,{})}};
+/* invito una tantum ad attivare i promemoria (volo, tappe, pasti) */
+(function(){var n=0,iv=setInterval(function(){if(++n>30){clearInterval(iv);return}
+ var seen=false;try{seen=!!localStorage.getItem("via-nprompt")}catch(e){}if(seen||ST.on||!supported||perm()==="denied"||(ios&&!standalone)){clearInterval(iv);return}
+ var P=window.PAR,cfg=P&&P.cfg,tg=$("#tgr");if(!cfg||!tg||!window.PD)return;clearInterval(iv);
+ if($("#nprompt"))return;var d=document.createElement("div");d.id="nprompt";d.className="nprompt";d.innerHTML='<span><b>Promemoria</b>Ti avviso prima del volo, delle tappe e dei pasti.</span><div><button type="button" class="npy">Attiva</button><button type="button" class="npn" aria-label="Non ora">Non ora</button></div>';tg.parentNode.insertBefore(d,tg);
+ function done(){try{localStorage.setItem("via-nprompt","1")}catch(e){}d.remove()}
+ $(".npy",d).addEventListener("click",function(){done();var c=$("#non");if(c){c.checked=true;c.dispatchEvent(new Event("change",{bubbles:true}))}});
+ $(".npn",d).addEventListener("click",done)},1500)})();
 })();

@@ -2141,3 +2141,31 @@ html.sa .nbar{top:calc(var(--apph) - 142px - env(safe-area-inset-bottom,0px)*.45
 .ntl .ntn,.ntl .ntw{background:none!important;box-shadow:none!important;border:0!important;border-radius:0!important;padding:0!important;margin:0!important;width:auto!important;height:auto!important}
 .ntl .ntw{text-transform:none!important;letter-spacing:0!important}
 .ntl .ntn{flex:none!important}
+/* v200 niente scroll orizzontale della pagina (Android): il dito muove solo in verticale, i caroselli restano orizzontali */
+html,body,.blk{touch-action:pan-y!important;overscroll-behavior-x:none!important}
+.blk{overflow-x:hidden}
+.dir,.tt,.sqr,.dsel,.dsel1,.tgr,.hch,.gds{touch-action:pan-x pan-y!important}
+/* v200 condividi giornata, domande una tantum, banner senza doppioni, alto contrasto */
+.ithw{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0 8px}
+.ithw #ith{margin:6px 4px 8px!important}
+.dsbn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 13px;border:0;border-radius:999px;background:var(--gsoft);color:var(--ga);font:700 .78rem Outfit,system-ui,sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.dsbn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dsbn:active{transform:scale(.96)}.dsbn:focus-visible{outline:3px solid var(--ga);outline-offset:2px}
+.fpq,.nprompt{display:flex;flex-direction:column;gap:10px;margin:0 0 12px;padding:14px 16px;border-radius:var(--gr);background:var(--surf);font-size:.86rem;line-height:1.4}
+.fpq div,.nprompt div{display:flex;gap:8px;flex-wrap:wrap}
+.nprompt span b{display:block;font:800 .64rem Outfit,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:2px}
+.fpq button,.nprompt button{min-height:40px;padding:0 16px;border:0;border-radius:14px;background:var(--gsoft);color:var(--ga);font:700 .82rem Outfit,system-ui,sans-serif;cursor:pointer}
+.fpq .fpy,.nprompt .npy{background:var(--ga);color:var(--gon)}
+.fpq button:focus-visible,.nprompt button:focus-visible{outline:3px solid var(--ga);outline-offset:2px}
+.hero .live.ldup .lt b{display:none}
+.hero .live.ldup .lt span{margin:0;font-size:1.05rem;font-weight:700;color:#fff!important}
+/* alto contrasto */
+html.hc{--mute:#4b3b37;--line:#7d6d66}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]).hc{--mute:#cfd3e2;--line:#6b7390}}
+:root[data-theme="dark"].hc,:root:has(#dm:checked).hc{--mute:#cfd3e2;--line:#6b7390}
+html.hc body{font-weight:500}
+html.hc :is(.live,.eat,.stay,.avv,.pmrow,.gdr,.tg,.dsel,.shgrp,.row,.r,.fpq,.nprompt,.nbrow,.btw,.btwd,.pvr){box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ink) 38%,transparent)!important}
+html.hc .nbrow{background:var(--surf)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.hc .hero .sky{opacity:.12}
+html.hc .nt:not([aria-current=page]),html.hc .nt span{color:var(--ink)}
+.ithw>h2.sec#ith{position:static;width:auto;height:auto;clip:auto;overflow:visible;margin:6px 4px 8px!important;font:800 .66rem Outfit,system-ui,sans-serif!important;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);animation:none}

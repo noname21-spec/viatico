@@ -312,7 +312,7 @@ var bk="https://www.booking.com/searchresults.it.html?ss="+encodeURIComponent(h.
 el.innerHTML='<span class="se">🏨</span><div><b>'+esc(h.name)+'</b><small>'+(h.addr&&!h.alt?'Zona '+esc(h.zn)+' · ':'')+nights+(nights===1?" notte":" notti")+' · check-in dalle '+esc(h.cin)+' · check-out entro le '+esc(h.cout)+'</small><small>'+(h.geo?"📍 Posizione presa dall'indirizzo":h.addr?"📍 Indirizzo non trovato sulla mappa: uso il centro della zona":"📍 Posizione indicativa: centro della zona")+'</small><div class="lpa">'+'<a class="go sm" target="_blank" rel="noopener" href="'+esc(gdir(h.q,"transit"))+'">↗︎ Portami all\'alloggio</a>'+(h.addr?'':'<a class="go sm" target="_blank" rel="noopener" href="'+esc(bk)+'">🔎 Cerca su Booking</a>')+'<button type="button" class="go sm" data-edit>✏️ Modifica</button></div></div>';
 $("[data-edit]",el).addEventListener("click",function(){openSetup(false,2)})}
 
-function renderItin(){$("#ith").textContent=TRIP.multi?"Giorno "+(SEL+1)+" · "+DAYS[P.wd]+" "+dateObj(P.date).getUTCDate():"Itinerario";$("#steps").innerHTML=P.items.map(stepHTML).join("");buildWheel();buildCru()}
+function renderItin(){$("#ith").textContent=TRIP.multi?"Giorno "+(SEL+1)+" · "+DAYS[P.wd]+" "+dateObj(P.date).getUTCDate():"Itinerario";$("#steps").innerHTML=P.items.map(stepHTML).join("");buildWheel();buildCru();dayShareBtn()}
 
 /* cruscotto: riquadri meteo e alloggio sopra le tappe */
 function buildCru(){var old=$("#cru");if(old)old.remove();var tg=$("#tgr"),b=$(".cst",tg);
@@ -376,13 +376,26 @@ var st=WSEL.d===P.i?WSEL.i:(todayIdx()===SEL&&WNOW>=0?WNOW:0);WSEL={d:P.i,i:Math
 WH={paint:paint,go:function(i){pick(i,"drum")},setNow:function(i){WNOW=i;window.VNOW=i>=0&&its[i]?{t:fmt(its[i].t),n:tt(i),nx:its[i+1]?{t:fmt(its[i+1].t),n:tt(i+1)}:null}:null;try{document.dispatchEvent(new Event("vnow"))}catch(e){}paint()}};
 paint();ds.scrollLeft=WSEL.i*H;fish()}
 
+/* condividi la giornata */
+function shareDay(){var h=$("#itinerario h1"),city=h?h.textContent.split(/\s+in\s+/)[0].trim():(PD&&PD.n)||"",L=[];L.push(city+" · "+$("#ith").textContent);$$("#steps .step").forEach(function(li){var t=$(".t",li),h2=$("h2",li);if(t&&h2)L.push(t.textContent.trim()+"  "+h2.textContent.trim())});var tx=L.join("\n");
+if(navigator.share){navigator.share({title:L[0],text:tx}).catch(function(){})}else if(navigator.clipboard){navigator.clipboard.writeText(tx).then(function(){toast("Giornata copiata: incollala dove vuoi")},function(){toast("Non riesco a copiare")})}else toast("Condivisione non disponibile")}
+function dayShareBtn(){var h=$("#ith");if(!h)return;var w=h.parentNode;if(!w.classList.contains("ithw")){var d=document.createElement("div");d.className="ithw";w.insertBefore(d,h);d.appendChild(h);w=d}
+if(!$(".dsbn",w)){var b=document.createElement("button");b.type="button";b.className="dsbn";b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4M5 12v7h14v-7"/></svg><span>Condividi</span>';b.setAttribute("aria-label","Condividi la giornata");b.addEventListener("click",shareDay);w.appendChild(b)}}
+/* domanda una tantum sui filtri dei pasti */
+function fpQuestion(){var g=$("#mgrid");if(!g||$("#fpq"))return;var seen=false;try{seen=!!localStorage.getItem("via-fpq")}catch(e){}if(seen||fprefOn())return;
+var d=document.createElement("div");d.id="fpq";d.className="fpq";d.innerHTML='<span>Vegetariano, senza glutine o economico? Scegli i filtri e vedi solo i locali adatti.</span><div><button type="button" class="fpy">Imposta filtri</button><button type="button" class="fpn">No, grazie</button></div>';g.parentNode.insertBefore(d,g);
+function done(){try{localStorage.setItem("via-fpq","1")}catch(e){}d.remove()}
+$(".fpy",d).addEventListener("click",function(){done();var b=$("#fbtn");if(b)b.click()});$(".fpn",d).addEventListener("click",done)}
+/* alto contrasto */
+(function(){var on=false;try{on=localStorage.getItem("via-hc")==="1"}catch(e){}document.documentElement.classList.toggle("hc",on);var c=$("#hcon");if(!c)return;c.checked=on;c.addEventListener("change",function(){document.documentElement.classList.toggle("hc",c.checked);try{localStorage.setItem("via-hc",c.checked?"1":"0")}catch(e){}})})();
+
 /* banner dal vivo */
 var lastNow=-2,LB=null;
 function todayIdx(){if(!TRIP)return -1;var d=paris().d;for(var i=0;i<TRIP.days.length;i++)if(TRIP.days[i].date===d)return i;return -1}
 var lastDay=null;
 function liveTick(){if(document.hidden)return;var live=$("#live");if(!TRIP||!CFG){live.hidden=true;return}var dd=paris().d;if(lastDay&&dd!==lastDay){lastDay=dd;try{renderAll()}catch(e){console.error(e)}return}lastDay=dd;
 var n=paris(),c=CFG,A=TRIP.A,D0=TRIP.days[0],DN=TRIP.days[TRIP.n-1];
-function set(cls,b,sp){try{localStorage.setItem("via-live",JSON.stringify({k:c.dest+c.date,b:b,s:sp,t:Date.now(),bar:LB}))}catch(e){}live.className="live "+cls;var lk="",tt=b,mm=/^(Ora|Prima tappa): /.exec(b);if(mm){lk=mm[1]==="Ora"?"Adesso":"Prima tappa";tt=b.slice(mm[0].length)}live.innerHTML='<i class="dot"></i><div class="lt">'+(lk?'<small class="lk"></small>':'')+'<b></b><span></span></div>';live.classList.toggle("lnow",lk==="Adesso");if(lk)$(".lk",live).textContent=lk;$("b",live).textContent=tt;$("span",live).textContent=sp;live.hidden=false;window.__apPaint&&__apPaint(/^Prossima:/.test(sp)?"":b)}
+function set(cls,b,sp){try{localStorage.setItem("via-live",JSON.stringify({k:c.dest+c.date,b:b,s:sp,t:Date.now(),bar:LB}))}catch(e){}live.className="live "+cls;var lk="",tt=b,mm=/^(Ora|Prima tappa): /.exec(b);if(mm){lk=mm[1]==="Ora"?"Adesso":"Prima tappa";tt=b.slice(mm[0].length)}live.innerHTML='<i class="dot"></i><div class="lt">'+(lk?'<small class="lk"></small>':'')+'<b></b><span></span></div>';live.classList.toggle("lnow",lk==="Adesso");live.classList.toggle("ldup",/^Mancano /.test(b));if(lk)$(".lk",live).textContent=lk;$("b",live).textContent=tt;$("span",live).textContent=sp;live.hidden=false;window.__apPaint&&__apPaint(/^Prossima:/.test(sp)?"":b)}
 var steps=$$("#steps .step");steps.forEach(function(li){li.classList.remove("now")});
 if(n.d<D0.date){var d=Math.round((dateObj(D0.date)-dateObj(n.d))/864e5);set("calm",d===1?"Domani si parte! ✈️":"Mancano "+d+" giorni al viaggio",(c.a_num?"Volo "+c.a_num+(c.a_dep?" alle "+c.a_dep:"")+". ":"")+"Atterraggio a "+A.n+" alle "+c.a_arr+"."+(d<=2&&PD.T.remind?" "+PD.T.remind:""));return}
 if(n.d>DN.date){set("calm","Com'è andata a "+PD.n+"? "+PD.flag,"L'itinerario resta qui come ricordo.");$(".lt",live).insertAdjacentHTML("beforeend",'<div class="lact"><button type="button" class="lb lb2 lrecap">Condividi il riepilogo</button></div>');return}
@@ -591,7 +604,7 @@ var id="u"+Date.now().toString(36);MEALS.o=MEALS.o||{};(MEALS.o[k]=MEALS.o[k]||[
 document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest(".fplink");if(!a)return;e.preventDefault();var t=$("#t-mangiare");if(t){t.checked=true;t.dispatchEvent(new Event("change",{bubbles:true}))}setTimeout(function(){PS.fil=true;PS.menu=null;pOv()},120)});
 setInterval(function(){if(document.hidden||!TRIP||!P||!PS.L.length)return;var t=$("#t-mangiare");if(!t||!t.checked||PS.add||PS.menu||PS.fil)return;pGeo();var a=document.activeElement;if(a&&a.closest&&a.closest("#mgrid")&&/INPUT/.test(a.tagName))return;if(pBanner(PS.L,pHero(PS.L))!==PS.hh){PS.anim="h";pDraw()}},60000);
 PAR.fpPaint=pFpaint})();
-function renderPasti(){var hb=$("#hbt");if(hb){hb.hidden=!(TRIP&&TRIP.multi);$("#hbc").checked=COPT.hb===1}if(PD.T.mcrit)$("#mcrit").textContent=PD.T.mcrit;var it=P.items,meals=it.filter(function(x){return x.k==="meal"||x.k==="snk"}),h="";
+function renderPasti(){try{fpQuestion()}catch(e){}var hb=$("#hbt");if(hb){hb.hidden=!(TRIP&&TRIP.multi);$("#hbc").checked=COPT.hb===1}if(PD.T.mcrit)$("#mcrit").textContent=PD.T.mcrit;var it=P.items,meals=it.filter(function(x){return x.k==="meal"||x.k==="snk"}),h="";
 $("#mlead").textContent=TRIP.multi?"Giorno "+(P.i+1)+", "+dateLong(P.date)+": scegli dove mangiare e, nel mezzo, cosa assaggiare lungo il percorso.":"Scegli dove mangiare: i pasti in ordine e, nel mezzo, cosa assaggiare lungo il percorso.";
 if(!meals.length){$("#mgrid").innerHTML='<p class="meta">Con questi orari non ci sono pasti in città.</p>';return}
 var acts=function(a,b){return it.filter(function(x){return x.k==="act"&&x.t>a&&x.t<b})};

@@ -33,7 +33,7 @@ function liveTx(c){var v=window.VNOW,q=function(x){return $(x)},t;
  if(c===0&&v&&v.nx)return["Dopo · "+v.nx.t,v.nx.n];
  if(c<=1){if(v)return["Adesso · "+v.t,v.n];var a=q("#itinerario .gdr .a"),b=q("#itinerario .gdr .b");if(a&&b)return["Prima tappa · "+a.textContent,b.textContent];return[FULL[c],"Imposta il tuo viaggio"]}
  if(c===2){var s=q("#mgrid .pban small"),n=q("#mgrid .pban b");if(s&&n)return[s.textContent,n.textContent];return["Pasti","Scegli dove mangiare"]}
- if(c===3)return["Costi","Spese del viaggio"];
+ if(c===3){var st=q("#stot"),sd=q("#sdiff");if(st&&st.textContent)return["Spese · "+st.textContent,(sd&&sd.textContent)||"Spese del viaggio"];return["Costi","Spese del viaggio"]}
  return["Consigli","Da sapere prima di partire"]}
 var lastT="";
 function nowTxt(){var c=curI(),t=liveTx(c),k=t[0]+"|"+t[1],x=$(".ntx",bar);if(!x||k===lastT)return;lastT=k;$(".ntn",bar).textContent=t[0];$(".ntw",bar).textContent=t[1];x.classList.remove("ntchg");void x.offsetWidth;x.classList.add("ntchg")}
@@ -66,5 +66,8 @@ window.addEventListener("voli",function(){setTimeout(render,60)});
 setInterval(function(){if(!document.hidden)render()},4000);
 /* suggerimento la prima volta */
 (function(){var k="via-tbcap3",s=false;try{s=!!localStorage.getItem(k)}catch(e){}if(s)return;var n=0,iv=setInterval(function(){if(++n>40){clearInterval(iv);return}var r=bar.getBoundingClientRect();if(r.width<10||document.hidden||document.querySelector(".cch,.tour"))return;clearInterval(iv);try{localStorage.setItem(k,"1")}catch(e){}var c=document.createElement("div");c.className="tbcap";c.innerHTML="<b>●</b> Il tasto in basso a destra cambia con la sezione. Tienilo premuto per cercare o tornare ai viaggi";document.body.appendChild(c);requestAnimationFrame(function(){c.classList.add("on")});setTimeout(function(){c.classList.remove("on");setTimeout(function(){c.remove()},300)},6000);c.addEventListener("click",function(){c.remove()})},1500)})();
+/* la pagina non deve mai spostarsi di lato: se qualcosa la sposta (focus, scrollIntoView) la riporto a zero */
+document.addEventListener("scroll",function(e){var t=e.target;if(t&&t.nodeType===1&&t.classList&&t.classList.contains("blk")&&t.scrollLeft)t.scrollLeft=0},true);
+addEventListener("scroll",function(){if(window.scrollX)scrollTo(0,window.scrollY);var d=document.scrollingElement;if(d&&d.scrollLeft)d.scrollLeft=0},{passive:true});
 render();
 })();
