@@ -355,7 +355,7 @@ function nowM(){return todayIdx()===SEL?paris().m:-1}
 function pos(i,f){return (cum[i]+lens[i]*f)/tot*100}
 function thumb(p,anim,txt){var t=anim&&!reduce?"left .35s cubic-bezier(.3,1.2,.4,1)":"none";th.style.transition=t;bub.style.transition=t;th.style.left=p+"%";bub.style.left=Math.max(14,Math.min(86,p))+"%";bub.textContent=txt}
 function paint(){var i=WSEL.i,d=0,m=nowM();
-cards.forEach(function(c,k){var dn=wDone(its[k]),nw=k===WNOW&&!dn;if(dn)d++;c.classList.toggle("dn",dn);c.classList.toggle("now",k===WNOW);$(".wcp",c).textContent=dn?"Fatto":nw?"Adesso":"";$(".wcp",c).className="wcp"+(dn?" dn":nw?" nw":"");var bt=$(".wcs",c);bt.textContent=dn?"Annulla timbro":"Timbra";bt.setAttribute("aria-pressed",dn);
+cards.forEach(function(c,k){var dn=wDone(its[k]),nw=k===WNOW&&!dn;if(dn)d++;c.classList.toggle("dn",dn);c.classList.toggle("now",k===WNOW);$(".wcp",c).textContent=dn?"Fatto":nw?"Adesso":"";$(".wcp",c).className="wcp"+(dn?" dn":nw?" nw":"");var bt=$(".wcs",c);bt.textContent=dn?"Annulla":"Timbra";bt.setAttribute("aria-pressed",dn);
 blocks[k].className=(dn?"dn ":"")+(k===i?"sel":"");rows[k].className="gdr"+(dn?" dn":"")+(k===WNOW&&!dn?" now":"")+(k===i?" sel":"");rows[k].setAttribute("aria-selected",k===i);$(".c",rows[k]).textContent=dn?"✓ Visto":dur(real[k])});
 if(det.firstChild!==cards[i]){det.innerHTML="";det.appendChild(cards[i])}
 cn.textContent="Tappa "+(i+1)+" di "+N+(d?" · "+d+(d===1?" fatta":" fatte"):"");
