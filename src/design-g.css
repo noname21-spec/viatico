@@ -2184,3 +2184,20 @@ body:has(#sheet.on) .ntl,body:has(#sheet.on) .ntr{opacity:0;transform:translateY
 #sheet{-webkit-backdrop-filter:blur(0px)!important;backdrop-filter:blur(0px)!important;transition:background-color .35s ease,backdrop-filter .35s ease,-webkit-backdrop-filter .35s ease,visibility 0s linear .6s!important}
 #sheet.on{-webkit-backdrop-filter:blur(12px) saturate(1.1)!important;backdrop-filter:blur(12px) saturate(1.1)!important;transition:background-color .3s ease,backdrop-filter .4s ease,-webkit-backdrop-filter .4s ease,visibility 0s!important}
 html.lite #sheet.on{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+/* v203 rifiniture estetiche */
+.hcrow{display:flex!important;align-items:center;justify-content:space-between;gap:12px;cursor:pointer}
+.hcrow .shl{flex:1;min-width:0}.hcrow .nsw{flex:none;margin:0}
+.dp.today::after{content:none!important}
+.dp.today{position:relative}
+.dp.today small::after{content:" · oggi";font-weight:800;color:var(--c2)}
+.dp.on.today small::after{color:inherit}
+.wx:not(.sun):not(.cloud):not(.fog):not(.rain):not(.snow):not(.storm){display:none!important}
+.hero .wca .btn,.hero .wca button:not(.wcd){background:rgba(0,0,0,.34)!important;color:#fff!important;border:1px solid rgba(255,255,255,.28)!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.gdr:before{width:14px!important;height:14px!important;border:3px solid var(--c2,#c0392b)!important;background:var(--bg,#fff)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--c2,#c0392b) 16%,transparent)}
+.gds:before{opacity:.55}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hero{--h1:#7d1a24;--h2:#3d0a10}}
+:root[data-theme="dark"] .hero,:root:has(#dm:checked) .hero{--h1:#7d1a24;--h2:#3d0a10}
+h2.sec{font-size:1.5rem!important}
+h2.sec.mh,.ithw>h2.sec#ith{font-size:1.25rem!important}
+:root{--gr:24px;--gr2:16px}
+.shc .shgrp>.hcrow{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:space-between!important}
