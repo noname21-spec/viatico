@@ -2102,3 +2102,6 @@ html.sa .blk{height:calc(var(--apph) - var(--abh) - 4px - env(safe-area-inset-to
 .pdt .vhd{align-items:center}
 .pdt.pcl .pdx{display:none}
 .pdx{display:grid;gap:7px}
+/* v196 respiro tra selettore colazione in hotel e banner del pasto */
+.hbt{margin-bottom:14px!important}
+.pban{margin-top:0}
