@@ -2169,3 +2169,13 @@ html.hc .nbrow{background:var(--surf)!important;-webkit-backdrop-filter:none!imp
 html.hc .hero .sky{opacity:.12}
 html.hc .nt:not([aria-current=page]),html.hc .nt span{color:var(--ink)}
 .ithw>h2.sec#ith{position:static;width:auto;height:auto;clip:auto;overflow:visible;margin:6px 4px 8px!important;font:800 .66rem Outfit,system-ui,sans-serif!important;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);animation:none}
+/* v201 le impostazioni nascono dalla barra: la scheda parte dal rettangolo della barra, cresce verso l'alto, la barra sfuma */
+#sheet{opacity:1!important;background:transparent!important;padding-left:10px!important;padding-right:10px!important;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px)*.3)!important;transition:background-color .35s ease,visibility 0s linear .6s!important}
+#sheet.on{background:color-mix(in srgb,#000 24%,transparent)!important;transition:background-color .3s ease,visibility 0s!important}
+html.sa #sheet{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px)*.45)!important}
+.shc{border-radius:30px!important;background:transparent!important;border-color:transparent!important;clip-path:inset(calc(100% - 134px) 0 0 0 round 30px);transition:clip-path .42s cubic-bezier(.4,0,.6,1),background-color .3s ease .12s,border-color .3s ease .12s!important}
+#sheet.on .shc{background:var(--bg)!important;border-color:var(--line)!important;clip-path:inset(0 0 0 0 round 34px);transition:clip-path .62s cubic-bezier(.2,.9,.25,1),background-color .32s ease,border-color .32s ease!important}
+.ntl,.ntr{transition:opacity .25s ease .3s,transform .3s ease .3s}
+body:has(#sheet.on) .nbar{pointer-events:none}
+body:has(#sheet.on) .ntl,body:has(#sheet.on) .ntr{opacity:0;transform:translateY(10px);transition:opacity .16s ease,transform .22s ease}
+@media (prefers-reduced-motion:reduce){.shc,#sheet.on .shc{clip-path:none!important;transition:none!important}.ntl,.ntr{transition:none!important}}
