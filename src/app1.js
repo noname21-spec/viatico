@@ -1407,6 +1407,7 @@ function closeSheet(){sheet.classList.remove("on");sheet.setAttribute("aria-hidd
 (function(){var URL_CAFFE="https://buymeacoffee.com/viaticum",b=$("#shcof");if(!b||!URL_CAFFE||window.__IS_APP)return;b.hidden=false;b.addEventListener("click",function(){window.open(URL_CAFFE,"_blank","noopener")})})();
 $("#gear").addEventListener("click",function(){sheet.classList.remove("home");sheet.classList.add("on");sheet.setAttribute("aria-hidden","false")});
 /* impostazioni a pagine */
+(function(){var c0=sheet.querySelector(".shc"),st0=$(".stabs",sheet),cl0=$("#shclose");if(c0&&st0&&cl0&&!$(".shfoot",c0)){var f=document.createElement("div");f.className="shfoot";f.appendChild(st0);cl0.textContent="";cl0.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>';cl0.setAttribute("aria-label","Chiudi");f.appendChild(cl0);c0.appendChild(f)}})();
 (function(){var c=sheet.querySelector(".shc"),tabs=$$(".stabs [data-t]",sheet),ind=$(".stind",sheet),pages=$$(".spage",sheet),cur="",sub="";
 function vis(b){return b.offsetParent!==null}
 function mv(){var b=tabs.filter(function(x){return x.dataset.t===cur})[0];if(!b||!vis(b))return;ind.style.width=b.offsetWidth+"px";ind.style.transform="translateX("+b.offsetLeft+"px)"}

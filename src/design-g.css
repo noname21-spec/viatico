@@ -2363,3 +2363,17 @@ html.lite .dhero .dhfx .dfr,html.lite .dhero .dhfx .dfw::before,html.lite .dhero
 .hcb .hck b{font-weight:800}
 .hcb .hck{display:inline-flex;align-items:center;gap:4px}
 .hcb{flex-wrap:nowrap!important}.hcb button{padding:0 12px!important;font-size:.8rem!important;white-space:nowrap}
+/* v215 impostazioni: altezza fissa, sezioni in basso, la barra ruota e diventa il menu */
+#sheet .shc{display:flex!important;flex-direction:column;height:min(74vh,620px)!important;max-height:calc(100% - 8px)!important;clip-path:none!important;padding-bottom:0!important}
+#sheet .shc>.spage{flex:none}
+.shfoot{position:sticky;bottom:0;z-index:3;margin-top:auto;display:flex;align-items:center;gap:8px;padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px)*.2);background:linear-gradient(180deg,transparent,var(--bg) 14px)}
+.shfoot .stabs{flex:1;margin:0!important}
+.shfoot #shclose{flex:none;width:46px;height:46px;min-height:0!important;margin:0!important;padding:0!important;border-radius:50%!important;display:grid;place-items:center}
+.shfoot #shclose svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round}
+.shc.insub .shfoot{justify-content:flex-end}
+.shc{transform-origin:50% 100%;transform:perspective(1000px) rotateX(82deg)!important;opacity:0;transition:transform .2s cubic-bezier(.5,0,.75,0),opacity .12s ease .08s,background-color .2s!important}
+#sheet.on .shc{transform:perspective(1000px) rotateX(0)!important;opacity:1;transition:transform .5s cubic-bezier(.2,1.25,.35,1) .17s,opacity .14s ease .17s,background-color .2s .17s!important}
+.nbrow{transform-origin:50% 50%;transition:transform .32s cubic-bezier(.2,1.3,.35,1) .16s,opacity .2s ease .16s}
+body:has(#sheet.on) .nbrow{transform:perspective(700px) rotateX(-90deg);opacity:.3;transition:transform .18s cubic-bezier(.5,0,.75,0),opacity .18s ease}
+body:has(#sheet.on) .ntl,body:has(#sheet.on) .ntr{opacity:1!important;transform:none!important}
+@media (prefers-reduced-motion:reduce){.shc,#sheet.on .shc{transform:none!important;transition:opacity .15s!important}.nbrow,body:has(#sheet.on) .nbrow{transform:none;transition:none}}
