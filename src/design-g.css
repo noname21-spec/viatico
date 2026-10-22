@@ -2261,9 +2261,9 @@ html.en .wi.now .wn::after{content:"now"}
 #hero.tod-night{--h1:color-mix(in srgb,var(--ga) 55%,#1d1850);--h2:color-mix(in srgb,var(--ga) 30%,#070718)}
 .cbar.anim{animation:cbRev 1s cubic-bezier(.3,.9,.3,1) both}
 @keyframes cbRev{from{clip-path:inset(0 100% 0 0 round 9px)}to{clip-path:inset(0 0 0 0 round 9px)}}
-.blk.dsl>*{animation:dsIn .34s ease-out}.blk.dsr>*{animation:dsIn2 .34s ease-out}
+.blk.dsx-l>*{animation:dsIn .34s ease-out}.blk.dsx-r>*{animation:dsIn2 .34s ease-out}
 @keyframes dsIn{from{opacity:.4;transform:translateX(26px)}}@keyframes dsIn2{from{opacity:.4;transform:translateX(-26px)}}
-@media (prefers-reduced-motion:reduce){.cbar.anim,.blk.dsl>*,.blk.dsr>*{animation:none}}
+@media (prefers-reduced-motion:reduce){.cbar.anim,.blk.dsx-l>*,.blk.dsx-r>*{animation:none}}
 .hero .wca .wcp2{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hero .wca:has(.wcp2) .go{flex:0 0 44px;width:44px;min-width:44px;padding:0!important;font-size:0!important;justify-content:center}
 .hero .wca:has(.wcp2) .go svg,.hero .wca:has(.wcp2) .go img{margin:0!important}
@@ -2481,7 +2481,7 @@ body:has(#sheet.on) main{filter:none!important}
 .blk.bin-r{animation:binR var(--m2) var(--ein)!important}.blk.bin-l{animation:binL var(--m2) var(--ein)!important}
 .blk.ent>*{animation:eUp var(--m2) var(--ein) both!important;animation-delay:calc(var(--ei,99)*40ms)!important}
 .blk.ent>*:not([style*="--ei"]){animation:none!important}
-.blk.dsl>*{animation:dsIn var(--m2) var(--ein)!important}.blk.dsr>*{animation:dsIn2 var(--m2) var(--ein)!important}
+.blk.dsx-l>*{animation:dsIn var(--m2) var(--ein)!important}.blk.dsx-r>*{animation:dsIn2 var(--m2) var(--ein)!important}
 .gds::after{transition:height var(--m3) var(--ein)!important}
 /* pressione su tutto ciò che si tocca */
 :is(button,.btn,a.go,.gdr,.ctile,.tg,.dp,.drc2,.dic,.row,.tkb,.pk,.nt,.nhm,.nfab,.dsbn,.hlate,.dchips button,.dword,.dsb,.dnext):not(:disabled){transition:transform var(--m1) var(--espr)}
@@ -2548,7 +2548,7 @@ body:has(#sheet.on) main{filter:none!important}
 /* v224 pulizia animazioni: la vecchia entrata (riseIn su ogni sezione) si sommava alla cascata e lasciava un transform residuo */
 .blk.on>*{animation:none}
 .blk.on.ent>*[style*="--ei"]{animation:eUp var(--m2) var(--ein) both!important;animation-delay:calc(var(--ei,0)*40ms)!important}
-.blk.on.dsl>*{animation:dsIn var(--m2) var(--ein)!important}.blk.on.dsr>*{animation:dsIn2 var(--m2) var(--ein)!important}
+.blk.on.dsx-l>*{animation:dsIn var(--m2) var(--ein)!important}.blk.on.dsx-r>*{animation:dsIn2 var(--m2) var(--ein)!important}
 .blk>h2.sec,body.dir-r .blk>h2.sec,body.dir-l .blk>h2.sec{animation:none!important}
 .blk.on.ent>h2.sec[style*="--ei"]{animation:eUp var(--m2) var(--ein) both!important;animation-delay:calc(var(--ei,0)*40ms)!important}
 body.dir-r .blk.on>*,body.dir-l .blk.on>*{animation-name:none!important}
