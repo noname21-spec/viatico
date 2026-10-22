@@ -2469,3 +2469,45 @@ main{transform-origin:50% 30%;transition:transform .34s cubic-bezier(.2,.9,.3,1)
 body:has(#sheet.on) main{transform:scale(.95);border-radius:22px;filter:brightness(.9);overflow:hidden}
 html.lite body:has(#sheet.on) main{filter:none}
 @media (prefers-reduced-motion:reduce){.shc,#sheet.on .shc{transition:opacity .15s!important}body:has(#sheet.on) main{transform:none}}
+/* v222 movimento coerente: tre durate, due curve */
+:root{--m1:.18s;--m2:.32s;--m3:.6s;--ein:cubic-bezier(.2,.9,.3,1);--eout:cubic-bezier(.4,0,.9,.6);--espr:cubic-bezier(.2,1.12,.35,1)}
+.shc{transition:transform var(--m1) var(--eout)!important}
+#sheet.on .shc{transition:transform .38s var(--espr)!important}
+main{transition:transform var(--m2) var(--ein),border-radius var(--m2) var(--ein)!important}
+body:has(#sheet.on) main{filter:none!important}
+#sheet,#sheet.on{transition:background-color var(--m2) ease,visibility 0s linear var(--m2)!important}
+#sheet.on{transition:background-color var(--m2) ease,visibility 0s!important}
+#sheet:not(.on){-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.blk.bin-r{animation:binR var(--m2) var(--ein)!important}.blk.bin-l{animation:binL var(--m2) var(--ein)!important}
+.blk.ent>*{animation:eUp var(--m2) var(--ein) both!important;animation-delay:calc(var(--ei,99)*40ms)!important}
+.blk.ent>*:not([style*="--ei"]){animation:none!important}
+.blk.dsl>*{animation:dsIn var(--m2) var(--ein)!important}.blk.dsr>*{animation:dsIn2 var(--m2) var(--ein)!important}
+.gds::after{transition:height var(--m3) var(--ein)!important}
+/* pressione su tutto ciò che si tocca */
+:is(button,.btn,a.go,.gdr,.ctile,.tg,.dp,.drc2,.dic,.row,.tkb,.pk,.nt,.nhm,.nfab,.dsbn,.hlate,.dchips button,.dword,.dsb,.dnext):not(:disabled){transition:transform var(--m1) var(--espr)}
+:is(button,.btn,a.go,.gdr,.ctile,.tg,.dp,.drc2,.dic,.row,.tkb,.pk,.dsbn,.hlate,.dchips button,.dword,.dsb,.dnext):not(:disabled):active{transform:scale(.97)}
+/* timbro che vola e riga che si illumina */
+.sfly{position:fixed;z-index:950;width:28px;height:28px;border-radius:50%;border:3px solid var(--ga);background:color-mix(in srgb,var(--ga) 18%,#fff);pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.gdr.rflash{animation:rfl var(--m3) var(--ein)}
+@keyframes rfl{0%{background:color-mix(in srgb,var(--ga) 30%,var(--surf))}100%{}}
+/* cifre che scorrono */
+.hcn b.rl,.pcd b.rl{display:inline-block;animation:rl var(--m2) var(--espr)}
+@keyframes rl{from{transform:translateY(-60%);opacity:0}}
+/* sagome di caricamento */
+.meteo.ld{position:relative;overflow:hidden}
+.meteo.ld::after,.leaflet-container::before{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,color-mix(in srgb,var(--surf) 60%,#fff) 50%,transparent 70%);background-size:220% 100%;animation:shim 1.3s linear infinite;pointer-events:none}
+.leaflet-container::before{z-index:0;opacity:.6}
+.leaflet-container{background:color-mix(in srgb,var(--ga) 6%,var(--surf))!important}
+.leaflet-tile-pane{z-index:1}
+@keyframes shim{from{background-position:120% 0}to{background-position:-120% 0}}
+/* benvenuto */
+.wel{position:fixed;inset:0;z-index:940;display:grid;place-items:center;padding:24px;background:color-mix(in srgb,#000 45%,transparent);opacity:0;transition:opacity var(--m2) ease}
+.wel.on{opacity:1}
+.welc{position:relative;overflow:hidden;width:min(360px,100%);border-radius:28px;padding:26px 22px 20px;background:linear-gradient(160deg,var(--ga),color-mix(in srgb,var(--ga) 60%,#000));color:#fff;text-align:center;transform:translateY(30px) scale(.94);transition:transform .5s var(--espr)}
+.wel.on .welc{transform:none}
+.welc .welsky{position:absolute;left:0;right:0;bottom:-4px;width:100%;height:auto;opacity:.25;pointer-events:none}
+.welc small{position:relative;display:block;font:800 .7rem Outfit,system-ui,sans-serif;letter-spacing:.16em;text-transform:uppercase;opacity:.85}
+.welc b{position:relative;display:block;font:800 2.6rem/1.1 Outfit,system-ui,sans-serif;margin:6px 0}
+.welc span{position:relative;display:block;font-size:.95rem;opacity:.92;margin-bottom:18px}
+.welc button{position:relative;min-height:48px;padding:0 26px;border:0;border-radius:16px;background:#fff;color:var(--ga);font:800 1rem Outfit,system-ui,sans-serif;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.sfly,.hcn b.rl,.gdr.rflash,.meteo.ld::after,.leaflet-container::before{animation:none!important}.welc{transition:none}}
