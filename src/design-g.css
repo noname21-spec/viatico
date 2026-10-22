@@ -2545,3 +2545,17 @@ body:has(#sheet.on) main{filter:none!important}
 .dnt small{font:800 .62rem Outfit,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 .dnt b{font:700 .95rem/1.25 Outfit,system-ui,sans-serif;color:var(--ink)}
 .dna{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--bg);color:var(--hca);font:800 1.1rem Outfit,system-ui,sans-serif}
+/* v224 pulizia animazioni: la vecchia entrata (riseIn su ogni sezione) si sommava alla cascata e lasciava un transform residuo */
+.blk.on>*{animation:none}
+.blk.on.ent>*[style*="--ei"]{animation:eUp var(--m2) var(--ein) both!important;animation-delay:calc(var(--ei,0)*40ms)!important}
+.blk.on.dsl>*{animation:dsIn var(--m2) var(--ein)!important}.blk.on.dsr>*{animation:dsIn2 var(--m2) var(--ein)!important}
+.blk>h2.sec,body.dir-r .blk>h2.sec,body.dir-l .blk>h2.sec{animation:none!important}
+.blk.on.ent>h2.sec[style*="--ei"]{animation:eUp var(--m2) var(--ein) both!important;animation-delay:calc(var(--ei,0)*40ms)!important}
+body.dir-r .blk.on>*,body.dir-l .blk.on>*{animation-name:none!important}
+/* v224 tema scuro: anellino e freccia del prossimo passo leggibili */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #dest{--hcl:color-mix(in srgb,var(--hca) 45%,#fff)}}
+:root[data-theme="dark"] #dest,:root:has(#dm:checked) #dest{--hcl:color-mix(in srgb,var(--hca) 45%,#fff)}
+.dnr{background:conic-gradient(var(--hcl,var(--hca)) 0 var(--p,0%),color-mix(in srgb,var(--ink) 14%,transparent) 0)}
+.dnr i,.dna,.dnr svg{color:var(--hcl,var(--hca));stroke:var(--hcl,var(--hca))}
+.dnr i{stroke:none}
+.drall{color:var(--hcl,color-mix(in srgb,var(--hca) 70%,var(--ink)))!important}
