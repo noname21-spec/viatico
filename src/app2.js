@@ -55,7 +55,7 @@ PAR.vSorted(ids,wd,it.t).forEach(function(o){if(seen[o.id])return;seen[o.id]=1;v
 var snkSeen={};P.items.filter(function(x){return x.k==="act"}).forEach(function(x){(PD.MEAL.snk[PD.STOPS[x.id].z]||[]).forEach(function(id){if(seen[id]||snkSeen[id])return;snkSeen[id]=1;var v=PD.V[id],q=vq(v),st=PAR.vSorted([id],wd,x.t)[0].s,mk=L.marker(v.pos,{icon:icon("lfd","S",22),zIndexOffset:450});bind(mk,v.n+" · "+v.r+" ★",(st.c==="ok"?"✓ ":"⚠️ ")+st.t+". "+v.d,q);mk.addTo(gFood)})});
 PD.PH.forEach(function(p){var mk=L.marker(p[4],{icon:icon("lph",p[0],28),zIndexOffset:600});bind(mk,p[0]+" "+p[1],p[2]+": "+p[3],p[5]);mk.addTo(gPh)});
 var b=L.latLngBounds([multi?H.pos:PD.START]);P.items.forEach(function(it){if(it.k==="act")b.extend(PD.STOPS[it.id].pos)});if(!P.acts.length)b.extend(multi?PD.START:[48.8584,2.2945]);bnds=b;
-map.fitBounds(b,{paddingTopLeft:[16,24],paddingBottomRight:[48,24],maxZoom:15});
+var _mv=document.getElementById("t-mappa");map.fitBounds(b,{paddingTopLeft:[16,24],paddingBottomRight:[48,24],maxZoom:15,animate:!!(_mv&&_mv.checked)});
 legend(used);sync();
 if(document.getElementById("t-mappa").checked)setTimeout(anim,250)}
 function legend(used){var h=Object.keys(used).map(function(k){var u=used[k];return '<span><i style="border-color:'+(k==="walk"?"var(--c4)":u.c)+(k==="walk"?";border-top-style:dotted":"")+'"></i>'+esc(k==="walk"?"A piedi":u.n)+'</span>'}).join("");
@@ -160,7 +160,7 @@ var tab=document.getElementById("t-mappa");tab.addEventListener("change",functio
 var legHL=null;window.__mapLeg=function(pts){if(!pts||pts.length<2)return;if(!tab.checked){tab.checked=true;tab.dispatchEvent(new Event("change",{bubbles:true}))}
 setTimeout(function(){map.invalidateSize();if(legHL)map.removeLayer(legHL);legHL=L.polyline(pts,{color:"#2f7df6",weight:7,opacity:.9,dashArray:"2 12",lineCap:"round",interactive:false}).addTo(map);
 try{map.flyToBounds(legHL.getBounds(),{paddingTopLeft:[40,90],paddingBottomRight:[70,60],maxZoom:17,duration:.8})}catch(e){}setTimeout(function(){if(legHL)try{map.fitBounds(legHL.getBounds(),{paddingTopLeft:[40,90],paddingBottomRight:[70,60],maxZoom:17})}catch(e){console.error(e)}},900);setTimeout(function(){if(legHL){map.removeLayer(legHL);legHL=null}},15000)},420)};
-PAR.on(function(){waterLoaded=false;gWater.clearLayers();draw()});draw();if(tab.checked)setTimeout(function(){map.invalidateSize();if(bnds)map.fitBounds(bnds,{paddingTopLeft:[16,24],paddingBottomRight:[48,24],maxZoom:15});anim()},150);try{locInit()}catch(e){console.error("loc",e&&e.stack)}
+var mDirty=false;PAR.on(function(){waterLoaded=false;gWater.clearLayers();if(!tab.checked){mDirty=true;return}draw()});tab.addEventListener("change",function(){if(tab.checked&&mDirty){mDirty=false;setTimeout(function(){map.invalidateSize();draw();if(bnds)map.fitBounds(bnds,{paddingTopLeft:[16,24],paddingBottomRight:[48,24],maxZoom:15,animate:false})},170)}});draw();if(tab.checked)setTimeout(function(){map.invalidateSize();if(bnds)map.fitBounds(bnds,{paddingTopLeft:[16,24],paddingBottomRight:[48,24],maxZoom:15});anim()},150);try{locInit()}catch(e){console.error("loc",e&&e.stack)}
 setTimeout(function(){if(!ok&&!navigator.onLine)off.textContent="Sei offline: la mappa mostra solo le zone già viste."},5000)}
 function load(){var sc=document.createElement("script");sc.src="lib/leaflet.js";sc.onload=init;sc.onerror=function(){off.textContent="La mappa non si è caricata: serve una connessione."};document.head.appendChild(sc)}
 /* la mappa si prepara solo quando serve (o a riposo, molto dopo l'intro): non pesa sull'avvio */

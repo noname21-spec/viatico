@@ -2577,3 +2577,15 @@ html.lite .blk.on.ent>*[style*="--ei"]{animation-duration:.24s!important;animati
 html.covin #splash{display:none!important}
 html.covin #zin{display:none!important}
 #dest:not(.on){transition:opacity .2s ease,visibility 0s linear .2s!important}
+/* tema scuro: testo dei pulsanti bianchi nell'hero leggibile */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hero .wca a.go{color:color-mix(in srgb,var(--ga) 30%,#2a0a10)!important}}
+:root[data-theme="dark"] .hero .wca a.go,:root.k-dm .hero .wca a.go{color:color-mix(in srgb,var(--ga) 30%,#2a0a10)!important}
+/* v226 Android: la Home entra con una sola dissolvenza, senza decine di animazioni separate */
+html.lite #dest.on .dcard>*,html.lite #dest .dcard *{animation:none!important}
+html.lite #dest .dhero .dhfx{display:none}
+html.lite .dgrid{content-visibility:auto;contain-intrinsic-size:auto 600px}
+/* cambio di colori della città: niente transizioni dei colori elemento per elemento (ricalcolo a ogni fotogramma) */
+html.recolor *,html.recolor *::before,html.recolor *::after{transition:none!important}
+/* indicatore del giorno e linea della timeline: animazioni che non ricalcolano la pagina */
+.dsel::before{left:0!important;transform:translateX(var(--dl,5px));transition:transform .45s var(--spring),width .3s ease,opacity .2s!important;will-change:transform}
+html.lite .gds::after{transition:none!important}

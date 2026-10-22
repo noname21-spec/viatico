@@ -28,7 +28,7 @@ function pill(animate){
   if(animate&&prev.length&&!reduce.matches)labs.forEach(function(l,k){var dx=prev[k]-now[k];if(Math.abs(dx)>.5)try{l.animate([{transform:"translateX("+dx+"px)"},{transform:"none"}],{duration:420,easing:getComputedStyle(document.documentElement).getPropertyValue("--spring").trim()||"cubic-bezier(.2,1.3,.35,1)"})}catch(e){}});
   bar.style.setProperty("--tbl",a.offsetLeft+"px");bar.style.setProperty("--tbw",a.offsetWidth+"px");prev=now}
 if(bar){
-  [].forEach.call(document.querySelectorAll(".tabr"),function(r){r.addEventListener("change",function(){pill(true)})});
+  [].forEach.call(document.querySelectorAll(".tabr"),function(r){r.addEventListener("change",function(){requestAnimationFrame(function(){pill(true)})})});
   if(window.ResizeObserver)new ResizeObserver(function(){pill(false)}).observe(bar);
   addEventListener("resize",function(){pill(false)});
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){pill(false)});
@@ -59,7 +59,7 @@ document.addEventListener("visibilitychange",function(){if(document.hidden){clea
 wakeAnims();
 
 /* skyline: si ferma mentre scorri e quando non si vede; se resta invisibile viene mostrato fermo */
-(function(){var R=document.documentElement,st=0;function on(){R.classList.add("scr");clearTimeout(st);st=setTimeout(function(){R.classList.remove("scr")},180)}
+(function(){var R=document.documentElement,st=0,act=false;function sk(v){if(window.LITE)return;[].forEach.call(document.querySelectorAll("svg.sky"),function(x){x.classList.toggle("off",v)})}function on(){if(!act){act=true;sk(true)}clearTimeout(st);st=setTimeout(function(){act=false;sk(false)},180)}
 addEventListener("scroll",on,{passive:true,capture:true});
 try{var io=new IntersectionObserver(function(es){es.forEach(function(e){e.target.classList.toggle("off",!e.isIntersecting)})},{threshold:0});
 function watch(){[].forEach.call(document.querySelectorAll("svg.sky:not(.zsk)"),function(s){if(!s.__w){s.__w=1;io.observe(s)}})}watch();setTimeout(watch,1500);setTimeout(watch,4000)}catch(e){}
