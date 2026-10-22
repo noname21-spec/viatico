@@ -52,7 +52,7 @@ function build(svg,sfx,sky,lite){
   return exts}
 function buildHero(){var parent=svg.parentNode,next=svg.nextSibling;parent.removeChild(svg);exts=build(svg,"",PD.SKY,false);parent.insertBefore(svg,next);persp(0)}
 function zSky(id,sfx){var C=window.CITIES&&CITIES[id];if(!C||!C.SKY)return null;var z=document.createElementNS(NS,"svg");z.setAttribute("class","sky zsk");z.setAttribute("aria-hidden","true");var ex=build(z,sfx||"z",C.SKY,true);for(var j=0;j<ex.length;j++){var u=ex[j];u.setAttribute("transform","translate("+(u._s*.75).toFixed(2)+" "+(u._s*-.55).toFixed(2)+")")}return z}
-function persp(p){
+var lastP=null;function persp(p){p=Math.round(p*200)/200;if(p===lastP)return;lastP=p;
   var dx=.75+p*.55,dy=-.55;
   for(var j=0;j<exts.length;j++){var u=exts[j];u.setAttribute("transform","translate("+(u._s*dx).toFixed(2)+" "+(u._s*dy).toFixed(2)+")")}
   var f=svg.querySelector(".far");if(f)f.setAttribute("transform","translate("+(-p*7).toFixed(2)+" 0)");
@@ -63,7 +63,7 @@ function loop(t){raf=requestAnimationFrame(loop);if(t-last<33)return;last=t;
   if(t>until)tx=null;
   var target=tx!==null?tx:(t<until?Math.sin(t/2600)*.45:0);px+=(target-px)*.14;persp(px);
   if(t>until&&tx===null&&Math.abs(px)<.004){px=0;persp(0);cancelAnimationFrame(raf);raf=0}}
-function run(){cancelAnimationFrame(raf);raf=0;if(!reduce.matches&&vis&&!document.hidden&&performance.now()<until)raf=requestAnimationFrame(loop)}
+function run(){cancelAnimationFrame(raf);raf=0;if(!window.LITE&&!reduce.matches&&vis&&!document.hidden&&performance.now()<until)raf=requestAnimationFrame(loop)}
 function wake(ms){until=Math.max(until,performance.now()+ms);if(!raf)run()}
 buildHero();
 var hero=svg.closest(".hero")||svg.parentNode;

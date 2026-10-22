@@ -19,3 +19,12 @@ window.addEventListener("error",function(e){if(window.__viaOK)return;var f=e&&e.
 window.addEventListener("unhandledrejection",function(){});
 setTimeout(show,7000);
 })();
+
+/* classi di stato al posto dei selettori :has() (più leggero per lo stile) */
+(function(){var H=document.documentElement,B=document.body;function sync(){if(!B)B=document.body;if(!B)return;var dm=document.getElementById("dm");H.classList.toggle("k-dm",!!(dm&&dm.checked));
+var r=document.querySelector(".tabr:checked"),cur=r?r.id:"";["t-itinerario","t-voli","t-mappa","t-mangiare","t-costi","t-consigli"].forEach(function(id){B.classList.toggle("k-"+id,id===cur)});
+var sh=document.getElementById("sheet"),de=document.getElementById("dest"),se=document.getElementById("setup"),hr=document.getElementById("hero");B.classList.toggle("k-sheet",!!(sh&&sh.classList.contains("on")));B.classList.toggle("k-dest",!!(de&&de.classList.contains("on")));B.classList.toggle("k-setup",!!(se&&se.classList.contains("on")));B.classList.toggle("k-heropre",!!(hr&&hr.classList.contains("pre")))}
+window.__ksync=sync;sync();document.addEventListener("change",function(e){var t=e.target;if(t&&(t.id==="dm"||(t.classList&&t.classList.contains("tabr"))))sync()},true);
+function obs(){["sheet","dest","setup","hero"].forEach(function(id){var el=document.getElementById(id);if(el&&!el.__ko){el.__ko=1;new MutationObserver(sync).observe(el,{attributes:true,attributeFilter:["class"]})}});
+["dm"].concat([].map.call(document.querySelectorAll(".tabr"),function(x){return x.id})).forEach(function(id){var el=document.getElementById(id);if(el&&!el.__kp){el.__kp=1;var d=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"checked");try{Object.defineProperty(el,"checked",{get:function(){return d.get.call(this)},set:function(v){d.set.call(this,v);setTimeout(sync,0)}})}catch(x){}}});sync()}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",obs);else obs();setTimeout(obs,1500)})();

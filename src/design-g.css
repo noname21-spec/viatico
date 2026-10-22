@@ -2559,3 +2559,21 @@ body.dir-r .blk.on>*,body.dir-l .blk.on>*{animation-name:none!important}
 .dnr i,.dna,.dnr svg{color:var(--hcl,var(--hca));stroke:var(--hcl,var(--hca))}
 .dnr i{stroke:none}
 .drall{color:var(--hcl,color-mix(in srgb,var(--hca) 70%,var(--ink)))!important}
+/* v225 fluidità su Android: le animazioni SVG dello skyline ricalcolano lo stile a ogni fotogramma */
+html.lite svg.sky *,html.lite svg.zsk *,html.lite svg.spsky *,html.lite .csky *,html.lite .welsky *{animation:none!important}
+.blk:not(.on) *,#dest:not(.on) *,#splash[style*="none"] *,.blk:not(.on)::before,.blk:not(.on)::after{animation-play-state:paused!important}
+html.lite *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.lite .nbrow{background:var(--surf)!important}
+html.lite .isl,html.lite .dmenu{background:var(--surf)!important}
+html.lite .dmenu i{background:var(--ink)}
+html.lite body:has(#sheet.on) main{transform:none!important;border-radius:0!important}
+html.lite .leaflet-tile-pane::after{display:none}
+html.lite,html.lite body{background-attachment:scroll!important}
+html.lite{background-image:none!important;background-color:var(--bg)!important}
+html.lite .meteo.ld::after,html.lite .leaflet-container::before{animation:none!important;display:none}
+html.lite{--sh1:0 2px 6px rgba(0,0,0,.07);--sh2:0 6px 14px rgba(0,0,0,.12)}
+html.lite .blk.on.ent>*[style*="--ei"]{animation-duration:.24s!important;animation-delay:calc(var(--ei,0)*25ms)!important}
+.vcover{position:fixed;z-index:2000;pointer-events:none;box-shadow:0 20px 50px rgba(0,0,0,.2)}
+html.covin #splash{display:none!important}
+html.covin #zin{display:none!important}
+#dest:not(.on){transition:opacity .2s ease,visibility 0s linear .2s!important}

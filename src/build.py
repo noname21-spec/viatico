@@ -68,6 +68,17 @@ CSP="; ".join([
  "connect-src "+" ".join(CONN),
 
  "worker-src 'self'","manifest-src 'self'","object-src 'none'","base-uri 'self'","form-action 'self'"])
+# prestazioni: i selettori :has() su html/body costringono il browser a ricalcolare lo stile di tutta la pagina a ogni cambio; li sostituisco con classi mantenute da uno script
+def _nohas(css):
+    css=css.replace('body:not(:has(#t-itinerario:checked))','body:not(.k-t-itinerario)')
+    css=css.replace('body:has(#dest.on,#setup.on)','body:is(.k-dest,.k-setup)')
+    css=css.replace(':has(#hero.pre)','.k-heropre')
+    css=re.sub(r':has\(#(t-[a-z]+):checked\)',r'.k-\1',css)
+    css=css.replace(':has(#dm:checked)','.k-dm')
+    css=css.replace(':has(#sheet.on)','.k-sheet').replace(':has(#dest.on)','.k-dest')
+    return css
+_parts=re.split(r'(<style[^>]*>.*?</style>)',html,flags=re.S)
+html=''.join(_nohas(x) if x.startswith('<style') else x for x in _parts)
 mk='<meta name="color-scheme" content="light dark">'
 assert html.count(mk)==1
 html=html.replace(mk,'<meta http-equiv="Content-Security-Policy" content="'+CSP+'">\n'+mk,1)
