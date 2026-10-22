@@ -2459,3 +2459,13 @@ html{background:var(--topoL,none) 0 0/480px 480px fixed,radial-gradient(130% 60%
 #dest .dpass .pcd small{font:700 .9rem Outfit,system-ui,sans-serif!important;letter-spacing:0!important;text-transform:none!important;opacity:1!important}
 #dest .dpass .pcd em{flex:0 0 100%;order:9;font:600 .78rem Outfit,system-ui,sans-serif;font-style:normal;opacity:.8;margin-top:-2px}
 #dest.lst .dmy b{display:none!important}
+/* v221 impostazioni: pannello che sale con una leggera molla, la pagina dietro arretra */
+.shc{transform-origin:50% 100%;transform:translateY(105%)!important;opacity:1!important;transition:transform .26s cubic-bezier(.4,0,.9,.6)!important}
+#sheet.on .shc{transform:none!important;opacity:1!important;transition:transform .42s cubic-bezier(.2,1.12,.35,1)!important}
+.nbrow,body:has(#sheet.on) .nbrow{transform:none!important}
+.nbrow{transition:opacity .2s ease .12s}
+body:has(#sheet.on) .nbrow{opacity:0;transition:opacity .12s ease}
+main{transform-origin:50% 30%;transition:transform .34s cubic-bezier(.2,.9,.3,1),filter .34s ease,border-radius .34s ease}
+body:has(#sheet.on) main{transform:scale(.95);border-radius:22px;filter:brightness(.9);overflow:hidden}
+html.lite body:has(#sheet.on) main{filter:none}
+@media (prefers-reduced-motion:reduce){.shc,#sheet.on .shc{transition:opacity .15s!important}body:has(#sheet.on) main{transform:none}}

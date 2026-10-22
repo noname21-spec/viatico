@@ -3861,6 +3861,16 @@ html{background:var(--topoL,none) 0 0/480px 480px fixed,radial-gradient(130% 60%
 #dest .dpass .pcd small{font:700 .9rem Outfit,system-ui,sans-serif!important;letter-spacing:0!important;text-transform:none!important;opacity:1!important}
 #dest .dpass .pcd em{flex:0 0 100%;order:9;font:600 .78rem Outfit,system-ui,sans-serif;font-style:normal;opacity:.8;margin-top:-2px}
 #dest.lst .dmy b{display:none!important}
+/* v221 impostazioni: pannello che sale con una leggera molla, la pagina dietro arretra */
+.shc{transform-origin:50% 100%;transform:translateY(105%)!important;opacity:1!important;transition:transform .26s cubic-bezier(.4,0,.9,.6)!important}
+#sheet.on .shc{transform:none!important;opacity:1!important;transition:transform .42s cubic-bezier(.2,1.12,.35,1)!important}
+.nbrow,body:has(#sheet.on) .nbrow{transform:none!important}
+.nbrow{transition:opacity .2s ease .12s}
+body:has(#sheet.on) .nbrow{opacity:0;transition:opacity .12s ease}
+main{transform-origin:50% 30%;transition:transform .34s cubic-bezier(.2,.9,.3,1),filter .34s ease,border-radius .34s ease}
+body:has(#sheet.on) main{transform:scale(.95);border-radius:22px;filter:brightness(.9);overflow:hidden}
+html.lite body:has(#sheet.on) main{filter:none}
+@media (prefers-reduced-motion:reduce){.shc,#sheet.on .shc{transition:opacity .15s!important}body:has(#sheet.on) main{transform:none}}
 
 </style>
 </head>
@@ -4096,7 +4106,7 @@ html{background:var(--topoL,none) 0 0/480px 480px fixed,radial-gradient(130% 60%
 <details><summary>Come cancello i miei dati?</summary><p>Dalle impostazioni, «Cancella tutti i dati» elimina viaggi, spese e liste da questo telefono. Per cancellare anche i dati dell'account scrivi all'assistenza.</p></details>
 </div>
 <div class="qrb"><a class="btn" id="hlmail" href="mailto:support.viaticum@gmail.com" translate="no">✉️ Scrivi all'assistenza</a><button type="button" class="btn ghost" id="hlcopy">📋 Copia i dettagli tecnici</button><a class="btn ghost" href="privacy.html" target="_blank" rel="noopener">🔒 Privacy e condizioni</a></div>
-<p class="hlver" id="hlver" translate="no">Viaticum · versione 220 · 21/10/2026</p>
+<p class="hlver" id="hlver" translate="no">Viaticum · versione 221 · 22/10/2026</p>
 <button type="button" class="btn ghost cls" id="hlclose">Chiudi</button></div></div>
 
 <div id="exp" aria-hidden="true"><div class="qrc xcard" role="dialog" aria-label="Spesa"><div id="xbody"></div></div></div>
