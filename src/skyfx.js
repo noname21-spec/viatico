@@ -9,7 +9,7 @@ var svg=document.querySelector("svg.sky:not(.zsk)");if(!svg||!window.PD||!PD.SKY
 /* il cielo segue l'ora della città: alba, giorno, tramonto, notte */
 (function(){var hero=document.getElementById("hero");if(!hero)return;
 function hr(){try{var p=new Intl.DateTimeFormat("en-GB",{hour:"2-digit",minute:"2-digit",hourCycle:"h23",timeZone:PD.TZ||"Europe/Rome"}).formatToParts(new Date()),h=0,m=0;p.forEach(function(x){if(x.type==="hour")h=+x.value;if(x.type==="minute")m=+x.value});return h+m/60}catch(e){var d=new Date();return d.getHours()+d.getMinutes()/60}}
-function set(){var h=hr(),t=h>=5.5&&h<8?"dawn":h>=8&&h<17.5?"day":h>=17.5&&h<20.5?"dusk":"night";if(hero.getAttribute("data-tod")!==t)hero.setAttribute("data-tod",t)}
+function set(){var h=hr(),t=h>=5.5&&h<8?"dawn":h>=8&&h<17.5?"day":h>=17.5&&h<20.5?"dusk":"night";hero._real=t;if(hero._lp)return;if(hero.getAttribute("data-tod")!==t)hero.setAttribute("data-tod",t)}
 set();setInterval(set,300000);document.addEventListener("visibilitychange",function(){if(!document.hidden)set()})})();
 var reduce=matchMedia("(prefers-reduced-motion: reduce)"),exts=[],px=0,tx=null,raf=0,vis=true;
 function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
@@ -48,8 +48,27 @@ function build(svg,sfx,sky,lite){
   var sea=src.querySelector(".sk-sea");if(sea){var sg2=sea.cloneNode(true);sg2.setAttribute("class","sea");sg2.removeAttribute("style");svg.appendChild(fade(sg2))}
   var spk=src.querySelector(".sk-spark"),sp=el("g",{"class":"spk"},svg);
   if(spk)[].forEach.call(spk.children,function(c,j){var n=c.cloneNode(true);n.setAttribute("style","--i:"+j);sp.appendChild(n)});
+  if(!lite){try{addNight(far,mons,sky,sunX,sunY)}catch(e){}}
   if(!lite){var fl=el("g",{"class":"flock"},svg);[[0,40],[12,34],[22,44]].forEach(function(b,j){var g=el("g",{transform:"translate("+b[0]+" "+b[1]+")"},fl);el("path",{"class":"bird",d:"M0 0q3-3 6 0q3-3 6 0",style:"animation-delay:"+(j*.13)+"s"},g)})}
   return exts}
+/* finestre che si accendono la sera e stelle la notte (solo sui telefoni non lenti) */
+function addNight(far,mons,sky,sunX,sunY){
+  var seed=5;function rnd(){seed=(seed*9301+49297)%233280;return seed/233280}
+  var st=el("g",{"class":"stars"},far);
+  for(var i=0;i<16;i++){var x=-20+rnd()*440,y=-2+rnd()*46;if(Math.abs(x-sunX)<34&&Math.abs(y-sunY)<30)continue;el("circle",{cx:x.toFixed(1),cy:y.toFixed(1),r:(.6+rnd()*.6).toFixed(2),style:"--d:"+(rnd()*1.6).toFixed(2)+"s"},st)}
+  var tmp=document.createElementNS(NS,"svg");tmp.setAttribute("width","0");tmp.setAttribute("height","0");tmp.style.cssText="position:absolute;visibility:hidden;pointer-events:none";document.body.appendChild(tmp);
+  var wg=el("g",{"class":"wins"},mons),pts=[];
+  try{var doc=new DOMParser().parseFromString('<svg xmlns="'+NS+'">'+sky+"</svg>","image/svg+xml").documentElement,main=doc.querySelector(".sk-main");
+  if(main)[].forEach.call(main.children,function(g){var c=document.importNode(g,true);tmp.appendChild(c);
+    [].forEach.call(c.querySelectorAll("path"),function(p){var bb=p.getBBox();if(bb.width<12||bb.height<14)return;
+      var n=Math.min(9,Math.round(bb.width*bb.height/230)),got=0,tries=0,pt=tmp.createSVGPoint();
+      function inside(x,y){pt.x=x;pt.y=y;return p.isPointInFill(pt)}
+      while(got<n&&tries<n*14){tries++;var x=bb.x+3+rnd()*(bb.width-7),y=bb.y+6+rnd()*(bb.height-10);
+        if(y>101||!inside(x,y)||!inside(x+1.8,y)||!inside(x,y+2.6)||!inside(x+1.8,y+2.6))continue;
+        var ok=true;for(var k=0;k<pts.length;k++){if(Math.abs(pts[k][0]-x)<4&&Math.abs(pts[k][1]-y)<4){ok=false;break}}
+        if(!ok)continue;pts.push([x,y]);got++}})})}catch(e){}
+  tmp.parentNode.removeChild(tmp);
+  pts.forEach(function(q){el("rect",{x:q[0].toFixed(1),y:q[1].toFixed(1),width:1.6,height:2.4,rx:.3,style:"--d:"+(rnd()*1.4).toFixed(2)+"s"},wg)})}
 function buildHero(){var parent=svg.parentNode,next=svg.nextSibling;parent.removeChild(svg);exts=build(svg,"",PD.SKY,false);parent.insertBefore(svg,next);persp(0)}
 function zSky(id,sfx){var C=window.CITIES&&CITIES[id];if(!C||!C.SKY)return null;var z=document.createElementNS(NS,"svg");z.setAttribute("class","sky zsk");z.setAttribute("aria-hidden","true");var ex=build(z,sfx||"z",C.SKY,true);for(var j=0;j<ex.length;j++){var u=ex[j];u.setAttribute("transform","translate("+(u._s*.75).toFixed(2)+" "+(u._s*-.55).toFixed(2)+")")}return z}
 var lastP=null;function persp(p){p=Math.round(p*200)/200;if(p===lastP)return;lastP=p;
@@ -70,9 +89,22 @@ var hero=svg.closest(".hero")||svg.parentNode;
 hero.addEventListener("pointermove",function(e){var r=hero.getBoundingClientRect();tx=Math.max(-1,Math.min(1,((e.clientX-r.left)/r.width)*2-1));wake(1600)});
 hero.addEventListener("pointerleave",function(){tx=null;wake(900)});
 hero.addEventListener("pointercancel",function(){tx=null;wake(900)});
-if("IntersectionObserver" in window)new IntersectionObserver(function(es){var v=es[0].isIntersecting;if(v!==vis){vis=v;if(v)wake(5000);else run()}}).observe(hero);
+if("IntersectionObserver" in window)new IntersectionObserver(function(es){var v=es[0].isIntersecting;if(v!==vis){vis=v;if(v){wake(5000);if(Date.now()-(hero._hid||0)>60000&&window.heroLapse)heroLapse.arm();if(window.heroLapse)setTimeout(window.heroLapse,200)}else{hero._hid=Date.now();run()}}}).observe(hero);
 document.addEventListener("visibilitychange",function(){if(!document.hidden)wake(3000);else run()});
 try{reduce.addEventListener("change",function(){run()})}catch(e){}
+/* time-lapse: all'apertura il cielo corre dall'alba fino all'ora vera della città */
+var armed=true,lapT=[];
+function splashUp(){var s=document.getElementById("splash");if(!s)return false;var c=getComputedStyle(s);return c.display!=="none"&&c.visibility!=="hidden"&&s.style.display!=="none"}
+var CL={dawn:"dawn",day:"day",dusk:"gold",night:"night"};
+function step(t){hero.setAttribute("data-tod",t);["night","dawn","gold","day"].forEach(function(x){hero.classList.toggle("tod-"+x,x===CL[t])})}
+function lapse(){if(!armed||reduce.matches||!hero._real||splashUp()||!hero.offsetParent||hero.getBoundingClientRect().height<50||document.hidden)return;armed=false;
+  var O=["dawn","day","dusk","night"],real=hero._real,i=O.indexOf(real),seq=window.LITE?[O[(i+3)%4],real]:(real==="dawn"?["night","dawn"]:O.slice(0,i+1));
+  lapT.forEach(clearTimeout);lapT=[];hero._lp=1;hero.classList.remove("lp");step(seq[0]);void hero.offsetWidth;hero.classList.add("lp");
+  seq.slice(1).forEach(function(t,k){lapT.push(setTimeout(function(){step(t)},600+k*1500))});
+  lapT.push(setTimeout(function(){hero._lp=0;hero.classList.remove("lp");if(hero.getAttribute("data-tod")!==hero._real)hero.setAttribute("data-tod",hero._real);if(window.heroTod)heroTod()},600+(seq.length-1)*1500+1300))}
+lapse.arm=function(){armed=true};window.heroLapse=lapse;
+setTimeout(lapse,300);
+
 /* quando si torna alla scheda Tappe la città risale di nuovo */
 var tr=document.getElementById("t-itinerario");
 if(tr)tr.addEventListener("change",function(){if(tr.checked&&!reduce.matches){buildHero();wake(5000)}});

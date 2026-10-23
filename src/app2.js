@@ -257,9 +257,9 @@ var tk=0;function upd(){tk=0;var a=document.querySelector(".tabr:checked"),b=a&&
 blks.forEach(function(b){b.addEventListener("scroll",function(){if(!tk)tk=requestAnimationFrame(upd)},{passive:true})});
 /* splash a ogni apertura */
 var sp=document.getElementById("splash"),hid=0,tm;function hide(){if(!sp)return;var s=sp,sh=s.querySelector(".spshr"),tg=document.getElementById("dlw"),de=document.getElementById("dest");
-if(s.animate&&s.style.display!=="none"){s.style.pointerEvents="none";s.animate([{opacity:1},{opacity:0}],{duration:380,easing:"ease-out",fill:"forwards"}).onfinish=function(){s.style.display="none";try{s.getAnimations().forEach(function(x){x.cancel()})}catch(e){}};return}
-s.style.display="none"}tm=setTimeout(hide,3500);
-document.addEventListener("visibilitychange",function(){if(document.hidden){hid=Date.now();return}if(!sp||!hid||Date.now()-hid<120000||matchMedia("(prefers-reduced-motion: reduce)").matches)return;var n=sp.cloneNode(true);n.style.display="";sp.parentNode.replaceChild(n,sp);sp=n;clearTimeout(tm);tm=setTimeout(hide,3500)});
+if(s.animate&&s.style.display!=="none"){s.style.pointerEvents="none";s.animate([{opacity:1},{opacity:0}],{duration:380,easing:"ease-out",fill:"forwards"}).onfinish=function(){s.style.display="none";try{s.getAnimations().forEach(function(x){x.cancel()})}catch(e){}if(window.heroLapse)setTimeout(window.heroLapse,60)};return}
+s.style.display="none";if(window.heroLapse)setTimeout(window.heroLapse,60)}tm=setTimeout(hide,3500);
+document.addEventListener("visibilitychange",function(){if(document.hidden){hid=Date.now();return}if(!sp||!hid||Date.now()-hid<120000||matchMedia("(prefers-reduced-motion: reduce)").matches)return;if(window.heroLapse&&heroLapse.arm)heroLapse.arm();var n=sp.cloneNode(true);n.style.display="";sp.parentNode.replaceChild(n,sp);sp=n;clearTimeout(tm);tm=setTimeout(hide,3500)});
 /* service worker per l'uso offline */
 try{if("serviceWorker" in navigator&&location.protocol==="https:"){navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(function(r){r.update()}).catch(function(){});var _r=false;navigator.serviceWorker.addEventListener("controllerchange",function(){if(_r)return;_r=true;if(!document.getElementById("setup").classList.contains("on"))location.reload()})}}catch(e){}
 })();

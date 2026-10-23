@@ -2589,3 +2589,23 @@ html.recolor *,html.recolor *::before,html.recolor *::after{transition:none!impo
 /* indicatore del giorno e linea della timeline: animazioni che non ricalcolano la pagina */
 .dsel::before{left:0!important;transform:translateX(var(--dl,5px));transition:transform .45s var(--spring),width .3s ease,opacity .2s!important;will-change:transform}
 html.lite .gds::after{transition:none!important}
+
+/* v231 · il giorno che passa: time-lapse del cielo, finestre accese la sera, stelle di notte */
+@property --h1{syntax:"<color>";inherits:true;initial-value:#0a6f95}
+@property --h2{syntax:"<color>";inherits:true;initial-value:#0a4f70}
+@property --hz{syntax:"<color>";inherits:true;initial-value:transparent}
+@property --hz2{syntax:"<color>";inherits:true;initial-value:transparent}
+@property --sun{syntax:"<color>";inherits:true;initial-value:#ffe9a8}
+@property --sunHalo{syntax:"<color>";inherits:true;initial-value:#ffe9a8}
+@property --moonc{syntax:"<color>";inherits:true;initial-value:transparent}
+@property --cloud{syntax:"<color>";inherits:true;initial-value:rgba(255,255,255,.2)}
+@property --hsh{syntax:"<color>";inherits:true;initial-value:rgba(0,0,0,.3)}
+@property --farOp{syntax:"<number>";inherits:true;initial-value:.16}
+#hero.lp{transition:--h1 1.1s ease,--h2 1.1s ease,--hz 1.1s ease,--hz2 1.1s ease,--sun 1.1s ease,--sunHalo 1.1s ease,--moonc 1.1s ease,--cloud 1.1s ease,--hsh 1.1s ease,--farOp 1.1s ease}
+.sky .wins rect{fill:#ffd56b;opacity:0;transition:opacity .7s ease var(--d,0s)}
+#hero[data-tod=dusk] .sky .wins rect{opacity:.6}
+#hero[data-tod=night] .sky .wins rect{opacity:.95}
+.sky .stars circle{fill:#fff;opacity:0;transition:opacity .9s ease var(--d,0s)}
+#hero[data-tod=night] .sky .stars circle{opacity:.85}
+html.lite .sky .wins,html.lite .sky .stars{display:none}
+@media (prefers-reduced-motion:reduce){#hero.lp{transition:none}.sky .wins rect,.sky .stars circle{transition:none}}
