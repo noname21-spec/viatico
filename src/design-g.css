@@ -2259,6 +2259,9 @@ html.en .wi.now .wn::after{content:"now"}
 #hero.tod-dawn{--h1:color-mix(in srgb,var(--ga) 72%,#ff9e7a);--h2:color-mix(in srgb,var(--ga) 82%,#5a3a7a)}
 #hero.tod-gold{--h1:color-mix(in srgb,var(--ga) 70%,#ff8a2a);--h2:color-mix(in srgb,var(--ga) 85%,#4a1020)}
 #hero.tod-night{--h1:color-mix(in srgb,var(--ga) 55%,#1d1850);--h2:color-mix(in srgb,var(--ga) 30%,#070718)}
+:root[data-theme="dark"] #hero.tod-dawn,:root:has(#dm:checked) #hero.tod-dawn{--h1:color-mix(in srgb,var(--ga) 30%,#7a3556);--h2:color-mix(in srgb,var(--ga) 20%,#1a1238)}
+:root[data-theme="dark"] #hero.tod-gold,:root:has(#dm:checked) #hero.tod-gold{--h1:color-mix(in srgb,var(--ga) 26%,#9a3a18);--h2:color-mix(in srgb,var(--ga) 18%,#2a0f2e)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #hero.tod-dawn{--h1:color-mix(in srgb,var(--ga) 30%,#7a3556);--h2:color-mix(in srgb,var(--ga) 20%,#1a1238)}:root:not([data-theme="light"]) #hero.tod-gold{--h1:color-mix(in srgb,var(--ga) 26%,#9a3a18);--h2:color-mix(in srgb,var(--ga) 18%,#2a0f2e)}}
 .cbar.anim{animation:cbRev 1s cubic-bezier(.3,.9,.3,1) both}
 @keyframes cbRev{from{clip-path:inset(0 100% 0 0 round 9px)}to{clip-path:inset(0 0 0 0 round 9px)}}
 .blk.dsx-l>*{animation:dsIn .34s ease-out}.blk.dsx-r>*{animation:dsIn2 .34s ease-out}

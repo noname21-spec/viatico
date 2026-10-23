@@ -3659,6 +3659,9 @@ html.en .wi.now .wn::after{content:"now"}
 #hero.tod-dawn{--h1:color-mix(in srgb,var(--ga) 72%,#ff9e7a);--h2:color-mix(in srgb,var(--ga) 82%,#5a3a7a)}
 #hero.tod-gold{--h1:color-mix(in srgb,var(--ga) 70%,#ff8a2a);--h2:color-mix(in srgb,var(--ga) 85%,#4a1020)}
 #hero.tod-night{--h1:color-mix(in srgb,var(--ga) 55%,#1d1850);--h2:color-mix(in srgb,var(--ga) 30%,#070718)}
+:root[data-theme="dark"] #hero.tod-dawn,:root.k-dm #hero.tod-dawn{--h1:color-mix(in srgb,var(--ga) 30%,#7a3556);--h2:color-mix(in srgb,var(--ga) 20%,#1a1238)}
+:root[data-theme="dark"] #hero.tod-gold,:root.k-dm #hero.tod-gold{--h1:color-mix(in srgb,var(--ga) 26%,#9a3a18);--h2:color-mix(in srgb,var(--ga) 18%,#2a0f2e)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #hero.tod-dawn{--h1:color-mix(in srgb,var(--ga) 30%,#7a3556);--h2:color-mix(in srgb,var(--ga) 20%,#1a1238)}:root:not([data-theme="light"]) #hero.tod-gold{--h1:color-mix(in srgb,var(--ga) 26%,#9a3a18);--h2:color-mix(in srgb,var(--ga) 18%,#2a0f2e)}}
 .cbar.anim{animation:cbRev 1s cubic-bezier(.3,.9,.3,1) both}
 @keyframes cbRev{from{clip-path:inset(0 100% 0 0 round 9px)}to{clip-path:inset(0 0 0 0 round 9px)}}
 .blk.dsx-l>*{animation:dsIn .34s ease-out}.blk.dsx-r>*{animation:dsIn2 .34s ease-out}
@@ -4245,7 +4248,7 @@ html.lite .sky .wins,html.lite .sky .stars{display:none}
 <details><summary>Come cancello i miei dati?</summary><p>Dalle impostazioni, «Cancella tutti i dati» elimina viaggi, spese e liste da questo telefono. Per cancellare anche i dati dell'account scrivi all'assistenza.</p></details>
 </div>
 <div class="qrb"><a class="btn" id="hlmail" href="mailto:support.viaticum@gmail.com" translate="no">✉️ Scrivi all'assistenza</a><button type="button" class="btn ghost" id="hlcopy">📋 Copia i dettagli tecnici</button><a class="btn ghost" href="privacy.html" target="_blank" rel="noopener">🔒 Privacy e condizioni</a></div>
-<p class="hlver" id="hlver" translate="no">Viaticum · versione 231 · 23/10/2026</p>
+<p class="hlver" id="hlver" translate="no">Viaticum · versione 232 · 23/10/2026</p>
 <button type="button" class="btn ghost cls" id="hlclose">Chiudi</button></div></div>
 
 <div id="exp" aria-hidden="true"><div class="qrc xcard" role="dialog" aria-label="Spesa"><div id="xbody"></div></div></div>
