@@ -1271,6 +1271,7 @@ function skySet(){var h=$("#dhero"),sk=$("#dsk");if(!h||!sk||!h.dataset.id||sk.f
 window.__homeSky=skySet;
 var HCL={k:"",items:[],i:0,at:0,nc:0};
 function heroPaint(it){var h=$("#dhero"),hc=$("#dhc");if(!h||!hc)return;var d=dOf(it.id);hc.dataset.mode=it.mode;hc.dataset.id=it.id;$("#dhl").textContent=it.lab;var hn=$("#dhn");hn.textContent=d.n;hn.style.setProperty("--l",Math.max(5,d.n.length));$("#dbn").textContent=d.n;$("#dhs").textContent=it.sub;if(!$(".dhfx",h)){var fx=document.createElement("div");fx.className="dhfx";fx.setAttribute("aria-hidden","true");fx.innerHTML='<i class="dfr"></i><i class="dfs1"></i><i class="dfs2"></i><i class="dfsh"></i><i class="dfg"></i><i class="dfw"></i>';h.insertBefore(fx,h.firstChild)}
+var cta=$("#dhk .dhcta");if(cta&&cta.lastChild&&cta.lastChild.nodeType===3)cta.lastChild.textContent="Pianifica "+(d.n||"un viaggio");
 var C=CITIES[it.id],hx=$("#dhx");if(!hx){hx=document.createElement("span");hx.id="dhx";hx.className="dhx";hc.appendChild(hx)}
 var lt="";try{if(C&&C.TZ)lt=new Intl.DateTimeFormat("it-IT",{timeZone:C.TZ,hour:"2-digit",minute:"2-digit"}).format(new Date())}catch(e){}
 hx.innerHTML='<span>'+((C&&C.flag)||d.e)+' '+esc(d.c||"")+'</span>'+(lt?'<span>🕐 '+lt+' ora locale</span>':'')+(d.ok?'<span class="ok">✓ Guida completa</span>':'<span>In arrivo</span>');
