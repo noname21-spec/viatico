@@ -1305,7 +1305,7 @@ if(!yr.length){el.hidden=true;el.innerHTML="";el.dataset.k="";return}
 var cs={},dys=0;yr.forEach(function(t){cs[t.cfg.dest]=1;dys+=Math.round((dateObj(t.cfg.date_r||t.cfg.date)-dateObj(t.cfg.date))/864e5)+1});var nc=Object.keys(cs).length,k=yr.length+"/"+dys+"/"+nc;
 el.hidden=false;if(el.dataset.k===k)return;el.dataset.k=k;
 el.innerHTML='<small>Il tuo anno in viaggio</small><div class="dys"><div><b data-n="'+yr.length+'">'+yr.length+'</b><span>'+(yr.length===1?"viaggio":"viaggi")+'</span></div><div><b data-n="'+dys+'">'+dys+'</b><span>'+(dys===1?"giorno":"giorni")+'</span></div><div><b data-n="'+nc+'">'+nc+'</b><span>'+(nc===1?"città":"città")+'</span></div></div>';
-if(!matchMedia("(prefers-reduced-motion:reduce)").matches)[].forEach.call(el.querySelectorAll("b"),function(b){var N=+b.dataset.n,t0=0;function f(ts){if(!t0)t0=ts;if(el._cuI!==id)return;var p=Math.min(1,(ts-t0)/700);b.textContent=Math.round(N*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)}b.textContent="0";requestAnimationFrame(f)})}
+if(!matchMedia("(prefers-reduced-motion:reduce)").matches)[].forEach.call(el.querySelectorAll("b"),function(b){var N=+b.dataset.n,t0=0;function f(ts){if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/700);b.textContent=Math.round(N*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)}b.textContent="0";requestAnimationFrame(f)})}
 /* v213: Home coerente con il resto dell'app */
 function homeV213(all,up){destEl.classList.toggle("lst",!!DOPEN&&all.length>0);var de=destEl,n0=up[0],d0=n0?dOf(n0.cfg.dest):null,col=d0&&d0.col?d0.col:["#0a6f95","#1cc0d6","#ffb800"];
 de.style.setProperty("--hca",col[0]);de.style.setProperty("--hcb",col[1]);de.style.setProperty("--hcc",col[2]||col[1]);
