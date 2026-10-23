@@ -86,7 +86,7 @@ var an=d.animate([{transform:"translate(0,0) scale(1) rotate(0)",opacity:1},{tra
 an.onfinish=function(){d.remove();row.classList.remove("rflash");void row.offsetWidth;row.classList.add("rflash")}}
 /* conteggio dei costi quando si apre la sezione */
 function countUp(el){if(!el||RM())return;var t=el._cuT||el.textContent;el._cuT=t;var id=(el._cuI=(el._cuI||0)+1),m=/([\d.]+(?:,\d+)?)/.exec(t);if(!m)return;var v=parseFloat(m[1].replace(/\./g,"").replace(",",".")),dec=(m[1].split(",")[1]||"").length,t0=null;
-(function f(ts){if(!t0)t0=ts;if(el._cuI!==id)return;var p=Math.min(1,(ts-t0)/700),e=1-Math.pow(1-p,3);el.textContent=t.replace(m[1],(v*e).toLocaleString("it-IT",{minimumFractionDigits:dec,maximumFractionDigits:dec}));if(p<1)requestAnimationFrame(f);else{el.textContent=t;el._cuT=null}})(performance.now())}
+(function f(ts){if(!t0)t0=ts;if(el._cuI!==id)return;var p=Math.max(0,Math.min(1,(ts-t0)/700)),e=1-Math.pow(1-p,3);el.textContent=t.replace(m[1],(v*e).toLocaleString("it-IT",{minimumFractionDigits:dec,maximumFractionDigits:dec}));if(p<1)requestAnimationFrame(f);else{el.textContent=t;el._cuT=null}})(performance.now());setTimeout(function(){if(el._cuI===id){el._cuI++;el.textContent=t;el._cuT=null}},1100)}
 (function(){var tc=$("#t-costi");if(tc)tc.addEventListener("change",function(){if(tc.checked)setTimeout(function(){countUp($("#cdonut .ch-t b"))},60)})})();
 /* benvenuto il primo giorno di viaggio */
 function welcome(){if(!TRIP||!CFG||todayIdx()!==0)return;var k="via-wel-"+tKey();try{if(localStorage.getItem(k))return;localStorage.setItem(k,"1")}catch(e){return}
