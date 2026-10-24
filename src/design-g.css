@@ -2612,3 +2612,16 @@ html.lite .gds::after{transition:none!important}
 #hero[data-tod=night] .sky .stars circle{opacity:.85}
 html.lite .sky .wins,html.lite .sky .stars{display:none}
 @media (prefers-reduced-motion:reduce){#hero.lp{transition:none}.sky .wins rect,.sky .stars circle{transition:none}}
+
+/* v235 · testo molto grande (Dynamic Type): tasti che vanno a capo, hero più alto, pulsante sopra lo skyline */
+.dhero .dhc{z-index:3}
+html.bigtext .hero .wca{flex-wrap:wrap!important}
+html.bigtext .hero .wca>*{padding:0 13px;font-size:.8rem}
+html.bigtext .chero{flex-wrap:wrap;align-items:flex-end;row-gap:10px}
+html.bigtext .ntl .ntn{font-size:.58rem;letter-spacing:.08em}
+html.bigtext .ntl .nfab{padding:0 11px 0 9px;font-size:.7rem}
+html.bigtext .dhero{height:clamp(480px,78vh,660px)}
+html.bigtext .dhx span{font-size:.68rem;padding:4px 8px}
+html.bigtext .dhx{gap:5px;margin-top:10px}
+html.bigtext .qd{gap:6px}
+html.bigtext .qd button{padding:7px 11px;font-size:.76rem}
