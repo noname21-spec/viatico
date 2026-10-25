@@ -33,7 +33,7 @@ function calc(){var now=new Date(),pd=window.PD,tz=pd&&pd.TZ||"Europe/Rome",ll=p
  if(day)e=Math.sin(Math.PI*u);else{var nl=24-(st-sr),tt=t>=st?t-st:t+24-st;v=tt/nl;e=-Math.sin(Math.PI*v)}
  var L=ss(-.14,.2,e);return{t:t,u:u,v:v,e:e,L:L,N:1-L,W:Math.exp(-(e*e)/.045),day:day}}
 function paint(I){var E=env,x=34+Math.max(0,Math.min(1,E.day?E.u:E.v))*232,c=E.day?"#fff3b8":"#dfe8ff",a=E.day?ss(-.04,.12,E.e):ss(-.1,-.35,E.e)*.9;
- I.n.style.setProperty("--mw",(E.W*.12).toFixed(3));
+ I.n.style.setProperty("--mw",(E.W*.07).toFixed(3));
  I.gg.setAttribute("fill",c);
  if(I.n.classList.contains("mb-main")){sx=x;o=a}
  if(LITE||RM.matches)draw(I,0)}
