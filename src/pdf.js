@@ -3,9 +3,9 @@
 var $=function(s){return document.querySelector(s)};
 function toast(t){var el=$("#toast");if(!el)return;el.textContent=t;el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove("on")},2200)}
 
-/* ---------- generatore di QR code (modalità byte, correzione M, versioni 1-10) ---------- */
+/* ---------- generatore di QR code (modalità byte, correzione M, versioni 1-20) ---------- */
 var QR=(function(){
-var ECPB=[0,10,16,26,18,24,16,18,22,22,26],NB=[0,1,1,1,2,2,4,4,4,5,5];
+var ECPB=[0,10,16,26,18,24,16,18,22,22,26,30,22,22,24,24,28,28,26,26,26],NB=[0,1,1,1,2,2,4,4,4,5,5,5,8,9,9,10,10,11,13,14,16];
 function raw(v){var r=(16*v+128)*v+64;if(v>=2){var n=Math.floor(v/7)+2;r-=(25*n-10)*n-55;if(v>=7)r-=36}return r}
 function dataCw(v){return Math.floor(raw(v)/8)-ECPB[v]*NB[v]}
 function gmul(x,y){var z=0;for(var i=7;i>=0;i--){z=(z<<1)^((z>>>7)*0x11D);z^=((y>>>i)&1)*x}return z}
@@ -14,8 +14,8 @@ function rsRem(data,div){var r=div.map(function(){return 0});data.forEach(functi
 function utf8(s){var o=[],b=unescape(encodeURIComponent(s));for(var i=0;i<b.length;i++)o.push(b.charCodeAt(i));return o}
 function make(text){
  var bytes=utf8(text),v,i,j;
- for(v=1;v<=10;v++){if(4+(v<10?8:16)+bytes.length*8<=dataCw(v)*8)break}
- if(v>10)return null;
+ for(v=1;v<=20;v++){if(4+(v<10?8:16)+bytes.length*8<=dataCw(v)*8)break}
+ if(v>20)return null;
  var bits=[];function put(val,n){for(var k=n-1;k>=0;k--)bits.push((val>>>k)&1)}
  put(4,4);put(bytes.length,v<10?8:16);bytes.forEach(function(b){put(b,8)});
  var cap=dataCw(v)*8;put(0,Math.min(4,cap-bits.length));put(0,(8-bits.length%8)%8);
@@ -62,8 +62,11 @@ window.VIATICO_QR=QR;
 /* ---------- finestra QR ---------- */
 var qrbox=$("#qrbox");
 function appUrl(){var u=location.href.split("#")[0].split("?")[0];return u.replace(/index\.html$/,"")}
-function openQr(){var u=appUrl();$("#qrimg").innerHTML=QR.svg(u,4);$("#qru").textContent=u.replace(/^https?:\/\//,"");qrbox.classList.add("on");qrbox.setAttribute("aria-hidden","false")}
+function openQr(){qrSet(null);var u=appUrl();$("#qrimg").innerHTML=QR.svg(u,4);$("#qru").textContent=u.replace(/^https?:\/\//,"");qrbox.classList.add("on");qrbox.setAttribute("aria-hidden","false")}
+var qrCur=null,qrDef=null;
+function qrSet(o){var h=qrbox.querySelector("h3"),p=qrbox.querySelector(".qrp"),s=$("#qrshare");if(!qrDef)qrDef={h:h.textContent,p:p.textContent,s:s.textContent};h.textContent=o?o.title:qrDef.h;p.textContent=o?o.text:qrDef.p;s.textContent=o?"Condividi il link":qrDef.s;qrCur=o||null}
 function closeQr(){qrbox.classList.remove("on");qrbox.setAttribute("aria-hidden","true")}
+window.VIATICO_QRBOX=function(o){var q=QR.make(o.url);if(!q)return false;qrSet(o);$("#qrimg").innerHTML=QR.svg(o.url,4);$("#qru").textContent=o.label||"";qrbox.classList.add("on");qrbox.setAttribute("aria-hidden","false");return true};
 function copyText(t){return(navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(t):Promise.reject()).catch(function(){var a=document.createElement("textarea");a.value=t;a.setAttribute("readonly","");a.style.cssText="position:fixed;opacity:0;top:0";document.body.appendChild(a);a.select();var ok=false;try{ok=document.execCommand("copy")}catch(e){}a.remove();if(!ok)throw 0})}
 if(qrbox){
  $("#shapp").addEventListener("click",function(){openQr()});
@@ -71,8 +74,8 @@ if(qrbox){
  $("#qrclose").addEventListener("click",closeQr);
  qrbox.addEventListener("click",function(e){if(e.target===qrbox)closeQr()});
  document.addEventListener("keydown",function(e){if(e.key==="Escape")closeQr()});
- $("#qrshare").addEventListener("click",function(){var u=appUrl();if(navigator.share){navigator.share({title:"Viaticum",text:"Viaticum: itinerario, voli, mappa, pasti e costi per il tuo viaggio.",url:u}).catch(function(){})}else{copyText(u).then(function(){toast("Link copiato")},function(){toast("Copia il link dal codice qui sopra")})}});
- $("#qrcopy").addEventListener("click",function(){copyText(appUrl()).then(function(){toast("Link copiato")},function(){toast("Non riesco a copiare il link")})});
+ $("#qrshare").addEventListener("click",function(){var u=qrCur?qrCur.url:appUrl();if(navigator.share){navigator.share(qrCur?{title:qrCur.shareTitle,text:qrCur.shareText,url:u}:{title:"Viaticum",text:"Viaticum: itinerario, voli, mappa, pasti e costi per il tuo viaggio.",url:u}).catch(function(){})}else{copyText(u).then(function(){toast("Link copiato")},function(){toast("Copia il link dal codice qui sopra")})}});
+ $("#qrcopy").addEventListener("click",function(){copyText(qrCur?qrCur.url:appUrl()).then(function(){toast("Link copiato")},function(){toast("Non riesco a copiare il link")})});
 }
 
 /* ---------- lettura dell'itinerario dalla pagina ---------- */
@@ -207,6 +210,12 @@ function makePdf(D){
    lines.forEach(function(l,li){txt(M+4,y+size+1,size,font,col,l);if(li===0){var a=clean(r.c[1]||""),b=clean(r.c[2]||"");txt(c1+60-tw(a,size,isT||isH),y+size+1,size,font,col,a);if(r.c[2])txt(c2+60-tw(b,size,isT||isH),y+size+1,size,font,col,b)}y+=12});
    y+=2});
   para("Stime a persona e per il gruppo: i prezzi cambiano, controllali prima di partire.",{size:8.4,col:MUTE,it:1})}
+ if(D.tripUrl&&!D.only){var qq=QR.make(D.tripUrl);if(qq){var qs=116,un=qs/(qq.size+8);ensure(qs+30);y+=14;
+  rrect(M,y,CW,qs+20,10,TINT);rect(M+10,y+10,qs,qs,WHITE);
+  for(var qy=0;qy<qq.size;qy++){var qx=0;while(qx<qq.size){if(qq.m[qy][qx]){var q0=qx;while(qx<qq.size&&qq.m[qy][qx])qx++;rect(M+10+(q0+4)*un,y+10+(qy+4)*un,(qx-q0)*un+.15,un+.15,[0,0,0])}else qx++}}
+  var tx0=M+10+qs+18,tw0=CW-qs-38;txt(tx0,y+34,12.5,"F2",A,"Apri questo viaggio in Viaticum");
+  var ql=wrap("Inquadra il codice con la fotocamera del telefono: si apre l'app e puoi importare lo stesso viaggio (date, voli e preferenze). Funziona anche stampato.",9.2,false,tw0);ql.forEach(function(l,li){txt(tx0,y+54+li*13,9.2,"F1",MUTE,l)});
+  y+=qs+20+6}}
  ensure(34);y+=10;
  para("Orari, prezzi, scioperi e lavori cambiano: verifica sempre prima di partire. "+(D.only?"Costi stimati con Viaticum il ":"Itinerario creato con Viaticum il ")+new Date().toLocaleDateString("it-IT")+".",{size:8.4,col:MUTE,it:1});
  /* piè di pagina */
@@ -237,7 +246,7 @@ function summary(D){var o=[D.title,D.sub,""];D.days.forEach(function(d){o.push(d
 /* ---------- pulsanti ---------- */
 function ready(){if(!document.querySelector("#steps > li")){toast("Imposta prima il tuo viaggio");return false}return true}
 function slug(s){return clean(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"viaggio"}
-function mk(){return grabAll().then(function(D){return{D:D,blob:makePdf(D),name:"Viaticum-"+slug(D.city)+"-itinerario.pdf"}})}
+function mk(){return grabAll().then(function(D){try{D.tripUrl=window.VIA_TRIPLINK&&VIA_TRIPLINK()}catch(e){}return{D:D,blob:makePdf(D),name:"Viaticum-"+slug(D.city)+"-itinerario.pdf"}})}
 var isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 function download(blob,name){var u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=name;a.rel="noopener";document.body.appendChild(a);a.click();setTimeout(function(){a.remove();URL.revokeObjectURL(u)},4000)}
 var pdfBtn=$("#shpdf"),pdfS=$("#shpdfs"),pdfS0=pdfS&&pdfS.textContent;
