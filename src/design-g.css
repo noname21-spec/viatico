@@ -2625,3 +2625,17 @@ html.bigtext .dhx span{font-size:.68rem;padding:4px 8px}
 html.bigtext .dhx{gap:5px;margin-top:10px}
 html.bigtext .qd{gap:6px}
 html.bigtext .qd button{padding:7px 11px;font-size:.76rem}
+
+/* v236 · sfondo a mappa con fiume (riflessi del sole/luna a seconda dell'ora della città): solo decorazione, contrasto minimo */
+.mapbg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;contain:strict}
+#dest>.mapbg,#setup>.mapbg{position:absolute;z-index:0}
+.mapbg svg{opacity:.72;position:absolute;inset:0;width:100%;height:100%;display:block}
+.mapbg .mb-b{fill:color-mix(in srgb,var(--ink) 3.2%,transparent)}
+.mapbg .mb-p{fill:color-mix(in srgb,#5fa86a 10%,transparent)}
+.mapbg .mb-r{fill:none;stroke:color-mix(in srgb,var(--bg) 60%,transparent);stroke-linecap:round}
+.mapbg .mb-w{fill:none;stroke:color-mix(in srgb,#5b9bc9 24%,transparent);stroke-linecap:round}
+.mapbg .mb-w2{fill:none;stroke:color-mix(in srgb,#5b9bc9 6%,transparent);stroke-linecap:round;stroke-width:62}
+.mapbg .mbt{position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,140,80,.9),rgba(255,110,150,.5) 40%,transparent 80%);opacity:var(--mw,0)}
+#dest>.mapbg{top:clamp(400px,64vh,580px);-webkit-mask-image:linear-gradient(180deg,transparent,#000 110px);mask-image:linear-gradient(180deg,transparent,#000 110px)}
+html.bigtext #dest>.mapbg{top:clamp(480px,78vh,660px)}
+#dest.pick>.mapbg{top:0;-webkit-mask-image:none;mask-image:none}
