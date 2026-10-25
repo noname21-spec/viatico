@@ -19,10 +19,9 @@ function markup(){var R=rng(5),s="",x,y;
  ["M-10 70C90 90 160 40 310 110","M-10 560C90 520 200 600 310 520","M40 -10C70 150 20 300 60 430S90 600 80 630","M240 -10C220 120 280 220 250 330S220 520 260 630","M-10 400C100 380 180 440 310 410","M-10 230L310 200"].forEach(function(d,k){s+='<path class="mb-r" d="'+d+'" stroke-width="'+(k<3?5.4:4)+'"/>'});
  s+='<path class="mb-w" d="'+RV+'" stroke-width="76"/><path class="mb-w2" d="'+RV+'" stroke-width="64"/>';
  s+='<g class="mb-g">';GL.forEach(function(g){s+='<ellipse cx="'+f(g.x)+'" cy="'+f(g.y)+'" rx="'+f(g.w)+'" ry=".9" opacity="0"/>'});s+="</g>";
- s+='<circle class="mb-sg" cy="92" r="20"/><circle class="mb-sd" cy="92" r="7"/>';
  return'<div class="mapbg" aria-hidden="true"><svg viewBox="0 0 300 620" preserveAspectRatio="xMidYMid slice" focusable="false">'+s+'</svg><i class="mbt"></i></div>'}
 var M=markup(),inst=[],env=null,sx=150,o=0;
-function mount(host,first){if(!host)return;var d=document.createElement("div");d.innerHTML=M;var n=d.firstChild;if(host===document.body)n.classList.add("mb-main");var df=host.id==="dest"&&host.querySelector(".dfull");if(df)host.insertBefore(n,df.nextSibling);else host.insertBefore(n,host.firstChild);inst.push({n:n,host:host,es:[].slice.call(n.querySelectorAll(".mb-g ellipse")),sd:n.querySelector(".mb-sd"),sg:n.querySelector(".mb-sg"),gg:n.querySelector(".mb-g")});if(env)paint(inst[inst.length-1])}
+function mount(host,first){if(!host)return;var d=document.createElement("div");d.innerHTML=M;var n=d.firstChild;if(host===document.body)n.classList.add("mb-main");var df=host.id==="dest"&&host.querySelector(".dfull");if(df)host.insertBefore(n,df.nextSibling);else host.insertBefore(n,host.firstChild);inst.push({n:n,host:host,es:[].slice.call(n.querySelectorAll(".mb-g ellipse")),gg:n.querySelector(".mb-g")});if(env)paint(inst[inst.length-1])}
 function ss(a,b,x){x=Math.max(0,Math.min(1,(x-a)/(b-a)));return x*x*(3-2*x)}
 /* alba e tramonto (formula NOAA semplificata), in ore locali della città */
 function sun(lat,lng,tz,now){try{var P={};new Intl.DateTimeFormat("en-CA",{timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(now).forEach(function(p){P[p.type]=+p.value});
@@ -35,8 +34,7 @@ function calc(){var now=new Date(),pd=window.PD,tz=pd&&pd.TZ||"Europe/Rome",ll=p
  var L=ss(-.14,.2,e);return{t:t,u:u,v:v,e:e,L:L,N:1-L,W:Math.exp(-(e*e)/.045),day:day}}
 function paint(I){var E=env,x=34+Math.max(0,Math.min(1,E.day?E.u:E.v))*232,c=E.day?"#fff3b8":"#dfe8ff",a=E.day?ss(-.04,.12,E.e):ss(-.1,-.35,E.e)*.9;
  I.n.style.setProperty("--mw",(E.W*.12).toFixed(3));
- I.gg.setAttribute("fill",c);I.sd.setAttribute("fill",c);I.sg.setAttribute("fill",c);
- I.sd.setAttribute("cx",f(x));I.sg.setAttribute("cx",f(x));I.sd.setAttribute("opacity",(a*.22).toFixed(2));I.sg.setAttribute("opacity",(a*.05).toFixed(2));
+ I.gg.setAttribute("fill",c);
  if(I.n.classList.contains("mb-main")){sx=x;o=a}
  if(LITE||RM.matches)draw(I,0)}
 function draw(I,now){I.es.forEach(function(e,i){var g=GL[i],b=Math.max(0,1-Math.abs(g.x-sx)/80);e.setAttribute("opacity",(o*b*(.3+.7*Math.sin(now/260+g.ph))*.8).toFixed(2))})}
