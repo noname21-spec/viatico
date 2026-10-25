@@ -175,6 +175,12 @@ function makePdf(D){
  txt(M,86,tsz,"F2",lum(A)>.62?INK:WHITE,ttl);
  y=118+3+16;
  para(D.sub,{size:10,col:MUTE,after:6});
+ if(D.tripUrl&&!D.only){var qq=QR.make(D.tripUrl);if(qq){var qs=92,un=qs/(qq.size+8);ensure(qs+30);y+=2;
+  rrect(M,y,CW,qs+20,10,TINT);rect(M+10,y+10,qs,qs,WHITE);
+  for(var qy=0;qy<qq.size;qy++){var qx=0;while(qx<qq.size){if(qq.m[qy][qx]){var q0=qx;while(qx<qq.size&&qq.m[qy][qx])qx++;rect(M+10+(q0+4)*un,y+10+(qy+4)*un,(qx-q0)*un+.15,un+.15,[0,0,0])}else qx++}}
+  var tx0=M+10+qs+18,tw0=CW-qs-38;txt(tx0,y+32,12.5,"F2",A,"Apri questo viaggio in Viaticum");
+  var ql=wrap("Inquadra il codice con la fotocamera: si apre Viaticum e importa lo stesso viaggio (date, voli, preferenze). Funziona anche stampato.",9.2,false,tw0);ql.forEach(function(l,li){txt(tx0,y+54+li*13,9.2,"F1",MUTE,l)});
+  y+=qs+20+8}}
  /* giorni */
  D.days.forEach(function(d,di){
   ensure(70);y+=6;
@@ -210,12 +216,6 @@ function makePdf(D){
    lines.forEach(function(l,li){txt(M+4,y+size+1,size,font,col,l);if(li===0){var a=clean(r.c[1]||""),b=clean(r.c[2]||"");txt(c1+60-tw(a,size,isT||isH),y+size+1,size,font,col,a);if(r.c[2])txt(c2+60-tw(b,size,isT||isH),y+size+1,size,font,col,b)}y+=12});
    y+=2});
   para("Stime a persona e per il gruppo: i prezzi cambiano, controllali prima di partire.",{size:8.4,col:MUTE,it:1})}
- if(D.tripUrl&&!D.only){var qq=QR.make(D.tripUrl);if(qq){var qs=116,un=qs/(qq.size+8);ensure(qs+30);y+=14;
-  rrect(M,y,CW,qs+20,10,TINT);rect(M+10,y+10,qs,qs,WHITE);
-  for(var qy=0;qy<qq.size;qy++){var qx=0;while(qx<qq.size){if(qq.m[qy][qx]){var q0=qx;while(qx<qq.size&&qq.m[qy][qx])qx++;rect(M+10+(q0+4)*un,y+10+(qy+4)*un,(qx-q0)*un+.15,un+.15,[0,0,0])}else qx++}}
-  var tx0=M+10+qs+18,tw0=CW-qs-38;txt(tx0,y+34,12.5,"F2",A,"Apri questo viaggio in Viaticum");
-  var ql=wrap("Inquadra il codice con la fotocamera del telefono: si apre l'app e puoi importare lo stesso viaggio (date, voli e preferenze). Funziona anche stampato.",9.2,false,tw0);ql.forEach(function(l,li){txt(tx0,y+54+li*13,9.2,"F1",MUTE,l)});
-  y+=qs+20+6}}
  ensure(34);y+=10;
  para("Orari, prezzi, scioperi e lavori cambiano: verifica sempre prima di partire. "+(D.only?"Costi stimati con Viaticum il ":"Itinerario creato con Viaticum il ")+new Date().toLocaleDateString("it-IT")+".",{size:8.4,col:MUTE,it:1});
  /* piè di pagina */

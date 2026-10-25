@@ -18,7 +18,7 @@ def mk(pri, sec, gold, cream, flag=None):
     c5 = mix(pri, '#ffffff', .45)
     c2 = _fix(sec, bg, 4.8, '#000000')
     ink = mix('#0a0a0a', pri, .22)
-    mute = _fix(mix(ink, bg, .5), bg, 4.8, '#000000')
+    mute = _fix(mix(ink, bg, .5), bg, 5.6, '#000000')
     sand = mix(cream, gold, .35)
     L = dict(c1=c1, c2=c2, c3=c3, c4=c4, c5=c5, gold=gold, sand=sand, cream=cream, pin=c3, blue=c1, food=c2,
              bg=bg, land=mix(bg, pri, .07), ink=ink, mute=mute, line=mix(bg, pri, .14),
@@ -33,7 +33,7 @@ def mk(pri, sec, gold, cream, flag=None):
     dc2 = _fix(mix(sec, '#ffffff', .45), dbg, 7, '#ffffff')
     dgold = _fix(gold, dbg, 7, '#ffffff')
     dink = mix(cream, '#ffffff', .35)
-    dmute = _fix(mix(dink, dbg, .38), dbg, 5.2, '#ffffff')
+    dmute = _fix(mix(dink, dbg, .38), dbg, 5.8, '#ffffff')
     D = dict(c1=dc1, c2=dc2, c3=dc3, c4=dc4, c5=dc5, gold=dgold, sand=sand, cream=cream, pin=dc4, blue=dc1, food=dc2,
              bg=dbg, land=mix(dbg, pri, .12), ink=dink, mute=dmute, line=mix(dbg, pri, .3),
              paper=mix(dbg, pri, .12), surf=mix(dbg, pri, .16), surf2=mix(dbg, pri, .24),

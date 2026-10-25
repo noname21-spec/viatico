@@ -2645,3 +2645,11 @@ html.bigtext #dest>.mapbg{top:clamp(480px,78vh,660px)}
 :root[data-theme="dark"] .mapbg .mb-w,:root:has(#dm:checked) .mapbg .mb-w{stroke:color-mix(in srgb,#5b9bc9 8%,transparent)}
 :root[data-theme="dark"] .mapbg .mb-w2,:root:has(#dm:checked) .mapbg .mb-w2{stroke:color-mix(in srgb,#5b9bc9 4%,transparent)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .mapbg svg{opacity:.3}:root:not([data-theme="light"]) .mapbg .mb-w{stroke:color-mix(in srgb,#5b9bc9 8%,transparent)}:root:not([data-theme="light"]) .mapbg .mb-w2{stroke:color-mix(in srgb,#5b9bc9 4%,transparent)}}
+
+/* v240 · movimento solo dove serve: niente animazioni infinite fuori schermo; shimmer della mappa limitato */
+#dest:not(.on) *,#dest:not(.on) *::before,#dest:not(.on) *::after{animation-play-state:paused!important}
+.leaflet-container::before{animation-iteration-count:5!important}
+/* v240 · aree toccabili di almeno 40-44 px (il disegno resta uguale: si allarga solo la zona sensibile) */
+.drall,.dsbn,.rtb,.fbtn,.pdb{position:relative}
+.drall::after,.dsbn::after,.rtb::after,.fbtn::after,.pdb::after{content:"";position:absolute;inset:-8px -6px}
+html.lite .leaflet-container::before{animation:none!important}

@@ -65,3 +65,5 @@ try{var io=new IntersectionObserver(function(es){es.forEach(function(e){e.target
 function watch(){[].forEach.call(document.querySelectorAll("svg.sky:not(.zsk)"),function(s){if(!s.__w){s.__w=1;io.observe(s)}})}watch();setTimeout(watch,1500);setTimeout(watch,4000)}catch(e){}
 setTimeout(function(){[].forEach.call(document.querySelectorAll("svg.sky:not(.zsk)"),function(s){var m=s.querySelector(".mon");if(!m||!s.getBoundingClientRect().width)return;var o=parseFloat(getComputedStyle(m).opacity);var run=false;try{run=m.getAnimations().some(function(x){return x.playState==="running"})}catch(e){}if(o<.05&&!run)s.classList.add("sk-fix")})},4200)})();
 })();
+/* vibrazione leggera (solo dove il telefono la supporta) quando si spunta una voce */
+(function(){try{if(!navigator.vibrate||matchMedia("(prefers-reduced-motion: reduce)").matches)return;document.addEventListener("change",function(e){var t=e.target;if(t&&t.type==="checkbox"&&t.checked)navigator.vibrate(8)},true)}catch(e){}})();
