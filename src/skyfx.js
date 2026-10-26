@@ -29,8 +29,9 @@ function build(svg,sfx,sky,lite){
   var far=el("g",{"class":"far"},svg),hills=fade(el("g",{"class":"hills"},far));
   if(back)[].forEach.call(back.children,function(n){if(n.tagName==="circle"){sunX=+n.getAttribute("cx");sunY=+n.getAttribute("cy");sunR=+n.getAttribute("r")}else{var c=n.cloneNode(true);c.setAttribute("class","hill");hills.appendChild(c)}});
   var sg=el("g",{"class":"sunG"},far);
-  el("circle",{"class":"halo",cx:sunX,cy:sunY,r:sunR*2.6},sg);el("circle",{"class":"sun",cx:sunX,cy:sunY,r:sunR},sg);
-  el("circle",{"class":"moonc",cx:sunX+sunR*.45,cy:sunY-sunR*.3,r:sunR*.85},sg);
+  var mm=el("mask",{id:sfx+"mMoon",maskUnits:"userSpaceOnUse",x:sunX-sunR*2,y:sunY-sunR*2,width:sunR*4,height:sunR*4},defs);
+  el("rect",{x:sunX-sunR*2,y:sunY-sunR*2,width:sunR*4,height:sunR*4,fill:"#fff"},mm);el("circle",{"class":"mooncut",cx:sunX+sunR*.5,cy:sunY-sunR*.32,r:sunR*.86},mm);
+  el("circle",{"class":"halo",cx:sunX,cy:sunY,r:sunR*2.6},sg);el("circle",{"class":"sun",cx:sunX,cy:sunY,r:sunR,mask:"url(#"+sfx+"mMoon)"},sg);
   [["cl1",62,24],["cl2",120,12]].forEach(function(c){var g=el("g",{"class":c[0]},far);[[0,4,10,5],[9,0,9,8],[18,4,10,5]].forEach(function(e){el("ellipse",{"class":"cloud",cx:c[1]+e[0],cy:c[2]+e[1],rx:e[2],ry:e[3]},g)})});
   var dir=sunX<200?1:-1,shd=el("g",{"class":"shd",filter:"url(#"+sfx+"fBlur)"},svg),mons=el("g",{"class":"mons"},svg);
   var main=src.querySelector(".sk-main"),i=0;
