@@ -219,7 +219,7 @@ function paris(){var o={};new Intl.DateTimeFormat("en-CA",{timeZone:PD.TZ,year:"
 function gdir(q,mode){return "https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(q)+"&travelmode="+(mode||"walking")}
 function hav(a,b){var R=6371,r=Math.PI/180,dl=(b[0]-a[0])*r,dg=(b[1]-a[1])*r,x=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dg/2)*Math.sin(dg/2);return 2*R*Math.asin(Math.sqrt(x))}
 window.__undoToast=function(t,lab,fn){var old=document.querySelector(".utoast");if(old)old.remove();var el=document.createElement("div");el.className="utoast";el.setAttribute("role","status");el.innerHTML='<span></span><button type="button"></button>';el.firstChild.textContent=t;el.lastChild.textContent=lab;document.body.appendChild(el);var done=0;function end(){if(done)return;done=1;el.classList.remove("on");setTimeout(function(){el.remove()},250)}el.lastChild.addEventListener("click",function(){if(done)return;end();fn()});requestAnimationFrame(function(){el.classList.add("on")});setTimeout(end,7000)};
-function toast(t){var el=$("#toast");el.textContent=t;el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove("on")},1800)}
+function toast(t){try{if(window.VNUI&&VNUI.toast(t))return}catch(e){}var el=$("#toast");el.textContent=t;el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove("on")},1800)}
 /* tramonto (algoritmo NOAA semplificato), ora locale della città */
 function sunset(d){var o=dateObj(d),N=Math.floor((o-Date.UTC(o.getUTCFullYear(),0,0))/864e5),lat=PD.LL[0],lng=PD.LL[1],r=Math.PI/180;
 var g=2*Math.PI/365*(N-1+(18-12)/24),eq=229.18*(0.000075+0.001868*Math.cos(g)-0.032077*Math.sin(g)-0.014615*Math.cos(2*g)-0.040849*Math.sin(2*g)),de=0.006918-0.399912*Math.cos(g)+0.070257*Math.sin(g)-0.006758*Math.cos(2*g)+0.000907*Math.sin(2*g)-0.002697*Math.cos(3*g)+0.00148*Math.sin(3*g);
@@ -1627,7 +1627,7 @@ if(p.state==="prompt"&&ls("via-pres-opt")!=="1"){if(ls("via-pres-ask")!==td){ls(
 navigator.geolocation.getCurrentPosition(function(pos){PRES_ST="ok";var acc=pos.coords.accuracy||0,t=Date.now();if(acc>20000)return;var all=presAll(),got=[];
 L.forEach(function(c){var ll=CITIES[c.dest].LL,k=pKey(c),r=all[k]||{ms:0,la:0,done:0},d=havG(pos.coords.latitude,pos.coords.longitude,ll[0],ll[1]);
 if(d<=PRES_R){if(r.la&&t>r.la&&t-r.la<=PRES_GAP)r.ms+=t-r.la;r.la=t;if(r.ms>=PRES_NEED&&!r.done){r.done=t;got.push(c)}}else if(d>PRES_R+acc/1000)r.la=0;all[k]=r});
-ls("via-pres",JSON.stringify(all));got.forEach(function(c){toast("Timbro di "+dOf(c.dest).n+" ottenuto!");hap(18)});try{renderDest()}catch(e){}},function(e){if(e&&e.code===1)PRES_ST="off"},{maximumAge:90000,timeout:9000,enableHighAccuracy:false})},function(){})}
+ls("via-pres",JSON.stringify(all));got.forEach(function(c){var dd=todayStr().split("-");try{if(window.VNUI&&VNUI.stamp({city:dOf(c.dest).n,code:(c.to||dOf(c.dest).n.slice(0,3)).toUpperCase(),date:dd[2]+"."+dd[1]+"."+dd[0].slice(2),sub:"6 ore in città · aggiunto al passaporto"}))return}catch(e){}toast("Timbro di "+dOf(c.dest).n+" ottenuto!");hap(18)});try{renderDest()}catch(e){}},function(e){if(e&&e.code===1)PRES_ST="off"},{maximumAge:90000,timeout:9000,enableHighAccuracy:false})},function(){})}
 window.viaPres={tick:presTick,get:presAll};
 setTimeout(function(){presTick(true)},4000);setInterval(function(){presTick()},300000);document.addEventListener("visibilitychange",function(){if(!document.hidden)presTick()});
 /* avvio */

@@ -1,7 +1,7 @@
 /* ===== impostazioni: PDF dell'itinerario, condivisione, QR code ===== */
 (function(){
 var $=function(s){return document.querySelector(s)};
-function toast(t){var el=$("#toast");if(!el)return;el.textContent=t;el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove("on")},2200)}
+function toast(t){try{if(window.VNUI&&VNUI.toast(t))return}catch(e){}var el=$("#toast");if(!el)return;el.textContent=t;el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove("on")},2200)}
 
 /* ---------- generatore di QR code (modalità byte, correzione M, versioni 1-20) ---------- */
 var QR=(function(){

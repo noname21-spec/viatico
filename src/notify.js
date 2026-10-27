@@ -7,7 +7,7 @@ var DEF={on:false,vol:1,tappe:1,pasti:1,alloggio:1,riep:1,lista:1,lead:15};
 function lj(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v&&typeof v==="object"?v:d}catch(e){return d}}
 function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 var ST=Object.assign({},DEF,lj(KEY,{}));
-function toast(t){var el=$("#toast");if(!el)return;el.textContent=t;el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove("on")},3200)}
+function toast(t){try{if(window.VNUI&&VNUI.toast(t))return}catch(e){}var el=$("#toast");if(!el)return;el.textContent=t;el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove("on")},3200)}
 var supported="Notification" in window;
 var ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 var standalone=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
@@ -49,10 +49,10 @@ function build(){
 /* consegna */
 function fired(){return lj(FK,{})}
 function mark(id){var f=fired(),now=Date.now();Object.keys(f).forEach(function(k){if(now-f[k]>40*864e5)delete f[k]});f[id]=now;sv(FK,f)}
-function show(title,body,tag){
+function show(title,body,tag,type){
  var opt={body:body,tag:tag||"viatico",icon:"icon-192.png",badge:"icon-192.png",lang:"it",data:{url:"./"}};
  var vis=document.visibilityState==="visible";
- var inApp=function(){toast(title.replace(/^\S+\s/,"")+(body?" · "+body:""))};
+ var inApp=function(){try{if(window.VNUI&&VNUI.show(type||"test",title,body,tag))return}catch(e){}toast(title.replace(/^\S+\s/,"")+(body?" · "+body:""))};
  if(perm()!=="granted"){inApp();return Promise.resolve(false)}
  if(vis)inApp();
  var p=navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration():Promise.resolve(null);
@@ -64,7 +64,7 @@ function tick(){
  if(!ST.on)return;refresh();var now=Date.now(),f=fired();
  list.forEach(function(e){if(f[e.id]||e.at>now||now-e.at>e.grace)return;
   var b=e.body;if(e.dyn){b=e.dyn();if(!b){mark(e.id);return}}
-  mark(e.id);show(e.title,b,e.id)})
+  mark(e.id);show(e.title,b,e.id,e.type)})
 }
 var timer=0;function start(){stop();if(!ST.on)return;tick();timer=setInterval(tick,20000)}function stop(){clearInterval(timer);timer=0}
 document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")tick()});
@@ -109,7 +109,7 @@ on.addEventListener("change",function(){
 [].forEach.call(box.querySelectorAll(".nsw[data-k]"),function(c){c.addEventListener("change",function(){ST[c.dataset.k]=c.checked?1:0;save();tick()})});
 lead.addEventListener("change",function(){ST.lead=+lead.value||15;save();tick()});
 $("#ntest").addEventListener("click",function(){
- ask().then(function(p){label();show("🔔 Viaticum","Funziona! I promemoria arriveranno così.","test").then(function(ok){if(!ok&&p!=="granted")toast("Per le notifiche del telefono concedi il permesso")})})});
+ ask().then(function(p){label();show("🔔 Viaticum","Funziona! I promemoria arriveranno così.","test","test").then(function(ok){if(!ok&&p!=="granted")toast("Per le notifiche del telefono concedi il permesso")})})});
 $("#ncal").addEventListener("click",function(){var c=$("#shcal");if(c)c.click()});
 sync();if(ST.on)start();
 window.VNOT={list:function(){refresh();return list},state:function(){return ST},tick:tick,build:build,reset:function(){sv(FK,{})}};

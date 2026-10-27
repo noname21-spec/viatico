@@ -2656,3 +2656,88 @@ html.bigtext #dest>.mapbg{top:clamp(480px,78vh,660px)}
 html.lite .leaflet-container::before{animation:none!important}
 .dmp .dms,.dmt+.dms{margin:-2px 0 10px;font-size:.74rem;color:var(--mute);line-height:1.35}
 #dmap .dms{margin:-2px 0 10px;font-size:.74rem;color:var(--mute);line-height:1.35}
+/* ===== avvisi nell'app (nui.js) ===== */
+#nui{position:fixed;z-index:960;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 8px);padding:0 12px;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+.nui-c{position:relative;pointer-events:auto;width:100%;max-width:440px;box-sizing:border-box;touch-action:pan-y;font-family:Outfit,system-ui,sans-serif;color:var(--ink);opacity:0;transition:transform .55s cubic-bezier(.2,1.15,.3,1),opacity .35s,margin .4s,width .55s cubic-bezier(.2,1.1,.3,1),border-radius .55s;will-change:transform}
+.nui-c b{display:block;font-size:.86rem;font-weight:700;line-height:1.2}
+.nui-c svg{width:18px;height:18px;flex:none}.nui-c svg.ns{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.nui-c svg.nf{fill:currentColor}
+.nui-n{display:none;position:absolute;top:-7px;right:-3px;min-width:22px;height:22px;border-radius:11px;padding:0 6px;background:var(--ga);color:var(--gon);font:800 .72rem Outfit,system-ui,sans-serif;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.3);z-index:2}
+#nui.stk .nui-c:first-child .nui-n{display:grid}
+#nui.stk:not(.fan) .nui-c:not(:first-child){margin-top:var(--ov,-40px);transform:scale(.95);opacity:.9}
+#nui.stk:not(.fan) .nui-c:nth-child(n+3){transform:scale(.9)}
+#nui.stk .nui-c:nth-child(2){z-index:2}#nui.stk .nui-c:nth-child(1){z-index:3}
+/* banner con campanella: tappe e pasti */
+.nui-banner{display:flex;gap:10px;align-items:center;padding:11px 12px;border-radius:22px;background:var(--surf);border:1px solid color-mix(in srgb,var(--ink) 12%,transparent);box-shadow:0 12px 26px rgba(0,0,0,.24);transform:translateY(-140%)}
+.nui-banner.in{opacity:1;transform:none}
+.nui-banner .nui-ic{width:34px;height:34px;border-radius:50%;background:var(--ga);color:var(--gon);display:grid;place-items:center;flex:none}
+.nui-banner.in .nui-ic svg{transform-origin:50% 12%;animation:nuiRing .9s .45s ease-in-out}
+.nui-banner .nui-tx{min-width:0;flex:1}
+.nui-banner .nui-tx span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:.76rem;line-height:1.3;color:var(--mute);margin-top:1px}
+.nui-banner .nui-tm{align-self:flex-start;font-size:.68rem;color:var(--mute)}
+.nui-banner.out{transform:translateX(var(--dx,118%)) rotate(5deg);opacity:0;transition:transform .5s cubic-bezier(.5,0,.8,.5),opacity .5s}
+@keyframes nuiRing{0%,100%{rotate:0deg}15%{rotate:18deg}30%{rotate:-16deg}45%{rotate:11deg}60%{rotate:-7deg}80%{rotate:3deg}}
+/* isola: alloggio, riepilogo, lista */
+.nui-isola{width:150px;border-radius:20px;background:var(--ink);color:var(--surf);overflow:hidden;transform:scale(.4) translateY(-8px);box-shadow:0 12px 26px rgba(0,0,0,.3)}
+.nui-isola.in{opacity:1;transform:none}
+.nui-isola.open{width:100%;max-width:440px;border-radius:26px}
+.nui-isola .nui-hd{display:flex;align-items:center;gap:8px;padding:9px 14px}
+.nui-isola .nui-hd b{font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nui-isola.open .nui-hd b{white-space:normal;font-size:.86rem}
+.nui-isola .nui-bd{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s cubic-bezier(.2,.9,.3,1)}
+.nui-isola.open .nui-bd{grid-template-rows:1fr}
+.nui-isola .nui-bd>div{overflow:hidden;min-height:0}
+.nui-isola p{margin:0 14px 8px;font-size:.76rem;line-height:1.3;opacity:.82}
+.nui-ok{font:700 .74rem Outfit,system-ui,sans-serif;border:0;border-radius:99px;padding:0 16px;min-height:34px;margin:0 14px 12px;background:color-mix(in srgb,var(--surf) 20%,transparent);color:inherit;cursor:pointer}
+.nui-isola.out{opacity:0;transform:scale(.4) translateY(-8px);transition:transform .4s,opacity .3s}
+/* biglietto del volo */
+.nui-ticket{display:flex;align-items:stretch;filter:drop-shadow(0 10px 14px rgba(0,0,0,.26));transform:perspective(600px) rotateX(-70deg) translateY(-24px);transform-origin:50% 0;border-radius:0}
+.nui-ticket.in{opacity:1;transform:perspective(600px) rotateX(0) translateY(0)}
+.nui-l{flex:1;min-width:0;background:var(--surf);border-radius:18px 0 0 18px;padding:12px 14px;-webkit-mask:radial-gradient(circle 9px at 100% 0,#0000 97%,#000) top/100% 51% no-repeat,radial-gradient(circle 9px at 100% 100%,#0000 97%,#000) bottom/100% 51% no-repeat;mask:radial-gradient(circle 9px at 100% 0,#0000 97%,#000) top/100% 51% no-repeat,radial-gradient(circle 9px at 100% 100%,#0000 97%,#000) bottom/100% 51% no-repeat}
+.nui-lb{font-size:.64rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--mute);margin-bottom:3px}
+.nui-l span{display:block;font-size:.76rem;line-height:1.3;color:var(--mute);margin-top:2px}
+.nui-trk{position:relative;margin-top:10px;border-top:2px dashed color-mix(in srgb,var(--ink) 20%,transparent)}
+.nui-trk i{position:absolute;left:0;top:-10px;color:var(--ga);transition:left 2.4s .5s ease-in-out}.nui-trk i svg{transform:rotate(90deg)}
+.nui-ticket.in .nui-trk i{left:calc(100% - 18px)}
+.nui-r{width:78px;flex:none;border:0;background:var(--ga);color:var(--gon);border-radius:0 18px 18px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:700 .8rem Outfit,system-ui,sans-serif;cursor:pointer;transform-origin:0 0;-webkit-mask:radial-gradient(circle 9px at 0 0,#0000 97%,#000) top/100% 51% no-repeat,radial-gradient(circle 9px at 0 100%,#0000 97%,#000) bottom/100% 51% no-repeat;mask:radial-gradient(circle 9px at 0 0,#0000 97%,#000) top/100% 51% no-repeat,radial-gradient(circle 9px at 0 100%,#0000 97%,#000) bottom/100% 51% no-repeat;transition:transform .8s cubic-bezier(.5,0,.8,.6),opacity .7s}
+.nui-r svg{width:24px;height:24px;transform:rotate(45deg)}.nui-r em{font-style:normal}
+.nui-ticket.out{opacity:0;transition:opacity .5s .55s,transform .5s .55s;transform:perspective(600px) rotateX(0) translateY(-16px)}
+.nui-ticket.out .nui-r{transform:translate(12px,190px) rotate(26deg);opacity:0}
+/* toast con tempo */
+.nui-t{position:fixed;left:50%;width:max-content;bottom:calc(var(--tb,66px) + 24px + env(safe-area-inset-bottom,0px)*.3);transform:translate(-50%,34px) scale(.96);z-index:310;display:flex;align-items:center;gap:10px;max-width:calc(100vw - 24px);box-sizing:border-box;background:var(--ink);color:var(--surf);padding:12px 18px;border-radius:999px;font:600 .85rem Outfit,system-ui,sans-serif;box-shadow:0 12px 30px rgba(0,0,0,.4);opacity:0;pointer-events:none;overflow:hidden;transition:opacity .3s,transform .5s cubic-bezier(.2,1.1,.3,1)}
+.nui-t svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.nui-t.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.nui-t u{position:absolute;left:0;bottom:0;height:3px;width:100%;background:color-mix(in srgb,var(--surf) 55%,transparent);transform-origin:left;transform:scaleX(0)}
+.nui-t.on u{animation:nuiDrain 2.6s linear forwards}
+.nui-t.hold u{animation-play-state:paused}.nui-t.hold{transform:translate(-50%,0) scale(.97)}
+@keyframes nuiDrain{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+/* timbro sul passaporto */
+.nui-s{position:fixed;inset:0;z-index:965;display:grid;place-items:center;padding:20px;font-family:Outfit,system-ui,sans-serif}
+.nui-dm{position:absolute;inset:0;background:rgba(0,0,0,.5);opacity:0;transition:opacity .4s}
+.nui-cd{position:relative;width:min(300px,100%);border-radius:26px;background:var(--surf);color:var(--ink);padding:20px 16px 18px;text-align:center;opacity:0;transform:scale(.85);transition:opacity .35s,transform .5s cubic-bezier(.2,1.2,.3,1);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.nui-stp{position:relative;width:112px;height:112px;margin:0 auto 8px;color:var(--ga)}
+.nui-stp svg{position:absolute;inset:0;width:100%;height:100%;opacity:0}
+.nui-ink{position:absolute;inset:4px;border-radius:50%;border:3px solid var(--ga);opacity:0}
+.nui-cf i{position:absolute;left:50%;top:56px;width:7px;height:7px;margin:-3px;border-radius:2px;opacity:0;background:var(--c)}
+.nui-cd h3{margin:0;font-size:1.05rem;font-weight:800}.nui-cd p{margin:3px 0 0;font-size:.8rem;color:var(--mute)}
+.nui-sx{opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s}
+.nui-s.in .nui-dm{opacity:1}.nui-s.in .nui-cd{opacity:1;transform:none}
+.nui-s.in .nui-stp svg{animation:nuiSlam .55s .35s cubic-bezier(.3,.1,.6,1) forwards}
+.nui-s.in .nui-cd{animation:nuiShk .35s .85s}
+.nui-s.in .nui-ink{animation:nuiInk .8s .85s ease-out}
+.nui-s.in .nui-cf i{animation:nuiBurst .9s .85s ease-out forwards}
+.nui-s.tx .nui-sx{opacity:1;transform:none}
+@keyframes nuiSlam{0%{opacity:0;transform:scale(2.8) rotate(0)}55%{opacity:1;transform:scale(.9) rotate(-14deg)}78%{transform:scale(1.05) rotate(-11deg)}100%{opacity:1;transform:scale(1) rotate(-12deg)}}
+@keyframes nuiShk{20%{transform:translate(-3px,3px)}40%{transform:translate(3px,-2px)}60%{transform:translate(-2px,1px)}80%{transform:translate(1px,0)}}
+@keyframes nuiInk{0%{opacity:.7;transform:scale(.9)}100%{opacity:0;transform:scale(2)}}
+@keyframes nuiBurst{0%{opacity:1;transform:rotate(var(--a)) translateY(0)}100%{opacity:0;transform:rotate(var(--a)) translateY(calc(var(--d)*-1)) rotate(200deg)}}
+.nui-s:not(.in){pointer-events:none}.nui-s:not(.in) .nui-dm,.nui-s:not(.in) .nui-cd{opacity:0}
+html.lite .nui-cf{display:none}
+@media (prefers-reduced-motion:reduce){
+.nui-c,.nui-t,.nui-cd,.nui-dm,.nui-sx{transition:opacity .2s!important}
+.nui-banner,.nui-isola,.nui-ticket,.nui-banner.out,.nui-isola.out,.nui-ticket.out{transform:none!important}
+.nui-isola{width:100%!important;max-width:440px}.nui-isola .nui-bd{grid-template-rows:1fr!important;transition:none!important}
+.nui-banner .nui-ic svg,.nui-t u,.nui-cd,.nui-ink,.nui-cf i{animation:none!important}
+.nui-trk i{transition:none!important;left:calc(100% - 18px)}
+.nui-stp svg{animation:none!important;opacity:1!important;transform:rotate(-12deg)}
+.nui-cf{display:none}.nui-sx{opacity:1;transform:none}
+}
