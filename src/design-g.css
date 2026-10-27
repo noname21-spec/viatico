@@ -2654,3 +2654,5 @@ html.bigtext #dest>.mapbg{top:clamp(480px,78vh,660px)}
 .drall,.dsbn,.rtb,.fbtn,.pdb{position:relative}
 .drall::after,.dsbn::after,.rtb::after,.fbtn::after,.pdb::after{content:"";position:absolute;inset:-8px -6px}
 html.lite .leaflet-container::before{animation:none!important}
+.dmp .dms,.dmt+.dms{margin:-2px 0 10px;font-size:.74rem;color:var(--mute);line-height:1.35}
+#dmap .dms{margin:-2px 0 10px;font-size:.74rem;color:var(--mute);line-height:1.35}
