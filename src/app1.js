@@ -131,7 +131,7 @@ function skipF(i,acts){var s=skipGet().d[i]||[];return s.length?acts.filter(func
 function skipSet(i,id,on){var o=skipGet(),s=(o.d[i]||[]).filter(function(a){return a!==id});if(on)s.push(id);if(s.length)o.d[i]=s;else delete o.d[i];ls("via-skip",Object.keys(o.d).length?JSON.stringify(o):null)}
 function lateGet(){var o=lj("via-late",null);return o&&o.k===tKey()&&o.s?o:null}
 function lateApply(T){var o=lateGet();if(!o)return;var D=T.days.filter(function(d){return d.date===o.day})[0];if(!D)return;var tot=0;
-o.s.forEach(function(sh){tot+=sh.m;var fl=sh.f;D.items.forEach(function(it){if(it.k==="ret"||it.k==="air")return;if(it.t>=sh.f){if(it.t0==null)it.t0=it.t;var nt=it.t+sh.m;if(sh.m<0){nt=Math.max(nt,fl);fl=nt}it.t=nt}})});D.late=tot}
+o.s.forEach(function(sh){tot+=sh.m;var fl=sh.f;D.items.forEach(function(it){if(it.k==="air")return;if(it.k==="ret"&&!(sh.m<0&&D.eadd&&D.eadd.length))return;if(it.t>=sh.f){if(it.t0==null)it.t0=it.t;var nt=it.t+sh.m;if(sh.m<0){nt=Math.max(nt,fl);fl=nt}it.t=nt}})});D.late=tot}
 function lateAdd(m){var n=paris(),o=lateGet();if(!o||o.day!==n.d)o={k:tKey(),day:n.d,s:[]};o.s.push({f:n.m,m:m});ls("via-late",JSON.stringify(o));buzz(15);renderAll();toast(m<0?"Prossime tappe anticipate di "+(-m)+" minuti":"Prossime tappe spostate di "+m+" minuti")}
 function lateAsk(early){var n=paris(),o=lateGet(),sg=early?-1:1,b=[15,30,60].map(function(m){return{t:early?m+" minuti prima":"+"+m+" minuti",fn:function(){lateAdd(sg*m)}}});
 if(o&&o.day===n.d)b.push({t:"Torna agli orari previsti",fn:function(){ls("via-late",null);renderAll();toast("Orari previsti ripristinati")}});
@@ -289,14 +289,21 @@ if(!D&&ctx.wantD){
 if(ctx.snack&&!D&&t>=15*60+30&&t+25+R.min<=ctx.dl){t+=5;items.push({k:"snk",t:t,d:20,z:zoneOf(prev)});t+=20}
 var slack=ctx.dl-(t+R.min);if(late>0)slack=Math.min(slack,-late);
 return{items:items,end:t,prev:prev,ret:R,slack:slack,B:B,L:L,D:D}}
+/* se il biglietto è tolto dai costi, la visita si accorcia: ci si ferma fuori */
+function tOn(id){var t=S[id]&&S[id].tk;if(!t||!t[2])return true;var k=typeof COPT!=="undefined"&&COPT?COPT[id]:null;return k==null?!t[3]:!!k}
+function dMin(id){var q=S[id];return tOn(id)?q.min:Math.max(15,Math.round(q.min*.5/5)*5)}
+function dId(id){var q=S[id];return tOn(id)?q.id:Math.max(dMin(id),Math.round(q.id*.5/5)*5)}
+function dMax(id){var q=S[id];return tOn(id)?q.max:Math.max(dId(id),Math.round(q.max*.6/5)*5)}
+/* anticipo dichiarato oggi: minuti guadagnati e momento in cui li hai guadagnati */
+function earlyOf(date){var o=lateGet();if(!o||o.day!==date)return null;var tot=0,f=0;o.s.forEach(function(x){tot+=x.m;if(x.m<0&&x.f>f)f=x.f});return tot<0?{B:-tot,f:f}:null}
 function planDay(acts,ctx,opt){
 var dur={},dropped=[],r,g=0,minLen=ctx.single?1:0,need=ST.pc==="rel"?30:0;
-acts=acts.slice();acts.forEach(function(id){dur[id]=ST.pc==="int"?Math.round((S[id].min+S[id].id)/10)*5:S[id].id;if(dur[id]<S[id].min)dur[id]=S[id].min});
+acts=acts.slice();acts.forEach(function(id){dur[id]=ST.pc==="int"?Math.round((dMin(id)+dId(id))/10)*5:dId(id);if(dur[id]<dMin(id))dur[id]=dMin(id)});
 if(need){var b0=sim([],dur,ctx).slack;need=Math.max(0,Math.min(need,b0-10))}
-while(g++<80){r=sim(acts,dur,ctx);if(r.slack>=0&&(r.slack>=need||!(acts.length>minLen||acts.some(function(id){return dur[id]>S[id].min}))))break;
+while(g++<80){r=sim(acts,dur,ctx);if(r.slack>=0&&(r.slack>=need||!(acts.length>minLen||acts.some(function(id){return dur[id]>dMin(id)}))))break;
 var cand=acts.slice().sort(function(a,b){return pri(b)-pri(a)});
-var sh=cand.filter(function(id){return dur[id]>S[id].min})[0];
-if(sh){dur[sh]=S[sh].min;continue}
+var sh=cand.filter(function(id){return dur[id]>dMin(id)})[0];
+if(sh){dur[sh]=dMin(sh);continue}
 if(acts.length>minLen){dropped.push(cand[0]);acts.splice(acts.indexOf(cand[0]),1);continue}
 if(ctx.wantD){ctx.wantD=false;continue}
 if(!ctx.single&&ctx.wantL){ctx.wantL=false;continue}
@@ -304,25 +311,42 @@ if(!ctx.single&&ctx.wantB){ctx.wantB=false;continue}
 break}
 var none=false;
 if(r.slack<0){acts=[];ctx.wantB=false;ctx.wantL=false;ctx.wantD=false;r=sim(acts,dur,ctx);none=true}
-function tryIns(id,after){var i=acts.indexOf(after);if(i<0||r.slack<60||acts.indexOf(id)>=0)return;var a2=acts.slice();a2.splice(i+1,0,id);dur[id]=S[id].id;var r2=sim(a2,dur,ctx);if(r2.slack>=15){acts=a2;r=r2}}
+function tryIns(id,after){var i=acts.indexOf(after);if(i<0||r.slack<60||acts.indexOf(id)>=0)return;var a2=acts.slice();a2.splice(i+1,0,id);dur[id]=dId(id);var r2=sim(a2,dur,ctx);if(r2.slack>=15){acts=a2;r=r2}}
 if(!none){
 (ST.pc==="rel"?[]:PD.SINGLE.ins||[]).forEach(function(x){if(x[3]&&!(opt&&opt.single))return;if(x[2]&&acts.indexOf(x[2])<0)return;tryIns(x[0],x[1])});
 var order=acts.slice().sort(function(a,b){return pri(a)-pri(b)}),ch=true,k=0;
-while(r.slack>=15&&ch&&k++<200){ch=false;for(var i=0;i<order.length;i++){var id=order[i];if(dur[id]+5<=(ST.pc==="int"?S[id].id:S[id].max)){dur[id]+=5;var r2=sim(acts,dur,ctx);if(r2.slack>=10){r=r2;ch=true}else dur[id]-=5}}}}
-var shrunk=acts.filter(function(id){return dur[id]<S[id].id-4});
-return{r:r,acts:acts,dropped:dropped,shrunk:shrunk,none:none}}
+while(r.slack>=15&&ch&&k++<200){ch=false;for(var i=0;i<order.length;i++){var id=order[i];if(dur[id]+5<=(ST.pc==="int"?dId(id):dMax(id))){dur[id]+=5;var r2=sim(acts,dur,ctx);if(r2.slack>=10){r=r2;ch=true}else dur[id]-=5}}}}
+var eadd=[];
+if(!none&&ctx.eb&&ctx.eb.B>=20){var B=ctx.eb.B,f=ctx.eb.f,c2=Object.assign({},ctx,{dl:ctx.dl+B}),pool=[];
+ dropped.forEach(function(id){pool.push(id)});
+ if(ctx.single)Object.keys(S).forEach(function(id){var q=S[id];if(!q.multi||pool.indexOf(id)>=0)return;pool.push(id)});
+ var done=0,wd=ctx.wd,skp=ctx.sk||[],exact=function(id){return S[id]&&dropped.indexOf(id)<0&&S[id].tk&&!(S[id].tk[2]&&S[id].tk[3])};
+ pool=pool.filter(function(id){var q=S[id];return q&&acts.indexOf(id)<0&&skp.indexOf(id)<0&&!(q.cl&&q.cl.indexOf(wd)>=0)&&!exact(id)});
+ pool.sort(function(x,y){return (dropped.indexOf(x)<0?1:0)-(dropped.indexOf(y)<0?1:0)||pri(x)-pri(y)});
+ while(done<3){var best=null,tm={};r.items.forEach(function(x){if(x.k==="act")tm[x.id]=x});
+  for(var ci=0;ci<pool.length;ci++){var cid=pool[ci],bp=null;
+   for(var p=0;p<=acts.length;p++){var ok=p===0?(!acts.length||tm[acts[0]]&&tm[acts[0]].t>=f):(tm[acts[p-1]]&&tm[acts[p-1]].t+tm[acts[p-1]].d>f);if(!ok)continue;
+    var a2=acts.slice();a2.splice(p,0,cid);var d0=dur[cid];dur[cid]=dMin(cid);var r2=sim(a2,dur,c2);
+    if(r2.slack>=10&&(!bp||r2.slack>bp.r.slack))bp={a:a2,r:r2,d:dur[cid]};dur[cid]=d0}
+   if(bp&&(!best||(dropped.indexOf(cid)>=0&&dropped.indexOf(best.id)<0)||(dropped.indexOf(cid)>=0===(dropped.indexOf(best.id)>=0)&&bp.r.slack>best.r.slack)))best={id:cid,a:bp.a,r:bp.r,d:bp.d}}
+  if(!best)break;acts=best.a;r=best.r;dur[best.id]=best.d;eadd.push(best.id);pool.splice(pool.indexOf(best.id),1);done++;
+  /* con il tempo che avanza, la nuova tappa si allunga fino alla durata ideale */
+  var gi=0;while(dur[best.id]+5<=dId(best.id)&&gi++<30){dur[best.id]+=5;var r3=sim(acts,dur,c2);if(r3.slack>=10)r=r3;else{dur[best.id]-=5;break}}}
+ if(eadd.length)dropped=dropped.filter(function(id){return acts.indexOf(id)<0})}
+var shrunk=acts.filter(function(id){return dur[id]<dId(id)-4});
+return{r:r,acts:acts,dropped:dropped,shrunk:shrunk,none:none,eadd:eadd}}
 function ridesOf(items){var n=0;items.forEach(function(x){var l=x.leg;if(x.k==="act"||x.k==="free"||x.k==="night"){if(l&&l.mode==="metro")n++}});return n}
 
 /* gita in giornata: come la prima versione dell'app */
 function planSingle(c){
 var A=PD.PAR[c.to],R=PD.PAR[c.rt||c.to],land=toMin(c.a_arr),dep=toMin(c.r_dep),imb=toMin(c.r_imb),wd=wdOf(c.date);
 var c0=land+A.inMin,dl=Math.min(dep-R.buf,imb!=null?imb-45:1e9);
-var ctx={single:1,c0:c0,start:"start",dl:dl,wd:wd,date:c.date,endOf:function(p){return retOf(c.rt||c.to,p)},wantB:c0<10*60+45,wantL:c0<14*60+(PD.LUNCHO||0)&&dl>13*60+30+(PD.LUNCHO||0),wantD:dl>=18*60+15,dinAt:18*60+45,snack:1};
+var ctx={single:1,c0:c0,start:"start",dl:dl,wd:wd,date:c.date,endOf:function(p){return retOf(c.rt||c.to,p)},wantB:c0<10*60+45,wantL:c0<14*60+(PD.LUNCHO||0)&&dl>13*60+30+(PD.LUNCHO||0),wantD:dl>=18*60+15,dinAt:18*60+45,snack:1,eb:earlyOf(c.date),sk:skipGet().d[0]||[]};
 var x=planDay(skipF(0,PD.SINGLE.acts),ctx,{single:1}),r=x.r;
 var items=[{k:"air",t:land,d:A.inMin,c0:c0}].concat(r.items);
 items.push({k:"ret",t:r.end,d:r.ret.min,ret:r.ret,arr:r.end+r.ret.min,slack:r.slack,dl:dl});
 var n=0;items.forEach(function(it){if(it.k==="act")it.n=++n});
-return{kind:"single",i:0,date:c.date,wd:wd,items:items,acts:x.acts,dropped:x.dropped,shrunk:x.shrunk,none:x.none,c0:c0,dl:dl,land:land,dep:dep,imb:imb,leave:r.end,prev:r.prev,B:r.B,L:r.L,D:r.D,A:A,R:R,rides:ridesOf(items)+((A.xr||0)+(R.xr||0))/2}}
+return{kind:"single",i:0,date:c.date,wd:wd,items:items,acts:x.acts,dropped:x.dropped,eadd:x.eadd,shrunk:x.shrunk,none:x.none,c0:c0,dl:dl,land:land,dep:dep,imb:imb,leave:r.end,prev:r.prev,B:r.B,L:r.L,D:r.D,A:A,R:R,rides:ridesOf(items)+((A.xr||0)+(R.xr||0))/2}}
 
 /* viaggio di più giorni */
 function frame(c,i,n){var A=PD.PAR[c.to],R=PD.PAR[c.rt||c.to],date=addDays(c.date,i),wd=wdOf(date),kind=i===0?"first":i===n-1?"last":"mid",f={i:i,date:date,wd:wd,kind:kind,A:A,R:R,acts:[]};
@@ -342,7 +366,7 @@ return left}
 function planMulti(f,c){var last=f.kind==="last";
 var ctx={multi:1,c0:f.c0,start:"home",dl:f.dl,wd:f.wd,date:f.date,
 endOf:last?lastRet:function(p){return legOf(p,"home")},
-wantB:f.c0<10*60+45,wantL:f.c0<14*60+(PD.LUNCHO||0)&&f.dl>13*60+30+(PD.LUNCHO||0),wantD:last?f.dl>=18*60+15:f.c0<21*60+30,dinAt:last?18*60+45:19*60+30+(PD.DINO||0),free:!last,snack:last,snx:!last&&ST.th==="eno"};
+wantB:f.c0<10*60+45,wantL:f.c0<14*60+(PD.LUNCHO||0)&&f.dl>13*60+30+(PD.LUNCHO||0),wantD:last?f.dl>=18*60+15:f.c0<21*60+30,dinAt:last?18*60+45:19*60+30+(PD.DINO||0),free:!last,snack:last,snx:!last&&ST.th==="eno",eb:earlyOf(f.date),sk:skipGet().d[f.i]||[]};
 var x=planDay(skipF(f.i,f.acts),ctx,null),r=x.r,items=[];
 if(f.kind==="first"){items.push({k:"air",t:f.land,d:f.A.inMin,c0:f.tC,multi:1});items.push({k:"home",t:f.tH,d:15,arr:1,leg:f.lh})}
 else items.push({k:"home",t:f.c0,d:0,co:last?1:0,mor:last?0:1});
@@ -352,7 +376,7 @@ if(last)items.push({k:"ret",t:rt,d:r.ret.min,ret:r.ret,arr:rt+r.ret.min,slack:r.
 else if(r.prev!=="home"||items[items.length-1].k==="meal")items.push({k:"night",t:r.end,d:r.ret.min,leg:r.ret});
 var n=0;items.forEach(function(it){if(it.k==="act")it.n=++n});
 var rides=ridesOf(items)+(last&&r.ret.rides?1:0)+(f.kind==="first"?(f.A.xrm||0):0)+(last?(f.R.xrm||0):0);
-return Object.assign(f,{items:items,acts:x.acts,dropped:x.dropped,shrunk:x.shrunk,none:x.none,leave:rt,prev:r.prev,B:r.B,L:r.L,D:r.D,rides:rides,end:rt+(last?0:r.ret.min)})}
+return Object.assign(f,{items:items,acts:x.acts,dropped:x.dropped,eadd:x.eadd,shrunk:x.shrunk,none:x.none,leave:rt,prev:r.prev,B:r.B,L:r.L,D:r.D,rides:rides,end:rt+(last?0:r.ret.min)})}
 function buildTrip(c){ST=sty(c);if(!c.rt||!PD.PAR[c.rt])c.rt=c.to;var n=nDays(c),A=PD.PAR[c.to],R=PD.PAR[c.rt];
 if(n===1)return{multi:false,n:1,A:A,R:R,days:[planSingle(c)],left:[]};
 var days=[];for(var i=0;i<n;i++)days.push(frame(c,i,n));
@@ -383,7 +407,7 @@ if(m==="pra"||m==="cen")o=o.filter(function(id){var t=ftag(id);return t&&t.k!=="
 function kindRk(id){var t=ftag(id);return t?({t:0,m:1,r:1,p:1,w:2,s:3,c:4,d:4})[t.k]:2}
 /* ===== locali: economici, almeno 4 stelle, e mai ripetuti nella stessa giornata ===== */
 function vRate(id){var v=V[id],r=v&&parseFloat(String(v.r).replace(",","."));return r>0?r:0}
-function vPrice(id){var q=ftag(id);return q?q.p:0}
+function vPrice(id){var q=ftag(id);if(q)return q.p;var v=V[id],m=v?mPrice(v):0;return m>=25?3:m>=14?2:0}
 function cheapIds(ids){var a=ids.filter(function(i){var r=vRate(i);return !r||r>=4});if(FP.p===2)return a.length>=2?a:ids;
 var b=a.filter(function(i){return vPrice(i)<2}),c=a.filter(function(i){return vPrice(i)<3});return b.length>=2?b:c.length>=2?c:a.length>=2?a:ids}
 function kOf(x){return x.k+"|"+(x.m||"")+"|"+(x.x?1:0)+"|"+(x.t0!=null?x.t0:x.t)}
@@ -453,6 +477,7 @@ else if(it.k==="snk"){cls="food";ti=it.x?"Aperitivo e assaggi":"Ultimo assaggio 
 body=(it.x?'<p>Una pausa golosa prima di cena: stuzzichini, un calice o un dolce tipico, assaggiando senza fretta.</p>':'<p>Non c\'è tempo per una cena seduti: prendete qualcosa da mangiare in viaggio o in aeroporto prima dei controlli.</p>')+(sids?'<div class="eat"><h3>Dove prenderlo</h3>'+eatUL(prefList(sids,WD,it.t,"snk",it.z,0,it),WD,"snk",it.z)+fpNote()+'</div>':nearBox("snk"))}
 else if(it.k==="act"){var s=S[it.id];cls=s.cls;ti=s.t;var meta=s.m,lg=it.leg;
 if(PD.fx.meta)meta=PD.fx.meta(it,meta,E);
+if(!tOn(it.id))meta="Senza biglietto: ti fermi fuori e nelle vie, circa "+it.d+" minuti."+(meta?" "+meta:"");
 if(s.sun){var ss=sunset(P.date);if(Math.abs(it.t+it.d/2-ss)<120)meta+=" Il sole tramonta alle "+fmt(ss)+": "+(it.t+it.d>ss?"sei qui al momento giusto per la luce del tramonto.":"goditi l'ultima luce.")}
 (PD.EXCL||[]).forEach(function(x){if(it.id===x[1]&&TRIP.multi&&TRIP.days.some(function(d){return d.acts.indexOf(x[0])>=0}))meta=x[2]});
 body='<div class="leg"><i>'+(lg.mode==="walk"?"🚶":"🚇")+'</i><span>'+esc(lg.txt)+'</span></div><p>'+esc(s.d)+'</p>'+(meta?'<p class="meta">'+esc(meta)+'</p>':'')+goBtn(s.q,lg.mode==="walk"?"walking":"transit","Portami lì",lg.mode==="walk"?"🚶":"🚇")}
@@ -490,7 +515,8 @@ b.classList.toggle("hl",on);if(hc)hc.textContent=on&&cur>=0?(cur+1)+" di "+it.le
 
 function renderShort(){var el=$("#short"),t=[];
 if(P.none){t.push(P.kind==="single"?"Con questi orari non resta tempo per entrare in città: tra il trasferimento dall'aeroporto e il ritorno non ci sono abbastanza minuti. Controlla gli orari dei voli.":P.kind==="first"?"Atterri tardi: oggi c'è solo il tempo di arrivare all'alloggio.":P.kind==="last"?"Il volo parte presto: oggi c'è giusto il tempo per il check-out e il viaggio in aeroporto.":"Oggi non resta tempo per le tappe.")}
-else{if(P.dropped.length)t.push("Il tempo è poco, quindi ho tolto: "+P.dropped.map(function(id){return S[id].t}).join(", ")+".");
+else{if(P.eadd&&P.eadd.length)t.push("⚡ Sei in anticipo: ho aggiunto "+P.eadd.map(function(id){return S[id].t}).join(", ")+".");
+if(P.dropped.length)t.push("Il tempo è poco, quindi ho tolto: "+P.dropped.map(function(id){return S[id].t}).join(", ")+".");
 if(P.shrunk.length&&!P.dropped.length)t.push("Il tempo è stretto: ho accorciato "+P.shrunk.map(function(id){return S[id].t}).join(", ")+".")}
 if(TRIP.multi&&SEL===0&&TRIP.left.length)t.push("In "+TRIP.n+" giorni non ci stanno: "+TRIP.left.map(function(b){return b.t}).join(", ")+". Allunga il viaggio per aggiungerli.");
 el.hidden=!t.length;el.textContent=t.length?"⏳ "+t.join(" "):"";el.classList.remove("open");if(!el.__t){el.__t=1;el.setAttribute("role","button");el.tabIndex=0;el.addEventListener("click",function(){el.classList.toggle("open")})}}
@@ -882,7 +908,7 @@ var rm=matchMedia("(prefers-reduced-motion:reduce)").matches,du=window.LITE?170:
 if(op){d.open=true;d.classList.add("op");CCOL[g]=false;if(rm)return;h=c.offsetHeight;d.__a=c.animate([{height:"0px",paddingBottom:"0px",opacity:0},{height:h+"px",paddingBottom:"8px",opacity:1}],{duration:du,easing:"cubic-bezier(.2,.8,.2,1)"});d.__a.onfinish=function(){d.__a=null}}
 else{d.classList.remove("op");CCOL[g]=true;if(rm){d.open=false;return}h=c.offsetHeight;var a=d.__a=c.animate([{height:h+"px",paddingBottom:"8px",opacity:1},{height:"0px",paddingBottom:"0px",opacity:0}],{duration:Math.round(du*.8),easing:"cubic-bezier(.4,0,.6,1)"});a.onfinish=function(){if(d.__a===a){d.open=false;d.__a=null}}}})});
 $$("#ctab [data-hotel]").forEach(function(b){b.addEventListener("click",function(){openSetup(false,2);setTimeout(function(){var p=form.sprice;if(p&&!$("#stayin").hidden)try{p.focus({preventScroll:true});p.scrollIntoView({block:"center"})}catch(e){}},350)})});
-$$("#ctab input[data-o]").forEach(function(x){x.addEventListener("change",function(){COPT[x.dataset.o]=x.checked?1:0;ls("via-copt",JSON.stringify(COPT));renderCosti(false);renderSpese()})});
+$$("#ctab input[data-o]").forEach(function(x){x.addEventListener("change",function(){COPT[x.dataset.o]=x.checked?1:0;ls("via-copt",JSON.stringify(COPT));if(S[x.dataset.o]&&S[x.dataset.o].tk)renderAll();else{renderCosti(false);renderSpese()}})});
 var nt=(M.V.length?"Voli inclusi come li hai inseriti. ":"Voli esclusi: puoi aggiungerne il costo qui sotto, in «Costo dei voli». ")+"Tutte le attrazioni sono facoltative: togli la spunta a quelle che non ti interessano e il totale si aggiorna. ";
 if(PD.fx.costNote)nt+=PD.fx.costNote(E,M);else{nt+=(M.bn?M.bn+" ":M.best==="single"?"Con poche corse i biglietti singoli costano meno degli abbonamenti. ":"")+(M.alt.length?"Alternative: "+M.alt.join(", ")+". ":"")+PD.TR.note+(PD.T.foodNote?" "+PD.T.foodNote:"");if(TRIP.multi&&PD.T.taxNote)nt+=" "+PD.T.taxNote}
 var cn=$("#cnote"),wo=anim===false&&cn.querySelector("details")&&cn.querySelector("details").open;cn.innerHTML=moreHtml(esc(nt),wo);
