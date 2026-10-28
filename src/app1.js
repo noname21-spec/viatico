@@ -131,7 +131,7 @@ function skipF(i,acts){var s=skipGet().d[i]||[];return s.length?acts.filter(func
 function skipSet(i,id,on){var o=skipGet(),s=(o.d[i]||[]).filter(function(a){return a!==id});if(on)s.push(id);if(s.length)o.d[i]=s;else delete o.d[i];ls("via-skip",Object.keys(o.d).length?JSON.stringify(o):null)}
 function lateGet(){var o=lj("via-late",null);return o&&o.k===tKey()&&o.s?o:null}
 function lateApply(T){var o=lateGet();if(!o)return;var D=T.days.filter(function(d){return d.date===o.day})[0];if(!D)return;var tot=0;
-o.s.forEach(function(sh){tot+=sh.m;var fl=sh.f;D.items.forEach(function(it){if(it.k==="air")return;if(it.k==="ret"&&!(sh.m<0&&D.eadd&&D.eadd.length))return;if(it.t>=sh.f){if(it.t0==null)it.t0=it.t;var nt=it.t+sh.m;if(sh.m<0){nt=Math.max(nt,fl);fl=nt}it.t=nt}})});D.late=tot}
+o.s.forEach(function(sh){tot+=sh.m;var fl=sh.f;D.items.forEach(function(it){if(it.k==="air")return;if(it.k==="ret"&&!(sh.m<0&&((D.eadd&&D.eadd.length)||(D.egr&&D.egr.length))))return;if(it.t>=sh.f){if(it.t0==null)it.t0=it.t;var nt=it.t+sh.m;if(sh.m<0){nt=Math.max(nt,fl);fl=nt}it.t=nt}})});D.late=tot}
 function lateAdd(m){var n=paris(),o=lateGet();if(!o||o.day!==n.d)o={k:tKey(),day:n.d,s:[]};o.s.push({f:n.m,m:m});ls("via-late",JSON.stringify(o));buzz(15);renderAll();toast(m<0?"Prossime tappe anticipate di "+(-m)+" minuti":"Prossime tappe spostate di "+m+" minuti")}
 function lateAsk(early){var n=paris(),o=lateGet(),sg=early?-1:1,b=[15,30,60].map(function(m){return{t:early?m+" minuti prima":"+"+m+" minuti",fn:function(){lateAdd(sg*m)}}});
 if(o&&o.day===n.d)b.push({t:"Torna agli orari previsti",fn:function(){ls("via-late",null);renderAll();toast("Orari previsti ripristinati")}});
@@ -316,7 +316,7 @@ if(!none){
 (ST.pc==="rel"?[]:PD.SINGLE.ins||[]).forEach(function(x){if(x[3]&&!(opt&&opt.single))return;if(x[2]&&acts.indexOf(x[2])<0)return;tryIns(x[0],x[1])});
 var order=acts.slice().sort(function(a,b){return pri(a)-pri(b)}),ch=true,k=0;
 while(r.slack>=15&&ch&&k++<200){ch=false;for(var i=0;i<order.length;i++){var id=order[i];if(dur[id]+5<=(ST.pc==="int"?dId(id):dMax(id))){dur[id]+=5;var r2=sim(acts,dur,ctx);if(r2.slack>=10){r=r2;ch=true}else dur[id]-=5}}}}
-var eadd=[];
+var eadd=[],egr=[];
 if(!none&&ctx.eb&&ctx.eb.B>=20){var B=ctx.eb.B,f=ctx.eb.f,c2=Object.assign({},ctx,{dl:ctx.dl+B}),pool=[];
  dropped.forEach(function(id){pool.push(id)});
  if(ctx.single)Object.keys(S).forEach(function(id){var q=S[id];if(!q.multi||pool.indexOf(id)>=0)return;pool.push(id)});
@@ -332,9 +332,14 @@ if(!none&&ctx.eb&&ctx.eb.B>=20){var B=ctx.eb.B,f=ctx.eb.f,c2=Object.assign({},ct
   if(!best)break;acts=best.a;r=best.r;dur[best.id]=best.d;eadd.push(best.id);pool.splice(pool.indexOf(best.id),1);done++;
   /* con il tempo che avanza, la nuova tappa si allunga fino alla durata ideale */
   var gi=0;while(dur[best.id]+5<=dId(best.id)&&gi++<30){dur[best.id]+=5;var r3=sim(acts,dur,c2);if(r3.slack>=10)r=r3;else{dur[best.id]-=5;break}}}
+ /* con il tempo guadagnato, le tappe accorciate tornano alla durata ideale (le prossime, non quelle già fatte) */
+ var tm2={};r.items.forEach(function(x){if(x.k==="act")tm2[x.id]=x});
+ var gord=acts.slice().sort(function(a,b){return pri(a)-pri(b)}),gch=true,gk=0,gr={};
+ while(gch&&gk++<80){gch=false;gord.forEach(function(id){var q=tm2[id];if(!q||q.t+q.d<=f)return;if(dur[id]+5<=(ST.pc==="int"?dId(id):dMax(id))){dur[id]+=5;var r4=sim(acts,dur,c2);if(r4.slack>=10){r=r4;gch=true;gr[id]=1}else dur[id]-=5}})}
+ egr=Object.keys(gr);
  if(eadd.length)dropped=dropped.filter(function(id){return acts.indexOf(id)<0})}
 var shrunk=acts.filter(function(id){return dur[id]<dId(id)-4});
-return{r:r,acts:acts,dropped:dropped,shrunk:shrunk,none:none,eadd:eadd}}
+return{r:r,acts:acts,dropped:dropped,shrunk:shrunk,none:none,eadd:eadd,egr:egr.filter(function(id){return eadd.indexOf(id)<0})}}
 function ridesOf(items){var n=0;items.forEach(function(x){var l=x.leg;if(x.k==="act"||x.k==="free"||x.k==="night"){if(l&&l.mode==="metro")n++}});return n}
 
 /* gita in giornata: come la prima versione dell'app */
@@ -346,7 +351,7 @@ var x=planDay(skipF(0,PD.SINGLE.acts),ctx,{single:1}),r=x.r;
 var items=[{k:"air",t:land,d:A.inMin,c0:c0}].concat(r.items);
 items.push({k:"ret",t:r.end,d:r.ret.min,ret:r.ret,arr:r.end+r.ret.min,slack:r.slack,dl:dl});
 var n=0;items.forEach(function(it){if(it.k==="act")it.n=++n});
-return{kind:"single",i:0,date:c.date,wd:wd,items:items,acts:x.acts,dropped:x.dropped,eadd:x.eadd,shrunk:x.shrunk,none:x.none,c0:c0,dl:dl,land:land,dep:dep,imb:imb,leave:r.end,prev:r.prev,B:r.B,L:r.L,D:r.D,A:A,R:R,rides:ridesOf(items)+((A.xr||0)+(R.xr||0))/2}}
+return{kind:"single",i:0,date:c.date,wd:wd,items:items,acts:x.acts,dropped:x.dropped,eadd:x.eadd,egr:x.egr,shrunk:x.shrunk,none:x.none,c0:c0,dl:dl,land:land,dep:dep,imb:imb,leave:r.end,prev:r.prev,B:r.B,L:r.L,D:r.D,A:A,R:R,rides:ridesOf(items)+((A.xr||0)+(R.xr||0))/2}}
 
 /* viaggio di più giorni */
 function frame(c,i,n){var A=PD.PAR[c.to],R=PD.PAR[c.rt||c.to],date=addDays(c.date,i),wd=wdOf(date),kind=i===0?"first":i===n-1?"last":"mid",f={i:i,date:date,wd:wd,kind:kind,A:A,R:R,acts:[]};
@@ -376,7 +381,7 @@ if(last)items.push({k:"ret",t:rt,d:r.ret.min,ret:r.ret,arr:rt+r.ret.min,slack:r.
 else if(r.prev!=="home"||items[items.length-1].k==="meal")items.push({k:"night",t:r.end,d:r.ret.min,leg:r.ret});
 var n=0;items.forEach(function(it){if(it.k==="act")it.n=++n});
 var rides=ridesOf(items)+(last&&r.ret.rides?1:0)+(f.kind==="first"?(f.A.xrm||0):0)+(last?(f.R.xrm||0):0);
-return Object.assign(f,{items:items,acts:x.acts,dropped:x.dropped,eadd:x.eadd,shrunk:x.shrunk,none:x.none,leave:rt,prev:r.prev,B:r.B,L:r.L,D:r.D,rides:rides,end:rt+(last?0:r.ret.min)})}
+return Object.assign(f,{items:items,acts:x.acts,dropped:x.dropped,eadd:x.eadd,egr:x.egr,shrunk:x.shrunk,none:x.none,leave:rt,prev:r.prev,B:r.B,L:r.L,D:r.D,rides:rides,end:rt+(last?0:r.ret.min)})}
 function buildTrip(c){ST=sty(c);if(!c.rt||!PD.PAR[c.rt])c.rt=c.to;var n=nDays(c),A=PD.PAR[c.to],R=PD.PAR[c.rt];
 if(n===1)return{multi:false,n:1,A:A,R:R,days:[planSingle(c)],left:[]};
 var days=[];for(var i=0;i<n;i++)days.push(frame(c,i,n));
@@ -408,8 +413,10 @@ function kindRk(id){var t=ftag(id);return t?({t:0,m:1,r:1,p:1,w:2,s:3,c:4,d:4})[
 /* ===== locali: economici, almeno 4 stelle, e mai ripetuti nella stessa giornata ===== */
 function vRate(id){var v=V[id],r=v&&parseFloat(String(v.r).replace(",","."));return r>0?r:0}
 function vPrice(id){var q=ftag(id);if(q)return q.p;var v=V[id],m=v?mPrice(v):0;return m>=25?3:m>=14?2:0}
-function cheapIds(ids){var a=ids.filter(function(i){var r=vRate(i);return !r||r>=4});if(FP.p===2)return a.length>=2?a:ids;
-var b=a.filter(function(i){return vPrice(i)<2}),c=a.filter(function(i){return vPrice(i)<3});return b.length>=2?b:c.length>=2?c:a.length>=2?a:ids}
+function cheapIds(ids){var a=ids.filter(function(i){var r=vRate(i);return !r||r>=4});if(!a.length)a=ids;
+/* mai locali cari: se in zona non ce n'è di economici, la lista resta vuota e l'app propone la ricerca su Maps */
+if(FP.p===2)return a.filter(function(i){return vPrice(i)<3});
+var b=a.filter(function(i){return vPrice(i)<2}),c=a.filter(function(i){return vPrice(i)<3});return b.length>=2?b:c}
 function kOf(x){return x.k+"|"+(x.m||"")+"|"+(x.x?1:0)+"|"+(x.t0!=null?x.t0:x.t)}
 function idsOfItem(x){return x.k==="snk"?(PD.MEAL.snk[x.z]||(x.z==="X"?null:PD.MEAL.snk.A)):mealIds(x.m,x.z)}
 var PLAN={k:"",v:{},u:{}},BTWS={};
@@ -433,13 +440,13 @@ var q=function(lv){return lv<2?" · da chiedere":""};
 if(t.N)a.push('<span class="fb g'+(t.N<2?" q":"")+'">🌱 Vegano'+q(t.N)+'</span>');else if(t.V)a.push('<span class="fb g'+(t.V<2?" q":"")+'">🥦 Vegetariano'+q(t.V)+'</span>');
 if(t.F)a.push('<span class="fb g'+(t.F<2?" q":"")+'">🌾 Senza glutine'+q(t.F)+'</span>')}
 return '<span class="fbs">'+a.join("")+'</span>'}
-function fpMapsLink(m,z){var q=[];FP.d.forEach(function(d){if(d==="veg"&&FP.d.indexOf("vegan")>=0)return;q.push(d==="gf"?"gluten free":d==="vegan"?"vegan":"vegetarian")});if(!q.length&&!FP.p)return"";
+function fpMapsLink(m,z,force){var q=[];FP.d.forEach(function(d){if(d==="veg"&&FP.d.indexOf("vegan")>=0)return;q.push(d==="gf"?"gluten free":d==="vegan"?"vegan":"vegetarian")});if(!q.length&&!FP.p&&!force)return"";
 q.push(FP.p===2?"affordable":"cheap","highly rated");q.push(m==="col"?"breakfast cafe":m==="snk"?"snack":"restaurant");var h=null;try{h=TRIP&&TRIP.multi?home():null}catch(e){}
 var loc=h&&h.q?(h.geo?h.pos.join(","):h.q):(PD.hub.n+" "+PD.n);
 return '<a class="go sm" target="_blank" rel="noopener" href="'+esc("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q.join(" ")+" near "+loc))+'">🔎 Cerca su Maps: '+esc(q.join(" "))+'</a>'}
 function eatUL(pl,wd,m,z){var h="";
 if(pl.main.length)h='<ul>'+pl.main.map(function(o){return vLi(o,wd)}).join("")+'</ul>';
-else h='<p class="meta fpnone">Nessun locale della mia lista, in questa zona, risponde alle tue preferenze ('+esc(fpSum())+').</p>'+fpMapsLink(m,z);
+else h='<p class="meta fpnone">'+(fprefOn()?'Nessun locale della mia lista, in questa zona, risponde alle tue preferenze ('+esc(fpSum())+').':'Nella mia lista, per questa zona, non ci sono locali economici e ben valutati: non ti propongo posti cari.')+'</p>'+fpMapsLink(m,z,1);
 if(pl.rest.length)h+='<details class="fprest"><summary>Altri '+pl.rest.length+' locali della zona (non adatti o da verificare)</summary><ul>'+pl.rest.map(function(o){return vLi(o,wd)}).join("")+'</ul></details>';
 return h}
 function fpNote(){return fprefOn()?'<p class="fpnote">🥗 Filtrato per le tue preferenze: '+esc(fpSum())+'. <a class="fplink" href="#">Modifica</a></p>':'<p class="fpnote"><a class="fplink" href="#">🥗 Imposta le tue preferenze di cibo</a> (vegetariano, vegano, prezzo, gusti)</p>'}
@@ -516,6 +523,7 @@ b.classList.toggle("hl",on);if(hc)hc.textContent=on&&cur>=0?(cur+1)+" di "+it.le
 function renderShort(){var el=$("#short"),t=[];
 if(P.none){t.push(P.kind==="single"?"Con questi orari non resta tempo per entrare in città: tra il trasferimento dall'aeroporto e il ritorno non ci sono abbastanza minuti. Controlla gli orari dei voli.":P.kind==="first"?"Atterri tardi: oggi c'è solo il tempo di arrivare all'alloggio.":P.kind==="last"?"Il volo parte presto: oggi c'è giusto il tempo per il check-out e il viaggio in aeroporto.":"Oggi non resta tempo per le tappe.")}
 else{if(P.eadd&&P.eadd.length)t.push("⚡ Sei in anticipo: ho aggiunto "+P.eadd.map(function(id){return S[id].t}).join(", ")+".");
+if(P.egr&&P.egr.length)t.push("⚡ Sei in anticipo: ho dato più tempo a "+P.egr.map(function(id){return S[id].t}).join(", ")+".");
 if(P.dropped.length)t.push("Il tempo è poco, quindi ho tolto: "+P.dropped.map(function(id){return S[id].t}).join(", ")+".");
 if(P.shrunk.length&&!P.dropped.length)t.push("Il tempo è stretto: ho accorciato "+P.shrunk.map(function(id){return S[id].t}).join(", ")+".")}
 if(TRIP.multi&&SEL===0&&TRIP.left.length)t.push("In "+TRIP.n+" giorni non ci stanno: "+TRIP.left.map(function(b){return b.t}).join(", ")+". Allunga il viaggio per aggiungerli.");
