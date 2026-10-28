@@ -381,7 +381,23 @@ function ffit(id){var t=ftag(id);if(!t)return{ok:!FP.d.length&&!FP.p,lv:0,k:0};v
 function fpool(m,z){var M=PD.MEAL,zz=z==="X"?"A":z,nm=(m==="pra"||m==="cen")?["pra","cen"]:["col","snk"],o=[];nm.forEach(function(n){var L=(M[n]&&(M[n][zz]||M[n].A))||[];L.forEach(function(id){if(o.indexOf(id)<0)o.push(id)})});
 if(m==="pra"||m==="cen")o=o.filter(function(id){var t=ftag(id);return t&&t.k!=="c"&&t.k!=="d"});return o}
 function kindRk(id){var t=ftag(id);return t?({t:0,m:1,r:1,p:1,w:2,s:3,c:4,d:4})[t.k]:2}
-function prefList(ids,wd,t,m,z){ids=ids.filter(function(i){return !mHid(i)});var base=vSorted(ids,wd,t);
+/* ===== locali: economici, almeno 4 stelle, e mai ripetuti nella stessa giornata ===== */
+function vRate(id){var v=V[id],r=v&&parseFloat(String(v.r).replace(",","."));return r>0?r:0}
+function vPrice(id){var q=ftag(id);return q?q.p:0}
+function cheapIds(ids){var a=ids.filter(function(i){var r=vRate(i);return !r||r>=4});if(FP.p===2)return a.length>=2?a:ids;
+var b=a.filter(function(i){return vPrice(i)<2}),c=a.filter(function(i){return vPrice(i)<3});return b.length>=2?b:c.length>=2?c:a.length>=2?a:ids}
+function kOf(x){return x.k+"|"+(x.m||"")+"|"+(x.x?1:0)+"|"+(x.t0!=null?x.t0:x.t)}
+function idsOfItem(x){return x.k==="snk"?(PD.MEAL.snk[x.z]||(x.z==="X"?null:PD.MEAL.snk.A)):mealIds(x.m,x.z)}
+var PLAN={k:"",v:{},u:{}},BTWS={};
+function dayPlan(){var di=P.i,sig=di+"|"+P.items.length+"|"+JSON.stringify(FP)+"|"+ST.th+"|"+((MEALS.h||[]).join(","));if(PLAN.k===sig)return PLAN.v;
+var nodes=[];P.items.forEach(function(x){if((x.k!=="meal"&&x.k!=="snk")||x.hotel)return;var ids=idsOfItem(x);if(!ids)return;var mm=x.k==="snk"?"snk":x.m,pl=prefList(ids,WD,mTime(di,x),mm,x.z,1);
+nodes.push({k:kOf(x),c:pl.main.filter(function(o){return o.s.c!=="ko"}).map(function(o){return o.id}),a:pl.main.map(function(o){return o.id}),g:[]})});
+var used={},dm={},ord=nodes.slice().sort(function(a,b){return a.c.length-b.c.length});nodes.forEach(function(n){n.c.forEach(function(id){dm[id]=(dm[id]||0)+1})});
+for(var r=0;r<3;r++)ord.forEach(function(n){var bi=-1;n.c.forEach(function(id,i){if(!used[id]&&(bi<0||dm[id]<dm[n.c[bi]]))bi=i});if(bi>=0){used[n.c[bi]]=1;n.g.push(n.c[bi])}});
+var v={};nodes.forEach(function(n){n.a.forEach(function(id){if(n.g.length<2&&n.g.indexOf(id)<0)n.g.push(id)});v[n.k]=n.g});PLAN={k:sig,v:v,u:used};return v}
+function prefList(ids,wd,t,m,z,raw,x){ids=cheapIds(ids.filter(function(i){return !mHid(i)}));var r=prefList0(ids,wd,t,m,z);if(raw||!x)return r;
+var g=dayPlan()[kOf(x)];if(!g||!g.length)return r;var keep=r.main.filter(function(o){return g.indexOf(o.id)>=0});return keep.length?{main:keep.slice(0,3),rest:r.rest}:r}
+function prefList0(ids,wd,t,m,z){ids=ids.filter(function(i){return !mHid(i)});var base=vSorted(ids,wd,t);
 if(ST.th==="eno"&&(m==="pra"||m==="cen")){var so={ok:0,mid:1,ko:2};base=base.map(function(o,i){o.i0=i;return o}).sort(function(a,b){return so[a.s.c]-so[b.s.c]||kindRk(a.id)-kindRk(b.id)||a.i0-b.i0})}if(!fprefOn())return{main:base,rest:[]};
 var main=[],rest=[],ord={ok:0,mid:1,ko:2};base.forEach(function(o,i){o.i=i;o.f=ffit(o.id);(o.f.ok?main:rest).push(o)});
 if((FP.d.length||FP.p)&&main.filter(function(o){return o.s.c!=="ko"}).length<2)fpool(m,z).forEach(function(id){if(ids.indexOf(id)>=0||mHid(id))return;var o=vSorted([id],wd,t)[0];o.f=ffit(id);if(o.f.ok){o.extra=1;o.i=99;main.push(o)}});
@@ -394,7 +410,7 @@ if(t.N)a.push('<span class="fb g'+(t.N<2?" q":"")+'">🌱 Vegano'+q(t.N)+'</span
 if(t.F)a.push('<span class="fb g'+(t.F<2?" q":"")+'">🌾 Senza glutine'+q(t.F)+'</span>')}
 return '<span class="fbs">'+a.join("")+'</span>'}
 function fpMapsLink(m,z){var q=[];FP.d.forEach(function(d){if(d==="veg"&&FP.d.indexOf("vegan")>=0)return;q.push(d==="gf"?"gluten free":d==="vegan"?"vegan":"vegetarian")});if(!q.length&&!FP.p)return"";
-if(FP.p===1)q.push("cheap");q.push(m==="col"?"breakfast cafe":m==="snk"?"snack":"restaurant");var h=null;try{h=TRIP&&TRIP.multi?home():null}catch(e){}
+q.push(FP.p===2?"affordable":"cheap","highly rated");q.push(m==="col"?"breakfast cafe":m==="snk"?"snack":"restaurant");var h=null;try{h=TRIP&&TRIP.multi?home():null}catch(e){}
 var loc=h&&h.q?(h.geo?h.pos.join(","):h.q):(PD.hub.n+" "+PD.n);
 return '<a class="go sm" target="_blank" rel="noopener" href="'+esc("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q.join(" ")+" near "+loc))+'">🔎 Cerca su Maps: '+esc(q.join(" "))+'</a>'}
 function eatUL(pl,wd,m,z){var h="";
@@ -411,7 +427,7 @@ function mealTitle(it){if(it.hotel)return "Colazione in hotel";var where=it.near
 function ordBox(m){return '<div class="ord"><b>🍽️ Cosa ordinare</b>'+PD.ORD[m].map(function(o){return "<p><i>"+esc(o[0])+"</i> – "+esc(o[1])+"</p>"}).join("")+"</div>"}
 function hotelBf(){return '<p>La colazione è inclusa nel tuo hotel: scendi con calma nella sala colazioni.</p><p class="meta">Controlla gli orari del servizio (di solito dalle 7 alle 10:30) e, se hai fretta, chiedi alla reception se prepara un cestino da portare via.</p>'}
 function nearBox(m){var h=home(),k=PD.NEAR[m]||PD.NEAR.col;
-return '<div class="eat"><h3>Dove mangiare</h3><p class="meta" style="margin:4px 0 8px">In questa zona non ho locali verificati: cerca una '+k+' con almeno 4 stelle vicino all\'alloggio.</p><a class="go sm" target="_blank" rel="noopener" href="'+esc("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(fpWords()+k+" near "+(h.geo?h.pos.join(","):h.q)))+'">🔎 '+cap(k)+(fpWords()?" ("+esc(fpWords().trim())+")":"")+' vicino all\'alloggio</a></div>'}
+return '<div class="eat"><h3>Dove mangiare</h3><p class="meta" style="margin:4px 0 8px">In questa zona non ho locali verificati: cerca una '+k+' economica con almeno 4 stelle vicino all\'alloggio.</p><a class="go sm" target="_blank" rel="noopener" href="'+esc("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(fpWords()+"cheap highly rated "+k+" near "+(h.geo?h.pos.join(","):h.q)))+'">🔎 '+cap(k)+(fpWords()?" ("+esc(fpWords().trim())+")":"")+' vicino all\'alloggio</a></div>'}
 function fpWords(){var q=[];FP.d.forEach(function(d){if(d==="veg"&&FP.d.indexOf("vegan")>=0)return;q.push(d==="gf"?"gluten free":d==="vegan"?"vegan":"vegetarian")});return q.length?q.join(" ")+" ":""}
 
 /* ===== rendering ===== */
@@ -431,10 +447,10 @@ else{ti="Si parte dall'alloggio";body='<p>Giorno '+(P.i+1)+(P.themes&&P.themes.l
 else if(it.k==="meal"){cls="food";ti=mealTitle(it);var ids=mealIds(it.m,it.z);
 if(it.hotel)body=hotelBf();
 else if(!ids)body='<p>'+(it.m==="col"?"Prima di partire, qualcosa al volo vicino all'alloggio.":"Vicino all'alloggio, per non riattraversare la città.")+'</p>'+nearBox(it.m);
-else{var pl=prefList(ids,WD,it.t,it.m,it.z),L=pl.main,first=L.filter(function(o){return o.s.c==="ok"})[0]||L[0];
+else{var pl=prefList(ids,WD,it.t,it.m,it.z,0,it),L=pl.main,first=L.filter(function(o){return o.s.c==="ok"})[0]||L[0];
 body='<p>'+(it.m==="col"?(it.near?"A pochi passi dall'alloggio.":"Appena usciti dalla stazione, a pochi passi."):it.m==="pra"?((PD.T.praZ||{})[it.z]||PD.T.pra+": "+(it.d>=60?"un'ora a tavola, con calma.":"un pranzo veloce.")):(TRIP.multi&&P.kind!=="last"?"La cena della giornata, senza fretta.":"Mangia qui e non in aeroporto: si spende meno e si mangia meglio. Tieni d'occhio l'orologio."))+'</p>'+(ST.th==="eno"&&it.m!=="col"?'<p class="meta">🍷 Tavola lunga: piatti tipici e un calice di vino locale. Se puoi, prenota.</p>':'')+'<div class="eat"><h3>Dove mangiare</h3>'+eatUL(pl,WD,it.m,it.z)+fpNote()+'</div>'+mPickBlock(it,first)}}
 else if(it.k==="snk"){cls="food";ti=it.x?"Aperitivo e assaggi":"Ultimo assaggio prima di partire";var sids=PD.MEAL.snk[it.z]||(it.z==="X"?null:PD.MEAL.snk.A);
-body=(it.x?'<p>Una pausa golosa prima di cena: stuzzichini, un calice o un dolce tipico, assaggiando senza fretta.</p>':'<p>Non c\'è tempo per una cena seduti: prendete qualcosa da mangiare in viaggio o in aeroporto prima dei controlli.</p>')+(sids?'<div class="eat"><h3>Dove prenderlo</h3>'+eatUL(prefList(sids,WD,it.t,"snk",it.z),WD,"snk",it.z)+fpNote()+'</div>':nearBox("snk"))}
+body=(it.x?'<p>Una pausa golosa prima di cena: stuzzichini, un calice o un dolce tipico, assaggiando senza fretta.</p>':'<p>Non c\'è tempo per una cena seduti: prendete qualcosa da mangiare in viaggio o in aeroporto prima dei controlli.</p>')+(sids?'<div class="eat"><h3>Dove prenderlo</h3>'+eatUL(prefList(sids,WD,it.t,"snk",it.z,0,it),WD,"snk",it.z)+fpNote()+'</div>':nearBox("snk"))}
 else if(it.k==="act"){var s=S[it.id];cls=s.cls;ti=s.t;var meta=s.m,lg=it.leg;
 if(PD.fx.meta)meta=PD.fx.meta(it,meta,E);
 if(s.sun){var ss=sunset(P.date);if(Math.abs(it.t+it.d/2-ss)<120)meta+=" Il sole tramonta alle "+fmt(ss)+": "+(it.t+it.d>ss?"sei qui al momento giusto per la luce del tramonto.":"goditi l'ultima luce.")}
@@ -694,13 +710,13 @@ if(ch||add){saveSP();try{renderCosti(false);renderSpese()}catch(e){}}return add}
 function pmeals(){var out=[];P.items.forEach(function(x){if(x.k!=="meal"&&x.k!=="snk")return;var sn=x.k==="snk",mm=sn?"snk":x.m,ids=sn?(PD.MEAL.snk[x.z]||(x.z==="X"?null:PD.MEAL.snk.A)):mealIds(x.m,x.z),key=P.i+"|"+mm;
 out.push({it:x,mm:mm,key:key,ids:ids,ttl:sn?"Ultimo assaggio":mealTitle(x),nm:sn?"Assaggio":MN[x.m],hotel:!!x.hotel,sel:!x.hotel&&!!ids,done:!!(MEALS.s&&MEALS.s[key])})});return out}
 function pHero(L){var n=paris(),td=TRIP.days[SEL].date===n.d,i;if(td)for(i=0;i<L.length;i++)if(L[i].sel&&!L[i].done&&L[i].it.t+(L[i].it.d||45)>n.m)return i;for(i=0;i<L.length;i++)if(L[i].sel&&!L[i].done)return i;return -1}
-function pList(m){var di=P.i,pl=prefList(m.ids,WD,mTime(di,m.it),m.mm,m.it.z);
+function pList(m){var di=P.i,pl=prefList(m.ids,WD,mTime(di,m.it),m.mm,m.it.z,0,m.it);
 if(!fprefOn()&&ST.th!=="eno"){var o=mOrig(di,m.it),so={ok:0,mid:1,ko:2};pl.main=pl.main.map(function(x,i){var w=mWalk(x.v,o);x.w=w?w.min:99;x.i0=i;return x}).sort(function(a,b){return so[a.s.c]-so[b.s.c]||a.w-b.w||a.i0-b.i0})}return pl}
 function pStat(o){return '<span class="st '+o.s.c+'">'+(o.s.c==="ok"?"✓ ":o.s.c==="ko"?"⚠️ ":"⏱ ")+esc(o.s.t)+'</span>'}
 function pStatTxt(o){return (o.s.c==="ok"?"✓ ":o.s.c==="ko"?"⚠️ ":"⏱ ")+esc(o.s.t)}
 function pMeta(v,wd){return (v.r?'<span>★ '+esc(String(v.r))+'</span>':'')+(v.h&&v.h.length?'<span>🕐 '+esc(hrsTxt(v,wd))+'</span>':'')}
 function pBook(m,v){if(!v||v.own||(m.mm!=="pra"&&m.mm!=="cen"))return"";var r=parseFloat(String(v.r).replace(",","."));return (r>=4.6||/prenot/i.test((v.d||"")+" "+(v.pr||"")))?'<p class="pmbk">📅 Meglio prenotare: è molto apprezzato e può esserci fila (indicazione di massima).</p>':""}
-function pMore(m){var o=mOrig(P.i,m.it),k=m.mm==="col"?"breakfast cafe":m.mm==="snk"?"snack":"restaurant",loc=o.pos?o.pos.join(","):PD.hub.n+" "+PD.n;return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(fpWords()+(FP.p===1?"cheap ":FP.p===2?"affordable ":"")+k+" near "+loc)}
+function pMore(m){var o=mOrig(P.i,m.it),k=m.mm==="col"?"breakfast cafe":m.mm==="snk"?"snack":"restaurant",loc=o.pos?o.pos.join(","):PD.hub.n+" "+PD.n;return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(fpWords()+(FP.p===2?"affordable ":"cheap ")+"highly rated "+k+" near "+loc)}
 function pBanner(L,hi){if(hi<0)return"";var m=L[hi],di=P.i,n=paris(),td=TRIP.days[SEL].date===n.d,ch=MEALS.c&&MEALS.c[m.key],v=ch&&mFind(ch),og=mOrig(di,m.it),
 lk=(td?(m.it.t<=n.m?"Adesso":"Prossimo"):(hi===0?"Primo pasto":"Pasto"))+" · "+m.nm+(td&&m.it.t>n.m?" alle "+fmt(m.it.t):""),warn=v?mWarn(di,m.it,v,og):"";
 return '<div class="pban"><div class="pbx"><small>'+esc(lk)+'</small><b>'+(v?esc(v.n):"Da scegliere")+'</b></div>'+(v?'<a class="pbb" href="'+esc(mGo(v))+'" target="_blank" rel="noopener">Portami lì</a>':'<button type="button" class="pbb" data-a="open" data-k="'+esc(m.key)+'">Scegli</button>')+'</div>'+(warn?'<p class="pmw">'+esc(warn)+'</p>':'')}
@@ -793,7 +809,7 @@ function renderPasti(){try{fpQuestion()}catch(e){}var hb=$("#hbt");if(hb){hb.hid
 $("#mlead").textContent=TRIP.multi?"Giorno "+(P.i+1)+", "+dateLong(P.date)+": scegli dove mangiare e, nel mezzo, cosa assaggiare lungo il percorso.":"Scegli dove mangiare: i pasti in ordine e, nel mezzo, cosa assaggiare lungo il percorso.";
 if(!meals.length){$("#mgrid").innerHTML='<p class="meta">Con questi orari non ci sono pasti in città.</p>';return}
 var acts=function(a,b){return it.filter(function(x){return x.k==="act"&&x.t>a&&x.t<b})};
-var L=pmeals(),pre={},post=[],prevT=P.c0;
+var L=pmeals(),pre={},post=[],prevT=P.c0;BTWS={};dayPlan();
 meals.forEach(function(m,mi){var between=acts(prevT,m.t);
 if(mi>0||(!P.B&&between.length))pre[L[mi].key]=btw(between,meals[mi-1],m);
 prevT=m.t});
@@ -804,12 +820,13 @@ PS.L=L;PS.pre=pre;PS.post=post;if(PS.day!==SEL){PS.day=SEL;PS.add=null;PS.menu=n
 pDraw();pGeo();
 function btw(between,a,b){var zs=[];between.forEach(function(x){var z=S[x.id].z;if(zs.indexOf(z)<0)zs.push(z)});
 var ids=[];zs.forEach(function(z){(PD.MEAL.snk[z]||[]).forEach(function(id){if(ids.indexOf(id)<0&&!mHid(id))ids.push(id)})});
+ids=cheapIds(ids);var pu=PLAN.u||{},f1=ids.filter(function(i){return !pu[i]&&!BTWS[i]}),f2=ids.filter(function(i){return !BTWS[i]});ids=f1.length>=1?f1:f2.length>=1?f2:ids;
 var t0=between.length?between[0].t:(a?a.t:P.c0),t1=b?b.t:P.leave,mid=(t0+t1)/2,tips=[];
 tips.push(["💧",PD.T.water]);
 if(a&&a.m==="col"&&b&&b.m==="pra")tips.push(["🚫","Evitate i caffè con vista sui monumenti: un caffè o un'acqua costano il doppio che nelle vie laterali."]);
 if(b&&b.m==="cen"&&PD.T.kitchen)tips.push(["🕓",PD.T.kitchen]);
 if(b&&b.m==="pra")tips.push(["🥖","Tenetevi leggeri: al massimo un dolce da dividere, il pranzo arriva presto."]);
-var sn=(fprefOn()?prefList(ids,WD,mid,"snk",zs[0]||"A").main:vSorted(ids,WD,mid)).slice(0,4);
+var sn=(fprefOn()?prefList(ids,WD,mid,"snk",zs[0]||"A").main:vSorted(ids,WD,mid)).slice(0,3);sn.forEach(function(o){BTWS[o.id]=1});
 return '<div class="btw"><div class="btwh"><span class="btwi">⏳</span><div><small>'+fmt(t0)+' – '+fmt(t1)+(between.length?' · '+esc(between.map(function(x){return S[x.id].t.split(" e ")[0]}).join(", ")):'')+'</small><b>'+(a?(b?"Tra "+(a.m?MN[a.m].toLowerCase():"un pasto")+" e "+(b.m?MN[b.m].toLowerCase():"l'assaggio"):"Dopo "+(a.m?MN[a.m].toLowerCase():"l'assaggio")):"Prima di "+(b&&b.m?MN[b.m].toLowerCase():"mangiare"))+'</b></div></div><ul class="btwt">'+tips.map(function(t){return '<li><span>'+t[0]+'</span><p>'+esc(t[1])+'</p></li>'}).join("")+'</ul>'+(sn.length?'<div class="snacks">'+sn.map(function(o){var v=o.v,q=vq(v);return '<div class="snk'+(o.s.c==="ko"?" closed":"")+'"><span class="se">'+(v.e||(PD.SE||{})[o.id]||"🥐")+'</span><div class="snb"><div class="vhd"><b><a target="_blank" rel="noopener" href="'+esc(PD.G(q))+'">'+esc(v.n)+'</a></b><span class="st '+o.s.c+'">'+esc(o.s.t)+'</span></div><small class="sz">'+esc(v.a)+'</small><p>'+esc(v.d)+'</p><div class="vm"><span class="vr">★ '+esc(String(v.r))+'</span><span class="hrs">🕐 '+esc(hrsTxt(v,WD))+'</span></div><p class="vp">'+esc(v.pr)+'</p><a class="go sm" href="'+esc(gdir(q))+'" target="_blank" rel="noopener">↗︎ Portami lì</a></div></div>'}).join("")+'</div>':'')+'</div>'}}
 
 /* ===== costi ===== */
