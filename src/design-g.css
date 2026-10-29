@@ -2758,3 +2758,30 @@ html.lite .nui-cf{display:none}
 
 .leg+.legp,.legp{display:block;width:100%;margin:2px 0 10px;padding:7px 10px;border:0;border-radius:10px;background:color-mix(in srgb,var(--ink,#222) 6%,transparent);color:inherit;font:inherit;font-size:.86em;line-height:1.35;text-align:left;cursor:pointer}
 .legp u{margin-left:4px;font-weight:600;white-space:nowrap}
+
+/* sfondo viaggio: il cielo sulla carta */
+.mapbg.mb-sky svg{opacity:1!important}
+.mb-sky .sk-p{fill:var(--bg)}
+.mb-sky .sk-b2{fill:color-mix(in srgb,var(--ink) 6%,var(--bg));stroke:color-mix(in srgb,var(--ink) 17%,transparent);stroke-width:.5}
+.mb-sky .sk-g{fill:color-mix(in srgb,#5fa86a 30%,var(--bg))}
+.mb-sky .sk-h{stroke:color-mix(in srgb,var(--ink) 22%,transparent);stroke-width:.8}
+.mb-sky .sk-w{fill:none;stroke:color-mix(in srgb,#5b9bc9 34%,var(--bg))}
+.mb-sky .sk-wl{fill:none;stroke:color-mix(in srgb,var(--ink) 16%,transparent);stroke-width:.6}
+.mb-sky .sk-r{fill:none;stroke:color-mix(in srgb,var(--bg) 40%,#fff)}
+.mb-sky .sk-rl{fill:none;stroke:color-mix(in srgb,var(--ink) 18%,transparent)}
+.mb-sky .sk-nt{fill:#0d1530;opacity:calc(var(--N,0)*.12)}
+.mb-sky .sk-dim{fill:#050812;opacity:var(--dim,0)}
+.mb-sky .sk-st{opacity:calc(var(--N,0)*.9)}
+.mb-sky .sk-c{opacity:calc(var(--L,1)*.55)}
+.mb-sky .sk-tw{animation:skTw 3s ease-in-out infinite}
+@keyframes skTw{50%{opacity:calc(var(--N,0)*.25)}}
+.mb-sky .sk-c1{animation:skCl 24s linear infinite}.mb-sky .sk-c2{animation:skCl 31s linear infinite}.mb-sky .sk-c3{animation:skCl 38s linear infinite}
+@keyframes skCl{from{transform:translate(-120px,-40px)}to{transform:translate(480px,40px)}}
+@media (prefers-reduced-motion:reduce){.mb-sky .sk-tw,.mb-sky .sk-c1,.mb-sky .sk-c2,.mb-sky .sk-c3{animation:none}}
+html.lite .mb-sky .sk-tw,html.lite .mb-sky .sk-c{animation:none}
+/* di notte, in tema chiaro, i testi appoggiati al cielo diventano chiari */
+html.skm:not(.sks) .appbar::before{background:transparent!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.skn:not(.sks) .apn,html.skn:not(.sks) .apn *,html.skn:not(.sks) .apd,html.skn:not(.sks) .aps{color:#f1ebdd!important}
+html.skn:not(.sks) .apd{opacity:.8}
+html.skn:not(.sks) .blk.on>h2.sec:not(#ith){color:#f1ebdd!important}
+html.skn:not(.sks) .apn,html.skn:not(.sks) .apd,html.skn:not(.sks) .aps,html.skn:not(.sks) .blk.on>h2.sec:not(#ith){text-shadow:0 1px 8px rgba(8,14,36,.45)}
