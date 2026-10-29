@@ -1528,7 +1528,7 @@ var to=($('input[name=to]:checked',form)||{}).value||APK[0],rt=($('input[name=rt
 var c={dest:PD.id,date:d0,date_r:d1,ppl:+$("#ppl").textContent||2,from:form.from.value.trim(),fromCode:fromCode(form.from.value),to:to,rt:rt,a_num:(CFG&&CFG.a_num)||"",a_dep:form.a_dep.value,a_arr:form.a_arr.value,r_num:(CFG&&CFG.r_num)||"",r_imb:form.r_imb.value,r_dep:form.r_dep.value,th:styVals().th,pc:styVals().pc};
 if(multi){var addr=form.saddr.value.trim();c.stay={zone:form.sz.value,addr:addr,cin:form.sin.value||"15:00",cout:form.sout.value||"11:00",price:parseFloat(String(form.sprice.value).replace(",","."))||0,type:form.stype.value};
 if(addr&&addr===old.addr&&old.geo){c.stay.pos=old.pos;c.stay.geo=1}}
-var first=!CFG;if(SAVED&&SAVED.dest!==PD.id){parkCur();SP={};CK={};COPT={};MEALS={}}c.tid=(CFG&&CFG.tid)||newTid();CFG=c;SAVED=c;ls("via-trip",JSON.stringify(c));
+var first=!CFG;if(SAVED&&SAVED.dest!==PD.id){parkCur();SP={};CK={};COPT={};MEALS={}}c.tid=(CFG&&CFG.tid)||newTid();if(CFG&&CFG.sh&&SAVED&&SAVED.dest===PD.id)c.sh=CFG.sh;CFG=c;SAVED=c;ls("via-trip",JSON.stringify(c));
 waitFun(c,first,function(){closeSetup();SEL=0;renderAll();window.dispatchEvent(new Event("voli"));
 var t0=$("#t-itinerario");if(!t0.checked){t0.checked=true;t0.dispatchEvent(new Event("change",{bubbles:true}))}
 var blk=$("#itinerario");blk.scrollTop=0},function(){toast(first?"Itinerario pronto ✨":"Viaggio aggiornato ✓");hap([14,40,14]);if(FAST){FAST=0;setTimeout(function(){toast("Orari dei voli stimati: aggiornali in Voli ✈️")},2400)}
@@ -1599,9 +1599,27 @@ document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeSheet(
 /* invio e importazione di un viaggio tramite link */
 function tripLink(c){var k=["dest","date","date_r","ppl","from","fromCode","to","rt","a_num","a_dep","a_arr","r_num","r_imb","r_dep","th","pc"],o={};k.forEach(function(x){if(c[x]!=null&&c[x]!=="")o[x]=c[x]});if(c.stay){o.stay={};["zone","addr","cin","cout","price","type","pos","geo"].forEach(function(x){if(c.stay[x]!=null)o.stay[x]=c.stay[x]})}
 return (window.__IS_APP?"https://noname21-spec.github.io/viatico/":location.origin+location.pathname)+"#t="+btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
-function readLink(){var m=/^#t=([\w-]+)/.exec(location.hash||"");if(!m)return null;try{var s=m[1].replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";var o=JSON.parse(decodeURIComponent(escape(atob(s))));
+function cleanCfg(o){try{
 if(!o||!CITIES[o.dest]||!/^\d{4}-\d\d-\d\d$/.test(o.date||"")||!o.a_arr||!o.r_dep)return null;var c={},str=function(v){return String(v).slice(0,140)};["dest","date","date_r","from","fromCode","to","rt","a_num","a_dep","a_arr","r_num","r_imb","r_dep"].forEach(function(x){if(o[x]!=null)c[x]=str(o[x])});if(THS.indexOf(o.th)>=0)c.th=o.th;if(PCS.indexOf(o.pc)>=0)c.pc=o.pc;c.ppl=Math.max(1,Math.min(10,+o.ppl||2));
 if(o.stay&&typeof o.stay==="object"){c.stay={};["zone","addr","cin","cout","type"].forEach(function(x){if(o.stay[x]!=null)c.stay[x]=str(o.stay[x])});c.stay.price=+o.stay.price||0;if(Array.isArray(o.stay.pos)&&o.stay.pos.length===2&&isFinite(o.stay.pos[0])&&isFinite(o.stay.pos[1])){c.stay.pos=[+o.stay.pos[0],+o.stay.pos[1]];c.stay.geo=1}}return c}catch(e){return null}}
+function readLink(){var m=/^#t=([\w-]+)/.exec(location.hash||"");if(!m)return null;try{var s=m[1].replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";return cleanCfg(JSON.parse(decodeURIComponent(escape(atob(s)))))}catch(e){return null}}
+/* viaggio condiviso: ponte verso shared.js */
+function shId(x){return typeof x==="string"&&/^[\w-]{1,48}$/.test(x)}
+window.__viaSh={code:function(){return CFG&&CFG.sh||""},has:function(){return !!CFG},toast:toast,ask:ask,closeSheet:closeSheet,
+doc:function(){if(!CFG)return null;var c=cleanCfg(CFG);if(!c)return null;var tk={};Object.keys(COPT).forEach(function(k){if(S[k]&&S[k].tk&&(COPT[k]===0||COPT[k]===1))tk[k]=COPT[k]});return{v:1,cfg:c,skip:JSON.parse(JSON.stringify(skipGet().d)),tk:tk}},
+apply:function(d){if(!d||!CFG)return false;var c=cleanCfg(d.cfg);if(!c)return false;c.tid=CFG.tid;c.sh=CFG.sh;var tk={},sk={};
+if(d.tk&&typeof d.tk==="object")Object.keys(d.tk).forEach(function(k){if(shId(k)&&(d.tk[k]===0||d.tk[k]===1))tk[k]=d.tk[k]});
+if(d.skip&&typeof d.skip==="object")Object.keys(d.skip).forEach(function(k){var a=d.skip[k];if(/^\d{1,2}$/.test(k)&&Array.isArray(a)){a=a.filter(shId).slice(0,40);if(a.length)sk[k]=a}});
+if(c.dest!==CFG.dest){ls("via-trip",JSON.stringify(c));ls("via-skip",Object.keys(sk).length?JSON.stringify({k:c.dest+"|"+c.date+"|"+c.tid,d:sk}):null);ls("via-copt",Object.keys(tk).length?JSON.stringify(tk):null);goCity(c.dest);return true}
+CFG=c;SAVED=c;ls("via-trip",JSON.stringify(c));ls("via-skip",Object.keys(sk).length?JSON.stringify({k:tKey(),d:sk}):null);
+Object.keys(COPT).forEach(function(k){if(S[k]&&S[k].tk)delete COPT[k]});Object.keys(tk).forEach(function(k){COPT[k]=tk[k]});ls("via-copt",JSON.stringify(COPT));
+renderAll();try{window.dispatchEvent(new Event("voli"))}catch(e){}return true},
+attach:function(code){if(!CFG||!shId(code))return;CFG.sh=code;SAVED=CFG;ls("via-trip",JSON.stringify(CFG))},
+detach:function(){if(!CFG)return;delete CFG.sh;SAVED=CFG;ls("via-trip",JSON.stringify(CFG))},
+join:function(code,d){if(!shId(code)||!d)return false;var c=cleanCfg(d.cfg);if(!c)return false;parkCur();c.tid=newTid();c.sh=code;var k=c.dest+"|"+c.date+"|"+c.tid,sk={},tk={};
+if(d.skip&&typeof d.skip==="object")Object.keys(d.skip).forEach(function(i){var a=d.skip[i];if(/^\d{1,2}$/.test(i)&&Array.isArray(a)){a=a.filter(shId).slice(0,40);if(a.length)sk[i]=a}});
+if(d.tk&&typeof d.tk==="object")Object.keys(d.tk).forEach(function(i){if(shId(i)&&(d.tk[i]===0||d.tk[i]===1))tk[i]=d.tk[i]});
+ls("via-trip",JSON.stringify(c));if(Object.keys(sk).length)ls("via-skip",JSON.stringify({k:k,d:sk}));if(Object.keys(tk).length)ls("via-copt",JSON.stringify(tk));goCity(c.dest);return true}};
 window.VIA_TRIPLINK=function(){return CFG?tripLink(CFG):""};
 $("#shlink").addEventListener("click",function(){if(!CFG){toast("Imposta prima il tuo viaggio");return}var u=tripLink(CFG),d=dOf(CFG.dest);closeSheet();
 if(window.VIATICO_QRBOX&&VIATICO_QRBOX({url:u,title:"🔗 Condividi il viaggio a "+d.n,text:"Fai inquadrare il codice con la fotocamera: si apre Viaticum e può importare il tuo viaggio ("+rangeOf(CFG)+"). Oppure invia il link.",label:"Link del viaggio · "+d.n,shareTitle:"Viaggio a "+d.n+" con Viaticum",shareText:"Apri il mio viaggio a "+d.n+" ("+rangeOf(CFG)+") su Viaticum:"}))return;
@@ -1642,10 +1660,10 @@ document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!gs.hidden)
 /* ===== vibrazione leggera su azioni chiave (dove il telefono la permette) ===== */
 document.addEventListener("change",function(e){var t=e.target;if(t&&t.classList&&t.classList.contains("tabr"))hap(6);else if(t&&t.type==="checkbox"&&t.closest("#consigli,#mangiare,#itinerario"))hap(10)},true);
 /* tasto indietro (Android) e gesto indietro (iOS): chiudono la schermata aperta invece di uscire */
-(function(){var els={ask:$("#ask"),exp:$("#exp"),help:$("#help"),sheet:$("#sheet"),qr:$("#qrbox"),acct:$("#acct"),setup:$("#setup"),dest:$("#dest")},order=[],has=false,pop=false;
+(function(){var els={ask:$("#ask"),exp:$("#exp"),help:$("#help"),sheet:$("#sheet"),qr:$("#qrbox"),acct:$("#acct"),shm:$("#shm"),setup:$("#setup"),dest:$("#dest")},order=[],has=false,pop=false;
 try{if(history.state&&history.state.vov)history.replaceState(null,"")}catch(e){}
 function isOn(k){var e=els[k];if(!e||!e.classList.contains("on"))return false;if(k==="dest"&&!CFG)return false;return true}
-function closeTop(k){if(k==="ask")closeAsk();else if(k==="exp")closeExp();else if(k==="help"){var b3=$("#hlclose");b3&&b3.click()}else if(k==="sheet")closeSheet();else if(k==="qr"){var b=$("#qrclose");b&&b.click()}else if(k==="acct"){var b2=$("#acclose");b2&&b2.click()}else if(k==="setup"){if(CFG)$("#scancel").click();else $("#sback").click()}else if(k==="dest"){closeDest();setCity(PD.id)}}
+function closeTop(k){if(k==="ask")closeAsk();else if(k==="exp")closeExp();else if(k==="help"){var b3=$("#hlclose");b3&&b3.click()}else if(k==="sheet")closeSheet();else if(k==="qr"){var b=$("#qrclose");b&&b.click()}else if(k==="acct"){var b2=$("#acclose");b2&&b2.click()}else if(k==="shm"){var b4=$("#shmclose");b4&&b4.click()}else if(k==="setup"){if(CFG)$("#scancel").click();else $("#sback").click()}else if(k==="dest"){closeDest();setCity(PD.id)}}
 var tm=0;function recon(){clearTimeout(tm);tm=setTimeout(function(){order=order.filter(isOn);Object.keys(els).forEach(function(k){if(isOn(k)&&order.indexOf(k)<0)order.push(k)});
 var want=order.length>0;try{if(want&&!has){history.pushState({vov:1},"");has=true}else if(!want&&has){has=false;pop=true;history.back();setTimeout(function(){pop=false},400)}}catch(e){}},30)}
 var mo=new MutationObserver(recon);Object.keys(els).forEach(function(k){els[k]&&mo.observe(els[k],{attributes:true,attributeFilter:["class"]})});

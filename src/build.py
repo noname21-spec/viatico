@@ -26,6 +26,7 @@ window.PD=CITIES[id]||CITIES[CITY_ORDER[0]];Object.keys(CITIES).forEach(function
 if(PD.SKY)[].forEach.call(document.querySelectorAll("svg.sky:not(.zsk),svg.spsky"),function(sv){var df=sv.querySelector("defs");sv.innerHTML="";if(df)sv.appendChild(df);sv.insertAdjacentHTML("beforeend",PD.SKY)})})();'''
 cfgp=os.path.join(d,'supabase.json')
 SBC=json.load(open(cfgp)) if os.path.exists(cfgp) else {}
+SHARED=r('shared.js').replace('__SB_URL__',SBC.get('url','')).replace('__SB_KEY__',SBC.get('key',''))
 SYNC=r('sync.js').replace('__SB_URL__',SBC.get('url','')).replace('__SB_KEY__',SBC.get('key',''))
 supp=json.load(open(os.path.join(d,'support.json'))) if os.path.exists(os.path.join(d,'support.json')) else {}
 body=r('body.html').replace('__SUPPORT__',supp.get('email','')).replace('__BUILD__',__import__('re').search(r'via-v(\d+)',open('sw.js').read()).group(1)+' · '+datetime.date.today().strftime('%d/%m/%Y'))
@@ -49,7 +50,7 @@ import importlib.util as _iu,json as _js
 _sp=_iu.spec_from_file_location("i18n_en","/home/claude/viatico/src/i18n_en.py");_m=_iu.module_from_spec(_sp);_sp.loader.exec_module(_m)
 _F=[[a,re.sub(r'\\(\d)',r'$\1',b)] for a,b in _m.F]
 I18N='window.__I18N='+_js.dumps({'D':_m.D,'F':_F,'MON':_m.MON,'DAY':_m.DAY,'DAB':_m.DAB},ensure_ascii=False).replace('</','<\\/')+';'
-html=head+body+'<script>\n'+r('guard.js')+'\n</script>\n<script>\n'+I18N+'\n'+r('i18n.js')+'\n</script>\n<script>\n'+icons_js+'\n</script>\n<script>\n'+cities+boot+'\n</script>\n<script>\n'+r('app1.js')+'\n</script>\n<script>\n'+r('app2.js')+'\n</script>\n<script>\n'+r('skyfx.js')+'\n</script>\n<script>\n'+r('mapbg.js')+'\n</script>\n<script>\n'+r('anim.js')+'\n</script>\n<script>\n'+r('tabnav.js')+'\n</script>\n<script>\n'+r('season.js')+'\n</script>\n<script>\n'+r('pdf.js')+'\n</script>\n<script>\n'+SYNC+'\n</script>\n<script>\n'+r('offline.js')+'\n</script>\n<script>\n'+r('help.js')+'\n</script>\n<script>\n'+r('tutorial.js')+'\n</script>\n<script>\n'+r('coach.js')+'\n</script>\n<script>\n'+r('nui.js')+'\n</script>\n<script>\n'+r('notify.js')+'\n</script>\n<script>\nwindow.__viaOK=1;try{window.__zinReady&&window.__zinReady()}catch(e){}\n</script>\n</body>\n</html>\n'
+html=head+body+'<script>\n'+r('guard.js')+'\n</script>\n<script>\n'+I18N+'\n'+r('i18n.js')+'\n</script>\n<script>\n'+icons_js+'\n</script>\n<script>\n'+cities+boot+'\n</script>\n<script>\n'+r('app1.js')+'\n</script>\n<script>\n'+SHARED+'\n</script>\n<script>\n'+r('app2.js')+'\n</script>\n<script>\n'+r('skyfx.js')+'\n</script>\n<script>\n'+r('mapbg.js')+'\n</script>\n<script>\n'+r('anim.js')+'\n</script>\n<script>\n'+r('tabnav.js')+'\n</script>\n<script>\n'+r('season.js')+'\n</script>\n<script>\n'+r('pdf.js')+'\n</script>\n<script>\n'+SYNC+'\n</script>\n<script>\n'+r('offline.js')+'\n</script>\n<script>\n'+r('help.js')+'\n</script>\n<script>\n'+r('tutorial.js')+'\n</script>\n<script>\n'+r('coach.js')+'\n</script>\n<script>\n'+r('nui.js')+'\n</script>\n<script>\n'+r('notify.js')+'\n</script>\n<script>\nwindow.__viaOK=1;try{window.__zinReady&&window.__zinReady()}catch(e){}\n</script>\n</body>\n</html>\n'
 # Content-Security-Policy: hash di ogni script inline, niente 'unsafe-inline' per gli script
 import hashlib
 def b64h(t): return base64.b64encode(hashlib.sha256(t.encode('utf-8')).digest()).decode()

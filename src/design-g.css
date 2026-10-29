@@ -174,7 +174,7 @@ tr.tot td:not(:first-child){color:var(--ga)}
 /* --- impostazioni e finestre --- */
 .shc,.qrc{background:var(--bg)!important;border:0!important;box-shadow:0 12px 40px rgba(30,20,10,.22)!important;border-radius:30px!important}
 .shc button.row{background:var(--surf)!important;border:0!important;border-radius:20px!important;box-shadow:none!important}
-#sheet,#qrbox,#ask,#acct,#exp,#help{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+#sheet,#qrbox,#ask,#acct,#shm,#exp,#help{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 .nrow{border-top:1px solid var(--line)}
 .nlead{border-top:1px solid var(--line)}
 
