@@ -1214,7 +1214,7 @@ function tkSp(t){var q=spSum(t);if(!q)return '';return '<span class="tkx">💶 '
 function wxPass(t){var el=$("#pw");if(!el||!t||t.dd>14||t.dd<-1)return;var c=t.cfg,L=CITIES[c.dest]&&CITIES[c.dest].LL,day=t.now?todayStr():c.date,key=c.dest+day;if(!L)return;
 function show(w){var g=$("#dgw");if(g&&w){g.hidden=false;g.innerHTML='<span aria-hidden="true">'+wxIc(w[0])+'</span> '+Math.round(t.now&&w[3]!=null?w[3]:w[1])+'° a '+esc(dOf(c.dest).n)}var e=$("#pw");if(!e||!w)return;e.hidden=false;e.innerHTML='<span aria-hidden="true">'+wxIc(w[0])+'</span> '+(t.now&&w[3]!=null?'Adesso '+Math.round(w[3])+'° · ':'')+Math.round(w[1])+'° / '+Math.round(w[2])+'°'}
 if(WXC[key]){show(WXC[key]);return}if(!window.fetch)return;
-fetch("https://api.open-meteo.com/v1/forecast?latitude="+L[0]+"&longitude="+L[1]+"&current=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&start_date="+day+"&end_date="+day).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){var d=j&&j.daily;if(!d||d.weathercode==null)throw 0;var cu=j.current;WXC[key]=[t.now&&cu&&cu.weathercode!=null?cu.weathercode:d.weathercode[0],d.temperature_2m_max[0],d.temperature_2m_min[0],t.now&&cu?cu.temperature_2m:null];show(WXC[key])}).catch(function(){})}
+fetch("https://api.open-meteo.com/v1/forecast?latitude="+L[0]+"&longitude="+L[1]+"&current=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&start_date="+day+"&end_date="+day).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){var d=j&&j.daily;if(!d||d.weathercode==null)throw 0;var cu=j.current;WXC[key]=[t.now&&cu&&cu.weathercode!=null?cu.weathercode:d.weathercode[0],d.temperature_2m_max[0],d.temperature_2m_min[0],t.now&&cu?cu.temperature_2m:null];try{var q=lj("via-wxd",{});q[key]={w:WXC[key],at:Date.now()};var ks=Object.keys(q);if(ks.length>8)ks.sort(function(x,y){return q[x].at-q[y].at}).slice(0,ks.length-8).forEach(function(k){delete q[k]});ls("via-wxd",JSON.stringify(q))}catch(e){}show(WXC[key])}).catch(function(){try{var q=lj("via-wxd",{})[key];if(q&&q.w&&Date.now()-q.at<36*36e5){WXC[key]=q.w;show(q.w)}}catch(e){}})}
 function stampMap(dn){var el=$("#dmap");if(!el)return;if(!dn.length){el.hidden=true;el.innerHTML="";return}var vis={};dn.forEach(function(t){var id=t.cfg.dest,d=dateObj(t.cfg.date);if(!vis[id]||d<vis[id])vis[id]=d});
 var ids=Object.keys(CITIES).filter(function(i){return CITIES[i]&&CITIES[i].LL}),got=ids.filter(function(i){return vis[i]}).sort(function(a,b){return vis[a]-vis[b]}),lock=ids.filter(function(i){return!vis[i]}),h="",k=0;
 function rot(id){var n=0;for(var q=0;q<id.length;q++)n+=id.charCodeAt(q)*(q+3);return(n%15)-7}
@@ -1554,6 +1554,7 @@ function geocode(){var s=CFG&&CFG.stay;if(!s||!s.addr||!window.fetch)return;var 
 fetch("https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes="+PD.CC+"&accept-language="+PD.CC+"&email=support.viaticum%40gmail.com&q="+encodeURIComponent(q)).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){var x=j&&j[0];if(!x)throw 0;var p=[+(+x.lat).toFixed(5),+(+x.lon).toFixed(5)];if(hav(p,PD.LL)>45)throw 0;
 if(!CFG||!CFG.stay||CFG.stay.addr!==s.addr)return;CFG.stay.pos=p;CFG.stay.geo=1;ls("via-trip",JSON.stringify(CFG));renderAll();toast("Alloggio trovato sulla mappa 📍")}).catch(function(){})}
 
+window.addEventListener("online",function(){if(CFG&&CFG.stay&&CFG.stay.addr&&!CFG.stay.geo)setTimeout(geocode,1500)});
 /* impostazioni */
 var sheet=$("#sheet");
 function closeSheet(){sheet.classList.remove("on");sheet.setAttribute("aria-hidden","true")}
@@ -1593,7 +1594,7 @@ c.addEventListener("touchend",end);c.addEventListener("touchcancel",end)})();
 $$("[data-edit]").forEach(function(b){b.addEventListener("click",function(){openSetup(false,+b.dataset.edit||0)})});
 ["via-adb-key","par-adb-key","via-vlive","via-vlive-n"].forEach(function(k){try{localStorage.removeItem(k)}catch(e){}});
 $("#shreset").addEventListener("click",function(){if(!confirm("Cancellare TUTTI i viaggi, spese, liste e la chiave salvati su questo telefono?"))return;
-["via-trip","via-trips","via-spese","via-check","via-copt","via-meals","via-adb-key","via-vlive","via-vlive-n","via-water","via-fp","via-notif","via-nfired","via-ckfold"].forEach(function(k){ls(k,null)});FP.d=[];FP.p=0;FP.k=[];if(PAR.fpPaint)PAR.fpPaint();CFG=null;SAVED=null;TRIP=null;SP={};CK={};COPT={};MEALS={};closeSheet();openDest()});
+["via-trip","via-trips","via-spese","via-check","via-copt","via-meals","via-adb-key","via-vlive","via-vlive-n","via-water","via-fp","via-notif","via-nfired","via-ckfold","via-wxd","via-wx"].forEach(function(k){ls(k,null)});FP.d=[];FP.p=0;FP.k=[];if(PAR.fpPaint)PAR.fpPaint();CFG=null;SAVED=null;TRIP=null;SP={};CK={};COPT={};MEALS={};closeSheet();openDest()});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeSheet();if(CFG){closeSetup();closeDest();setCity(PD.id)}}});
 
 /* invio e importazione di un viaggio tramite link */

@@ -1199,7 +1199,6 @@ body:has(#dest.on) .utoast{bottom:96px}
 .dex{all:unset;box-sizing:border-box;display:block;width:100%;text-align:center;cursor:pointer;padding:13px 16px;border-radius:999px;font:600 .88rem Outfit,system-ui,sans-serif;color:var(--ink);background:color-mix(in srgb,var(--ink) 8%,transparent);margin-top:10px}
 .dex:focus-visible{outline:2px solid var(--ga);outline-offset:2px}
 #dest.empty .dopen{font-size:1.05rem;padding-block:18px}
-html.offl::before{content:"📴 Sei offline · viaggi e guide salvati restano disponibili";position:fixed;left:0;right:0;top:0;z-index:330;padding:calc(env(safe-area-inset-top,0px) + 6px) 12px 6px;background:#b96a00;color:#fff;font:600 .74rem Outfit,system-ui,sans-serif;text-align:center}
 @media (prefers-reduced-motion:reduce){.tbcap,.utoast{transition:none}}
 .dex[hidden]{display:none!important}
 .utoast{width:max-content;white-space:nowrap}
@@ -2209,7 +2208,6 @@ h2.sec.mh{font-size:1.25rem!important}
 @media (max-width:400px){.hero .wca{gap:6px}.hero .wca .go{padding-left:10px;padding-right:10px;font-size:.84rem;gap:6px}.hero .wca .wcs{flex-basis:78px;width:78px;min-width:78px;font-size:.84rem}.hero .wca .wcd{width:40px;min-width:40px}}
 /* v211 testi CSS in inglese */
 html.en #dal[data-go="1"]::after{content:" Open the list ›"}
-html.en.offl::before{content:"📴 You're offline · saved trips and guides are still available"}
 html.en .who::before{content:"Travellers · tap to change a name"}
 html.en .dp.today small::after{content:" · today"}
 html.en .wi.now .wn::after{content:"now"}
