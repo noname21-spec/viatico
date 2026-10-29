@@ -3,7 +3,7 @@ window.__IS_APP=location.hostname==='localhost'&&location.protocol==='https:'&&/
 (function(){
 "use strict";
 document.documentElement.classList.add("js");
-var S=PD.STOPS,V=PD.V;
+var S=PD.STOPS,V=PD.V;PD.MOV=window.MOVX&&MOVX[PD.id]||null;
 /* catalogo: altre attrazioni a pagamento della città, che si aggiungono con la spunta nei Costi */
 (function(){var L=window.CATX&&CATX[PD.id];if(!L)return;L.forEach(function(r){var id="x_"+r[0];if(S[id])return;var pos=[r[6],r[7]],z="A",bd=1e9;
 Object.keys(S).forEach(function(k){var q=S[k];if(q.x||!q.pos)return;var d=hav(pos,q.pos);if(d<bd){bd=d;z=q.z}});
@@ -1152,14 +1152,18 @@ var avv=avvList(),Z=[["✈️ Aeroporto e trasporti",[A.arr,A.tk].concat(TRIP.R&
 M?["🏨 Alloggio e bagagli",[(h.addr?"Il tuo alloggio: "+h.addr+(h.alt?"":" (zona "+h.zn+")"):"Il tuo alloggio è in zona "+h.zn)+". Check-in dalle "+h.cin+", check-out entro le "+h.cout+".","Il primo giorno l'itinerario passa dall'alloggio per lasciare i bagagli; l'ultimo giorno ripassa a prenderli prima dell'aeroporto. Chiedi alla struttura di tenerli: quasi tutte lo fanno gratis.","Se la struttura non tiene i bagagli, ci sono depositi a pagamento come Nannybag o Bounce, prenotabili online.",PD.taxTxt(tx)].concat(PD.STAYTIPS||[])]:null]
 .concat((PD.ZONES||[]).filter(function(z){return okIf(z[2])}).map(function(z){return[z[0],z[1]]}))
 .concat([PD.WTIPS?["💧 Acqua e fontanelle",PD.WTIPS]:null,fr.length?["🗣️ Frasario",null,2]:null,["📞 Numeri utili",null,3],["🚨 Scioperi e avvisi",null,4],["📋 In generale",PD.GEN]]).filter(Boolean);
+if(PD.MOV)Z.splice(1,0,["🚇 Muoversi in città",null,5]);
+function movBody(){var m=PD.MOV,L=["No","Solo in parte","Sì"],ic=["❌","⚠️","✅"];
+return '<div class="mov"><p class="movp"><b>'+ic[m.p[0]]+' Pagare con la carta contactless: '+L[m.p[0]]+'</b><br>'+esc(m.p[1])+'</p><h4 class="movh">📲 App da scaricare</h4><ul>'+m.a.map(function(a){return '<li><b>'+esc(a[0])+'</b> – '+esc(a[1])+'</li>'}).join("")+'</ul><h4 class="movh">💡 Da sapere</h4><ul>'+m.t.map(function(x){return '<li>'+esc(x)+'</li>'}).join("")+'</ul><p class="movn">Controllato online a ottobre 2026. Le regole dei trasporti cambiano spesso: verifica sul sito dell\'azienda prima di partire.</p></div>'}
 function zBody(z){var body;
 if(z[2]===2)body='<p class="fh">'+(PD.PHN?esc(PD.PHN):'Tocca l\'altoparlante per sentirla in '+PD.LANGN+'. Sotto c\'è la pronuncia all\'italiana.')+'</p><ul class="fras">'+fr.map(function(f){return '<li><div class="fl"><span class="it">'+esc(f[0])+'</span><b>'+esc(f[1])+'</b><small>'+esc(f[2])+'</small></div>'+(PD.NOSAY?'':'<button type="button" class="say" data-t="'+esc(f[1])+'" aria-label="Ascolta">'+csSvg("spk",22,"currentColor",1.9)+'</button>')+'</li>'}).join("")+'</ul>';
 else if(z[2]===3)body='<ul>'+PD.NUMS+'</ul>';
+else if(z[2]===5)body=movBody();
 else if(z[2]===4)body='<ul>'+(avv.length?avv.map(function(a){return "<li><b>⚠️ "+esc(a.t)+".</b> "+esc(a.x)+"</li>"}).join(""):"<li>Per "+(TRIP.n===1?esc(dateLong(c.date)):"i giorni del viaggio")+" non risultano scioperi o lavori che riguardano il tuo percorso (verifica del "+esc(PD.VER)+").</li>")+'<li>'+PD.STRK+' Il calendario degli scioperi in Italia è su <a href="https://scioperi.mit.gov.it/" target="_blank" rel="noopener">scioperi.mit.gov.it</a>.</li></ul>';
 else body='<ul>'+z[1].map(function(x){return "<li>"+esc(x)+"</li>"}).join("")+'</ul>';
 return body}
 CS.Z=Z.map(function(z){var ii=csZi(z[0]),nm=csName(z[0]),sb;
-if(z[2]===2){sb=fr.length+" frasi da ascoltare"}else if(z[2]===3){sb="Emergenze e furti"}else if(z[2]===4){sb=avv.length?(avv.length===1?"1 avviso":avv.length+" avvisi"):"Nessun avviso";ii=avv.length?["alert",6]:["check",4]}
+if(z[2]===2){sb=fr.length+" frasi da ascoltare"}else if(z[2]===3){sb="Emergenze e furti"}else if(z[2]===5){sb=["Carta sui mezzi: no","Carta sui mezzi: in parte","Carta sui mezzi: sì"][PD.MOV.p[0]]+" · "+PD.MOV.a.length+(PD.MOV.a.length===1?" app":" app")}else if(z[2]===4){sb=avv.length?(avv.length===1?"1 avviso":avv.length+" avvisi"):"Nessun avviso";ii=avv.length?["alert",6]:["check",4]}
 else if(M&&h&&/alloggio/i.test(nm)&&h.cin){sb="Check-in dalle "+h.cin}else{var n=(z[1]||[]).length;sb=n+(n===1?" consiglio":" consigli")}
 return{t:nm,sb:sb,ic:ii[0],k:ii[1],body:zBody(z),fr:z[2]===2,warn:z[2]===4&&avv.length>0}});
 CS.fn=function(){return};

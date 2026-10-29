@@ -2750,3 +2750,8 @@ html.lite .nui-cf{display:none}
 .wcr:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .skl.rpl{margin-top:6px}
 .cacc .cr.off{opacity:.62}
+
+.mov .movp{margin:0 0 12px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--ink,#222) 6%,transparent);line-height:1.45}
+.mov .movh{margin:14px 0 6px;font-size:.95em;font-weight:700}
+.mov ul{margin:0;padding-left:1.1em}.mov li{margin:0 0 6px;line-height:1.4}
+.mov .movn{margin:12px 0 0;font-size:.85em;opacity:.7}
