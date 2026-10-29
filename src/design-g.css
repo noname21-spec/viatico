@@ -2755,3 +2755,6 @@ html.lite .nui-cf{display:none}
 .mov .movh{margin:14px 0 6px;font-size:.95em;font-weight:700}
 .mov ul{margin:0;padding-left:1.1em}.mov li{margin:0 0 6px;line-height:1.4}
 .mov .movn{margin:12px 0 0;font-size:.85em;opacity:.7}
+
+.leg+.legp,.legp{display:block;width:100%;margin:2px 0 10px;padding:7px 10px;border:0;border-radius:10px;background:color-mix(in srgb,var(--ink,#222) 6%,transparent);color:inherit;font:inherit;font-size:.86em;line-height:1.35;text-align:left;cursor:pointer}
+.legp u{margin-left:4px;font-weight:600;white-space:nowrap}
