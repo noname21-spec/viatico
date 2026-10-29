@@ -1,0 +1,143 @@
+Object.assign(window.CATX,{
+praga:[
+["staromestska","Torre del Municipio della Città Vecchia",12,25,35,45,50.0871,14.4208,"Old Town Hall Tower, Praha","Si sale con l'ascensore fino al belvedere accanto all'Orloj: vista sui tetti rossi e sulla piazza.","",null,"09:00-21:00"],
+["mucha","Museo Mucha",12,40,50,60,50.0828,14.4272,"Mucha Museum, Praha","Poster, dipinti e disegni di Alfons Mucha, il maestro dell'Art Nouveau ceco.","",null,"10:00-18:00"],
+["comunismo","Museo del Comunismo",12,45,60,75,50.0836,14.4285,"Museum of Communism, Praha","La vita in Cecoslovacchia sotto il regime: ricostruzioni di scuole, negozi e uffici dell'epoca.","",null,"09:00-21:00"],
+["kafka","Museo Franz Kafka",11,45,60,75,50.0884,14.4090,"Franz Kafka Museum, Praha","Manoscritti, lettere e installazioni dedicate allo scrittore, sulla riva della Moldava.","",null,"10:00-18:00"],
+["clementinum","Clementinum, visita guidata",13,40,50,60,50.0866,14.4161,"Klementinum, Praha","La biblioteca barocca con le volte affrescate e la torre astronomica, con visita guidata.","Si entra solo con visita guidata a orari fissi.",null,"10:00-18:00"],
+["strahov","Biblioteca di Strahov",6,25,35,45,50.0869,14.3881,"Strahov Library, Praha","Due sale barocche piene di libri antichi e globi, che si guardano dalla porta.","",null,"09:00-17:00"],
+["loreta","Santuario della Loreta",7,30,45,60,50.0897,14.3908,"Loreta, Praha","Un santuario barocco vicino al Castello, con un chiostro e un tesoro di ostensori.","",null,"09:00-17:00"],
+["cubismo","Casa della Madonna Nera, Museo del Cubismo",8,40,50,60,50.0875,14.4276,"House of the Black Madonna, Praha","Pezzi di arredo e quadri cubisti cechi in un palazzo del 1912.","",[0],"10:00-18:00"],
+["narodni","Museo Nazionale",12,60,75,100,50.0788,14.4300,"National Museum, Praha","L'edificio neorinascimentale in cima a Piazza Venceslao, con la sala pantheon e collezioni di storia naturale.","",null,"10:00-18:00"],
+["vltava","Crociera sulla Moldava",20,50,60,75,50.0864,14.4122,"Čechův most, Praha","Un'ora in battello tra i ponti, il Castello e i palazzi della città.","",null,"10:00-21:00"],
+["zoopraga","Zoo di Praga",12,150,180,240,50.1172,14.4062,"Zoo Praha","Uno dei migliori zoo d'Europa, su una collina sopra la Moldava.","",null,"09:00-18:00"]
+],
+vienna:[
+["albertina","Albertina",20,60,90,120,48.2047,16.3685,"Albertina, Wien","Impressionisti e opere di Monet, Picasso e Klimt negli appartamenti di un palazzo asburgico.","",null,"10:00-18:00"],
+["leopold","Leopold Museum",16,60,90,120,48.2038,16.3590,"Leopold Museum, Wien","La più grande collezione al mondo di Egon Schiele, più Klimt e il modernismo viennese.","",[1],"10:00-18:00"],
+["naturhist","Museo di Storia Naturale",16,60,90,120,48.2047,16.3593,"Naturhistorisches Museum Wien","La Venere di Willendorf, dinosauri e una sala di minerali, di fronte al Kunsthistorisches.","",[1],"09:00-18:30"],
+["staatsoper","Visita guidata all'Opera di Stato",12,35,45,60,48.2036,16.3698,"Wiener Staatsoper","Il teatro dell'Opera visto da dietro le quinte: sala, palchi e scalone.","Le visite sono a orari fissi e non ci sono quando c'è prova.",null,"10:00-16:00"],
+["stephansturm","Torre sud del Duomo di Santo Stefano",6,30,40,50,48.2084,16.3731,"Stephansdom, Wien","343 gradini fino alla cima della torre, con vista sulla città vecchia.","",null,"09:00-17:30"],
+["kapuzinergruft","Cripta dei Cappuccini",7,25,35,45,48.2054,16.3680,"Kapuzinergruft, Wien","La cripta con le tombe degli Asburgo, compresa quella di Sissi.","",null,"10:00-18:00"],
+["hausmusik","Haus der Musik",16,60,75,90,48.2018,16.3716,"Haus der Musik, Wien","Il museo del suono: stanze interattive dove si compone, si dirige e si ascolta.","",null,"10:00-22:00"],
+["hofreitschule","Spanische Hofreitschule, allenamento",20,45,60,75,48.2065,16.3660,"Spanische Hofreitschule, Wien","Gli stalloni lipizzani che si allenano nella sala barocca della Hofburg.","L'allenamento mattutino è in orari e giorni limitati: controlla il calendario.",[0],"10:00-12:00"],
+["kunsthaus","KunstHausWien",13,45,60,75,48.2073,16.3943,"KunstHausWien, Wien","Il museo disegnato da Hundertwasser, con dipinti e un edificio fuori dagli schemi.","",null,"10:00-18:00"],
+["donauturm","Donauturm",11,30,45,60,48.2406,16.4106,"Donauturm, Wien","La torre sul Danubio, con terrazza panoramica e ristorante girevole.","",null,"10:00-23:00"],
+["tiergarten","Zoo di Schönbrunn",26,150,180,240,48.1823,16.3020,"Tiergarten Schönbrunn, Wien","Lo zoo più antico del mondo, nel parco di Schönbrunn: panda e animali polari.","",null,"09:00-18:00"]
+],
+bruxelles:[
+["mim","Museo degli Strumenti Musicali",12,60,75,100,50.8423,4.3620,"MIM Musical Instruments Museum, Bruxelles","Settemila strumenti in un palazzo Art Nouveau, con cuffie che suonano quando ci si avvicina.","",[0],"09:30-17:00"],
+["chocostory","Choco-Story, Museo del Cioccolato",11.5,45,60,75,50.8455,4.3495,"Choco-Story Brussels","La storia del cioccolato belga con dimostrazioni dal vivo e assaggi.","",null,"10:00-17:00"],
+["autoworld","Autoworld",14,60,75,100,50.8409,4.3944,"Autoworld Brussels","Seicento auto d'epoca nel padiglione del Cinquantenaire.","",null,"10:00-18:00"],
+["horta","Museo Horta",14,45,60,75,50.8268,4.3474,"Musée Horta, Bruxelles","La casa e lo studio di Victor Horta, il maestro dell'Art Nouveau a Bruxelles.","",[0],"14:00-17:30"],
+["minieurope","Mini-Europe",17,90,120,150,50.8947,4.3406,"Mini-Europe, Bruxelles","I monumenti d'Europa in miniatura, ai piedi dell'Atomium.","",null,"10:00-18:00"],
+["belvue","Museo BELvue",10,45,60,75,50.8446,4.3629,"Musée BELvue, Bruxelles","La storia del Belgio dal 1830, in un palazzo vicino al Parco Reale.","",[0],"10:00-17:30"],
+["scienzenat","Museo di Scienze Naturali",12,60,90,120,50.8383,4.3822,"Muséum des Sciences naturelles, Bruxelles","Dinosauri e il più grande scheletro di iguanodonte del mondo.","",[0],"09:30-17:00"],
+["citymuseum","Museo della Città, Maison du Roi",10,40,50,60,50.8466,4.3523,"Musée de la Ville de Bruxelles Grand-Place","Dentro la Grand-Place: la collezione dei costumi del Manneken-Pis e la storia di Bruxelles.","",[0],"10:00-17:00"]
+],
+cracovia:[
+["wieliczka","Miniera di sale di Wieliczka",28,180,210,240,49.9833,20.0555,"Wieliczka Salt Mine","Una miniera medievale con cappelle, statue e laghi sotterranei scavati nel sale, con visita guidata.","È a 14 km dal centro: servono circa 30 minuti di treno o bus in più, a andata e ritorno.",null,"08:00-17:00"],
+["muratusz","Torre del Municipio",4,20,30,40,50.0615,19.9372,"Town Hall Tower, Kraków","Una torre isolata nel Rynek, con panorama sulla piazza.","Aperta solo in primavera e in estate: controlla il calendario.",null,"10:00-18:00"],
+["museonaz","Museo Nazionale, Edificio Principale",5,60,75,100,50.0602,19.9231,"National Museum Kraków","Arte polacca dal Medioevo al Novecento e armi antiche.","",[0],"10:00-18:00"],
+["collegium","Collegium Maius",5.5,45,60,75,50.0615,19.9335,"Collegium Maius, Kraków","Il collegio più antico dell'Università Jagellonica, dove studiò Copernico, con la sala dei professori.","Si visita con guida a orari fissi.",null,"10:00-15:00"],
+["mocak","MOCAK",5,60,75,90,50.0476,19.9622,"MOCAK Kraków","Arte contemporanea nell'ex area della fabbrica di Schindler.","",[0],"11:00-19:00"],
+["wislacruise","Crociera sulla Vistola",9,45,60,75,50.0541,19.9348,"Wisła cruise Kraków","Un'ora in battello sotto il Wawel e lungo il fiume.","",null,"10:00-19:00"],
+["zoocracow","Zoo di Cracovia",7,120,150,180,50.0548,19.8523,"Zoo Kraków","Lo zoo nel bosco di Wolski, con animali di tutti i continenti.","",null,"09:00-17:00"],
+["kosciuszko","Tumulo di Kościuszko",4,40,60,80,50.0553,19.8930,"Kopiec Kościuszki, Kraków","La collina con il fortino ottocentesco: la vista migliore su Cracovia e i Tatra.","",null,"09:00-18:00"]
+],
+budapest:[
+["stefanocupola","Basilica di Santo Stefano, cupola panoramica",4,30,40,50,47.5009,19.0538,"St. Stephen's Basilica Budapest panorama","Si sale in ascensore e a piedi sulla cupola: vista a 360 gradi sulla città.","",null,"10:00-17:00"],
+["szepmuveszeti","Museo di Belle Arti",12,75,90,120,47.5149,19.0777,"Museum of Fine Arts Budapest","El Greco, Goya e Raffaello nel grande edificio neoclassico di Piazza degli Eroi.","",[0],"10:00-18:00"],
+["nemzeti","Galleria Nazionale Ungherese",9,60,75,100,47.4964,19.0390,"Hungarian National Gallery Budapest","L'arte ungherese dal Medioevo al Novecento, nel Castello di Buda.","",[0],"10:00-18:00"],
+["terror","Casa del Terrore",12,60,75,90,47.5072,19.0646,"House of Terror Budapest","Il museo nell'ex quartier generale della polizia segreta fascista e comunista, in Andrássy út.","",[0],"10:00-18:00"],
+["gellertbagni","Terme Gellért",40,150,180,240,47.4846,19.0467,"Gellért Thermal Bath Budapest","Le terme Art Nouveau accanto al Danubio: piscine con colonne e mosaici.","Il prezzo cambia nel fine settimana e con la cabina o l'armadietto.",null,"06:00-20:00"],
+["rudas","Terme Rudas",22,120,150,180,47.4900,19.0560,"Rudas Bath Budapest","Bagni turchi del Cinquecento e una piscina sul tetto con vista sul Danubio.","",null,"06:00-20:00"],
+["labirinto","Labirinto del Castello di Buda",15,40,50,60,47.4999,19.0365,"Buda Castle Labyrinth","Gallerie sotto la collina del Castello, tra storia e racconti di Dracula.","",null,"10:00-19:00"],
+["opera","Opera di Stato, visita guidata",15,45,60,75,47.5030,19.0583,"Hungarian State Opera Budapest","Il teatro neorinascimentale con scale di marmo e una sala dorata, con visita guidata.","",null,"14:00-16:00"],
+["dunacruise","Crociera sul Danubio",15,60,70,90,47.4949,19.0475,"Budapest Danube cruise","Un'ora sul Danubio sotto il Parlamento e il Castello.","",null,"10:00-23:00"],
+["zoobud","Zoo di Budapest",17,150,180,240,47.5186,19.0762,"Budapest Zoo","Lo zoo di inizio Novecento accanto ai bagni Széchenyi.","",null,"09:00-17:00"],
+["nemzetimuz","Museo Nazionale Ungherese",8,60,75,100,47.4912,19.0630,"Hungarian National Museum Budapest","La storia dell'Ungheria in un edificio neoclassico con scalone.","",[0],"10:00-18:00"]
+],
+porto:[
+["seiponti","Crociera dei Sei Ponti",18,45,50,60,41.1406,-8.6139,"Cruzeiro das Seis Pontes Porto","Cinquanta minuti sul fiume Douro sotto i ponti della città.","",null,"10:00-19:00"],
+["teleferico","Teleférico de Gaia",7,15,25,35,41.1396,-8.6115,"Teleférico de Gaia","La funivia tra il Ponte Luís I e le cantine: vista sul fiume e su Porto.","",null,"10:00-19:00"],
+["casamusica","Casa da Música, visita guidata",12,45,60,75,41.1587,-8.6306,"Casa da Música Porto","L'auditorium di Rem Koolhaas con le sue sale, scoperto con una guida.","",null,"10:00-17:00"],
+["soaresreis","Museo Nazionale Soares dos Reis",5,50,65,80,41.1470,-8.6240,"Museu Nacional Soares dos Reis Porto","Il più antico museo d'arte del Portogallo, in un palazzo neoclassico.","",[0],"10:00-18:00"],
+["secloister","Chiostro della Sé",3,15,25,35,41.1430,-8.6112,"Sé do Porto Cloister","Il chiostro gotico della cattedrale con i pannelli di azulejos.","",null,"09:00-18:00"],
+["carmo","Igreja do Carmo, azulejos",3,15,25,30,41.1472,-8.6164,"Igreja do Carmo Porto","La facciata laterale rivestita di azulejos blu e le catacombe.","",null,"09:00-17:00"],
+["tram","Museo del Tram Elettrico",10,40,50,60,41.1480,-8.6270,"Museu do Carro Eléctrico Porto","La storia del tram di Porto con vetture d'epoca.","",[0],"10:00-17:00"],
+["sealife","Sea Life Porto",18,75,90,120,41.1704,-8.6877,"Sea Life Porto","Un acquario sul mare, vicino a Foz.","Si trova a Matosinhos, a circa 6 km dal centro.",null,"10:00-18:00"]
+],
+monaco:[
+["olympiaturm","Olympiaturm",9,30,45,60,48.1755,11.5517,"Olympiaturm München","La torre nel Parco Olimpico, con vista fino alle Alpi.","",null,"09:00-23:00"],
+["bmwmuseum","Museo BMW",10,60,75,100,48.1770,11.5560,"BMW Museum München","La storia del marchio, dalle moto alle auto da corsa.","",[0],"10:00-18:00"],
+["rathausturm","Torre del Nuovo Municipio",6.5,25,30,40,48.1374,11.5755,"Neues Rathaus Turm München","L'ascensore fino alla terrazza sopra Marienplatz.","",null,"10:00-19:00"],
+["pinakothekmoderne","Pinakothek der Moderne",10,75,100,120,48.1477,11.5714,"Pinakothek der Moderne München","Arte moderna, architettura e design in un solo edificio.","",[0],"10:00-18:00"],
+["lenbachhaus","Lenbachhaus",10,60,75,100,48.1467,11.5655,"Lenbachhaus München","Il Cavaliere Azzurro: Kandinsky e Franz Marc in una villa toscana.","",[0],"10:00-18:00"],
+["hellabrunn","Zoo di Hellabrunn",24,150,180,240,48.0987,11.5547,"Tierpark Hellabrunn München","Uno zoo costruito per aree geografiche lungo l'Isar.","",null,"09:00-18:00"],
+["stadtmuseum","Museo della Città",8,60,75,100,48.1348,11.5726,"Münchner Stadtmuseum","La storia di Monaco di Baviera, con burattini e la sala della birra.","",[0],"10:00-18:00"],
+["allianz","Allianz Arena, tour",22,75,90,120,48.2188,11.6247,"Allianz Arena München","Lo stadio del Bayern: spogliatoi, tribune e museo.","È a 11 km dal centro, raggiungibile in metropolitana.",null,"10:00-17:00"],
+["aegyptisches","Museo d'Arte Egizia",10,50,60,75,48.1478,11.5663,"Staatliches Museum Ägyptischer Kunst München","Una collezione egizia in sale moderne scavate sottoterra.","",[0],"10:00-18:00"]
+],
+madrid:[
+["bernabeu","Tour dello Stadio Santiago Bernabéu",28,75,90,120,40.4531,-3.6883,"Santiago Bernabéu Tour Madrid","Il museo, la tribuna e il campo del Real Madrid.","",null,"10:00-19:00"],
+["sorolla","Museo Sorolla",3,40,50,60,40.4375,-3.6910,"Museo Sorolla Madrid","La casa e il giardino del pittore valenciano, ancora arredati.","",[0],"09:30-20:00"],
+["galdiano","Museo Lázaro Galdiano",7,50,60,80,40.4423,-3.6869,"Museo Lázaro Galdiano Madrid","Una collezione privata con Goya, El Greco e Bosch, in un palazzo.","",[1],"10:00-16:30"],
+["descalzas","Monastero delle Descalzas Reales",8,50,60,75,40.4186,-3.7078,"Monasterio de las Descalzas Reales Madrid","Un convento rinascimentale con arazzi di Rubens e tesori dei Reali.","Si visita con guida a orari fissi.",[0],"10:00-18:30"],
+["moncloa","Faro de Moncloa",3,20,30,40,40.4351,-3.7212,"Faro de Moncloa Madrid","La torre di 92 metri con vista sulla Sierra di Guadarrama.","",[0],"09:30-20:00"],
+["lasventas","Plaza de Toros Las Ventas, tour",16,45,60,75,40.4324,-3.6644,"Plaza de Toros de Las Ventas Madrid","L'arena neomudejar più importante di Spagna, con un piccolo museo.","",null,"10:00-18:00"],
+["arqueologico","Museo Archeologico Nazionale",3,60,75,100,40.4238,-3.6891,"Museo Arqueológico Nacional Madrid","Dalla preistoria al Medioevo, con la Dama di Elche.","",[0],"09:30-20:00"],
+["teleferico","Teleférico di Madrid",7,25,35,45,40.4237,-3.7195,"Teleférico de Madrid","La funivia sopra il Manzanarre fino alla Casa de Campo.","",null,"12:00-20:00"],
+["zooaq","Zoo Aquarium di Madrid",29,150,200,240,40.4118,-3.7487,"Zoo Aquarium de Madrid","Panda, delfini e un acquario, alla Casa de Campo.","",null,"10:30-18:30"],
+["caixamadrid","CaixaForum Madrid",6,45,60,75,40.4113,-3.6940,"CaixaForum Madrid","Un museo con un giardino verticale di Patrick Blanc e mostre temporanee.","",null,"10:00-20:00"]
+],
+milano:[
+["castellomusei","Musei del Castello Sforzesco",5,60,75,100,45.4705,9.1795,"Musei del Castello Sforzesco, Milano","La Pietà Rondanini di Michelangelo e sale con affreschi e armature, dentro il Castello.","",[0],"10:00-17:30"],
+["scienza","Museo della Scienza e della Tecnologia",10,75,100,120,45.4623,9.1708,"Museo Nazionale Scienza e Tecnologia Leonardo da Vinci Milano","Un sottomarino vero e le macchine di Leonardo, in un ex monastero.","",[0],"09:30-17:00"],
+["ambrosiana","Pinacoteca Ambrosiana",15,60,75,90,45.4640,9.1869,"Pinacoteca Ambrosiana Milano","La biblioteca con il Codice Atlantico e la Canestra di frutta di Caravaggio.","",[0],"10:00-18:00"],
+["galleriaditalia","Gallerie d'Italia",10,50,70,90,45.4651,9.1881,"Gallerie d'Italia Milano","L'Ottocento lombardo in un palazzo di Piazza della Scala.","",[0],"09:30-19:30"],
+["poldi","Museo Poldi Pezzoli",14,50,65,80,45.4677,9.1920,"Museo Poldi Pezzoli Milano","Una casa-museo con armi, orologi e il Ritratto di donna del Pollaiolo.","",[1],"10:00-18:00"],
+["sansiro","Stadio San Siro, tour",22,75,90,120,45.4781,9.1240,"Stadio San Siro Milano","Spogliatoi e tribune dello stadio di Milan e Inter, più il museo.","",null,"10:00-17:00"],
+["prada","Fondazione Prada",15,60,90,120,45.4453,9.2013,"Fondazione Prada Milano","Una ex distilleria trasformata in museo, con la Torre e il Bar Luce di Wes Anderson.","",[1],"10:00-19:00"],
+["triennale","Triennale Milano",12,50,70,90,45.4722,9.1735,"Triennale Milano","Il design italiano in un edificio razionalista del Parco Sempione.","",[0],"11:00-20:00"],
+["mudec","MUDEC",14,60,75,100,45.4504,9.1594,"MUDEC Milano","Il museo delle culture con mostre temporanee, in una ex fabbrica.","",[0],"10:00-19:30"],
+["bagatti","Museo Bagatti Valsecchi",10,50,60,75,45.4695,9.1944,"Museo Bagatti Valsecchi Milano","Una casa neorinascimentale piena di mobili e armi, nel quadrilatero della moda.","",[0],"13:00-17:45"],
+["eustorgio","Basilica di Sant'Eustorgio e Cappella Portinari",8,30,40,50,45.4553,9.1807,"Sant'Eustorgio Milano","Una basilica romanica con la cappella rinascimentale affrescata dal Foppa.","",null,"10:00-18:00"]
+],
+firenze:[
+["bargello","Museo del Bargello",10,50,60,75,43.7706,11.2582,"Museo Nazionale del Bargello Firenze","Il David di Donatello e le sculture di Michelangelo in un palazzo medievale.","Gli orari dei musei statali variano per giorno: controlla il sito.",null,"08:30-14:00"],
+["palazzovecchio","Palazzo Vecchio",12.5,50,60,80,43.7691,11.2563,"Palazzo Vecchio Firenze","Il salone dei Cinquecento e gli appartamenti dei Medici, con la torre panoramica.","",null,"09:00-19:00"],
+["medicee","Cappelle Medicee",9,30,40,50,43.7753,11.2538,"Cappelle Medicee Firenze","La Sagrestia Nuova di Michelangelo e le tombe dei Medici.","Gli orari dei musei statali variano per giorno: controlla il sito.",null,"08:30-14:00"],
+["sanmarco","Museo di San Marco",8,40,50,60,43.7780,11.2586,"Museo di San Marco Firenze","Gli affreschi del Beato Angelico nelle celle del convento domenicano.","Gli orari dei musei statali variano per giorno: controlla il sito.",null,"08:30-14:00"],
+["galileo","Museo Galileo",13,50,65,80,43.7678,11.2558,"Museo Galileo Firenze","Strumenti scientifici e telescopi di Galileo, vicino agli Uffizi.","",null,"09:30-18:00"],
+["strozzi","Palazzo Strozzi",14,50,70,90,43.7706,11.2512,"Palazzo Strozzi Firenze","Mostre temporanee in un palazzo rinascimentale.","",null,"10:00-20:00"],
+["bardini","Giardino Bardini",10,40,50,60,43.7646,11.2619,"Giardino Bardini Firenze","Un giardino terrazzato sull'Oltrarno, con una delle viste più belle sulla città.","",null,"08:15-18:30"],
+["laurenziana","Basilica di San Lorenzo e Biblioteca Laurenziana",9,40,50,60,43.7746,11.2542,"Basilica di San Lorenzo Firenze","La chiesa di Brunelleschi e lo scalone di Michelangelo per la biblioteca.","",null,"10:00-17:00"],
+["brancacci","Cappella Brancacci",10,30,40,50,43.7685,11.2400,"Cappella Brancacci Firenze","Gli affreschi di Masaccio che hanno aperto il Rinascimento.","",[1],"10:00-17:00"],
+["ferragamo","Museo Ferragamo",10,40,50,60,43.7700,11.2530,"Museo Salvatore Ferragamo Firenze","Le scarpe dei divi del Novecento in un palazzo di Piazza Santa Trinita.","",null,"10:00-19:30"]
+],
+venezia:[
+["campanile","Campanile di San Marco",10,20,30,40,45.4342,12.3388,"Campanile di San Marco Venezia","L'ascensore fino in cima al campanile: vista sulla laguna e sui tetti.","",null,"09:00-19:00"],
+["rezzonico","Ca' Rezzonico",12,50,65,80,45.4348,12.3270,"Ca' Rezzonico Venezia","Un palazzo sul Canal Grande con arredi, affreschi di Tiepolo e il Settecento veneziano.","",[1],"10:00-18:00"],
+["cadoro","Galleria Franchetti alla Ca' d'Oro",10,40,50,60,45.4408,12.3340,"Ca' d'Oro Venezia","Una facciata gotica sul Canal Grande e dentro opere di Mantegna e Tiziano.","",null,"10:00-19:00"],
+["sanrocco","Scuola Grande di San Rocco",12,40,55,70,45.4367,12.3257,"Scuola Grande di San Rocco Venezia","Il ciclo di dipinti di Tintoretto, sala dopo sala.","",null,"09:30-17:30"],
+["dogana","Punta della Dogana e Palazzo Grassi",18,60,90,120,45.4310,12.3355,"Punta della Dogana Venezia","Arte contemporanea della collezione Pinault, in un'ex dogana sul Canal Grande.","",[1],"10:00-19:00"],
+["orologio","Torre dell'Orologio",15,30,40,50,45.4340,12.3386,"Torre dell'Orologio Venezia","La visita guidata ai meccanismi dell'orologio e al terrazzo con vista sulla piazza.","Si visita solo con guida e su prenotazione.",null,"10:00-16:00"],
+["sangiorgio","Campanile di San Giorgio Maggiore",7,30,45,60,45.4290,12.3436,"San Giorgio Maggiore Venezia","Dal campanile di un'isola di fronte a San Marco: la vista più bella sulla città.","",null,"09:00-18:00"],
+["fenice","Teatro La Fenice, visita",12,30,40,50,45.4333,12.3333,"Teatro La Fenice Venezia","Il teatro d'opera ricostruito dopo l'incendio, con i palchi dorati.","",null,"09:30-18:00"],
+["canpesaro","Ca' Pesaro",10,45,60,75,45.4435,12.3295,"Ca' Pesaro Venezia","L'arte moderna di Klimt e Kandinsky in un palazzo barocco sul Canal Grande.","",[0],"10:00-18:00"],
+["murano","Museo del Vetro di Murano",10,40,50,60,45.4586,12.3534,"Museo del Vetro Murano","Cinque secoli di vetro soffiato, nell'isola dove si lavora ancora.","Si trova a Murano: aggiungi il tempo del vaporetto.",null,"10:00-17:00"]
+],
+napoli:[
+["capodimonte","Museo di Capodimonte",12,90,120,150,40.8660,14.2500,"Museo di Capodimonte Napoli","Caravaggio, Tiziano e Raffaello in un palazzo borbonico sulla collina, con un parco.","",[2],"08:30-19:30"],
+["catacombe","Catacombe di San Gennaro",11,60,75,90,40.8639,14.2506,"Catacombe di San Gennaro Napoli","Una necropoli paleocristiana su due piani, con affreschi e tombe, scoperta con guida.","",null,"09:00-17:00"],
+["zevallos","Gallerie d'Italia, Palazzo Zevallos",5,45,60,75,40.8404,14.2493,"Gallerie d'Italia Napoli Palazzo Zevallos","Il Martirio di sant'Orsola, l'ultimo dipinto di Caravaggio, in un palazzo di via Toledo.","",[0],"10:00-18:00"],
+["madre","MADRE, arte contemporanea",8,60,75,90,40.8517,14.2593,"MADRE Napoli","Il museo d'arte contemporanea, con opere di Kapoor e Kounellis.","",[1],"10:00-19:30"],
+["girolamini","Complesso dei Girolamini",5,40,50,60,40.8508,14.2584,"Complesso dei Girolamini Napoli","Una chiesa barocca con un chiostro e una pinacoteca, accanto al Duomo.","",null,"09:00-18:00"],
+["sancarlo","Teatro di San Carlo, visita",10,35,45,60,40.8381,14.2498,"Teatro di San Carlo Napoli","Il teatro d'opera più antico d'Europa, con palchi dorati.","Le visite sono a orari fissi e dipendono dalle prove.",null,"10:00-17:00"],
+["orto","Orto Botanico",5,50,60,75,40.8566,14.2577,"Orto Botanico Napoli","Un giardino dell'Ottocento con piante tropicali e serre.","",[6],"09:00-17:00"],
+["tesoro","Museo del Tesoro di San Gennaro",9,40,50,60,40.8529,14.2589,"Museo del Tesoro di San Gennaro Napoli","Il tesoro dei gioielli, argenti e reliquie donati al santo nei secoli.","",null,"09:00-18:00"],
+["borbonico","Galleria Borbonica",10,60,75,90,40.8365,14.2476,"Galleria Borbonica Napoli","Un tunnel borbonico del 1850 scavato nel tufo, usato come rifugio nella guerra.","Si visita solo con guida a orari fissi.",null,"10:00-17:00"],
+["dohrn","Acquario Dohrn",5,45,60,75,40.8328,14.2427,"Acquario Anton Dohrn Napoli","Il più antico acquario d'Europa, nella Villa Comunale.","",[0],"09:30-17:30"]
+]
+});

@@ -4,6 +4,10 @@ window.__IS_APP=location.hostname==='localhost'&&location.protocol==='https:'&&/
 "use strict";
 document.documentElement.classList.add("js");
 var S=PD.STOPS,V=PD.V;
+/* catalogo: altre attrazioni a pagamento della città, che si aggiungono con la spunta nei Costi */
+(function(){var L=window.CATX&&CATX[PD.id];if(!L)return;L.forEach(function(r){var id="x_"+r[0];if(S[id])return;var pos=[r[6],r[7]],z="A",bd=1e9;
+Object.keys(S).forEach(function(k){var q=S[k];if(q.x||!q.pos)return;var d=hav(pos,q.pos);if(d<bd){bd=d;z=q.z}});
+S[id]={t:r[1],z:z,p:0,min:r[3],id:r[4],max:r[5],pos:pos,q:r[8],cls:"",x:1,tk:[r[2],r[1],1,1],d:r[9],m:r[10]||"Prezzo e orari indicativi: controlla il sito ufficiale prima di andare."};if(r[11])S[id].cl=r[11];if(r[12]){var h=String(r[12]).split("-"),o=toMin(h[0]),c=toMin(h[1]);S[id].win=function(){return[o,c]}}})})();
 var DAYS=["lunedì","martedì","mercoledì","giovedì","venerdì","sabato","domenica"];
 var DAB=["Lun","Mar","Mer","Gio","Ven","Sab","Dom"];
 var MESI=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
@@ -127,7 +131,22 @@ function skyIn(){var src=$("#hero svg.sky");if(!src)return;$$("#cdonut .chero,#c
 function buzz(p){try{if(navigator.vibrate)navigator.vibrate(p)}catch(e){}}
 function tKey(){return CFG?CFG.dest+"|"+CFG.date+"|"+(CFG.tid||""):""}
 function skipGet(){var o=lj("via-skip",null);return o&&o.k===tKey()&&o.d?o:{k:tKey(),d:{}}}
-function skipF(i,acts){var s=skipGet().d[i]||[];return s.length?acts.filter(function(a){return s.indexOf(a)<0}):acts}
+/* sostituzioni di tappa: {giorno:{vecchia:nuova}} */
+function repGet(){var o=lj("via-rep",null);return o&&o.k===tKey()&&o.d?o:{k:tKey(),d:{}}}
+function repSave(o){ls("via-rep",Object.keys(o.d).length?JSON.stringify(o):null)}
+function repTarget(id){var d=repGet().d,f=false;Object.keys(d).forEach(function(i){Object.keys(d[i]).forEach(function(k){if(d[i][k]===id)f=true})});return f}
+function isOptT(id){var t=S[id]&&S[id].tk;return !!(t&&t[2]&&!S[id].x)}
+function skipF(i,acts){var s=skipGet().d[i]||[],rp=repGet().d[i]||{};
+return acts.map(function(x){return rp[x]||x}).filter(function(x,k,a){return a.indexOf(x)===k&&s.indexOf(x)<0&&!(S[x]&&S[x].tk&&!isOptT(x)&&typeof COPT!=="undefined"&&COPT[x]===0)})}
+/* le attrazioni spuntate nei Costi che non fanno parte del giro base */
+var POOL0=[];
+function xForced(){return Object.keys(S).filter(function(id){return S[id].tk&&COPT[id]===1&&POOL0.indexOf(id)<0&&!repTarget(id)})}
+function insNear(list,id){var q=S[id].pos;if(!list.length){list.push(id);return}var bp=list.length,bc=1e9;
+for(var p=0;p<=list.length;p++){var a=p>0?S[list[p-1]].pos:null,b=p<list.length?S[list[p]].pos:null,c=(a?hav(a,q):0)+(b?hav(q,b):0)-(a&&b?hav(a,b):0);if(c<bc){bc=c;bp=p}}list.splice(bp,0,id)}
+function assignX(days){xForced().forEach(function(id){var q=S[id],best=-1,bs=-1e9;
+days.forEach(function(d,i){if(q.cl&&q.cl.indexOf(d.wd)>=0)return;var used=0,near=1e9;d.acts.forEach(function(a){used+=S[a].id+25;var dd=hav(S[a].pos,q.pos);if(dd<near)near=dd});
+var rem=d.cap-used,sc=rem-Math.min(near,8)*70-(rem<q.id+20?150:0);if(sc>bs){bs=sc;best=i}});
+if(best<0)best=0;insNear(days[best].acts,id)})}
 function skipSet(i,id,on){var o=skipGet(),s=(o.d[i]||[]).filter(function(a){return a!==id});if(on)s.push(id);if(s.length)o.d[i]=s;else delete o.d[i];ls("via-skip",Object.keys(o.d).length?JSON.stringify(o):null)}
 function lateGet(){var o=lj("via-late",null);return o&&o.k===tKey()&&o.s?o:null}
 function lateApply(T){var o=lateGet();if(!o)return;var D=T.days.filter(function(d){return d.date===o.day})[0];if(!D)return;var tot=0;
@@ -159,13 +178,28 @@ if(it.k==="act"){var tm=0,sx=0,sy=0;r.addEventListener("pointerdown",function(e)
 r.addEventListener("pointermove",function(e){if(tm>0&&(Math.abs(e.clientX-sx)>10||Math.abs(e.clientY-sy)>10)){clearTimeout(tm);tm=0}});
 ["pointerup","pointercancel","pointerleave"].forEach(function(ev){r.addEventListener(ev,function(){if(tm>0)clearTimeout(tm);setTimeout(function(){tm=0},0)})});
 r.addEventListener("click",function(e){if(tm===-1){e.stopImmediatePropagation();e.preventDefault()}},true);r.addEventListener("contextmenu",function(e){e.preventDefault()})}});
-var sk=skipGet().d[P.i]||[],old=$("#itinerario .skl");if(old)old.remove();
+var sk=skipGet().d[P.i]||[];$$("#itinerario .skl").forEach(function(o){o.remove()});
+var rp=repGet().d[P.i]||{},rk=Object.keys(rp);
+if(rk.length){var l2=document.createElement("p");l2.className="skl rpl";l2.innerHTML='<span>'+(rk.length===1?"1 tappa sostituita":rk.length+" tappe sostituite")+': '+esc(rk.map(function(k){return (S[k]?S[k].t:k)+" → "+(S[rp[k]]?S[rp[k]].t:rp[k])}).join("; "))+'</span><button type="button">Ripristina</button>';$("button",l2).addEventListener("click",function(){var o=repGet(),dd=o.d[P.i]||{};Object.keys(dd).forEach(function(k){var n=dd[k];if(S[n]&&S[n].tk&&POOL0.indexOf(n)<0)delete COPT[n]});ls("via-copt",JSON.stringify(COPT));delete o.d[P.i];repSave(o);renderAll();toast("Tappe ripristinate")});ds.parentNode.insertBefore(l2,ds.nextSibling)}
 if(sk.length){var l=document.createElement("p");l.className="skl";l.innerHTML='<span>'+(sk.length===1?"1 tappa saltata":sk.length+" tappe saltate")+': '+esc(sk.map(function(id){return S[id]?S[id].t:id}).join(", "))+'</span><button type="button">Ripristina</button>';$("button",l).addEventListener("click",function(){var o=skipGet();delete o.d[P.i];ls("via-skip",Object.keys(o.d).length?JSON.stringify(o):null);renderAll();toast("Tappe ripristinate")});ds.parentNode.insertBefore(l,ds.nextSibling)}
 if(TRIP.multi)ds.setAttribute("data-noswipe","");daySwipe(ds)}
 var mg=$("#mgrid");if(mg&&TRIP.multi&&!mg.dataset.dsw){mg.dataset.dsw="1";mg.setAttribute("data-noswipe","");daySwipe(mg)}
 var hero=$("#hero"),hl=$("#hlate"),he=$("#hearly");if(hl)hl.remove();if(he)he.remove();
 if(today&&P.items.some(function(it){return it.t>paris().m&&it.k!=="ret"})){var b=document.createElement("button");b.type="button";b.id="hlate";b.className="hlate";b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg><span>'+(P.late>0?"In ritardo di "+P.late+" min · modifica":"Sono in ritardo")+'</span>';b.addEventListener("click",function(){lateAsk(false)});hero.appendChild(b);var e=document.createElement("button");e.type="button";e.id="hearly";e.className="hlate";e.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l-2.5 2M9 2h6"/></svg><span>'+(P.late<0?"In anticipo di "+(-P.late)+" min · modifica":"Sono in anticipo")+'</span>';e.addEventListener("click",function(){lateAsk(true)});hero.appendChild(e)}
 eveCard();preHero();heroTod();try{topoSet();tlProg();skyIn()}catch(e){}if(document.getElementById("vcover0"))setTimeout(function(){try{coverIn()}catch(e){var c=document.getElementById("vcover0");c&&c.remove()}},60);setTimeout(function(){try{if(!destEl.classList.contains("on"))welcome()}catch(e){}},1600)}
+function repAsk(it){var o=S[it.id];if(!o)return;var used=allActs(),wd=P.wd,cand=Object.keys(S).filter(function(id){var q=S[id];return id!==it.id&&used.indexOf(id)<0&&!(q.cl&&q.cl.indexOf(wd)>=0)&&!(q.multi&&!TRIP.multi)});
+cand.sort(function(a,b){return hav(S[a].pos,o.pos)-hav(S[b].pos,o.pos)});cand=cand.slice(0,5);
+if(!cand.length){toast("Non ci sono altre tappe da proporre");return}
+ask("Sostituisci «"+o.t+"»","Scegli un'alternativa vicina: sostituisce solo questa tappa e ricalcolo gli orari del giorno. Se non ci sta nel tempo, resta quella di prima.",cand.map(function(id){var q=S[id],tk=q.tk&&q.tk[0]?" · "+eur(q.tk[0]):"";return{t:q.t+" · "+fdur(q.id)+tk,fn:function(){repDo(P.i,it.id,id)}}}))}
+function repDo(di,old,nw){var ro=repGet(),sv=JSON.stringify(COPT),q=S[nw];ro.d[di]=ro.d[di]||{};var prev=ro.d[di];
+/* se la tappa da sostituire era già una sostituzione, risalgo all'originale */
+var orig=old;Object.keys(prev).forEach(function(k){if(prev[k]===old){orig=k;delete prev[k]}});prev[orig]=nw;
+if(S[old]&&S[old].tk&&POOL0.indexOf(old)<0)delete COPT[old];
+if(q.tk)COPT[nw]=1;
+ls("via-copt",JSON.stringify(COPT));repSave(ro);renderAll();
+var ok=TRIP.days[di]&&TRIP.days[di].acts.indexOf(nw)>=0;
+if(!ok){delete ro.d[di][orig];if(!Object.keys(ro.d[di]).length)delete ro.d[di];repSave(ro);try{COPT=JSON.parse(sv)}catch(e){}ls("via-copt",JSON.stringify(COPT));renderAll();toast(q.t+" non ci sta nel tempo del giorno: lascio la tappa di prima");return}
+toast("Sostituita con "+q.t)}
 function skipAsk(it){var x=S[it.id];if(!x)return;ask("Saltare questa tappa?",x.t+": la tolgo dal giorno e ricalcolo gli orari delle tappe dopo. Puoi rimetterla quando vuoi.",[{t:"Salta la tappa",fn:function(){var di=P.i;skipSet(di,it.id,true);renderAll();
 if(window.__undoToast)__undoToast("Tappa saltata","Annulla",function(){skipSet(di,it.id,false);renderAll()});else toast("Tappa saltata")}}])}
 function daySwipe(el){if(el.dataset.dsb)return;el.dataset.dsb="1";var x0=0,y0=0,t0=0,on=0;
@@ -299,6 +333,8 @@ function earlyOf(date){var o=lateGet();if(!o||o.day!==date)return null;var tot=0
 function planDay(acts,ctx,opt){
 var dur={},dropped=[],r,g=0,minLen=ctx.single?1:0,need=ST.pc==="rel"?30:0;
 acts=acts.slice();acts.forEach(function(id){dur[id]=ST.pc==="int"?Math.round((dMin(id)+dId(id))/10)*5:dId(id);if(dur[id]<dMin(id))dur[id]=dMin(id)});
+acts.filter(function(id){return S[id].x&&S[id].win}).forEach(function(id){var base=acts.filter(function(a){return a!==id}),bp=acts.indexOf(id),bs=-1e9;
+for(var p=0;p<=base.length;p++){var a2=base.slice();a2.splice(p,0,id);var sl=sim(a2,dur,ctx).slack;if(sl>bs+1){bs=sl;bp=p}}acts=base;acts.splice(bp,0,id)});
 if(need){var b0=sim([],dur,ctx).slack;need=Math.max(0,Math.min(need,b0-10))}
 while(g++<80){r=sim(acts,dur,ctx);if(r.slack>=0&&(r.slack>=need||!(acts.length>minLen||acts.some(function(id){return dur[id]>dMin(id)}))))break;
 var cand=acts.slice().sort(function(a,b){return pri(b)-pri(a)});
@@ -347,7 +383,7 @@ function planSingle(c){
 var A=PD.PAR[c.to],R=PD.PAR[c.rt||c.to],land=toMin(c.a_arr),dep=toMin(c.r_dep),imb=toMin(c.r_imb),wd=wdOf(c.date);
 var c0=land+A.inMin,dl=Math.min(dep-R.buf,imb!=null?imb-45:1e9);
 var ctx={single:1,c0:c0,start:"start",dl:dl,wd:wd,date:c.date,endOf:function(p){return retOf(c.rt||c.to,p)},wantB:c0<10*60+45,wantL:c0<14*60+(PD.LUNCHO||0)&&dl>13*60+30+(PD.LUNCHO||0),wantD:dl>=18*60+15,dinAt:18*60+45,snack:1,eb:earlyOf(c.date),sk:skipGet().d[0]||[]};
-var x=planDay(skipF(0,PD.SINGLE.acts),ctx,{single:1}),r=x.r;
+var sa=PD.SINGLE.acts.slice();xForced().forEach(function(id){if(!(S[id].cl&&S[id].cl.indexOf(wd)>=0))insNear(sa,id)});var x=planDay(skipF(0,sa),ctx,{single:1}),r=x.r;
 var items=[{k:"air",t:land,d:A.inMin,c0:c0}].concat(r.items);
 items.push({k:"ret",t:r.end,d:r.ret.min,ret:r.ret,arr:r.end+r.ret.min,slack:r.slack,dl:dl});
 var n=0;items.forEach(function(it){if(it.k==="act")it.n=++n});
@@ -383,9 +419,9 @@ var n=0;items.forEach(function(it){if(it.k==="act")it.n=++n});
 var rides=ridesOf(items)+(last&&r.ret.rides?1:0)+(f.kind==="first"?(f.A.xrm||0):0)+(last?(f.R.xrm||0):0);
 return Object.assign(f,{items:items,acts:x.acts,dropped:x.dropped,eadd:x.eadd,egr:x.egr,shrunk:x.shrunk,none:x.none,leave:rt,prev:r.prev,B:r.B,L:r.L,D:r.D,rides:rides,end:rt+(last?0:r.ret.min)})}
 function buildTrip(c){ST=sty(c);if(!c.rt||!PD.PAR[c.rt])c.rt=c.to;var n=nDays(c),A=PD.PAR[c.to],R=PD.PAR[c.rt];
-if(n===1)return{multi:false,n:1,A:A,R:R,days:[planSingle(c)],left:[]};
+if(n===1){POOL0=PD.SINGLE.acts.slice();return{multi:false,n:1,A:A,R:R,days:[planSingle(c)],left:[]}}
 var days=[];for(var i=0;i<n;i++)days.push(frame(c,i,n));
-var left=assign(days,n);
+var left=assign(days,n);POOL0=[];days.forEach(function(d){d.acts.forEach(function(a){if(POOL0.indexOf(a)<0)POOL0.push(a)})});assignX(days);
 return{multi:true,n:n,A:A,R:R,days:days.map(function(f){return planMulti(f,c)}),left:left}}
 
 /* ===== stato dei locali nel giorno scelto ===== */
@@ -578,6 +614,7 @@ var c=document.createElement("article");c.className="wc sel";c.setAttribute("ari
 c.innerHTML='<div class="wch"><span>Tappa '+(i+1)+' di '+N+'</span><b class="wcp"></b></div><div class="wct"></div><div class="wcb"></div><div class="wca"><button type="button" class="wcs"></button></div><div class="wcst" aria-hidden="true">VISTO<small>'+esc(stampTxt())+'</small></div>';
 $(".wct",c).textContent=$(".t",steps[i]).textContent;
 var b=$(".wcb",c);b.innerHTML=$(".body",steps[i]).innerHTML;
+if(it.k==="act"&&S[it.id]){var rw=document.createElement("div");rw.className="wcrw";rw.innerHTML='<button type="button" class="wcr"><span aria-hidden="true">⇄</span> Sostituisci tappa</button>';$(".wcr",rw).addEventListener("click",function(){repAsk(it)});b.appendChild(rw)}
 var ac=$(".wca",c),eat=$(".eat",b);if(eat)eat.parentNode.removeChild(eat);$$("a.go",b).filter(function(g){return g.parentNode===b}).reverse().forEach(function(g){g.parentNode.removeChild(g);ac.insertBefore(g,ac.firstChild)});if(eat){var pb=document.createElement("button");pb.type="button";pb.className="wcp2";pb.innerHTML="<span aria-hidden=\"true\">🍽️</span> "+(mPick(it)?"Cambia":"Scegli");pb.addEventListener("click",function(){wToPasti(it)});ac.insertBefore(pb,ac.firstChild)}
 if($("p",b)){var dt=document.createElement("button");dt.type="button";dt.className="wcd";dt.setAttribute("aria-expanded","false");dt.setAttribute("aria-label","Mostra i dettagli");dt.addEventListener("click",function(){var o=c.classList.toggle("open");dt.setAttribute("aria-label",o?"Nascondi i dettagli":"Mostra i dettagli");dt.setAttribute("aria-expanded",o)});ac.appendChild(dt)}
 $$("[data-edit]",c).forEach(function(x){x.addEventListener("click",function(){openSetup(false)})});
@@ -886,11 +923,21 @@ if(+o.a>0)R.push(["fa","Volo di andata ("+(F.code||"partenza")+"-"+c.to+")",pp(o
 if(+o.r>0)R.push(["fr","Volo di ritorno ("+(c.rt||c.to)+"-"+(F.code||"partenza")+")",pp(o.r),1]);
 if(+o.x>0)R.push(["fx","Bagagli, posti e altri extra dei voli",pp(o.x),1]);
 return R}
-function costModel(){var M=costModelBase(),V=flightRows();M.V=V;M.tV=V.reduce(function(s,r){return s+(M.on(r)?r[2]:0)},0);return M}
+function costModel(){var M=costModelBase(),V=flightRows();if(PD.fx.cost){var ids=M.AT.map(function(r){return r[0]});tgRows(allActs()).forEach(function(r){if(ids.indexOf(r[0])<0)M.AT.push(r)});M.tA=M.AT.reduce(function(a,r){return a+(M.on(r)&&!r[5]&&!(r[6]&&COPT[r[0]]!==1)?r[2]:0)},0)}M.V=V;M.tV=V.reduce(function(s,r){return s+(M.on(r)?r[2]:0)},0);return M}
+function xNote(id,on,bf){var q=S[id],af=allActs(),nm=q&&q.t||id;if(!q)return;
+if(on){var di=-1;TRIP.days.forEach(function(d,i){if(di<0&&d.acts.indexOf(id)>=0)di=i});
+if(di<0){if(bf.indexOf(id)<0)toast(nm+" non entra nei tuoi giorni: libera tempo togliendo un'altra tappa");return}
+var rm=bf.filter(function(a){return af.indexOf(a)<0&&a!==id});
+toast(bf.indexOf(id)>=0?nm+" è già nel tuo itinerario":"Aggiunta"+(TRIP.multi?" al giorno "+(di+1):"")+": "+nm+(rm.length?". Per fare posto ho tolto "+rm.map(function(a){return S[a].t}).join(", "):""))}
+else if(bf.indexOf(id)>=0&&af.indexOf(id)<0)toast("Tolta dall'itinerario: "+nm)}
+function tgRows(acts){var AT=[];
+Object.keys(S).filter(function(id){return S[id].tk}).sort(function(a,b){var ia=acts.indexOf(a),ib=acts.indexOf(b);return (ia<0?1e3:ia)-(ib<0?1e3:ib)||(S[a].x?1:0)-(S[b].x?1:0)}).forEach(function(id){var t=S[id].tk,inA=acts.indexOf(id)>=0,def=isOptT(id)?(t[3]?1:0):(POOL0.indexOf(id)<0?1:0),r=[id,t[1],t[0],1,def];
+if(!inA){r[6]=1;if(COPT[id]===1||(def===0&&COPT[id]!==0&&!isOptT(id)))r[5]=1}AT.push(r)});
+return AT}
 function costModelBase(){if(PD.fx.cost)return PD.fx.cost(E);
 var c=CFG,N=c.ppl,acts=allActs(),tr=transport(),T=tr.T.slice(),AT=[],F=[],AL=[],h=TRIP.multi?home():null,nights=TRIP.n-1,FD=PD.FOOD;
 if(PD.TR.card)T.push(["card",PD.TR.card[1],PD.TR.card[0],1]);
-acts.forEach(function(id){var t=S[id].tk;if(t)AT.push([id,t[1],t[0],1,t[3]?1:0])});
+tgRows(acts).forEach(function(r){AT.push(r)});
 (PD.XTK||[]).forEach(function(x){if(!x[3]||acts.indexOf(x[3])>=0)AT.push([x[0],x[1],x[2],1,x[4]?1:0])});
 var nb=0,nl=0,nd=0;TRIP.days.forEach(function(d){if(d.B&&!(d.items||[]).some(function(i){return i.k==="meal"&&i.m==="col"&&i.hotel}))nb++;if(d.L)nl++;if(d.D)nd++});
 var x=function(k){return TRIP.n>1&&k>1?" (× "+k+")":""};
@@ -900,7 +947,7 @@ if(TRIP.multi){var tx=PD.TAX.filter(function(t){return t[0]===h.type})[0]||PD.TA
 AL.push(["al",h.price?"Alloggio, "+nights+(nights===1?" notte":" notti")+" ("+eur(h.price)+" in tutto"+(N>1?", diviso per "+N:"")+")":"Alloggio: inserisci il prezzo totale (⚙️)",h.price?h.price/N:0]);
 var tn=Math.min(nights,PD.TAXMAXN||1e9);if(pp)AL.push(["tax","Tassa di soggiorno ("+eur(pp)+" a notte"+(typeof tx[2]==="number"?"":", "+tx[2].pct+"% del prezzo")+(tn<nights?", massimo "+tn+" notti":"")+")",pp*tn,1])}
 function on(r){if(!r[3])return true;var k=COPT[r[0]];return k==null?!r[4]:!!k}
-var sum=function(a){return a.reduce(function(s,r){return s+(on(r)?r[2]:0)},0)};
+var sum=function(a){return a.reduce(function(s,r){return s+(on(r)&&!r[5]&&!(r[6]&&COPT[r[0]]!==1)?r[2]:0)},0)};
 return{N:N,T:T,AT:AT,F:F,AL:AL,on:on,tT:sum(T),tA:sum(AT),tF:sum(F),tL:sum(AL),alt:tr.alt,best:tr.best,bn:tr.bn}}
 function renderCosti(anim){var M=costModel(),N=M.N,tot=M.tT+M.tA+M.tF+M.tL+M.tV;
 var cat=[["Trasporti",M.tT,"var(--k1)"],["Attrazioni",M.tA,"var(--k2)"],["Cibo",M.tF,"var(--k3)"]];if(TRIP.multi)cat.push(["Alloggio",M.tL,"var(--k4)"]);if(M.V.length)cat.splice(1,0,["Voli",M.tV,"var(--k5)"]);
@@ -908,7 +955,7 @@ var segs=cat.map(function(c,i){return '<i style="flex:'+Math.max(c[1],tot?tot*.0
 var CCOL=window.CCOL=window.CCOL||{},GR={Voli:M.V,Trasporti:M.T,Attrazioni:M.AT,Cibo:M.F,Alloggio:M.AL},two=N>1,E2=function(v,z){return v?eur(v):z};
 function grp(c){var t=c[0],a=GR[t]||[],hd='<span class="n"><i class="d" style="background:'+c[2]+'"></i>'+t+(a.length?'<i class="ch" aria-hidden="true">›</i>':'')+'</span><b>'+(c[1]?eur(c[1]):"—")+'</b>'+(two?'<b class="s">'+(c[1]?eur(c[1]*N):"—")+'</b>':'');
 if(!a.length)return '<div class="cg"><div class="cs">'+hd+'</div></div>';
-return '<details class="cg'+(CCOL[t]===false?" op":"")+'" data-g="'+esc(t)+'"'+(CCOL[t]===false?" open":"")+'><summary class="cs">'+hd+'</summary><div class="cd">'+a.map(function(r){var o=M.on(r),hot=r[0]==="al",z=hot?"—":"gratis";return '<div class="cr'+(o?"":" off")+'"><span class="n'+(r[3]?"":" np")+'">'+(r[3]?'<label class="opt"><input type="checkbox" data-o="'+r[0]+'"'+(o?" checked":"")+'><span>'+esc(r[1])+'</span></label>':hot?'<button type="button" class="hotb" data-hotel>'+esc(r[1])+' <b>Modifica ›</b></button>':'<span>'+esc(r[1])+'</span>')+'</span><span>'+E2(r[2],z)+'</span>'+(two?'<span class="s">'+E2(r[2]*N,z)+'</span>':'')+'</div>'}).join("")+'</div></details>'}
+return '<details class="cg'+(CCOL[t]===false?" op":"")+'" data-g="'+esc(t)+'"'+(CCOL[t]===false?" open":"")+'><summary class="cs">'+hd+'</summary><div class="cd">'+(function(){var capd=0;return a.map(function(r){var o=M.on(r),hot=r[0]==="al",z=hot?"—":"gratis",cp="";if(r[6]&&!capd){capd=1;cp='<div class="cr cap"><span>Altre attrazioni a pagamento: spunta per aggiungerle all\'itinerario</span></div>'}return cp+'<div class="cr'+(o?"":" off")+'"><span class="n'+(r[3]?"":" np")+'">'+(r[3]?'<label class="opt"><input type="checkbox" data-o="'+r[0]+'"'+(o?" checked":"")+'><span>'+esc(r[1])+(r[5]?'<small class="xn">non entra nei tuoi giorni</small>':r[6]&&S[r[0]]?'<small class="xn">'+esc(fdur(S[r[0]].id))+'</small>':'')+'</span></label>':hot?'<button type="button" class="hotb" data-hotel>'+esc(r[1])+' <b>Modifica ›</b></button>':'<span>'+esc(r[1])+'</span>')+'</span><span>'+E2(r[2],z)+'</span>'+(two?'<span class="s">'+E2(r[2]*N,z)+'</span>':'')+'</div>'}).join("")})()+'</div></details>'}
 $("#cdonut").innerHTML='<div class="hero chero"><div class="ch-t"><span>Previsto · a persona</span><b style="--n:'+Math.max(4,eur(tot).length)+'">'+eur(tot)+'</b><em>'+(TRIP.n>1?TRIP.n+" giorni":"1 giorno")+(N>1?" · "+eur(tot*N)+" in "+N:"")+'</em></div><button type="button" class="ch-pdf" id="cdpdf" aria-label="Scarica i costi in PDF"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>PDF</button></div><div class="cbrk"><div class="cbar'+(anim?" anim":"")+'" aria-hidden="true">'+segs+'</div><div class="cacc'+(two?" two":"")+'" id="ctab"><div class="cth"><span></span><span>A persona</span>'+(two?'<span>In '+N+'</span>':'')+'</div>'+cat.map(grp).join("")+'<div class="ctot"><span>Totale</span><span>'+eur(tot)+'</span>'+(two?'<span>'+eur(tot*N)+'</span>':'')+'</div></div></div>';
 var cdp=$("#cdpdf");if(cdp)cdp.addEventListener("click",function(){var o=$("#ccpdf");if(o)o.click()});
 $$("#ctab details.cg").forEach(function(d){var g=d.dataset.g,sm=d.querySelector("summary"),c=d.querySelector(".cd");sm.addEventListener("click",function(e){e.preventDefault();if(!c)return;if(d.__a){d.__a.cancel();d.__a=null}
@@ -916,8 +963,8 @@ var rm=matchMedia("(prefers-reduced-motion:reduce)").matches,du=window.LITE?170:
 if(op){d.open=true;d.classList.add("op");CCOL[g]=false;if(rm)return;h=c.offsetHeight;d.__a=c.animate([{height:"0px",paddingBottom:"0px",opacity:0},{height:h+"px",paddingBottom:"8px",opacity:1}],{duration:du,easing:"cubic-bezier(.2,.8,.2,1)"});d.__a.onfinish=function(){d.__a=null}}
 else{d.classList.remove("op");CCOL[g]=true;if(rm){d.open=false;return}h=c.offsetHeight;var a=d.__a=c.animate([{height:h+"px",paddingBottom:"8px",opacity:1},{height:"0px",paddingBottom:"0px",opacity:0}],{duration:Math.round(du*.8),easing:"cubic-bezier(.4,0,.6,1)"});a.onfinish=function(){if(d.__a===a){d.open=false;d.__a=null}}}})});
 $$("#ctab [data-hotel]").forEach(function(b){b.addEventListener("click",function(){openSetup(false,2);setTimeout(function(){var p=form.sprice;if(p&&!$("#stayin").hidden)try{p.focus({preventScroll:true});p.scrollIntoView({block:"center"})}catch(e){}},350)})});
-$$("#ctab input[data-o]").forEach(function(x){x.addEventListener("change",function(){COPT[x.dataset.o]=x.checked?1:0;ls("via-copt",JSON.stringify(COPT));if(S[x.dataset.o]&&S[x.dataset.o].tk)renderAll();else{renderCosti(false);renderSpese()}})});
-var nt=(M.V.length?"Voli inclusi come li hai inseriti. ":"Voli esclusi: puoi aggiungerne il costo qui sotto, in «Costo dei voli». ")+"Tutte le attrazioni sono facoltative: togli la spunta a quelle che non ti interessano e il totale si aggiorna. ";
+$$("#ctab input[data-o]").forEach(function(x){x.addEventListener("change",function(){var id=x.dataset.o,bf=TRIP?allActs().slice():[];COPT[id]=x.checked?1:0;ls("via-copt",JSON.stringify(COPT));if(S[id]&&S[id].tk){renderAll();xNote(id,x.checked,bf)}else{renderCosti(false);renderSpese()}})});
+var nt=(M.V.length?"Voli inclusi come li hai inseriti. ":"Voli esclusi: puoi aggiungerne il costo qui sotto, in «Costo dei voli». ")+"Spunta un'attrazione e la inserisco nell'itinerario; toglila e sparisce dal giorno e dal totale. I prezzi sono indicativi: controlla il sito ufficiale. ";
 if(PD.fx.costNote)nt+=PD.fx.costNote(E,M);else{nt+=(M.bn?M.bn+" ":M.best==="single"?"Con poche corse i biglietti singoli costano meno degli abbonamenti. ":"")+(M.alt.length?"Alternative: "+M.alt.join(", ")+". ":"")+PD.TR.note+(PD.T.foodNote?" "+PD.T.foodNote:"");if(TRIP.multi&&PD.T.taxNote)nt+=" "+PD.T.taxNote}
 var cn=$("#cnote"),wo=anim===false&&cn.querySelector("details")&&cn.querySelector("details").open;cn.innerHTML=moreHtml(esc(nt),wo);
 window.PAREST=tot*N}
@@ -1605,14 +1652,16 @@ if(!o||!CITIES[o.dest]||!/^\d{4}-\d\d-\d\d$/.test(o.date||"")||!o.a_arr||!o.r_de
 if(o.stay&&typeof o.stay==="object"){c.stay={};["zone","addr","cin","cout","type"].forEach(function(x){if(o.stay[x]!=null)c.stay[x]=str(o.stay[x])});c.stay.price=+o.stay.price||0;if(Array.isArray(o.stay.pos)&&o.stay.pos.length===2&&isFinite(o.stay.pos[0])&&isFinite(o.stay.pos[1])){c.stay.pos=[+o.stay.pos[0],+o.stay.pos[1]];c.stay.geo=1}}return c}catch(e){return null}}
 function readLink(){var m=/^#t=([\w-]+)/.exec(location.hash||"");if(!m)return null;try{var s=m[1].replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";return cleanCfg(JSON.parse(decodeURIComponent(escape(atob(s)))))}catch(e){return null}}
 /* viaggio condiviso: ponte verso shared.js */
+function shRep(r){var o={};if(r&&typeof r==="object")Object.keys(r).forEach(function(i){var m=r[i];if(!/^\d{1,2}$/.test(i)||!m||typeof m!=="object")return;var q={};Object.keys(m).slice(0,20).forEach(function(k){if(shId(k)&&shId(m[k]))q[k]=m[k]});if(Object.keys(q).length)o[i]=q});return o}
 function shId(x){return typeof x==="string"&&/^[\w-]{1,48}$/.test(x)}
 window.__viaSh={code:function(){return CFG&&CFG.sh||""},has:function(){return !!CFG},toast:toast,ask:ask,closeSheet:closeSheet,
-doc:function(){if(!CFG)return null;var c=cleanCfg(CFG);if(!c)return null;var tk={};Object.keys(COPT).forEach(function(k){if(S[k]&&S[k].tk&&(COPT[k]===0||COPT[k]===1))tk[k]=COPT[k]});return{v:1,cfg:c,skip:JSON.parse(JSON.stringify(skipGet().d)),tk:tk}},
+doc:function(){if(!CFG)return null;var c=cleanCfg(CFG);if(!c)return null;var tk={};Object.keys(COPT).forEach(function(k){if(S[k]&&S[k].tk&&(COPT[k]===0||COPT[k]===1))tk[k]=COPT[k]});return{v:1,cfg:c,skip:JSON.parse(JSON.stringify(skipGet().d)),tk:tk,rep:JSON.parse(JSON.stringify(repGet().d))}},
 apply:function(d){if(!d||!CFG)return false;var c=cleanCfg(d.cfg);if(!c)return false;c.tid=CFG.tid;c.sh=CFG.sh;var tk={},sk={};
 if(d.tk&&typeof d.tk==="object")Object.keys(d.tk).forEach(function(k){if(shId(k)&&(d.tk[k]===0||d.tk[k]===1))tk[k]=d.tk[k]});
 if(d.skip&&typeof d.skip==="object")Object.keys(d.skip).forEach(function(k){var a=d.skip[k];if(/^\d{1,2}$/.test(k)&&Array.isArray(a)){a=a.filter(shId).slice(0,40);if(a.length)sk[k]=a}});
-if(c.dest!==CFG.dest){ls("via-trip",JSON.stringify(c));ls("via-skip",Object.keys(sk).length?JSON.stringify({k:c.dest+"|"+c.date+"|"+c.tid,d:sk}):null);ls("via-copt",Object.keys(tk).length?JSON.stringify(tk):null);goCity(c.dest);return true}
-CFG=c;SAVED=c;ls("via-trip",JSON.stringify(c));ls("via-skip",Object.keys(sk).length?JSON.stringify({k:tKey(),d:sk}):null);
+var rp2=shRep(d.rep);
+if(c.dest!==CFG.dest){ls("via-rep",Object.keys(rp2).length?JSON.stringify({k:c.dest+"|"+c.date+"|"+c.tid,d:rp2}):null);ls("via-trip",JSON.stringify(c));ls("via-skip",Object.keys(sk).length?JSON.stringify({k:c.dest+"|"+c.date+"|"+c.tid,d:sk}):null);ls("via-copt",Object.keys(tk).length?JSON.stringify(tk):null);goCity(c.dest);return true}
+CFG=c;SAVED=c;ls("via-trip",JSON.stringify(c));ls("via-skip",Object.keys(sk).length?JSON.stringify({k:tKey(),d:sk}):null);ls("via-rep",Object.keys(rp2).length?JSON.stringify({k:tKey(),d:rp2}):null);
 Object.keys(COPT).forEach(function(k){if(S[k]&&S[k].tk)delete COPT[k]});Object.keys(tk).forEach(function(k){COPT[k]=tk[k]});ls("via-copt",JSON.stringify(COPT));
 renderAll();try{window.dispatchEvent(new Event("voli"))}catch(e){}return true},
 attach:function(code){if(!CFG||!shId(code))return;CFG.sh=code;SAVED=CFG;ls("via-trip",JSON.stringify(CFG))},
@@ -1620,6 +1669,7 @@ detach:function(){if(!CFG)return;delete CFG.sh;SAVED=CFG;ls("via-trip",JSON.stri
 join:function(code,d){if(!shId(code)||!d)return false;var c=cleanCfg(d.cfg);if(!c)return false;parkCur();c.tid=newTid();c.sh=code;var k=c.dest+"|"+c.date+"|"+c.tid,sk={},tk={};
 if(d.skip&&typeof d.skip==="object")Object.keys(d.skip).forEach(function(i){var a=d.skip[i];if(/^\d{1,2}$/.test(i)&&Array.isArray(a)){a=a.filter(shId).slice(0,40);if(a.length)sk[i]=a}});
 if(d.tk&&typeof d.tk==="object")Object.keys(d.tk).forEach(function(i){if(shId(i)&&(d.tk[i]===0||d.tk[i]===1))tk[i]=d.tk[i]});
+var rp3=shRep(d.rep);if(Object.keys(rp3).length)ls("via-rep",JSON.stringify({k:k,d:rp3}));
 ls("via-trip",JSON.stringify(c));if(Object.keys(sk).length)ls("via-skip",JSON.stringify({k:k,d:sk}));if(Object.keys(tk).length)ls("via-copt",JSON.stringify(tk));goCity(c.dest);return true}};
 window.VIA_TRIPLINK=function(){return CFG?tripLink(CFG):""};
 $("#shlink").addEventListener("click",function(){if(!CFG){toast("Imposta prima il tuo viaggio");return}var u=tripLink(CFG),d=dOf(CFG.dest);closeSheet();

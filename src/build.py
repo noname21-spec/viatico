@@ -1,4 +1,4 @@
-import os,json,datetime
+import os,json,datetime,re
 from themes import css_for
 from world import W,REG as REGN
 d=os.path.dirname(os.path.abspath(__file__))
@@ -18,7 +18,7 @@ have=[c for c in ORDER if os.path.exists(os.path.join(d,'cities',c+'.js'))]
 RG={"paris":"eu","bcn":"eu","roma":"eu","londra":"eu","amsterdam":"eu","lisbona":"eu","berlino":"eu","praga":"eu","vienna":"eu","bruxelles":"eu","cracovia":"eu","budapest":"eu","porto":"eu","monaco":"eu","madrid":"eu","milano":"eu","firenze":"eu","venezia":"eu","napoli":"eu","siviglia":"eu","valencia":"eu","varsavia":"eu","amburgo":"eu","zurigo":"eu","copenaghen":"eu","stoccolma":"eu","oslo":"eu","helsinki":"eu","reykjavik":"eu","dublino":"eu","edimburgo":"eu","atene":"eu","istanbul":"eu","vilnius":"eu","lubiana":"eu","zagabria":"eu","bucarest":"eu","sofia":"eu","riga":"eu","tallinn":"eu","valletta":"eu","salisburgo":"eu","ginevra":"eu","malaga":"eu"}
 soon=[dict(id=c,r=RG[c],**META[c]) for c in ORDER if c not in have and c in META]
 soon+=[dict(id=i,n=n,c=c,e=e,r=r,col=col,k=k) for (i,n,c,e,r,col,k) in W if i not in have]
-cities=r('cities/_it.js')+'\n'+''.join(r('cities/'+c+'.js')+'\n' for c in have)+r('foodtags.js')+'\n'+r('words.js')+'\n'
+cities=r('cities/_it.js')+'\n'+''.join(r('cities/'+c+'.js')+'\n' for c in have)+r('foodtags.js')+'\n'+''.join(r(f)+'\n' for f in sorted(os.listdir(d)) if re.match(r'cat[a-z0-9]*\.js$',f))+'\n'+r('words.js')+'\n'
 boot='window.CITY_ORDER='+json.dumps(have)+';window.REG='+json.dumps(RG)+';window.REGN='+json.dumps(REGN,ensure_ascii=False)+';window.SOON='+json.dumps(soon,ensure_ascii=False)+''';
 (function(){var id=null;try{id=sessionStorage.getItem("via-pick")}catch(e){}if(!id||!CITIES[id]){id=null;try{var t=JSON.parse(localStorage.getItem("via-trip")||"null");if(t&&t.date)id=t.dest||"paris"}catch(e){}}
 window.PD=CITIES[id]||CITIES[CITY_ORDER[0]];Object.keys(CITIES).forEach(function(k){var C=CITIES[k];C.fx=C.fx||{};C.T=C.T||{}});

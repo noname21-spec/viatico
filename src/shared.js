@@ -20,8 +20,9 @@ function stSet(code,o){p("via-sh:"+code,JSON.stringify(o))}
 /* il documento si appiattisce in coppie chiave/valore per unire campo per campo */
 function flat(d){var f={};if(!d)return f;var c=d.cfg||{};Object.keys(c).forEach(function(k){f["c."+k]=JSON.stringify(c[k])});
  var s=d.skip||{};Object.keys(s).forEach(function(k){if(s[k]&&s[k].length)f["s."+k]=JSON.stringify(s[k])});
- var t=d.tk||{};Object.keys(t).forEach(function(k){f["t."+k]=JSON.stringify(t[k])});return f}
-function unflat(f){var d={v:1,cfg:{},skip:{},tk:{}};Object.keys(f).sort().forEach(function(k){var v=JSON.parse(f[k]),n=k.slice(2);if(k[0]==="c")d.cfg[n]=v;else if(k[0]==="s")d.skip[n]=v;else d.tk[n]=v});return d}
+ var t=d.tk||{};Object.keys(t).forEach(function(k){f["t."+k]=JSON.stringify(t[k])});
+var r=d.rep||{};Object.keys(r).forEach(function(k){if(r[k]&&Object.keys(r[k]).length)f["r."+k]=JSON.stringify(r[k])});return f}
+function unflat(f){var d={v:1,cfg:{},skip:{},tk:{},rep:{}};Object.keys(f).sort().forEach(function(k){var v=JSON.parse(f[k]),n=k.slice(2);if(k[0]==="c")d.cfg[n]=v;else if(k[0]==="s")d.skip[n]=v;else if(k[0]==="r")d.rep[n]=v;else d.tk[n]=v});return d}
 function merge(base,mine,theirs){var b=flat(base),m=flat(mine),t=flat(theirs),out={},keys={};[b,m,t].forEach(function(o){Object.keys(o).forEach(function(k){keys[k]=1})});
  Object.keys(keys).forEach(function(k){var v=m[k]!==b[k]?m[k]:t[k];if(v!==undefined)out[k]=v});return unflat(out)}
 function same(a,b){return JSON.stringify(flat(a))===JSON.stringify(flat(b))}
