@@ -2785,3 +2785,77 @@ html.skn:not(.sks) .apn,html.skn:not(.sks) .apn *,html.skn:not(.sks) .apd,html.s
 html.skn:not(.sks) .apd{opacity:.8}
 html.skn:not(.sks) .blk.on>h2.sec:not(#ith){color:#f1ebdd!important}
 html.skn:not(.sks) .apn,html.skn:not(.sks) .apd,html.skn:not(.sks) .aps,html.skn:not(.sks) .blk.on>h2.sec:not(#ith){text-shadow:0 1px 8px rgba(8,14,36,.45)}
+
+/* v257 skyline definitivo: sagome piatte, palazzi dietro, finestre che si accendono con la sera */
+@font-face{font-family:Caveat;font-style:normal;font-weight:400 700;font-display:swap;src:url(lib/caveat-latin-600.woff2) format("woff2")}
+svg.sky{--skc:rgba(8,16,44,.58);--skc2:rgba(8,16,44,.36)}
+svg.sky .face,svg.sky .face *{fill:var(--skc)!important;stroke:none!important}
+svg.sky .bk>rect:not(.wn){fill:var(--skc2)}
+svg.sky .ln,svg.sky .ln path{stroke:var(--skc)!important;animation:skFade .8s ease both!important}
+svg.sky .gnd{fill:var(--skc)!important}
+svg.sky .gl,svg.sky .shd,svg.sky .sweep,svg.sky .ext{display:none}
+svg.sky .wn{fill:#ffd98a;opacity:0;transition:opacity .7s ease}
+svg.sky .wn.on{opacity:.92}
+svg.sky .bk{animation:skFade 1s ease both}
+#hero[data-tod=dawn] svg.sky,#dest[data-tod=dawn] svg.sky{--skc:rgba(40,18,52,.46);--skc2:rgba(40,18,52,.28)}
+#hero[data-tod=dusk] svg.sky,#dest[data-tod=dusk] svg.sky{--skc:rgba(30,10,40,.55);--skc2:rgba(30,10,40,.34)}
+#hero[data-tod=night] svg.sky,#dest[data-tod=night] svg.sky{--skc:rgba(3,5,14,.74);--skc2:rgba(3,5,14,.5)}
+.hero .sky{opacity:1!important;-webkit-mask-image:linear-gradient(transparent 0,#000 30%)!important;mask-image:linear-gradient(transparent 0,#000 30%)!important}
+html.hc .hero .sky{opacity:.35!important}
+@media (prefers-reduced-motion:reduce){svg.sky .wn{transition:none}}
+
+/* v257 card di fine viaggio: la cartolina in tre pagine */
+.hero.post>h1,.hero.post>#live,.hero.post>.wdet,.hero.post>.wbox{display:none!important}
+.hero.post{padding:0!important}
+.pcd{position:relative;color:#fff}
+.pcar{display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x pan-y}
+.pcar::-webkit-scrollbar{display:none}
+.psl{flex:0 0 100%;min-width:0;scroll-snap-align:center;scroll-snap-stop:always;padding:18px 18px 96px;display:flex;flex-direction:column}
+.ptop{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.pkick{font:800 .64rem Outfit,system-ui,sans-serif;letter-spacing:.16em;text-transform:uppercase;opacity:.86}
+.pclk{font:600 .7rem Outfit,system-ui,sans-serif;opacity:.82;font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:.02em}
+.pbig{margin:4px 0 0;font:800 1.45rem/1.08 Outfit,system-ui,sans-serif;letter-spacing:-.02em;color:#fff;text-wrap:balance}
+.psub{margin:4px 0 0;font-size:.88rem;line-height:1.35;opacity:.88}
+.pcf{all:unset;box-sizing:border-box;cursor:pointer;position:relative;display:grid;place-items:center;height:184px;margin-top:14px;border-radius:12px;overflow:hidden;isolation:isolate;transform:rotate(-1.5deg);background:linear-gradient(180deg,#f0a77f,#7b5a86 70%,#3d3453);box-shadow:0 12px 22px -10px rgba(0,0,0,.5),inset 0 0 0 5px #fbf7ef;-webkit-tap-highlight-color:transparent;transition:transform .2s}
+.pcf:active{transform:rotate(-1.5deg) scale(.98)}
+.pcf:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.pgr{position:relative;z-index:2;margin:0 0 34px;font:700 2.15rem/.95 Caveat,"Segoe Print","Bradley Hand",cursive;color:#fffaf0;text-shadow:0 2px 10px rgba(40,20,50,.5);transform:rotate(-4deg);text-align:center;padding:0 14px}
+.pmk{position:absolute;z-index:2;right:12px;top:12px;width:42px;height:46px;border:2px dashed rgba(255,250,240,.75);border-radius:3px;display:grid;place-items:center;font:700 .5rem/1.25 Outfit,system-ui,sans-serif;color:#fffaf0;letter-spacing:.06em;text-align:center}
+.pcf svg.sky{position:absolute!important;left:0;right:0;bottom:-8px;width:100%!important;height:auto;margin:0!important;z-index:1;--skc:rgba(40,24,52,.78);--skc2:rgba(40,24,52,.5)}
+.pcf svg.sky .far,.pcf svg.sky .spk,.pcf svg.sky .flock{display:none}
+.pmom{display:flex;flex-wrap:wrap;align-content:flex-start;gap:7px;margin-top:12px;max-height:212px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;padding:1px 2px 14px;-webkit-mask-image:linear-gradient(#000 calc(100% - 22px),transparent);mask-image:linear-gradient(#000 calc(100% - 22px),transparent)}
+.pmom::-webkit-scrollbar{display:none}
+.pmom button{all:unset;box-sizing:border-box;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:8px 12px;border-radius:99px;background:rgba(255,255,255,.16);box-shadow:inset 0 0 0 1px rgba(255,255,255,.24);font:600 .8rem Outfit,system-ui,sans-serif;color:#fff;transition:background .2s,transform .15s;min-height:34px}
+.pmom button:active{transform:scale(.96)}
+.pmom button[aria-pressed=true]{background:#fff;color:#1b1630}
+.pmom button[aria-pressed=true]::before{content:"★ ";color:#e0913a}
+.pmom button[disabled]{opacity:.42;cursor:default}
+.pmom button:focus-visible,.pchips button:focus-visible,.psend:focus-visible,.pdots button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.pcnt{margin:10px 0 0;font-size:.8rem;opacity:.85}
+.pcb{perspective:1100px;margin-top:10px}
+.pcbi{height:184px;border-radius:12px;background:#fbf7ef;color:#2b2438;display:grid;grid-template-columns:1.35fr 1px 1fr;gap:12px;padding:12px 14px;box-shadow:0 12px 22px -10px rgba(0,0,0,.5);transform:rotateY(-180deg);opacity:0;transition:transform .9s cubic-bezier(.3,1.2,.4,1),opacity .3s}
+.pcb.in .pcbi{transform:none;opacity:1}
+.pmsg{font:600 1.05rem/1.2 Caveat,"Segoe Print","Bradley Hand",cursive;display:grid;gap:2px;align-content:start;min-width:0}
+.pmsg textarea{all:unset;box-sizing:border-box;width:100%;height:66px;font:600 1.05rem/22px Caveat,"Segoe Print","Bradley Hand",cursive;color:#2b2438;background:repeating-linear-gradient(transparent 0 21px,#cfc4b3 21px 22px);white-space:pre-wrap;overflow:hidden;cursor:text}
+.pmsg textarea::placeholder{color:#a0937f}
+.pmsg textarea:focus-visible{outline:2px solid #7b5a86;outline-offset:2px;border-radius:4px}
+.ppick{list-style:none;margin:2px 0 0;padding:0;font:700 .98rem/1.15 Caveat,"Segoe Print","Bradley Hand",cursive;color:#5b4a70}
+.ppick li{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.psep{background:#d9cfbf}
+.prt{display:grid;justify-items:end;align-content:space-between;gap:6px;min-width:0}
+.pst{width:44px;height:52px;background:#f3d9b8;border:3px solid #fbf7ef;outline:1px dashed #c8b79e;display:grid;place-items:center;font-size:1.5rem}
+.ppm{width:56px;height:56px;border:2px solid #b8503c;border-radius:50%;color:#b8503c;display:grid;place-items:center;font:700 .54rem/1.2 Outfit,system-ui,sans-serif;text-align:center;transform:rotate(-12deg);letter-spacing:.05em;margin:-30px 22px 0 0;opacity:0;transition:opacity .3s .7s}
+.pcb.in .ppm{opacity:.9}
+.pad{font:600 .92rem/1.1 Caveat,"Segoe Print","Bradley Hand",cursive;text-align:right;border-top:1px solid #d9cfbf;padding-top:4px}
+.pchips{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.pchips button{all:unset;cursor:pointer;min-height:34px;box-sizing:border-box;display:inline-flex;align-items:center;padding:0 13px;border-radius:99px;background:rgba(255,255,255,.16);box-shadow:inset 0 0 0 1px rgba(255,255,255,.24);font:600 .8rem Outfit,system-ui,sans-serif;color:#fff}
+.pchips button[aria-pressed=true]{background:#fff;color:#1b1630}
+.psend{all:unset;cursor:pointer;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:8px;align-self:flex-start;min-height:46px;margin-top:10px;padding:0 20px;border-radius:99px;background:#fff;color:#1b1630;font:700 .92rem Outfit,system-ui,sans-serif;transition:transform .15s}
+.psend:active{transform:scale(.96)}
+.psend svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pdots{position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:center;gap:2px;z-index:3}
+.pdots button{all:unset;cursor:pointer;width:24px;height:24px;display:grid;place-items:center}
+.pdots button::before{content:"";width:8px;height:8px;border-radius:5px;background:rgba(255,255,255,.5);transition:width .3s,background .3s}
+.pdots button.on::before{width:22px;background:#fff}
+.hero.post .sky{z-index:-1}
+@media (prefers-reduced-motion:reduce){.pcbi,.ppm,.pcf{transition:none}}

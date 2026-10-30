@@ -670,8 +670,9 @@ $(".fpy",d).addEventListener("click",function(){done();var b=$("#fbtn");if(b)b.c
 var lastNow=-2,LB=null;
 function todayIdx(){if(!TRIP)return -1;var d=paris().d;for(var i=0;i<TRIP.days.length;i++)if(TRIP.days[i].date===d)return i;return -1}
 var lastDay=null;
-function liveTick(){if(document.hidden)return;var live=$("#live");if(!TRIP||!CFG){live.hidden=true;return}var dd=paris().d;if(lastDay&&dd!==lastDay){lastDay=dd;try{renderAll()}catch(e){console.error(e)}return}lastDay=dd;
+function liveTick(){if(document.hidden)return;var live=$("#live");if(!TRIP||!CFG){live.hidden=true;var hp=$("#hero");if(hp)hp.classList.remove("post");var op=$("#pcd");if(op)op.remove();return}var dd=paris().d;if(lastDay&&dd!==lastDay){lastDay=dd;try{renderAll()}catch(e){console.error(e)}return}lastDay=dd;
 var n=paris(),c=CFG,A=TRIP.A,D0=TRIP.days[0],DN=TRIP.days[TRIP.n-1];
+var post=n.d>DN.date,hro=$("#hero");if(hro)hro.classList.toggle("post",post);if(post){try{postCard()}catch(e){console.error(e)}}else{var opc=$("#pcd");if(opc)opc.remove()}
 function set(cls,b,sp){try{localStorage.setItem("via-live",JSON.stringify({k:c.dest+c.date,b:b,s:sp,t:Date.now(),bar:LB}))}catch(e){}live.className="live "+cls;var lk="",tt=b,mm=/^(Ora|Prima tappa): /.exec(b);if(mm){lk=mm[1]==="Ora"?"Adesso":"Prima tappa";tt=b.slice(mm[0].length)}live.innerHTML='<i class="dot"></i><div class="lt">'+(lk?'<small class="lk"></small>':'')+'<b></b><span></span></div>';live.classList.toggle("lnow",lk==="Adesso");live.classList.toggle("ldup",/^Mancano /.test(b));if(lk)$(".lk",live).textContent=lk;$("b",live).textContent=tt;$("span",live).textContent=sp;live.hidden=false;window.__apPaint&&__apPaint(/^Prossima:/.test(sp)?"":b)}
 var steps=$$("#steps .step");steps.forEach(function(li){li.classList.remove("now")});
 if(n.d<D0.date){var d=Math.round((dateObj(D0.date)-dateObj(n.d))/864e5);set("calm",d===1?"Domani si parte! ✈️":"Mancano "+d+" giorni al viaggio",(c.a_num?"Volo "+c.a_num+(c.a_dep?" alle "+c.a_dep:"")+". ":"")+"Atterraggio a "+A.n+" alle "+c.a_arr+"."+(d<=2&&PD.T.remind?" "+PD.T.remind:""));return}
@@ -1056,6 +1057,91 @@ cv.toBlob(function(b){if(!b){toast("Non riesco a creare l'immagine");return}var 
 if(f&&navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){navigator.share({files:[f],title:"Il mio viaggio a "+PD.n}).catch(function(){});return}
 var u=URL.createObjectURL(b),o=document.createElement("div");o.className="rcap";o.innerHTML='<div class="rcc"><img alt="Riepilogo del viaggio" src="'+u+'"><p>Tieni premuta l\'immagine per salvarla o condividerla.</p><a class="btn" download="viaggio-'+esc(PD.id)+'.png" href="'+u+'">Scarica</a><button type="button" class="btn ghost">Chiudi</button></div>';document.body.appendChild(o);function cl(){o.remove();setTimeout(function(){URL.revokeObjectURL(u)},500)}o.querySelector("button").addEventListener("click",cl);o.addEventListener("click",function(ev){if(ev.target===o)cl()})},"image/png")}
 try{var fl=document.fonts&&document.fonts.load?Promise.all([document.fonts.load("800 80px Outfit"),document.fonts.load("500 40px Outfit")]):Promise.resolve();fl.then(draw,draw)}catch(er){draw()}};
+/* v257 card di fine viaggio: cartolina in tre pagine (fronte, momenti, retro) con il cielo dell'ora */
+function pcKey(){return"via-pc:"+CFG.dest+":"+CFG.date}
+function pcGet(){try{return JSON.parse(localStorage.getItem(pcKey())||"{}")||{}}catch(e){return{}}}
+function pcPut(o){try{localStorage.setItem(pcKey(),JSON.stringify(o))}catch(e){}}
+function pcMoments(){var seen={},out=[];TRIP.days.forEach(function(T){T.items.forEach(function(it){if(it.k!=="act")return;var t=stepTitle(T,it);if(t&&!seen[t]){seen[t]=1;out.push(t)}})});return out}
+function pcCode(){var n=(PD.n||"").normalize?PD.n.normalize("NFD").replace(/[̀-ͯ]/g,""):PD.n;return n.replace(/[^A-Za-z]/g,"").slice(0,3).toUpperCase()}
+function pcStamp(){var a=dateObj(CFG.date_r||CFG.date);return pcCode()+"<br>"+a.getUTCDate()+"·"+(a.getUTCMonth()+1)+"<br>"+a.getUTCFullYear()}
+function pcClock(){var n=paris();return fmt(n.m).replace(/^(\d):/,"0$1:")+" a "+PD.n}
+function pcSky(box){var f=$(".pcf",box);if(!f||$("svg",f)||!window.zSky)return;try{var z=zSky(PD.id,"pc");if(z){f.appendChild(z);if(window.skyLit)skyLit(z,.62)}}catch(e){}}
+function postCard(){var h=$("#hero");if(!h)return;var k=pcKey(),box=$("#pcd");
+ if(box&&box.dataset.k===k){$$("[data-clk]",box).forEach(function(e){e.textContent=pcClock()});pcSky(box);return}
+ if(box)box.remove();
+ var st=pcGet(),M=pcMoments(),acts=0,f0=TRIP.days[0].items[0],DL=TRIP.days[TRIP.n-1],l0=DL.items[DL.items.length-1];TRIP.days.forEach(function(T){T.items.forEach(function(it){if(it.k==="act")acts++})});
+ if(!st.m)st.m=M.slice(0,0);st.m=st.m.filter(function(x){return M.indexOf(x)>=0});
+ var sub=TRIP.n===1?(acts+(acts===1?" tappa":" tappe")+", dalle "+fmt(f0.t)+" alle "+fmt(l0.t)+"."):(TRIP.n+" giorni e "+acts+(acts===1?" tappa.":" tappe."));
+ box=document.createElement("div");box.id="pcd";box.className="pcd";box.dataset.k=k;
+ box.innerHTML='<div class="pcar" data-noswipe>'+
+  '<section class="psl" aria-label="Cartolina, pagina 1 di 3"><div class="ptop"><span class="pkick">Com\'è andata?</span><span class="pclk" data-clk></span></div><h3 class="pbig"></h3><p class="psub"></p><button type="button" class="pcf" aria-label="Gira la cartolina"><span class="pmk"></span><b class="pgr"></b></button></section>'+
+  '<section class="psl" aria-label="Momenti, pagina 2 di 3"><div class="ptop"><span class="pkick">Cosa ti è piaciuto</span><span class="pclk" data-clk></span></div><h3 class="pbig">Scegli tre momenti</h3><p class="psub">Finiscono sul retro della cartolina.</p><div class="pmom" role="group" aria-label="Momenti del viaggio"></div><p class="pcnt" aria-live="polite"></p></section>'+
+  '<section class="psl" aria-label="Retro, pagina 3 di 3"><div class="ptop"><span class="pkick">Il retro</span><span class="pclk" data-clk></span></div><div class="pcb"><div class="pcbi"><div class="pmsg"><span>Caro me,</span><textarea maxlength="80" placeholder="scrivi due righe…" aria-label="Scrivi due righe sul retro"></textarea><ul class="ppick"></ul></div><i class="psep"></i><div class="prt"><span class="pst"></span><span class="ppm"></span><span class="pad"></span></div></div></div>'+
+  '<div class="pchips" role="group" aria-label="Come la mandi"><button type="button" data-f="img" aria-pressed="true">Immagine</button><button type="button" data-f="txt" aria-pressed="false">Testo</button><button type="button" data-f="lnk" aria-pressed="false">Link</button></div>'+
+  '<button type="button" class="psend"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M8 7l4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span>Manda la cartolina</span></button></section>'+
+  '</div><div class="pdots"><button type="button" class="on" aria-label="Pagina 1" aria-current="true"></button><button type="button" aria-label="Pagina 2"></button><button type="button" aria-label="Pagina 3"></button></div>';
+ $(".pbig",box).textContent=PD.n+", "+rangeTxt();$(".psub",box).textContent=sub;
+ $(".pgr",box).innerHTML="Saluti da<br>"+esc(PD.n);$(".pmk",box).innerHTML=pcCode()+"<br>"+dateObj(CFG.date).getUTCFullYear();
+ $(".pst",box).textContent=PD.flag||"✈️";$(".ppm",box).innerHTML=pcStamp();var cn="";try{cn=PD.CC?new Intl.DisplayNames(["it"],{type:"region"}).of(String(PD.CC).toUpperCase()):""}catch(e){}$(".pad",box).innerHTML=esc(PD.n)+(cn?",<br>"+esc(cn):"");
+ var ta=$("textarea",box);ta.value=st.t||"";ta.addEventListener("input",function(){st.t=ta.value;pcPut(st)});
+ pcSky(box);if(!$(".pcf svg",box))setTimeout(function(){pcSky(box)},400);
+ var sv=$("#hero svg.sky");h.insertBefore(box,sv&&sv.parentNode===h?sv:null);
+ function moms(){var mb=$(".pmom",box);mb.innerHTML=M.map(function(t,i){var on=st.m.indexOf(t)>=0;return'<button type="button" data-i="'+i+'" aria-pressed="'+on+'"'+(!on&&st.m.length>=3?" disabled":"")+'>'+esc(t)+"</button>"}).join("");
+  var n=st.m.length,mx=Math.min(3,M.length);$(".pcnt",box).textContent=n>=mx?(n===1?"Scelto.":"Scelti.")+" Scorri per vedere il retro.":"Ne hai scelti "+n+" su "+mx+".";
+  $(".ppick",box).innerHTML=M.filter(function(t){return st.m.indexOf(t)>=0}).map(function(t){return"<li>★ "+esc(t)+"</li>"}).join("")}
+ $(".pmom",box).addEventListener("click",function(e){var b=e.target.closest("button");if(!b||b.disabled)return;var t=M[+b.dataset.i],j=st.m.indexOf(t);if(j>=0)st.m.splice(j,1);else if(st.m.length<3)st.m.push(t);pcPut(st);moms();var nb=$('.pmom button[data-i="'+b.dataset.i+'"]',box);nb&&nb.focus()});
+ moms();
+ var car=$(".pcar",box),dots=$$(".pdots button",box),cur=0,flip=$(".pcb",box);
+ function page(i){cur=i;dots.forEach(function(d,j){d.classList.toggle("on",j===i);if(j===i)d.setAttribute("aria-current","true");else d.removeAttribute("aria-current")});
+  if(i===2&&!flip.classList.contains("in")){setTimeout(function(){flip.classList.add("in")},matchMedia("(prefers-reduced-motion:reduce)").matches?0:220)}}
+ function go(i){car.scrollTo({left:i*car.clientWidth,behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth"})}
+ car.addEventListener("scroll",function(){var i=Math.round(car.scrollLeft/Math.max(1,car.clientWidth));if(i!==cur)page(i)},{passive:true});
+ dots.forEach(function(d,i){d.addEventListener("click",function(){go(i)})});
+ $(".pcf",box).addEventListener("click",function(){go(2)});
+ ta.addEventListener("keydown",function(e){e.stopPropagation()});
+ $$(".pchips button",box).forEach(function(b){b.addEventListener("click",function(){$$(".pchips button",box).forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false")})})});
+ $(".psend",box).addEventListener("click",function(){var f=$(".pchips [aria-pressed=true]",box).dataset.f;pcSend(f,st)});
+ $$("[data-clk]",box).forEach(function(e){e.textContent=pcClock()})}
+function pcText(st){var L=["Saluti da "+PD.n+"! "+(PD.flag||"")];if(st.t)L.push(st.t);if(st.m&&st.m.length){L.push("");st.m.forEach(function(t){L.push("★ "+t)})}L.push("",rangeTxt()+" · Viaticum");return L.join("\n")}
+function pcShareText(tx,title){if(navigator.share){navigator.share({title:title,text:tx}).catch(function(){})}else if(navigator.clipboard){navigator.clipboard.writeText(tx).then(function(){toast("Cartolina copiata: incollala dove vuoi")},function(){toast("Non riesco a copiare")})}else toast("Condivisione non disponibile")}
+function pcSend(f,st){var title="Saluti da "+PD.n;if(f==="txt"){pcShareText(pcText(st),title);return}
+ if(f==="lnk"){var u="";try{u=tripLink(CFG)}catch(e){}pcShareText(pcText(st)+(u?"\n\nL'itinerario: "+u:""),title);return}
+ pcImage(st)}
+/* immagine: fronte sopra, retro sotto */
+function pcImage(st){var W=1200,H=1640,cv=document.createElement("canvas");cv.width=W;cv.height=H;var x=cv.getContext("2d"),F="Outfit,system-ui,sans-serif",CV="Caveat,'Segoe Print','Bradley Hand',cursive";
+ function rr(a,b,w,h,r){x.beginPath();if(x.roundRect)x.roundRect(a,b,w,h,r);else x.rect(a,b,w,h)}
+ function done(sk){x.fillStyle="#e9e2d6";x.fillRect(0,0,W,H);
+  /* fronte */
+  x.save();rr(40,40,W-80,760,26);x.clip();var g=x.createLinearGradient(0,40,0,800);g.addColorStop(0,"#f0a77f");g.addColorStop(.7,"#7b5a86");g.addColorStop(1,"#3d3453");x.fillStyle=g;x.fillRect(40,40,W-80,760);
+  if(sk)x.drawImage(sk,40,800-420,W-80,420*(W-80)/(W-80));
+  x.fillStyle="#fffaf0";x.textAlign="center";x.shadowColor="rgba(40,20,50,.45)";x.shadowBlur=18;x.font="700 150px "+CV;x.save();x.translate(W/2,330);x.rotate(-.06);x.fillText("Saluti da",0,-40);var nm=PD.n,fs=170;x.font="700 "+fs+"px "+CV;while(x.measureText(nm).width>W-220&&fs>80){fs-=10;x.font="700 "+fs+"px "+CV}x.fillText(nm,0,fs*.9);x.restore();x.shadowBlur=0;x.restore();
+  x.strokeStyle="#fbf7ef";x.lineWidth=22;rr(51,51,W-102,738,20);x.stroke();
+  /* retro */
+  x.fillStyle="#fbf7ef";rr(40,840,W-80,760,26);x.fill();x.strokeStyle="#d9cfbf";x.lineWidth=3;x.beginPath();x.moveTo(700,900);x.lineTo(700,1540);x.stroke();
+  x.textAlign="left";x.fillStyle="#2b2438";x.font="600 64px "+CV;x.fillText("Caro me,",100,960);
+  var words=(st.t||"").split(/\s+/),line="",y=1040;x.font="500 56px "+CV;words.forEach(function(w){var t=line?line+" "+w:w;if(x.measureText(t).width>560){x.fillText(line,100,y);y+=66;line=w}else line=t});if(line){x.fillText(line,100,y);y+=66}
+  x.strokeStyle="#cfc4b3";x.lineWidth=2;for(var ly=1052;ly<1300;ly+=66){x.beginPath();x.moveTo(100,ly);x.lineTo(650,ly);x.stroke()}
+  y=Math.max(y+20,1330);x.fillStyle="#5b4a70";x.font="700 50px "+CV;(st.m||[]).forEach(function(t){var s="★ "+t;while(x.measureText(s).width>570&&s.length>4)s=s.slice(0,-2);if(s!=="★ "+t)s+="…";x.fillText(s,100,y);y+=62});
+  /* francobollo e timbro */
+  x.fillStyle="#f3d9b8";x.fillRect(930,890,180,210);x.setLineDash([8,8]);x.strokeStyle="#c8b79e";x.strokeRect(922,882,196,226);x.setLineDash([]);x.textAlign="center";x.font="90px "+F;x.fillStyle="#000";x.fillText(PD.flag||"✈️",1020,1030);
+  x.save();x.translate(860,1120);x.rotate(-.2);x.strokeStyle="#b8503c";x.lineWidth=6;x.beginPath();x.arc(0,0,92,0,7);x.stroke();x.fillStyle="#b8503c";x.font="700 34px 'IBM Plex Mono',monospace";var a=dateObj(CFG.date_r||CFG.date);x.fillText(pcCode(),0,-22);x.fillText(a.getUTCDate()+"·"+(a.getUTCMonth()+1),0,20);x.fillText(String(a.getUTCFullYear()),0,60);x.restore();
+  x.textAlign="right";x.fillStyle="#2b2438";x.font="600 58px "+CV;x.fillText(PD.n+",",1100,1440);x.font="500 46px "+CV;x.fillText(rangeTxt(),1100,1500);
+  x.textAlign="left";x.fillStyle="rgba(43,36,56,.55)";x.font="700 30px "+F;x.fillText("Viaticum",60,1622);
+  cv.toBlob(function(b){if(!b){toast("Non riesco a creare l'immagine");return}var fi=null;try{fi=new File([b],"cartolina-"+PD.id+".png",{type:"image/png"})}catch(e){}
+   if(fi&&navigator.canShare&&navigator.canShare({files:[fi]})&&navigator.share){navigator.share({files:[fi],title:"Saluti da "+PD.n}).catch(function(){});return}
+   var u=URL.createObjectURL(b),o=document.createElement("div");o.className="rcap";o.innerHTML='<div class="rcc"><img alt="La cartolina" src="'+u+'"><p>Tieni premuta l\'immagine per salvarla o condividerla.</p><a class="btn" download="cartolina-'+esc(PD.id)+'.png" href="'+u+'">Scarica</a><button type="button" class="btn ghost">Chiudi</button></div>';document.body.appendChild(o);function cl(){o.remove();setTimeout(function(){URL.revokeObjectURL(u)},500)}o.querySelector("button").addEventListener("click",cl);o.addEventListener("click",function(ev){if(ev.target===o)cl()})},"image/png")}
+ /* skyline della città come immagine: sagome scure e finestre accese */
+ function sky(cb){try{var z=window.zSky&&zSky(PD.id,"pi");if(!z)return cb(null);skyLit(z,.62);
+   [].forEach.call(z.querySelectorAll(".far,.spk,.flock,.gl"),function(e){e.remove()});
+   [].forEach.call(z.querySelectorAll(".face,.face *,.gnd"),function(e){e.setAttribute("style","fill:rgba(40,24,52,.78)")});
+   [].forEach.call(z.querySelectorAll(".bk>rect:not(.wn)"),function(e){e.setAttribute("style","fill:rgba(40,24,52,.5)")});
+   [].forEach.call(z.querySelectorAll(".ln,.ln path"),function(e){e.setAttribute("style","fill:none;stroke:rgba(40,24,52,.78);stroke-width:1.1")});
+   [].forEach.call(z.querySelectorAll(".sea path"),function(e){e.setAttribute("style","fill:none;stroke:rgba(255,240,220,.35);stroke-width:1.4")});
+   [].forEach.call(z.querySelectorAll(".wn"),function(e){e.setAttribute("style","fill:#ffd98a;opacity:"+(e.classList.contains("on")?".92":"0"))});
+   [].forEach.call(z.querySelectorAll(".mon,.bk"),function(e){e.removeAttribute("style")});
+   z.setAttribute("xmlns","http://www.w3.org/2000/svg");z.setAttribute("width","1120");z.setAttribute("height","420");z.setAttribute("preserveAspectRatio","xMidYMax slice");
+   var s=new XMLSerializer().serializeToString(z),im=new Image();im.onload=function(){cb(im)};im.onerror=function(){cb(null)};im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(s)}catch(e){cb(null)}}
+ try{var fl=document.fonts&&document.fonts.load?Promise.all([document.fonts.load("700 80px Caveat"),document.fonts.load("700 40px Outfit")]):Promise.resolve();fl.then(function(){sky(done)},function(){sky(done)})}catch(er){sky(done)}}
 function shareSpese(){var N=CFG.ppl,L=ledger(N),nm=names(),X=SP.x||[],o=["Spese del viaggio a "+PD.n+" ("+rangeTxt()+")","Totale: "+ec(L.total)+(N>1?" in "+N:""),""];
 if(N>1){o.push("Saldi:");nm.forEach(function(n,i){o.push("• "+n+": "+(L.net[i]>0?"deve ricevere ":L.net[i]<0?"deve dare ":"pari ")+ec(Math.abs(L.net[i])))});var st=settle(L.net);if(st.length){o.push("","Per saldare:");st.forEach(function(s){o.push("• "+nm[s.f]+" dà "+ec(s.a)+" a "+nm[s.t])})}o.push("")}
 o.push("Spese:");X.slice().sort(function(a,b){return (a.t||0)-(b.t||0)}).forEach(function(x){o.push("• "+dayTxt(x.t||0)+" · "+(x.d||catName(x.c))+": "+eur(x.a)+(N>1?" (pagato da "+nm[Math.min(N-1,x.p||0)]+")":""))});

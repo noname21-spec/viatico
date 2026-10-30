@@ -1,6 +1,11 @@
 # Dizionario IT -> EN dell'interfaccia (corrispondenza esatta del testo, spazi ignorati).
 # I testi delle guide delle città restano in italiano.
 D = {
+'Cosa ti è piaciuto': 'What you loved', 'Scegli tre momenti': 'Pick three moments',
+'Finiscono sul retro della cartolina.': 'They go on the back of the postcard.',
+'Il retro': 'The back', 'Caro me,': 'Dear me,', 'Manda la cartolina': 'Send the postcard',
+'Immagine': 'Image', 'Testo': 'Text', 'Link': 'Link', 'Gira la cartolina': 'Turn the postcard over',
+'Scelti. Scorri per vedere il retro.': 'Done. Swipe to see the back.', 'Scelto. Scorri per vedere il retro.': 'Done. Swipe to see the back.',
 # impostazioni e aspetto
 '"Sistema" segue le impostazioni del telefono': '"System" follows your phone settings',
 'Aspetto': 'Appearance', 'Sistema': 'System', 'Chiaro': 'Light', 'Scuro': 'Dark',
