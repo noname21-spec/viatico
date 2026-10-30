@@ -2904,3 +2904,11 @@ body:has(#hero.post) #tgr .tg:not(.pct){display:none!important}
 .hero.pre .sky{height:92px!important;opacity:.75!important}
 html.en body:has(#hero.post) .nbrow .ntl::before{content:"Trip finished · how did it go?"}
 .pcn{display:block;margin-top:3px;font:700 .74rem Outfit,system-ui,sans-serif;color:inherit;opacity:.9}
+/* v269 skyline in trasparenza di Costi e Consigli: sagome intere, senza animazioni a metà */
+.chero>.csky{height:auto!important;aspect-ratio:400/104;opacity:.22!important;-webkit-mask:linear-gradient(transparent,#000 45%)!important;mask:linear-gradient(transparent,#000 45%)!important}
+.chero>.csky *{animation:none!important;transition:none!important}
+.chero>.csky .mon,.chero>.csky .bk,.chero>.csky .ln{opacity:1!important;transform:none!important}
+.chero>.csky .far,.chero>.csky .flock{display:none}
+.chero>.csky{--skc:rgba(0,0,0,.85);--skc2:rgba(0,0,0,.55)}
+.pcf svg.sky *,.pcmi svg.sky *,.dhero svg.zsk .mon,.dhero svg.zsk .bk{animation:none!important}
+.pcf svg.sky .mon,.pcmi svg.sky .mon,.pcf svg.sky .bk,.pcmi svg.sky .bk,.pcf svg.sky .ln,.pcmi svg.sky .ln{opacity:1!important;transform:none!important}
