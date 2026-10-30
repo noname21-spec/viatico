@@ -1,6 +1,7 @@
 # Dizionario IT -> EN dell'interfaccia (corrispondenza esatta del testo, spazi ignorati).
 # I testi delle guide delle città restano in italiano.
 D = {
+'Saluti da': 'Greetings from', 'Scegli tre momenti': 'Pick three moments', 'Scorri per vedere il retro.': 'Swipe to see the back.',
 "Carta d'imbarco": 'Boarding pass',
 'città': 'cities', 'paesi': 'countries', 'paese': 'country', 'giorni in viaggio': 'days travelling', 'giorno in viaggio': 'day travelling', 'anni': 'years', 'anno': 'year',
 'Fuori programma': 'Off the plan', 'Un posto che hai visitato e non è in lista': 'A place you visited that is not listed', 'Aggiungi': 'Add',
@@ -317,3 +318,38 @@ F = [
 MON = {'gennaio':'January','febbraio':'February','marzo':'March','aprile':'April','maggio':'May','giugno':'June','luglio':'July','agosto':'August','settembre':'September','ottobre':'October','novembre':'November','dicembre':'December'}
 DAY = {'lunedì':'Monday','martedì':'Tuesday','mercoledì':'Wednesday','giovedì':'Thursday','venerdì':'Friday','sabato':'Saturday','domenica':'Sunday'}
 DAB = {'Lun':'Mon','Mar':'Tue','Mer':'Wed','Gio':'Thu','Ven':'Fri','Sab':'Sat','Dom':'Sun','LUN':'MON','MAR':'TUE','MER':'WED','GIO':'THU','VEN':'FRI','SAB':'SAT','DOM':'SUN'}
+
+# v265 frasi con il nome della città e nuove schermate (cartolina, taccuino, viaggi fatti)
+F += [
+(r"^Com'è andata a (.+)\? ?(.*)$", r'How was \1? \2'), (r"^Com'è andata\?$", 'How did it go?'),
+(r'^Saluti da (.+)$', r'Greetings from \1'), (r'^(.+) in un giorno$', r'\1 in a day'), (r'^(.+) in (\d+) giorni$', r'\1 in \2 days'),
+(r'^Atterraggio a (.+)$', r'Landing in \1'), (r'^Ultimo giorno a (.+)$', r'Last day in \1'), (r'^Il mio viaggio a (.+)$', r'My trip to \1'),
+(r'^Spiego la mappa di (.+)…$', r'Unfolding the map of \1…'), (r"^Inserisci l'orario di atterraggio a (.+)\.$", r'Enter your landing time in \1.'),
+(r'^(\d{1,2}:\d{2}) a (.+)$', r'\1 in \2'), (r'^Ne hai scelti (\d+) su (\d+)\.$', r'You picked \1 of \2.'),
+(r'^(\d+) tappe, dalle ([\d:]+) alle ([\d:]+)\.$', r'\1 stops, from \2 to \3.'),
+(r'^(\d+) tappe, dalle ([\d:]+) alle ([\d:]+)\. 1 fatta\.$', r'\1 stops, from \2 to \3. 1 done.'),
+(r'^(\d+) tappe, dalle ([\d:]+) alle ([\d:]+)\. (\d+) fatte\.$', r'\1 stops, from \2 to \3. \4 done.'),
+(r'^(\d+) giorni e (\d+) tappe\.$', r'\1 days and \2 stops.'), (r'^(\d+) giorni e (\d+) tappe\. 1 fatta\.$', r'\1 days and \2 stops. 1 done.'),
+(r'^(\d+) giorni e (\d+) tappe\. (\d+) fatte\.$', r'\1 days and \2 stops. \3 done.'),
+(r'^Aggiunto e timbrato: (.+)$', r'Added and stamped: \1'), (r'^Giorno (\d+)$', r'Day \1'),
+(r'^(.+) \(da fuori\)$', r'\1 (from outside)'), (r'^(.+) \(senza biglietti\)$', r'\1 (no tickets)'),
+(r"^Resta nell'itinerario, da fuori: (.+), circa (\d+) minuti$", r'Stays in your plan, from outside: \1, about \2 minutes'),
+(r'^Senza biglietto: lo vedi da fuori, circa (\d+) minuti per il giro intorno e le foto\.', r'No ticket: you see it from outside, about \1 minutes to walk around and take photos.'),
+(r'^Togli (.+)$', r'Remove \1'),
+]
+_IT_EN_CITY = {k: D[k] for k in ['Roma','Parigi','Londra','Barcellona','Lisbona','Berlino','Praga','Vienna','Bruxelles','Cracovia','Monaco','Milano','Firenze','Venezia','Napoli','Siviglia','Varsavia','Amburgo','Zurigo','Copenaghen','Stoccolma','Atene','Lubiana','Zagabria','Bucarest','Dublino','Edimburgo','Ginevra','Salisburgo','Vilnio','Vilnius','Malaga','Valencia','Oslo','Helsinki','Riga','Tallinn','La Valletta','Valletta','Sofia','Istanbul','Amsterdam','Porto','Madrid','Budapest','Reykjavík'] if k in D and D[k] != k}
+F += [(r'(^|[^A-Za-zÀ-ÿ])' + k + r'(?![A-Za-zÀ-ÿ])', r'\1' + v) for k, v in _IT_EN_CITY.items()]
+
+F += [
+(r'^Imbarco del volo(.*) alle ([\d:]+)$', r'Boarding for flight\1 at \2'), (r'^Tra (.+?)\. Decollo alle ([\d:]+)(.*)\.$', r'In \1. Take-off at \2\3.'),
+(r'^Buon volo(.*)! ✈️$', r'Have a good flight\1! ✈️'), (r'^Il decollo è alle ([\d:]+), imbarco dalle ([\d:]+)(.*)\.$', r'Take-off at \1, boarding from \2\3.'),
+(r'^Il decollo è alle ([\d:]+)(.*)\.$', r'Take-off at \1\2.'), (r'^Volo(.*) cancellato$', r'Flight\1 cancelled'),
+(r"^È ora di andare in aeroporto$", 'Time to head to the airport'), (r"^È ora di prendere i bagagli$", 'Time to pick up your bags'),
+(r"^Parti per l'aeroporto tra (.+)$", r'Leave for the airport in \1'), (r"^Torna all'alloggio per i bagagli tra (.+)$", r'Go back for your bags in \1'),
+(r'^Alle ([\d:]+)\. Decollo alle ([\d:]+)\.$', r'At \1. Take-off at \2.'),
+(r"^Ritorno all'aeroporto$", 'Back to the airport'), (r'^Portami in aeroporto$', 'Take me to the airport'), (r'^Portami in centro$', 'Take me to the centre'),
+(r'^Oggi si parte! ✈️$', 'We leave today! ✈️'), (r'^Domani si parte! ✈️$', 'We leave tomorrow! ✈️'), (r'^Mancano (\d+) giorni al viaggio$', r'\1 days to go'),
+(r'^Volo (\S+) alle ([\d:]+)\. Atterraggio a (.+?) alle ([\d:]+)\.(.*)$', r'Flight \1 at \2. Landing at \3 at \4.\5'), (r'^Volo (\S+)\. Atterraggio a (.+) alle ([\d:]+)(.*)$', r'Flight \1. Landing at \2 at \3\4'), (r'^Atterraggio a (.+) alle ([\d:]+)(.*)$', r'Landing at \1 at \2\3'),
+(r'^Check-out entro le ([\d:]+)\. Decollo alle ([\d:]+)\.$', r'Check-out by \1. Take-off at \2.'), (r'^Buongiorno! Giorno (\d+)$', r'Good morning! Day \1'),
+(r'^(.+), poi in alloggio\.$', r'\1, then to your accommodation.'),
+]

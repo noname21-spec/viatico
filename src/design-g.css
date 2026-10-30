@@ -2958,3 +2958,4 @@ body:has(#hero.post) #tgr .tg:not(.pct){display:none!important}
 #hero .live.board .lb{background:rgba(36,29,51,.08)!important;color:#241d33!important}
 #hero .live.board .lb2{background:#241d33!important;color:#f6f2ec!important}
 .hero.pre .sky{height:92px!important;opacity:.75!important}
+html.en body:has(#hero.post) .nbrow .ntl::before{content:"Trip finished · how did it go?"}
