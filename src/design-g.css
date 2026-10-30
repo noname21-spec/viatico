@@ -2889,9 +2889,11 @@ svg.sky .gnd{fill:var(--skc)!important}
 #spast .spx{all:unset;cursor:pointer;margin-left:6px;color:var(--ga);font-weight:700;text-decoration:underline}
 #spast .spon:focus-visible,#spast .spx:focus-visible{outline:3px solid var(--ga);outline-offset:2px;border-radius:6px}
 form[data-past="1"] #qd{display:none!important}
-body:has(#hero.post) .nbrow{display:none!important}
+body:has(#hero.post) .nbrow .ntl .ntx,body:has(#hero.post) .nbrow .ntl .ndot{display:none!important}
+body:has(#hero.post) .nbrow .ntl::before{content:"Viaggio concluso · com'è andata?";flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-left:12px;font:800 .66rem/1 Outfit,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 #dmine .tpcs .tk .ts,#dmine .tpcs .tk .stamp{display:none!important}
 #dmine .tpcs .tk .tkb{padding:8px 8px 12px!important;gap:8px!important;align-items:stretch!important;min-height:0!important}
 #dmine .tpcs .pcmi{width:100%;align-self:stretch;flex:none}
 #dmine .tpcs .tk .tm{text-align:left;align-items:flex-start}
 body:has(form[data-past="1"]) #sfast{display:none!important}
+body:has(#hero.post) .nfab{display:none!important}

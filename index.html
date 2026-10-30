@@ -4293,12 +4293,14 @@ svg.sky .gnd{fill:var(--skc)!important}
 #spast .spx{all:unset;cursor:pointer;margin-left:6px;color:var(--ga);font-weight:700;text-decoration:underline}
 #spast .spon:focus-visible,#spast .spx:focus-visible{outline:3px solid var(--ga);outline-offset:2px;border-radius:6px}
 form[data-past="1"] #qd{display:none!important}
-body:has(#hero.post) .nbrow{display:none!important}
+body:has(#hero.post) .nbrow .ntl .ntx,body:has(#hero.post) .nbrow .ntl .ndot{display:none!important}
+body:has(#hero.post) .nbrow .ntl::before{content:"Viaggio concluso · com'è andata?";flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-left:12px;font:800 .66rem/1 Outfit,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 #dmine .tpcs .tk .ts,#dmine .tpcs .tk .stamp{display:none!important}
 #dmine .tpcs .tk .tkb{padding:8px 8px 12px!important;gap:8px!important;align-items:stretch!important;min-height:0!important}
 #dmine .tpcs .pcmi{width:100%;align-self:stretch;flex:none}
 #dmine .tpcs .tk .tm{text-align:left;align-items:flex-start}
 body:has(form[data-past="1"]) #sfast{display:none!important}
+body:has(#hero.post) .nfab{display:none!important}
 
 </style>
 </head>
@@ -4535,7 +4537,7 @@ body:has(form[data-past="1"]) #sfast{display:none!important}
 <details><summary>Come cancello i miei dati?</summary><p>Dalle impostazioni, «Cancella tutti i dati» elimina viaggi, spese e liste da questo telefono. Per cancellare anche i dati dell'account scrivi all'assistenza.</p></details>
 </div>
 <div class="qrb"><a class="btn" id="hlmail" href="mailto:support.viaticum@gmail.com" translate="no">✉️ Scrivi all'assistenza</a><button type="button" class="btn ghost" id="hlcopy">📋 Copia i dettagli tecnici</button><a class="btn ghost" href="privacy.html" target="_blank" rel="noopener">🔒 Privacy e condizioni</a></div>
-<p class="hlver" id="hlver" translate="no">Viaticum · versione 260 · 30/10/2026</p>
+<p class="hlver" id="hlver" translate="no">Viaticum · versione 261 · 30/10/2026</p>
 <button type="button" class="btn ghost cls" id="hlclose">Chiudi</button></div></div>
 
 <div id="exp" aria-hidden="true"><div class="qrc xcard" role="dialog" aria-label="Spesa"><div id="xbody"></div></div></div>
