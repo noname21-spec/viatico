@@ -661,7 +661,21 @@ el.innerHTML='<span class="se">🏨</span><div><b>'+esc(h.name)+'</b><small>'+(h
 $("[data-edit]",el).addEventListener("click",function(){openSetup(false,2)})}
 
 document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest(".legp[data-mov]");if(!b)return;e.preventDefault();var t=$("#t-consigli");if(!t)return;t.checked=true;t.dispatchEvent(new Event("change",{bubbles:true}));setTimeout(function(){var z=[].slice.call(document.querySelectorAll("#zones .ctile")).filter(function(q){return /Muoversi/.test(q.textContent)})[0];if(z)z.click()},160)});
-function renderItin(){$("#ith").textContent=TRIP.multi?"Giorno "+(SEL+1)+" · "+DAYS[P.wd]+" "+dateObj(P.date).getUTCDate():"Itinerario";LPN=0;$("#steps").innerHTML=P.items.map(stepHTML).join("");LPN=0;buildWheel();buildCru();dayShareBtn();try{v212Itin()}catch(e){console.error(e)}}
+/* micro animazioni quando l'itinerario cambia: le tappe che si spostano scorrono, le nuove entrano, gli orari cambiati pulsano */
+var ITK="";function itRows(){return $$("#itinerario .gds .gdr")}
+function itKeys(){var seen={};return itRows().map(function(r){var b=$(".b",r),a=$(".a",r),k=(b?b.textContent:r.textContent).replace(/\s+/g," ").trim().slice(0,60);seen[k]=(seen[k]||0)+1;return {el:r,k:k+"#"+seen[k],t:a?a.textContent:""}})}
+function itY(e){var g=e.parentNode;return e.getBoundingClientRect().top-(g?g.getBoundingClientRect().top:0)}
+function itSnap(){var L=itKeys();if(!L.length)return null;var m={};L.forEach(function(o){m[o.k]={y:o.el.offsetParent?itY(o.el):null,t:o.t}});return {k:ITK,m:m,n:L.length}}
+function itAnim(sn){var key=(CFG&&CFG.dest)+"|"+(CFG&&CFG.date)+"|"+SEL,prevK=ITK;ITK=key;if(!sn||sn.k!==key||prevK!==key)return;
+if(document.documentElement.classList.contains("lite")||matchMedia("(prefers-reduced-motion: reduce)").matches||!Element.prototype.animate)return;
+var L=itKeys();if(!L.length)return;var vis=!!L[0].el.offsetParent,nw=L.filter(function(o){return !sn.m[o.k]}).length,gone=Object.keys(sn.m).filter(function(k){return !L.some(function(o){return o.k===k})}).length;
+if(!nw&&!gone&&L.every(function(o){return sn.m[o.k].t===o.t}))return;if(nw>Math.max(4,L.length*.6))return;
+var q=0,ez="cubic-bezier(.2,.8,.2,1)";L.forEach(function(o){var p=sn.m[o.k],e=o.el;
+if(!p){var d=Math.min(q++,5)*70;e.classList.add("itnew");e.animate([{opacity:0,transform:"translateX(-14px) scale(.96)"},{opacity:1,transform:"none"}],{duration:440,delay:d,easing:ez,fill:"backwards"});setTimeout(function(){e.classList.remove("itnew")},2000);return}
+if(vis&&p.y!=null){var dy=p.y-itY(e);if(Math.abs(dy)>3)e.animate([{transform:"translateY("+dy+"px)"},{transform:"none"}],{duration:480,easing:ez})}
+if(p.t!==o.t){var a=$(".a",e);if(a){a.classList.add("itt");setTimeout(function(){a.classList.remove("itt")},1300);a.animate([{transform:"translateY(-6px)",opacity:0},{transform:"none",opacity:1}],{duration:380,delay:140,easing:ez,fill:"backwards"})}}})
+if(gone&&!nw){var g=$("#itinerario .gds");if(g)g.animate([{transform:"scaleY(1.015)"},{transform:"none"}],{duration:300,easing:"ease-out"})}}
+function renderItin(){$("#ith").textContent=TRIP.multi?"Giorno "+(SEL+1)+" · "+DAYS[P.wd]+" "+dateObj(P.date).getUTCDate():"Itinerario";LPN=0;var _snap=null;try{_snap=itSnap()}catch(e){}$("#steps").innerHTML=P.items.map(stepHTML).join("");LPN=0;buildWheel();buildCru();dayShareBtn();try{v212Itin()}catch(e){console.error(e)}try{itAnim(_snap)}catch(e){}}
 
 /* cruscotto: riquadri meteo e alloggio sopra le tappe */
 function buildCru(){var old=$("#cru");if(old)old.remove();var tg=$("#tgr"),b=$(".cst",tg);

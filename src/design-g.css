@@ -2955,3 +2955,9 @@ html.en body:has(#hero.post) .nbrow .ntl::before{content:"Trip finished · how d
 #hero .wdet .wc .wca:has(.wcx) .wcd{order:2}
 #hero .wdet .wc .wca:has(.wcx) .wcs{order:3;flex:1 1 calc(50% - 4px)!important;width:auto!important;min-width:0!important;max-width:none!important}
 #hero .wdet .wc .wca:has(.wcx) .wcx{order:4;flex:1 1 calc(50% - 4px)!important;width:auto!important;padding:0 12px!important}
+/* v272: micro animazioni dell'itinerario che cambia */
+#itinerario .gdr.itnew{position:relative}
+#itinerario .gdr.itnew::after{content:"";position:absolute;inset:-3px -5px;border-radius:14px;background:color-mix(in srgb,var(--c1) 14%,transparent);box-shadow:0 0 0 1.5px color-mix(in srgb,var(--c1) 45%,transparent);pointer-events:none;animation:itglow 2s ease-out forwards}
+#itinerario .gdr .a.itt{color:var(--c1);transition:color 1s ease}
+@keyframes itglow{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){#itinerario .gdr.itnew::after{animation:none;opacity:0}}

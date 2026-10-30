@@ -3,7 +3,7 @@
 var stage=document.querySelector(".stage"),el=document.getElementById("lmap"),info=document.getElementById("info"),off=document.getElementById("mapoff");
 var map,tiles,gRoute,gStops,gFood,gPh,gWater,lines=[],ok=false,root=document.documentElement,mq=matchMedia("(prefers-color-scheme: dark)"),bnds=null,waterLoaded=false;
 var tg=document.getElementById("tg"),tp=document.getElementById("tp"),tw=document.getElementById("tw"),lgp=document.getElementById("lgp");
-function dark(){var cb=document.getElementById("dm");if(cb&&cb.checked)return true;var t=root.getAttribute("data-theme");return t?t==="dark":mq.matches}
+function dark(){var t=root.getAttribute("data-theme");return t?t==="dark":mq.matches}
 function esc(t){return PAR.esc(t)}
 function seg(ref){var s=PD.SEG[ref[0]],p=s.p,ia=-1,ib=-1;p.forEach(function(x,i){if(x[2]===ref[1])ia=i;if(x[2]===ref[2])ib=i});if(ia<0||ib<0)return null;
 var sl=ia<=ib?p.slice(ia,ib+1):p.slice(ib,ia+1).reverse();return{k:ref[0],c:s.c,n:s.n,p:sl}}
@@ -181,7 +181,7 @@ function soon(){clearTimeout(dcT);dcT=setTimeout(function(){requestAnimationFram
 map.on("zoomend moveend layeradd layerremove",soon);soon();
 document.querySelector(".mc-tr").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
 if(b.id==="zi")map.zoomIn();else if(b.id==="zo")map.zoomOut();else if(b.id==="zr"&&bnds)map.flyToBounds(bnds,{paddingTopLeft:[44,88],paddingBottomRight:[66,66],maxZoom:15,duration:.8});else if(b.id==="fs"){setTimeout(function(){map.invalidateSize()},350);setTimeout(function(){map.invalidateSize()},800)}});
-var dm=document.getElementById("dm");if(dm)dm.addEventListener("change",function(){setTimeout(function(){restyle();draw()},50)});try{mq.addEventListener("change",function(){restyle();draw()})}catch(e){}
+var dm=document.getElementById("dm");if(dm)dm.addEventListener("change",function(){setTimeout(function(){restyle();draw()},50)});try{mq.addEventListener("change",function(){restyle();draw()})}catch(e){}new MutationObserver(function(){setTimeout(function(){restyle();draw()},30)}).observe(root,{attributes:true,attributeFilter:["data-theme"]});setInterval(function(){if(!document.hidden&&el.classList.contains("dk")!==dark())restyle()},1500);
 var tab=document.getElementById("t-mappa");tab.addEventListener("change",function(){if(tab.checked)setTimeout(function(){map.invalidateSize();if(bnds)map.fitBounds(bnds,{paddingTopLeft:[44,88],paddingBottomRight:[66,66],maxZoom:15});anim()},150)});
 var legHL=null;window.__mapLeg=function(pts){if(!pts||pts.length<2)return;if(!tab.checked){tab.checked=true;tab.dispatchEvent(new Event("change",{bubbles:true}))}
 setTimeout(function(){map.invalidateSize();if(legHL)map.removeLayer(legHL);legHL=L.polyline(pts,{color:"#2f7df6",weight:7,opacity:.9,dashArray:"2 12",lineCap:"round",interactive:false}).addTo(map);
