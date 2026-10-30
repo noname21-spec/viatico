@@ -361,3 +361,4 @@ F += [
 ]
 F += [(r'^Al posto di (.+)$', r'Instead of \1'), (r'^Cambia tappa: (.+)$', r'Change stop: \1'), (r'^Sostituita con (.+)$', r'Replaced with \1'),
 (r'^(.+) · si vede anche da fuori$', r'\1 · also worth seeing from outside')]
+F += [(r'^Sulla strada per la prima tappa, vicino a (.+)\.$', r'On the way to the first stop, near \1.'), (r'^Qui vicino, senza allontanarti dal percorso\.$', 'Close by, without leaving your route.')]
