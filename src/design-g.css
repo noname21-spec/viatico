@@ -2863,3 +2863,35 @@ html.hc .hero .sky{opacity:.35!important}
 svg.sky .hills,svg.sky .cl1,svg.sky .cl2,svg.sky .sea,svg.sky .spk,svg.sky .flock,svg.sky .gl{display:none!important}
 svg.sky .gnd{fill:var(--skc)!important}
 .hero .sky{height:128px!important;width:100%!important;-webkit-mask-image:linear-gradient(transparent 0,#000 22%)!important;mask-image:linear-gradient(transparent 0,#000 22%)!important}
+
+/* v259 viaggi già fatti: cartoline in "I miei viaggi", tappe da segnare, modulo con date passate */
+.tpcs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 6px}
+.tpcs .tk{margin:0!important;min-width:0}
+.tpcs .tk .tkb{display:flex!important;flex-direction:column;align-items:stretch;gap:8px;padding:8px 8px 10px!important;height:auto!important;min-height:0!important;text-align:left}
+.tpcs .tk .ts,.tpcs .tk .stamp{display:none!important}
+.tpcs .tk .tm{padding:0 4px!important;min-width:0}
+.tpcs .tk .tm b{font-size:1rem!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tpcs .tk .tm small{display:none}
+.pcmi{position:relative;display:grid;place-items:center;aspect-ratio:3/2;border-radius:10px;overflow:hidden;isolation:isolate;background:linear-gradient(180deg,#f0a77f,#7b5a86 70%,#3d3453);box-shadow:inset 0 0 0 3px #fbf7ef,0 6px 12px -8px rgba(0,0,0,.45);transform:rotate(-1.2deg)}
+.tpcs .tk:nth-child(even) .pcmi{transform:rotate(1.2deg)}
+.pcmi b{position:relative;z-index:2;margin:0 0 16px;font:700 1.02rem/.95 Caveat,"Segoe Print","Bradley Hand",cursive;color:#fffaf0;text-align:center;transform:rotate(-4deg);text-shadow:0 1px 6px rgba(40,20,50,.5);padding:0 6px}
+.pcmi svg.sky{position:absolute!important;left:0;right:0;bottom:-4px;width:100%!important;height:auto;margin:0!important;z-index:1;--skc:rgba(40,24,52,.78);--skc2:rgba(40,24,52,.5)}
+.pcmi svg.sky .far{display:none}
+.tpcs .tk .tkd{grid-column:1/-1}
+.tnew.tpast{background:transparent!important;box-shadow:inset 0 0 0 1.5px var(--line,rgba(0,0,0,.15))!important;color:var(--ink)!important;margin-top:8px}
+.spast{margin:0 0 12px;padding:10px 14px;border-radius:14px;background:var(--gsoft,rgba(0,0,0,.05));color:var(--ink);font-size:.9rem;line-height:1.35}
+.spast[hidden]{display:none}
+.pchint{margin:4px 4px 10px;font-size:.88rem;color:var(--mute)}
+.hero.post~* .gdr,#itinerario .gdr[aria-pressed]{cursor:pointer}
+#itinerario .gdr[aria-pressed=false] .c{color:var(--ga);font-weight:700}
+#spast .spast[hidden],#spast .spon[hidden]{display:none}
+#spast .spon{all:unset;cursor:pointer;display:block;margin:0 0 12px;color:var(--ga);font-weight:700;font-size:.9rem;text-decoration:underline;text-underline-offset:3px;min-height:32px}
+#spast .spx{all:unset;cursor:pointer;margin-left:6px;color:var(--ga);font-weight:700;text-decoration:underline}
+#spast .spon:focus-visible,#spast .spx:focus-visible{outline:3px solid var(--ga);outline-offset:2px;border-radius:6px}
+form[data-past="1"] #qd{display:none!important}
+body:has(#hero.post) .nbrow{display:none!important}
+#dmine .tpcs .tk .ts,#dmine .tpcs .tk .stamp{display:none!important}
+#dmine .tpcs .tk .tkb{padding:8px 8px 12px!important;gap:8px!important;align-items:stretch!important;min-height:0!important}
+#dmine .tpcs .pcmi{width:100%;align-self:stretch;flex:none}
+#dmine .tpcs .tk .tm{text-align:left;align-items:flex-start}
+body:has(form[data-past="1"]) #sfast{display:none!important}

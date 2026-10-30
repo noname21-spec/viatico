@@ -1,6 +1,11 @@
 # Dizionario IT -> EN dell'interfaccia (corrispondenza esatta del testo, spazi ignorati).
 # I testi delle guide delle città restano in italiano.
 D = {
+'＋ Aggiungi un viaggio già fatto': '＋ Add a past trip', 'Scegli la città dove sei stato': 'Pick the city you visited',
+'Viaggio già fatto: scegli le date. Dopo potrai segnare le tappe che hai fatto davvero.': 'Past trip: pick the dates. Then you can mark the stops you actually did.',
+'Per un viaggio già fatto le date devono essere nel passato.': 'For a past trip the dates must be in the past.',
+'Tocca le tappe che hai fatto davvero: si segnano con il timbro.': 'Tap the stops you actually did to stamp them.',
+"Tocca se l'hai fatta": 'Tap if you did it', '✓ Fatta': '✓ Done',
 'Cosa ti è piaciuto': 'What you loved', 'Scegli tre momenti': 'Pick three moments',
 'Finiscono sul retro della cartolina.': 'They go on the back of the postcard.',
 'Il retro': 'The back', 'Caro me,': 'Dear me,', 'Manda la cartolina': 'Send the postcard',
