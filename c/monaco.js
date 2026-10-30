@@ -1,0 +1,284 @@
+(function(o){
+/* ===== Monaco di Baviera (dati verificati il 12 ottobre 2026) ===== */
+window.CITIES=window.CITIES||{};
+CITIES.monaco=(function(){
+var G=function(q){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q)};
+var FROM=CITIES.paris?CITIES.paris.FROM:[];
+var W=function(a){return {w:a}};
+var D7=function(x){return [x,x,x,x,x,x,x]};
+/* aeroporti */
+var PAR={
+MUC:{n:"Monaco Franz Josef Strauß (MUC)",s:"Flughafen München Franz Josef Strauß",url:"https://www.munich-airport.de/",live:"Monaco",inMin:45,buf:120,pos:[48.3537,11.7861],sd:"Aeroporto MUC · S-Bahn S8",rt:"Dall'aeroporto: S-Bahn S8 fino a Marienplatz, senza cambi (circa 40 minuti).",
+ arr:"Dall'Italia si entra in Germania senza controllo passaporti (spazio Schengen). Dopo il ritiro dei bagagli segui i cartelli verdi con la «S» per la stazione della S-Bahn, sotto il Centro tra i due terminal. Le linee S8 e S1 partono ognuna ogni 20 minuti, insieme circa ogni 10: la S8 passa per Ostbahnhof e arriva a Marienplatz, nel cuore del centro storico, in circa 40 minuti; la S1 fa il giro da ovest e arriva alla Hauptbahnhof, la stazione centrale, in circa 40 minuti. Per il centro storico prendi la S8 e scendi a Marienplatz. La S8 gira anche di notte (ogni 40 minuti tra l'1 e le 4). Dal 12 ottobre (11:30) al 16 ottobre 2026 (5:00) i treni non arrivano all'aeroporto per lavori: ci sono bus sostitutivi per la S8 fino a Ismaning e per la S1 fino a Neufahrn, poi si continua in treno. Calcola almeno mezz'ora in più.",
+ tk:"Biglietto: l'aeroporto è nella zona 5, quindi serve un biglietto per le zone M–5: la corsa singola costa 15,10 € (da guide, tariffa 2026). Conviene quasi sempre l'Airport-City-Day-Ticket, da 17,50 € (sito MVV), che vale su tutti i mezzi delle zone M–5 fino alle 6 del mattino dopo; esiste anche la versione di gruppo per 2–5 persone (prezzo sull'app MVV). Si compra alle macchinette rosse o blu davanti ai binari o sull'app MVV o MVGO; il biglietto cartaceo va timbrato prima di salire.",
+ gm:"München Flughafen Terminal S-Bahn",
+ tips:["Dal 12 al 16 ottobre 2026 i treni per l'aeroporto sono sostituiti da bus nel tratto finale: controlla sul sito dell'aeroporto o sull'app MVV il giorno prima.","C'è anche il Lufthansa Express Bus per la Hauptbahnhof, ogni 20 minuti, in circa 45 minuti (prezzo non letto sul sito: controllalo prima). Il taxi per il centro costa molto, di solito oltre 70 € (stima da guide).","Fino al 23 novembre 2026, per i lavori a Westkreuz, la S8 in città passa solo ogni 40 minuti in alcuni giorni: se la S8 non arriva, prendi la S1 fino alla Hauptbahnhof e poi la metro U4/U5 o la S-Bahn fino a Marienplatz."]},
+FMM:{n:"Memmingen (FMM)",s:"Allgäu Airport Memmingen",url:"https://www.allgaeu-airport.de/",live:"Memmingen",inMin:100,buf:120,pos:[47.9888,10.2395],sd:"Memmingen · bus per la Hauptbahnhof",rt:"Dall'aeroporto: bus Allgäu-Airport-Express fino alla stazione centrale di Monaco (circa 75 minuti), poi S-Bahn fino a Marienplatz.",
+ arr:"Memmingen è un piccolo aeroporto a circa 110 km a ovest di Monaco, usato da Ryanair e Wizz Air anche per diversi voli dall'Italia. Dall'Italia si entra in Germania senza controllo passaporti (spazio Schengen). Davanti al terminal parte il bus Allgäu-Airport-Express, che segue gli orari dei voli Ryanair e Wizz Air e di solito aspetta i voli in ritardo: arriva alla fermata 4 di Arnulfstraße, sul lato nord della Hauptbahnhof di Monaco, in circa 75 minuti. Da lì la S-Bahn (una qualsiasi linea verso est) arriva a Marienplatz in 3 minuti. In tutto sono circa 1 ora e 30.",
+ tk:"Biglietto del bus: 17 € in contanti all'autista, da 12 € online (da guide, prezzi del 2025, da controllare su allgaeu-airport-express.de); i bagagli ingombranti costano 5–9 € in più. Il Deutschlandticket e i biglietti delle ferrovie non valgono su questo bus. Per la S-Bahn dalla Hauptbahnhof a Marienplatz serve un biglietto zona M (4,20 €). In alternativa: bus locale fino alla stazione di Memmingen e treno regionale per München Hauptbahnhof (orari e prezzi su bahn.de, da controllare).",
+ gm:"Allgäu Airport Memmingen",
+ tips:["Il bus ha pochi posti per i bagagli ingombranti: se puoi, prenota online.","Il viaggio di ritorno in bus va calcolato con margine: in autostrada verso Memmingen ci sono spesso code, parti almeno 3 ore e mezza prima del volo.","Taxi e auto con conducente fino a Monaco costano molto (oltre 150 €, stima): il bus è la scelta più semplice."]}
+};
+/* linee (tracciati indicativi) */
+var SEG={
+s8:{c:"#3a3a3a",n:"S-Bahn S8 dall'aeroporto",p:[[48.3535,11.7861,"Aeroporto",2],[48.2265,11.6815,"Ismaning"],[48.1272,11.6046,"Ostbahnhof",2],[48.1337,11.5830,"Isartor"],[48.1371,11.5754,"Marienplatz",2],[48.1391,11.5660,"Karlsplatz (Stachus)",2],[48.1408,11.5600,"Hauptbahnhof",2]]},
+s1:{c:"#16c0e9",n:"S-Bahn S1",p:[[48.3535,11.7861,"Aeroporto",2],[48.3158,11.6655,"Neufahrn"],[48.1795,11.5120,"Moosach"],[48.1408,11.5600,"Hauptbahnhof",2]]},
+ss:{c:"#2e8b57",n:"S-Bahn (tratto centrale)",p:[[48.1408,11.5600,"Hauptbahnhof",2],[48.1391,11.5660,"Karlsplatz (Stachus)",2],[48.1371,11.5754,"Marienplatz",2]]},
+bus:{c:"#8a8a8a",n:"Bus Allgäu-Airport-Express",p:[[47.9888,10.2395,"Aeroporto di Memmingen",2],[48.0560,10.8720,"Landsberg / A96"],[48.1430,11.5590,"Hauptbahnhof (Arnulfstraße)",2]]},
+u3:{c:"#ec6726",n:"U-Bahn U3 (arancione)",p:[[48.1371,11.5754,"Marienplatz",2],[48.1425,11.5775,"Odeonsplatz",2],[48.1503,11.5806,"Universität",2],[48.1566,11.5843,"Giselastraße"],[48.1617,11.5866,"Münchner Freiheit",2],[48.1667,11.5808,"Bonner Platz"],[48.1687,11.5745,"Scheidplatz"],[48.1765,11.5705,"Petuelring"],[48.1795,11.5525,"Olympiazentrum",2]]},
+t17:{c:"#d82020",n:"Tram 17",p:[[48.1393,11.5665,"Karlsplatz (Stachus)",2],[48.1418,11.5612,"Hauptbahnhof",2],[48.1424,11.5487,"Hackerbrücke"],[48.1568,11.5168,"Romanplatz"],[48.1576,11.5060,"Schloss Nymphenburg",2]]}
+};
+var START=[48.1371,11.5754];
+/* tappe: p = priorità (1 = irrinunciabile), durate in minuti */
+var STOPS={
+marien:{t:"Marienplatz, Municipio e Glockenspiel",z:"A",p:1,min:30,id:45,max:70,pos:[48.1374,11.5761],q:"Neues Rathaus, Marienplatz, München",cls:"walk",sun:1,
+ d:"La piazza principale di Monaco, con la colonna della Madonna al centro e la facciata neogotica del Municipio nuovo (Neues Rathaus). Sulla torre c'è il Glockenspiel, il carillon con 32 figure a grandezza naturale che ballano e giostrano a cavallo.",
+ m:"La piazza è sempre aperta. Il Glockenspiel suona ogni giorno alle 11 e alle 12, da marzo a ottobre anche alle 17 (sito del Comune); lo spettacolo dura circa 12–15 minuti (da guide) e la piazza si riempie: arriva 10 minuti prima. Il cortile del Municipio si visita gratis."},
+frauen:{t:"Frauenkirche, il Duomo",z:"A",p:1,min:30,id:45,max:75,pos:[48.1387,11.5730],q:"Frauenkirche, München",cls:"",sun:1,
+ d:"La cattedrale di Monaco, in mattoni rossi, con le due torri dalle cupole a cipolla verdi che sono il simbolo della città. Dentro la navata è bianca e luminosa; vicino all'ingresso c'è l'impronta del diavolo (Teufelstritt) legata a una leggenda.",
+ m:"L'ingresso in chiesa è gratuito, ma non si visita durante le funzioni (orari sul sito del Duomo, non letti). Si può salire sulla torre sud con l'ascensore: lunedì–sabato 10–17, domenica e festivi 11:30–17, ultima salita 16:30; biglietto da 7,50 € (dal sito turistico ufficiale), online o al negozio del Duomo."},
+viktu:{t:"Viktualienmarkt e torre del Alter Peter",z:"A",p:1,min:45,id:70,max:110,pos:[48.1356,11.5764],q:"Viktualienmarkt, München",cls:"walk",sun:1,tk:[5,"Torre del Alter Peter (5 €)",1,0],
+ d:"Il mercato all'aperto più famoso di Monaco, con banchi di frutta, formaggi, salsicce e pane, e una birreria all'aperto sotto l'albero della cuccagna. Accanto c'è la Peterskirche, la chiesa più antica della città: dalla sua torre, il «vecchio Pietro», si vede tutto il centro e, nelle giornate limpide, le Alpi.",
+ m:"I banchi sono aperti lunedì–venerdì circa 8–20 e il sabato 8–15; la domenica il mercato è chiuso (sito del Comune; ogni banco ha i suoi orari). La torre del Alter Peter (circa 300 gradini, niente ascensore) è aperta da aprile a ottobre 9–19:30, da novembre a marzo 9–18:30 nei giorni feriali e 9–19:30 nel fine settimana; biglietto 5 €, solo alla cassa (sito del Comune, prezzi 2026)."},
+residenz:{t:"Residenz e Hofgarten",z:"A",p:1,min:90,id:120,max:180,pos:[48.1404,11.5783],q:"Residenz München, Residenzstraße 1",cls:"",sun:1,tk:[10,"Residenzmuseum (10 €)",1,1],
+ win:function(wd,d){var o=d.slice(5);return(o>="04-01"&&o<="10-19")?[9*60,17*60]:[10*60,16*60]},
+ d:"Il palazzo dei re di Baviera, il più grande palazzo cittadino della Germania: oltre cento sale, dall'Antiquarium rinascimentale alle stanze barocche e rococò. A parte c'è il Tesoro con le corone dei Wittelsbach. Dietro si apre il Hofgarten, il giardino di corte con il tempietto di Diana, e davanti l'Odeonsplatz con la Feldherrnhalle e la chiesa gialla dei Teatini.",
+ m:"Dal 1° aprile al 19 ottobre aperto ogni giorno 9–18 (ultimo ingresso 17); dal 20 ottobre al 31 marzo 10–17 (ultimo ingresso 16) (sito del Comune). Prezzi 2026 dell'amministrazione dei castelli bavaresi: Residenzmuseum 10 €, Tesoro 10 €, biglietto combinato 15 €, biglietto completo con il Teatro Cuvilliés 20 €; sotto i 18 anni si entra gratis. Zaini grandi vanno lasciati al guardaroba. Il Hofgarten è gratuito."},
+englg:{t:"Giardino Inglese e onda dell'Eisbach",z:"C",p:2,min:60,id:90,max:150,pos:[48.1435,11.5877],q:"Eisbachwelle, München",cls:"walk",multi:1,sun:1,
+ d:"Uno dei parchi cittadini più grandi del mondo, più grande di Central Park. All'ingresso sud, sotto il ponte di Prinzregentenstraße, i surfisti cavalcano l'onda del torrente Eisbach in mezzo alla città. Più avanti ci sono il tempietto del Monopteros sulla collinetta e la birreria all'aperto sotto la Torre cinese.",
+ m:"Il parco è gratuito e sempre aperto. Il surf sull'Eisbach è di nuovo permesso dall'8 maggio 2026 (sito del Comune, aggiornato ad agosto 2026), solo per surfisti esperti e mai dopo le 22: si guarda dal ponte. Fare il bagno è vietato. La birreria della Torre cinese apre di norma 10–23, ma da ottobre dipende dal tempo."},
+nymph:{t:"Castello e parco di Nymphenburg",z:"F",p:2,min:120,id:150,max:210,pos:[48.1583,11.5033],q:"Schloss Nymphenburg, München",cls:"",sun:1,tk:[10,"Castello di Nymphenburg (10 €)",1,1],
+ win:function(wd,d){var o=d.slice(5);return(o>="04-01"&&o<="10-15")?[9*60,17*60+40]:[10*60,15*60+40]},
+ d:"La residenza estiva dei Wittelsbach, un castello barocco lungo quasi 700 metri davanti a un grande canale. Dentro ci sono la Sala di pietra affrescata e la Galleria delle bellezze di re Ludovico I; nel parco, che si visita gratis, ci sono piccoli padiglioni come l'Amalienburg e il museo delle carrozze (Marstallmuseum).",
+ m:"Da aprile al 15 ottobre 9–18, dal 16 ottobre a marzo 10–16; ultimo ingresso circa 20 minuti prima (sito del Comune). Chiuso il martedì grasso, il 24, 25 e 31 dicembre e il 1° gennaio. Prezzi 2026 (amministrazione dei castelli bavaresi): castello 10 €, Marstallmuseum 8 €, biglietto completo 16 € in inverno e 20 € in estate; i padiglioni del parco sono chiusi d'inverno. Sotto i 18 anni si entra gratis. Il parco è gratuito."},
+pinak:{t:"Alte Pinakothek e quartiere dei musei",z:"B",p:3,min:90,id:120,max:180,pos:[48.1483,11.5700],q:"Alte Pinakothek, München",cls:"",cl:[0],sun:1,tk:[7,"Alte Pinakothek (7 €; la domenica 1 €)",1,1],
+ win:function(wd){return[10*60,(wd===1||wd===2)?19*60+30:17*60+30]},
+ d:"Una delle più grandi pinacoteche del mondo, con i maestri europei dal Trecento al Settecento: Dürer, Rubens, Rembrandt, Raffaello, Leonardo e Tiziano. Mentre la Neue Pinakothek è chiusa per restauro, alcuni suoi capolavori, come i Girasoli di Van Gogh, sono esposti qui.",
+ m:"Chiusa il lunedì; martedì e mercoledì 10–20, da giovedì a domenica 10–18 (sito del Comune). Biglietto 7 €, ridotto 5 €; la domenica 1 €; sotto i 18 anni gratis. Chiusa il martedì grasso, il 1° maggio, il 24, 25 e 31 dicembre. Il prato davanti al museo è un buon posto per una pausa."},
+asam:{t:"Asamkirche e Sendlinger Straße",z:"A",p:4,min:15,id:25,max:40,pos:[48.1351,11.5697],q:"Asamkirche, Sendlinger Straße 32, München",cls:"",sun:1,
+ win:function(wd,d){var o=d.slice(5),s=(o>="04-01"&&o<="10-31");return[(wd===4?13:9)*60,(s?19:18)*60]},
+ d:"Una piccola chiesa stretta tra le case della via dello shopping, costruita dai fratelli Asam come cappella privata: dentro è un'esplosione di stucchi dorati, marmi e affreschi barocchi, una delle chiese più spettacolari della Baviera.",
+ m:"Ingresso gratuito (offerte gradite). Da aprile a ottobre 9–19, da novembre a marzo 9–18; il venerdì apre solo alle 13 (sito del Comune). Durante le messe non si visita. All'ingresso ci sono alcuni gradini."},
+deutsches:{t:"Deutsches Museum",z:"D",p:4,min:120,id:180,max:240,pos:[48.1299,11.5835],q:"Deutsches Museum, Museumsinsel 1, München",cls:"",sun:1,tk:[16,"Deutsches Museum (16 €)",1,1],
+ win:function(){return[9*60,16*60+30]},
+ d:"Uno dei più grandi musei della scienza e della tecnica al mondo, su un'isola dell'Isar: aerei, navi, una miniera ricostruita, strumenti musicali, astronomia, robot e laboratori da toccare. Ideale anche con i bambini e nei giorni di pioggia.",
+ m:"Aperto ogni giorno 9–17, ultimo ingresso 16:30 (sito del Comune). Biglietto 16 €, ridotto 9 €, famiglia 33 €. Chiuso il 1° novembre, il 24, 25 e 31 dicembre, il 1° gennaio, il venerdì santo e il 1° maggio. È in restauro fino al 2028: alcune sezioni possono essere chiuse."},
+olympia:{t:"Parco Olimpico e BMW Welt",z:"F",p:5,min:90,id:120,max:180,pos:[48.1762,11.5530],q:"BMW Welt, Am Olympiapark 1, München",cls:"walk",multi:1,sun:1,
+ d:"Il parco delle Olimpiadi del 1972, con lo stadio dal tetto a tenda di vetro e una collina panoramica da cui si vede tutta la città. Dall'altra parte della strada c'è la BMW Welt, il salone futuristico della casa automobilistica, e il museo BMW a forma di coppa.",
+ m:"Il parco e la BMW Welt sono gratuiti. Il museo BMW è a pagamento e di norma chiuso il lunedì (da guide, prezzi e orari 2026 non letti: controlla bmw-welt.com). La torre olimpica (Olympiaturm) è chiusa per restauro fino al 2027 (sito del Comune)."}
+};
+/* collegamenti tra le tappe */
+function P2(a,b,min,mode,tab,tba,pts){LEGS[a+">"+b]={min:min,mode:mode,txt:tab,g:pts.f};LEGS[b+">"+a]={min:min,mode:mode,txt:tba,g:pts.r}}
+var LEGS={};
+P2("start","marien",2,"walk","Dalla stazione di Marienplatz sali in piazza: il Municipio è davanti a te.","Pochi passi fino alle scale della stazione di Marienplatz.",{f:[W([[48.1371,11.5754],[48.1374,11.5761]])],r:[W([[48.1374,11.5761],[48.1371,11.5754]])]});
+P2("start","frauen",5,"walk","A piedi per la Weinstraße o la Kaufingerstraße fino al Duomo, circa 5 minuti.","A piedi fino a Marienplatz, circa 5 minuti.",{f:[W([[48.1371,11.5754],[48.1380,11.5745],[48.1387,11.5730]])],r:[W([[48.1387,11.5730],[48.1380,11.5745],[48.1371,11.5754]])]});
+P2("marien","frauen",5,"walk","A piedi per la Weinstraße fino al Duomo, circa 5 minuti.","A piedi per la Weinstraße fino a Marienplatz, circa 5 minuti.",{f:[W([[48.1374,11.5761],[48.1380,11.5745],[48.1387,11.5730]])],r:[W([[48.1387,11.5730],[48.1380,11.5745],[48.1374,11.5761]])]});
+P2("start","viktu",5,"walk","A piedi dietro la chiesa di San Pietro fino al Viktualienmarkt, circa 5 minuti.","A piedi accanto alla chiesa di San Pietro fino a Marienplatz, circa 5 minuti.",{f:[W([[48.1371,11.5754],[48.1365,11.5764],[48.1356,11.5764]])],r:[W([[48.1356,11.5764],[48.1365,11.5764],[48.1371,11.5754]])]});
+P2("marien","viktu",4,"walk","A piedi accanto alla chiesa di San Pietro fino al mercato, circa 4 minuti.","A piedi accanto alla chiesa di San Pietro fino a Marienplatz, circa 4 minuti.",{f:[W([[48.1374,11.5761],[48.1365,11.5764],[48.1356,11.5764]])],r:[W([[48.1356,11.5764],[48.1365,11.5764],[48.1374,11.5761]])]});
+P2("frauen","viktu",7,"walk","A piedi per Marienplatz fino al Viktualienmarkt, circa 7 minuti.","A piedi per Marienplatz fino al Duomo, circa 7 minuti.",{f:[W([[48.1387,11.5730],[48.1374,11.5755],[48.1356,11.5764]])],r:[W([[48.1356,11.5764],[48.1374,11.5755],[48.1387,11.5730]])]});
+P2("start","residenz",8,"walk","A piedi per la Dienerstraße e la Max-Joseph-Platz, davanti al Teatro Nazionale, fino all'ingresso della Residenz, circa 8 minuti.","A piedi per la Max-Joseph-Platz e la Dienerstraße fino a Marienplatz, circa 8 minuti.",{f:[W([[48.1371,11.5754],[48.1384,11.5772],[48.1398,11.5786],[48.1404,11.5783]])],r:[W([[48.1404,11.5783],[48.1398,11.5786],[48.1384,11.5772],[48.1371,11.5754]])]});
+P2("marien","residenz",8,"walk","A piedi per la Dienerstraße fino alla Residenz, circa 8 minuti.","A piedi per la Dienerstraße fino a Marienplatz, circa 8 minuti.",{f:[W([[48.1374,11.5761],[48.1384,11.5772],[48.1404,11.5783]])],r:[W([[48.1404,11.5783],[48.1384,11.5772],[48.1374,11.5761]])]});
+P2("frauen","residenz",9,"walk","A piedi per la Maffeistraße fino alla Residenz, circa 9 minuti.","A piedi per la Maffeistraße fino al Duomo, circa 9 minuti.",{f:[W([[48.1387,11.5730],[48.1395,11.5755],[48.1404,11.5783]])],r:[W([[48.1404,11.5783],[48.1395,11.5755],[48.1387,11.5730]])]});
+P2("residenz","englg",13,"walk","A piedi attraverso il Hofgarten e sotto la Prinzregentenstraße fino al ponte sull'Eisbach, circa 13 minuti.","A piedi per il Hofgarten fino alla Residenz, circa 13 minuti.",{f:[W([[48.1404,11.5783],[48.1425,11.5800],[48.1430,11.5850],[48.1435,11.5877]])],r:[W([[48.1435,11.5877],[48.1430,11.5850],[48.1425,11.5800],[48.1404,11.5783]])]});
+P2("start","englg",20,"walk","A piedi per la Residenzstraße, l'Odeonsplatz e il Hofgarten fino al ponte sull'Eisbach, circa 20 minuti. In alternativa U3 o U6 fino a Odeonsplatz e 10 minuti a piedi.","A piedi per il Hofgarten, l'Odeonsplatz e la Residenzstraße fino a Marienplatz, circa 20 minuti.",{f:[W([[48.1371,11.5754],[48.1404,11.5775],[48.1425,11.5800],[48.1430,11.5850],[48.1435,11.5877]])],r:[W([[48.1435,11.5877],[48.1430,11.5850],[48.1425,11.5800],[48.1404,11.5775],[48.1371,11.5754]])]});
+P2("residenz","pinak",15,"walk","A piedi per l'Odeonsplatz e la Brienner Straße, poi la Barer Straße fino all'Alte Pinakothek, circa 15 minuti.","A piedi per la Barer Straße e la Brienner Straße fino all'Odeonsplatz e alla Residenz, circa 15 minuti.",{f:[W([[48.1404,11.5783],[48.1425,11.5765],[48.1440,11.5700],[48.1483,11.5700]])],r:[W([[48.1483,11.5700],[48.1440,11.5700],[48.1425,11.5765],[48.1404,11.5783]])]});
+P2("start","pinak",18,"metro","U3 o U6 da Marienplatz fino a Universität (2 fermate), poi 10 minuti a piedi per la Theresienstraße fino all'Alte Pinakothek.","A piedi fino a Universität, poi U3 o U6 fino a Marienplatz, circa 18 minuti.",{f:[["u3","Marienplatz","Universität"],W([[48.1503,11.5806],[48.1490,11.5740],[48.1483,11.5700]])],r:[W([[48.1483,11.5700],[48.1490,11.5740],[48.1503,11.5806]]),["u3","Universität","Marienplatz"]]});
+P2("englg","pinak",20,"walk","A piedi per la Veterinärstraße e la Schellingstraße fino all'Alte Pinakothek, circa 20 minuti.","A piedi fino al Giardino Inglese, circa 20 minuti.",{f:[W([[48.1435,11.5877],[48.1490,11.5830],[48.1495,11.5740],[48.1483,11.5700]])],r:[W([[48.1483,11.5700],[48.1495,11.5740],[48.1490,11.5830],[48.1435,11.5877]])]});
+P2("start","asam",7,"walk","A piedi per la Rosenstraße e la Sendlinger Straße, la via dei negozi, fino all'Asamkirche, circa 7 minuti.","A piedi per la Sendlinger Straße fino a Marienplatz, circa 7 minuti.",{f:[W([[48.1371,11.5754],[48.1362,11.5730],[48.1351,11.5697]])],r:[W([[48.1351,11.5697],[48.1362,11.5730],[48.1371,11.5754]])]});
+P2("frauen","asam",7,"walk","A piedi per la Färbergraben fino alla Sendlinger Straße e all'Asamkirche, circa 7 minuti.","A piedi per la Hackenstraße e la Färbergraben fino al Duomo, circa 7 minuti.",{f:[W([[48.1387,11.5730],[48.1368,11.5715],[48.1351,11.5697]])],r:[W([[48.1351,11.5697],[48.1368,11.5715],[48.1387,11.5730]])]});
+P2("viktu","asam",8,"walk","A piedi per la Rosental e la Sendlinger Straße fino all'Asamkirche, circa 8 minuti.","A piedi per la Sendlinger Straße e la Rosental fino al Viktualienmarkt, circa 8 minuti.",{f:[W([[48.1356,11.5764],[48.1360,11.5735],[48.1351,11.5697]])],r:[W([[48.1351,11.5697],[48.1360,11.5735],[48.1356,11.5764]])]});
+P2("start","deutsches",17,"walk","A piedi per la Tal fino all'Isartor, poi per la Zweibrückenstraße fino al ponte sull'Isar e al museo, circa 17 minuti. In alternativa S-Bahn fino a Isartor e 8 minuti a piedi.","A piedi per la Zweibrückenstraße, l'Isartor e la Tal fino a Marienplatz, circa 17 minuti.",{f:[W([[48.1371,11.5754],[48.1360,11.5790],[48.1340,11.5830],[48.1315,11.5850],[48.1299,11.5835]])],r:[W([[48.1299,11.5835],[48.1315,11.5850],[48.1340,11.5830],[48.1360,11.5790],[48.1371,11.5754]])]});
+P2("viktu","deutsches",14,"walk","A piedi per la Frauenstraße e lungo l'Isar fino al Deutsches Museum, circa 14 minuti.","A piedi per il lungofiume e la Frauenstraße fino al Viktualienmarkt, circa 14 minuti.",{f:[W([[48.1356,11.5764],[48.1340,11.5795],[48.1315,11.5830],[48.1299,11.5835]])],r:[W([[48.1299,11.5835],[48.1315,11.5830],[48.1340,11.5795],[48.1356,11.5764]])]});
+P2("start","nymph",32,"metro","S-Bahn da Marienplatz a Karlsplatz (Stachus), 1 fermata, poi tram 17 in direzione Amalienburgstraße fino a Schloss Nymphenburg (circa 20 minuti) e 5 minuti a piedi lungo il canale.","A piedi fino alla fermata Schloss Nymphenburg, tram 17 fino a Karlsplatz (Stachus) e S-Bahn fino a Marienplatz, circa 32 minuti.",{f:[["ss","Marienplatz","Karlsplatz (Stachus)"],["t17","Karlsplatz (Stachus)","Schloss Nymphenburg"],W([[48.1576,11.5060],[48.1583,11.5033]])],r:[W([[48.1583,11.5033],[48.1576,11.5060]]),["t17","Schloss Nymphenburg","Karlsplatz (Stachus)"],["ss","Karlsplatz (Stachus)","Marienplatz"]]});
+P2("start","olympia",22,"metro","U3 da Marienplatz fino a Olympiazentrum (circa 13 minuti), poi 5 minuti a piedi fino alla BMW Welt e al parco.","A piedi fino a Olympiazentrum, poi U3 fino a Marienplatz, circa 22 minuti.",{f:[["u3","Marienplatz","Olympiazentrum"],W([[48.1795,11.5525],[48.1770,11.5540],[48.1762,11.5530]])],r:[W([[48.1762,11.5530],[48.1770,11.5540],[48.1795,11.5525]]),["u3","Olympiazentrum","Marienplatz"]]});
+/* ritorno in aeroporto */
+var RET={
+MUC:{
+ A:{min:45,txt:"S-Bahn S8 da Marienplatz all'aeroporto (direzione Flughafen München), circa 40 minuti senza cambi, ogni 20 minuti; in alternativa la S1 dalla Hauptbahnhof. Biglietto zone M–5 (15,10 €) o Airport-City-Day-Ticket (da 17,50 €). Controlla il tabellone: in autunno 2026 ci sono lavori sulla linea e in alcuni giorni la S8 passa meno spesso.",g:[["s8","Marienplatz","Aeroporto"]]}},
+FMM:{
+ A:{min:95,txt:"S-Bahn da Marienplatz alla Hauptbahnhof (3 minuti), poi a piedi fino alla fermata 4 di Arnulfstraße, sul lato nord della stazione, e bus Allgäu-Airport-Express per l'aeroporto di Memmingen (circa 75 minuti; 17 € a bordo, da 12 € online). Il bus parte in base agli orari dei voli: controlla l'orario e parti con largo anticipo.",g:[["ss","Marienplatz","Hauptbahnhof"],["bus","Hauptbahnhof (Arnulfstraße)","Aeroporto di Memmingen"]]}}
+};
+var ARR={
+MUC:[["s8","Aeroporto","Marienplatz"]],
+FMM:[["bus","Aeroporto di Memmingen","Hauptbahnhof (Arnulfstraße)"],["ss","Hauptbahnhof","Marienplatz"]]
+};
+/* locali: h = orari lun→dom; "" = chiuso. Orari dalle schede online (ottobre 2026), non letti sui siti dei locali: da confermare. Prezzi indicativi, listini non visti */
+var V={
+frischhut:{n:"Schmalznudel – Café Frischhut",a:"Prälat-Zistl-Straße 8",z:"A",r:"4,5",pos:[48.1349,11.5746],h:["09:00-18:00","09:00-18:00","09:00-18:00","09:00-18:00","09:00-18:00","09:00-18:00",""],
+ d:"Un caffè minuscolo davanti al Viktualienmarkt dove friggono in vetrina la Schmalznudel, una ciambella schiacciata di pasta lievitata, e i Krapfen ripieni di marmellata, da mangiare caldi con un caffè.",pr:"Un dolce e un caffè costano pochi euro (listino non visto). Si paga solo in contanti. Domenica chiuso."},
+fraeulein:{n:"Café Fräulein",a:"Frauenstraße 11",z:"A",r:"4,8",pos:[48.1345,11.5780],h:["09:30-18:00","09:30-18:00","09:30-18:00","09:30-18:00","09:30-18:00","09:00-18:00","10:00-18:00"],
+ d:"Un piccolo caffè accanto al Viktualienmarkt, famoso per le girelle alla cannella in tanti gusti, le torte fatte in casa e i panini abbondanti per la colazione.",pr:"Una girella e un cappuccino stanno intorno ai 7–9 €, una colazione salata intorno ai 12–15 € (da recensioni, listino non visto)."},
+weisses:{n:"Weisses Bräuhaus im Tal",a:"Tal 7",z:"A",r:"4,4",pos:[48.1364,11.5785],h:D7("09:00-23:30"),
+ d:"La birreria della Schneider Weisse, a due passi da Marienplatz: sale di legno, tavoloni in comune e cucina bavarese. Dalle 9 si può fare la colazione tradizionale con Weißwurst, Brezn e birra bianca.",pr:"I piatti principali costano circa 16–25 €, mezzo litro di birra circa 5,50 € (da recensioni, listino non visto)."},
+schaebitz:{n:"Metzgerei Schäbitz",a:"Viktualienmarkt 2",z:"A",r:"4,9",pos:[48.1363,11.5767],h:["09:00-18:00","09:00-18:00","09:00-18:00","09:00-18:00","09:00-18:00","09:00-18:00",""],
+ d:"Una macelleria del Viktualienmarkt con un banco di panini caldi: Leberkässemmel, la fetta di polpettone al forno nel panino con la senape dolce, salsicce al formaggio e Weißwurst. Si mangia in piedi.",pr:"Due panini caldi circa 8–9 € in tutto (da recensioni, listino non visto). Domenica chiuso."},
+friedl:{n:"Landmetzgerei Friedl",a:"Viktualienmarkt 5",z:"A",r:"4,4",pos:[48.1358,11.5764],h:["","07:30-18:30","07:30-18:30","07:30-18:30","07:00-18:30","07:00-16:00",""],
+ d:"Una macelleria al mercato con l'arrosto di maiale con la cotenna croccante (Schweinebraten) servito nel panino, Leberkäse e Weißwurst: uno degli spuntini più amati del Viktualienmarkt.",pr:"Un panino con l'arrosto costa circa 4–5 € (da recensioni, listino non visto). Chiuso lunedì e domenica."},
+klosterwirt:{n:"Augustiner Klosterwirt",a:"Augustinerstraße 1",z:"A",r:"4,5",pos:[48.1386,11.5722],h:D7("09:30-23:59"),
+ d:"Una trattoria bavarese accanto al Duomo con la birra Augustiner, la più amata dai monacensi: Wiener Schnitzel, stinco di maiale croccante, Spätzle e strudel, in sale di legno o ai tavoli fuori.",pr:"Un piatto principale circa 16–26 € (listino non visto). Conviene prenotare la sera."},
+gloeckl:{n:"Nürnberger Bratwurst Glöckl am Dom",a:"Frauenplatz 9",z:"A",r:"4,3",pos:[48.1382,11.5742],h:["11:00-23:59","11:00-23:59","11:00-23:59","11:00-23:59","11:00-23:59","10:00-23:59","11:00-23:00"],
+ d:"Una locanda storica dietro il Duomo dove le piccole salsicce di Norimberga si cuociono sulla griglia a legna e arrivano su piatti di peltro con crauti e insalata di patate; la birra Augustiner esce dalle botti di legno.",pr:"Un piatto di salsicce con contorno circa 14–20 € (listino non visto)."},
+franziskaner:{n:"Zum Franziskaner",a:"Residenzstraße 9",z:"A",r:"4,4",pos:[48.1394,11.5772],h:D7("10:00-23:59"),
+ d:"Una grande trattoria tradizionale tra Marienplatz e la Residenz, con sale di legno e cucina bavarese abbondante: Weißwurst al mattino, Sauerbraten, cotoletta e Kaiserschmarrn.",pr:"Un piatto principale circa 16–25 € (listino non visto)."},
+ayinger:{n:"Ayinger am Platzl",a:"Platzl 1A",z:"A",r:"4,4",pos:[48.1379,11.5798],h:["11:00-23:00","11:00-23:00","11:00-23:00","11:00-23:00","11:00-23:59","11:00-23:59","11:00-23:00"],
+ d:"La trattoria del birrificio di Aying, di fronte all'Hofbräuhaus ma più tranquilla: arrosto di maiale, piatti di carne da dividere in due e birre del birrificio.",pr:"Un piatto principale circa 16–24 € (listino non visto)."},
+hb:{n:"Hofbräuhaus",a:"Platzl 9",z:"A",r:"4,3",pos:[48.1376,11.5797],h:D7("11:00-23:59"),
+ d:"La birreria più famosa del mondo, del 1589: sale enormi con le volte dipinte, la banda di ottoni, i boccali da un litro e un cortile alberato. È molto turistica ma è un'esperienza da fare una volta, anche solo per una birra e un Brezn.",pr:"Un litro di birra e un piatto caldo stanno intorno ai 25–30 € (listino non visto). Orari dalle schede online; il sito del Comune indica l'apertura alle 10:30 nel fine settimana."},
+puck:{n:"Café Puck",a:"Türkenstraße 33",z:"B",r:"4,4",pos:[48.1494,11.5752],h:["09:00-23:59","09:00-23:59","09:00-23:59","09:00-23:59","09:00-23:59","09:00-23:59","09:00-21:00"],
+ d:"Un caffè di quartiere vicino all'Università e alle Pinacoteche, frequentato da studenti: colazioni abbondanti tutto il giorno con il pane di un buon forno, piatti semplici a pranzo e a cena.",pr:"Una colazione completa circa 12–16 €, un piatto a pranzo circa 12–16 € (listino non visto)."},
+maxemanuel:{n:"Max Emanuel Brauerei",a:"Adalbertstraße 33",z:"B",r:"4,4",pos:[48.1527,11.5764],h:["12:00-23:00","12:00-23:00","12:00-23:00","12:00-23:00","12:00-23:59","12:00-23:59","12:00-22:00"],
+ d:"Una vecchia birreria della Maxvorstadt, lontana dai giri turistici, con un cortile alberato: cotoletta fritta nel burro, arrosto di maiale e birra Paulaner, tra studenti e gente del quartiere.",pr:"Un piatto principale circa 14–22 € (listino non visto). La sera conviene prenotare."},
+loewen:{n:"Löwenbräukeller",a:"Nymphenburger Straße 2 (Stiglmaierplatz)",z:"B",r:"4,4",pos:[48.1480,11.5585],h:["11:00-23:00","11:00-23:00","11:00-23:00","11:00-23:00","11:00-23:30","11:00-23:30","11:00-23:00"],
+ d:"La grande birreria del marchio Löwenbräu, con la torre e il leone sulla facciata: meno turistica di quelle del centro, porzioni enormi di stinco, arrosto e Brezn, a metà strada tra il centro e Nymphenburg.",pr:"Un piatto principale circa 16–25 € (listino non visto)."},
+chinaturm:{n:"Biergarten am Chinesischen Turm",a:"Englischer Garten 3",z:"C",r:"4,4",pos:[48.1521,11.5923],h:D7("10:00-23:00"),
+ d:"La birreria all'aperto più famosa del Giardino Inglese, con migliaia di posti sotto i castagni intorno alla pagoda di legno. Si prende da mangiare ai banchi self-service: mezzo pollo, salsicce, Brezn e Obatzda, la crema di formaggio alla birra.",pr:"Una birra da un litro e un piatto stanno intorno ai 20–25 € (listino non visto). In autunno e in inverno apre solo con il bel tempo: controlla prima."},
+seehaus:{n:"Seehaus im Englischen Garten",a:"Kleinhesselohe 3",z:"C",r:"4,3",pos:[48.1605,11.5983],h:["12:00-23:59","12:00-23:59","12:00-23:59","12:00-23:59","12:00-23:59","12:00-23:59","12:00-22:00"],
+ d:"Un ristorante con birreria sulla riva del lago Kleinhesseloher, nella parte nord del Giardino Inglese: il ristorante è un po' caro, il banco self-service sul lago è più economico e ha la vista migliore.",pr:"Al self-service un piatto circa 12–18 €, al ristorante i principali superano spesso i 25 € (da recensioni, listino non visto)."},
+au:{n:"Wirtshaus in der Au",a:"Lilienstraße 51",z:"D",r:"4,5",pos:[48.1290,11.5865],h:["17:00-23:00","17:00-23:00","17:00-23:00","17:00-23:00","17:00-23:00","10:00-23:00","10:00-23:00"],
+ d:"Una trattoria del 1901 a cinque minuti dal Deutsches Museum, famosa per i canederli (Knödel) in tante versioni, l'arrosto di maiale e l'anatra. Atmosfera di quartiere, molto frequentata dai monacensi.",pr:"Un piatto principale circa 15–24 € (listino non visto). Nei giorni feriali apre solo alle 17; la sera conviene prenotare."},
+ruffini:{n:"Ruffini",a:"Orffstraße 22-24",z:"F",r:"4,3",pos:[48.1581,11.5354],h:["","10:00-23:00","10:00-23:00","10:00-23:00","10:00-23:00","10:00-23:00","10:00-23:00"],
+ d:"Un caffè con panetteria e pasticceria a Neuhausen, sulla strada per Nymphenburg, con una terrazza sul tetto: torte fatte in casa, colazioni e piatti semplici, tra la gente del quartiere.",pr:"Un caffè con una fetta di torta circa 7–10 €, un piatto circa 12–18 € (listino non visto). Lunedì chiuso."},
+palmenhaus:{n:"Schlosscafé im Palmenhaus",a:"Schloss Nymphenburg 43",z:"F",r:"4,2",pos:[48.1593,11.4998],h:["","","","11:00-17:30","11:00-17:30","10:00-17:30","10:00-17:30"],
+ d:"Il caffè nella serra delle palme del parco di Nymphenburg, luminoso e tranquillo: torte, strudel e piatti caldi, con una parte self-service più veloce.",pr:"Un caffè con lo strudel circa 8–11 € (listino non visto). Aperto solo da giovedì a domenica (orari dalle schede online, da confermare)."}
+};
+/* quali locali per pasto e zona */
+var MEAL={
+col:{A:["frischhut","fraeulein","weisses"],B:["puck","fraeulein"],C:["puck","fraeulein"],D:["fraeulein","weisses"],F:["ruffini","puck"]},
+pra:{A:["schaebitz","friedl","franziskaner","klosterwirt"],B:["puck","maxemanuel","loewen"],C:["chinaturm","puck"],D:["weisses","schaebitz"],F:["palmenhaus","ruffini","loewen"]},
+cen:{A:["klosterwirt","gloeckl","weisses","ayinger","franziskaner","hb"],B:["maxemanuel","loewen"],C:["seehaus","maxemanuel"],D:["au","weisses"],F:["loewen","ruffini"]},
+snk:{A:["frischhut","fraeulein","schaebitz"],B:["puck","fraeulein"],C:["chinaturm","seehaus"],D:["fraeulein","frischhut"],F:["ruffini","palmenhaus"]}
+};
+/* giornate a tema per i viaggi di più giorni, in ordine di priorità */
+var BUNDLES=[
+{id:"centro",t:"Marienplatz, Duomo, Viktualienmarkt e Asamkirche",acts:["marien","frauen","viktu","asam"],need:200,core:1},
+{id:"resid",t:"Residenz e Giardino Inglese",acts:["residenz","englg"],need:230,core:1},
+{id:"nymph",t:"Nymphenburg e Parco Olimpico",acts:["nymph","olympia"],need:300,core:1},
+{id:"arte",t:"Alte Pinakothek e quartiere dei musei",acts:["pinak"],need:140},
+{id:"museo",t:"Deutsches Museum",acts:["deutsches"],need:200}
+];
+var ORDER=["marien","frauen","viktu","residenz","englg","nymph","pinak","asam","deutsches","olympia"];
+/* zone dell'alloggio: nome, centro indicativo, zona dei locali */
+var HZ=[
+["alt","Altstadt (centro storico)",[48.1374,11.5755],"A"],
+["hbf","Hauptbahnhof / Ludwigsvorstadt",[48.1395,11.5600],"A"],
+["max","Maxvorstadt / Università",[48.1500,11.5720],"B"],
+["sch","Schwabing / Lehel / Giardino Inglese",[48.1580,11.5850],"C"],
+["au","Isarvorstadt / Glockenbach / Au / Haidhausen",[48.1290,11.5800],"D"],
+["neu","Neuhausen / Nymphenburg",[48.1560,11.5350],"F"],
+["altro","Altra zona (scrivi l'indirizzo)",[48.1371,11.5754],""]
+];
+/* imposta di soggiorno: a Monaco non c'è (la Baviera la vieta; ricorso del Comune respinto a novembre 2025) */
+var TAX=[["h5","Hotel 4–5 stelle",0],["h3","Hotel fino a 3 stelle, B&B o appartamento",0],["host","Ostello o struttura economica",0],["no","Ospite di amici o parenti",0]];
+var ORD={
+col:[["Weißwurstfrühstück","la colazione bavarese: salsicce bianche di vitello bollite, un Brezn e la senape dolce, con la birra bianca. Si mangia prima di mezzogiorno."],["Brezn mit Butter","il pretzel bavarese tagliato a metà e spalmato di burro, con un caffè."],["Schmalznudel","una ciambella fritta schiacciata, specialità del Viktualienmarkt."]],
+pra:[["Leberkässemmel","una fetta calda di polpettone al forno nel panino, con la senape dolce."],["Schweinebratensemmel","un panino con l'arrosto di maiale e la cotenna croccante."],["Obatzda mit Brezn","crema di formaggio, burro, paprika e cipolla, da spalmare sul Brezn."],["Käsekrainer","salsiccia al formaggio con il pane, dal banco della macelleria."]],
+cen:[["Schweinsbraten mit Knödel","arrosto di maiale con il canederlo di patate e la salsa alla birra: il piatto simbolo della Baviera."],["Schweinshaxe","stinco di maiale arrosto, con la cotenna croccante; spesso basta per due."],["Nürnberger Rostbratwürstl","piccole salsicce alla griglia con crauti."],["Kaiserschmarrn o Apfelstrudel","la frittata dolce sminuzzata con la composta di prugne, o lo strudel di mele con la salsa alla vaniglia."]]
+};
+/* punti per foto e selfie (posizioni indicative) */
+var PH=[
+["📷","Il Municipio da Marienplatz","Foto","La facciata neogotica e la torre del Glockenspiel: la luce migliore è nel pomeriggio.",[48.1371,11.5754],"Marienplatz, München","marien"],
+["🤳","La colonna della Madonna","Selfie","Con la Mariensäule e il Municipio alle spalle, al centro della piazza.",[48.1372,11.5755],"Mariensäule, München","marien"],
+["📷","Le torri del Duomo dalla Kaufingerstraße","Foto","Le due cupole a cipolla spuntano sopra i tetti: inquadrale dalla strada pedonale.",[48.1383,11.5715],"Kaufingerstraße, München","frauen"],
+["📷","Monaco dal Alter Peter","Foto","Dalla torre si vedono il Municipio, le torri del Duomo e, nelle giornate limpide, le Alpi.",[48.1367,11.5756],"Alter Peter, München","viktu"],
+["📷","L'albero della cuccagna del Viktualienmarkt","Foto","Il palo bianco e blu con le figure dei mestieri, sopra i banchi del mercato.",[48.1355,11.5763],"Maibaum Viktualienmarkt, München","viktu"],
+["📷","Odeonsplatz e la chiesa dei Teatini","Foto","La facciata gialla e le due torri barocche, con la loggia della Feldherrnhalle accanto.",[48.1420,11.5773],"Theatinerkirche, München","residenz"],
+["🤳","Il tempietto del Hofgarten","Selfie","Il padiglione di Diana al centro del giardino di corte, con la Residenz dietro.",[48.1427,11.5800],"Dianatempel Hofgarten, München","residenz"],
+["📷","I surfisti dell'Eisbach","Foto","Dal ponte di Prinzregentenstraße si vedono i surfisti sull'onda.",[48.1435,11.5877],"Eisbachwelle, München","englg"],
+["📷","Il Monopteros","Foto","Il tempietto sulla collina del Giardino Inglese, con le torri del centro all'orizzonte.",[48.1497,11.5925],"Monopteros, München","englg"],
+["📷","Nymphenburg dal canale","Foto","Il castello si riflette nel canale davanti all'ingresso, con i cigni.",[48.1578,11.5070],"Schloss Nymphenburg, München","nymph"],
+["📷","La Asamkirche","Foto","Lo sguardo verso l'altare dorato, dal fondo della chiesa (senza flash).",[48.1351,11.5697],"Asamkirche, München","asam"],
+["🤳","Il tetto dello Stadio Olimpico","Selfie","Le vele trasparenti del tetto viste dalla riva del lago del parco.",[48.1740,11.5510],"Olympiastadion, München","olympia"]
+];
+/* avvisi (verificati il 12 ottobre 2026) */
+var AVV=[
+{from:"2026-10-12",to:"2026-10-16",t:"Aeroporto: niente treni fino al 16 ottobre",x:"Dal 12 ottobre (11:30) al 16 ottobre 2026 (5:00) la S-Bahn non arriva all'aeroporto per lavori: bus sostitutivi tra l'aeroporto e Ismaning per la S8 e tra l'aeroporto e Neufahrn per la S1, poi si prosegue in treno. Calcola almeno mezz'ora in più."},
+{from:"2026-10-12",to:"2026-12-07",t:"Lavori sulla S-Bahn in città",x:"Dal 16 ottobre (22:20) al 19 ottobre (4:40) la tratta centrale della S-Bahn è chiusa: la S1 arriva solo fino alla Hauptbahnhof e la S8 fa un giro più lungo; usa la metro per il centro. Dal 23 ottobre al 23 novembre, per i lavori a Westkreuz, la S8 passa in città solo ogni 40 minuti e in alcuni giorni non passa; dal 3 al 6 novembre servizio ridotto sulla tratta centrale. Altri lavori nei fine settimana del 13–16 e 27–30 novembre e del 4–7 dicembre. Controlla l'app MVV o MVGO prima di partire."},
+{from:"2026-10-12",to:"2026-11-27",t:"Metro: U3, U6 e U4 interrotte in alcuni tratti",x:"Fino al 27 novembre circa la U3 non passa tra Sendlinger Tor e Implerstraße (bus sostitutivo), la U6 è interrotta tra Goetheplatz e Implerstraße e la U4 tra Odeonsplatz e Max-Weber-Platz. Le tratte usate dalle tappe dell'itinerario (U3 e U6 da Marienplatz verso nord) funzionano normalmente."},
+{from:"2026-10-12",to:"2027-03-31",t:"Orari invernali di Residenz e Nymphenburg",x:"Dal 16 ottobre il castello di Nymphenburg è aperto 10–16 e dal 20 ottobre la Residenz 10–17. La torre olimpica è chiusa per restauro fino al 2027 e la Neue Pinakothek è chiusa per lavori (alcuni capolavori sono esposti all'Alte Pinakothek)."},
+{from:"2026-10-25",to:"2026-11-01",t:"1° novembre: festa in Baviera",x:"Il 1° novembre (Ognissanti) è festivo in Baviera: negozi chiusi, mezzi con orario festivo, Deutsches Museum chiuso."},
+{from:"2026-11-15",to:"2026-12-24",t:"Mercatino di Natale di Marienplatz",x:"Il Christkindlmarkt di Marienplatz è aperto dal 20 novembre al 24 dicembre 2026 (chiuso il 22 novembre), lunedì–sabato 10–21, domenica 10–20, il 24 dicembre 10–14. Il centro è molto più affollato, soprattutto nel fine settimana."},
+{from:"2026-12-20",to:"2026-12-31",t:"Natale: musei chiusi e negozi chiusi",x:"Il 24, 25 e 31 dicembre sono chiusi la Alte Pinakothek, il castello di Nymphenburg e il Deutsches Museum. Il 25 e il 26 dicembre i negozi sono chiusi."}
+];
+/* clima medio di Monaco (indicativo, massime/minime) */
+var CLIM=[[3,-4],[5,-4],[10,0],[14,3],[19,8],[22,11],[24,13],[24,13],[19,9],[14,5],[8,1],[4,-2]];
+return {G:G,FROM:FROM,PAR:PAR,SEG:SEG,START:START,STOPS:STOPS,LEGS:LEGS,RET:RET,ARR:ARR,V:V,MEAL:MEAL,ORD:ORD,PH:PH,AVV:AVV,CLIM:CLIM,BUNDLES:BUNDLES,ORDER:ORDER,HZ:HZ,TAX:TAX};
+})();
+
+/* ===== Monaco di Baviera: comportamenti e testi propri della città ===== */
+(function(C){
+function meta(it,meta,E){var WD=E.wd;
+if(it.id==="viktu"&&WD===6)meta+=" Oggi è domenica: i banchi del Viktualienmarkt sono chiusi; la torre del Alter Peter è aperta.";
+if(it.id==="viktu"&&WD===5)meta+=" Oggi è sabato: i banchi del mercato chiudono verso le 15.";
+if(it.id==="pinak"&&WD===6)meta+=" Oggi è domenica: l'Alte Pinakothek costa solo 1 €, ma c'è più gente.";
+if(it.id==="pinak"&&(WD===1||WD===2))meta+=" Oggi l'Alte Pinakothek resta aperta fino alle 20.";
+if(it.id==="asam"&&WD===4)meta+=" Oggi è venerdì: la Asamkirche apre solo alle 13.";
+if(it.id==="frauen"&&WD===6)meta+=" Oggi è domenica: la torre del Duomo apre alle 11:30 e la chiesa si visita fuori dalle messe.";
+if(it.id==="olympia"&&WD===0)meta+=" Oggi è lunedì: il museo BMW di norma è chiuso, la BMW Welt e il parco sono aperti.";
+return meta}
+Object.assign(C,{id:"monaco",n:"Monaco di Baviera",cn:"Germania",e:"🥨",flag:"🇩🇪",col:["#1f6fb4","#e8e8e8","#2b2b2b"],k:"monaco munich baviera germania",
+TZ:"Europe/Berlin",LL:[48.1374,11.5755],CC:"de",QN:"München",BK:"Munich",ARE:/m(ü|u)nchen|munich|monaco|\b8[01][0-9]{3}\b/i,VER:"12 ottobre 2026",
+Z0:"A",LANG:"de-DE",LANGN:"tedesco",WATER:"osm",TAXDEF:"h3",TAXMAXN:99,RETC:1,LUNCHO:0,DINO:0,
+hub:{n:"Marienplatz",q:"Marienplatz S-Bahn U-Bahn, München"},
+SINGLE:{acts:["marien","frauen","viktu","residenz","englg"],ins:[]},
+EXCL:[],
+DICON:{marien:"🕰️",frauen:"⛪",viktu:"🥨",residenz:"👑",englg:"🏄",nymph:"🏰",pinak:"🖼️",asam:"✨",deutsches:"🔬",olympia:"🏟️"},
+ZN:{A:"nella Altstadt",B:"a Maxvorstadt",C:"a Schwabing e al Giardino Inglese",D:"lungo l'Isar, nella Au",F:"a Neuhausen e Nymphenburg"},
+NEAR:{col:"caffè",pra:"banco del mercato o trattoria",cen:"birreria o trattoria",snk:"caffè o banco"},
+SE:{frischhut:"🍩",fraeulein:"🥐",weisses:"🍺",schaebitz:"🥪",friedl:"🥪",klosterwirt:"🍖",gloeckl:"🌭",franziskaner:"🍖",ayinger:"🍺",hb:"🍺",puck:"☕",maxemanuel:"🍺",loewen:"🍖",chinaturm:"🍺",seehaus:"🌊",au:"🥟",ruffini:"🍰",palmenhaus:"🌴"},
+TR:{one:4.2,cap:10.1,lbl:"U-Bahn, S-Bahn, tram e bus (MVV)",
+ air:{MUC:{one:15.1,n:"S-Bahn per l'aeroporto (zone M–5, 15,10 €)"},FMM:{one:17,n:"Bus Allgäu-Airport-Express (17 € a bordo)"}},
+ passes:[
+ {n:"Biglietto giornaliero zona M",d:1,max:1,p:10.1,note:"Il biglietto giornaliero (Single-Tageskarte) per la zona M costa 10,10 € e vale su U-Bahn, S-Bahn, tram e bus in tutta la città fino alle 6 del mattino dopo. Per l'aeroporto serve quello M–5 o l'Airport-City-Day-Ticket (da 17,50 €)."},
+ {n:"Biglietto settimanale zona M",d:7,p:23.8,only:function(T){return T.n>=4},note:"Il biglietto settimanale (IsarCard Woche) per la zona M costa 23,80 € e vale su tutti i mezzi della città per una settimana (dal sito del Comune; controlla sull'app MVV i giorni di validità). Non vale per l'aeroporto."}],
+ note:"Prezzi MVV dal 1° gennaio 2026 (sito del Comune e del MVV): corsa singola zona M 4,20 €, Kurzstrecke (fino a 4 fermate di bus o tram, o 2 di metro) 2,10 €, biglietto giornaliero zona M 10,10 €, giornaliero di gruppo (fino a 5 persone) da 19,70 €, carnet a strisce (Streifenkarte) 18,70 €, Airport-City-Day-Ticket da 17,50 €. Con il giornaliero singolo viaggiano gratis fino a tre bambini da 6 a 14 anni. Il Deutschlandticket (63 € al mese, abbonamento) vale su tutti i mezzi urbani e regionali della Germania. I biglietti di carta vanno timbrati prima di salire; quelli dell'app MVV o MVGO no."},
+FOOD:{co:[9,"Colazione (caffè o Weißwurst)"],pr:[10,"Pranzo (panino del mercato o piatto semplice)"],ce:[22,"Cena (cucina bavarese in birreria)"],sp:[5,"Spuntini e dolci"]},
+T:{ride:"In metro, S-Bahn o tram",move:"tutto a piedi, in metro (U-Bahn), S-Bahn o tram",bags:"«Kann ich meine Koffer hier lassen?»",bagsPM:"«Kann ich meine Koffer bis heute Nachmittag hier lassen?»",bagsAM:"«Kann ich meine Koffer bis Mittag hier lassen?»",
+pra:"Un banco del mercato o una trattoria",praZ:{A:"Il Viktualienmarkt è il posto migliore per un pranzo veloce ed economico: le macellerie servono panini caldi con l'arrosto o il Leberkäse. Le birrerie intorno a Marienplatz sono piene a mezzogiorno: se vuoi sederti arriva prima delle 12.",C:"Al Giardino Inglese le birrerie all'aperto sono self-service: prendi il vassoio, scegli ai banchi e paga alla cassa. Il bicchiere ha un deposito (Pfand) che ti viene restituito."},
+freeLong:"Qualche idea: una passeggiata nel Hofgarten o lungo l'Isar, una birra all'aperto al Giardino Inglese, un dolce al Viktualienmarkt o un riposo all'alloggio.",
+freeShort:"Riposati all'alloggio, oppure siediti al Hofgarten o lungo l'Isar.",
+remind:"Domenica i negozi e il Viktualienmarkt sono chiusi; il lunedì l'Alte Pinakothek è chiusa. Per salire sulla torre del Duomo conviene il biglietto online.",
+rain1:"Al coperto: la Residenz, l'Alte Pinakothek, il Deutsches Museum, la Asamkirche, il Duomo e le grandi birrerie.",
+rainM:"Al coperto: Residenz, castello di Nymphenburg, Alte Pinakothek, Deutsches Museum, BMW Welt e le birrerie storiche.",
+water:"Riempite la borraccia: l'acqua del rubinetto di Monaco arriva dalle valli prealpine ed è tra le migliori d'Europa. Attivate «Acqua» sulla mappa per le fontanelle più vicine.",
+kitchen:"A Monaco si pranza tra le 11:30 e le 14 e si cena dalle 18: le birrerie del centro servono di solito tutto il giorno, i locali di quartiere spesso chiudono tra i due servizi. La Weißwurst si mangia per tradizione solo al mattino.",
+night:[["🍺","Mezzo litro (Halbe) o un litro (Maß) di birra in una birreria storica è il modo monacense di chiudere la giornata."],["🕙","Le cucine servono fino alle 22–23. Di notte girano tram e bus notturni (linee N) e la S8 per l'aeroporto passa anche nelle ore piccole."],["☕","Molti caffè aprono alle 9: la colazione di domani è nella prima tappa dell'itinerario."]],
+bottle:"Borraccia vuota (da riempire: l'acqua del rubinetto è ottima)",
+fuso:"Monaco ha lo stesso fuso orario dell'Italia",
+plug:"Caricabatterie (la spina è quella europea, nessun adattatore)",
+foodNote:"I pasti sono stime per banchi del mercato, caffè e birrerie tradizionali: una colazione sta intorno ai 7–12 €, un pranzo veloce intorno ai 5–10 € e una cena in birreria con un piatto principale e una birra intorno ai 22–30 €. Molte birrerie accettano la carta, ma i banchi del mercato e alcuni caffè vogliono contanti.",
+taxNote:"A Monaco di Baviera non si paga l'imposta di soggiorno: la Baviera la vieta per legge e a novembre 2025 la Corte costituzionale bavarese ha respinto il ricorso del Comune, che vuole portare la questione alla Corte costituzionale federale. Se dovesse cambiare, la struttura lo indicherà nell'annuncio.",
+mcrit:"Criteri: almeno 4 stelle su Google, banchi del mercato, caffè di quartiere e birrerie tradizionali, niente catene. Colazione e pranzo restano sotto i 15 € a persona; una cena in birreria costa di più (20–30 €). Orari dalle schede online (ottobre 2026), non letti sui siti dei locali; prezzi indicativi, da recensioni: controllali qualche giorno prima."},
+fx:{meta:meta},
+AIRTIPS:["Dall'aeroporto di Monaco la S8 arriva a Marienplatz in circa 40 minuti, senza cambi. Dal 12 al 16 ottobre 2026 il tratto finale è sostituito da bus.","💧 Passa i controlli con la borraccia vuota e riempila dopo: in aeroporto l'acqua costa cara."],
+CHECK:[["tk","Biglietto per l'aeroporto (zone M–5, 15,10 €, o Airport-City-Day-Ticket da 17,50 €) e biglietto giornaliero zona M (10,10 €): alle macchinette o sull'app MVV",function(E){return true}],["res","Biglietto per la Residenz (10 €; combinato con il Tesoro 15 €)",["residenz"]],["nym","Biglietto per il castello di Nymphenburg (10 €)",["nymph"]],["pin","Biglietto per l'Alte Pinakothek (7 €; la domenica 1 €; chiusa il lunedì)",["pinak"]],["dm","Biglietto per il Deutsches Museum (16 €)",["deutsches"]],["card","Carta d'identità o passaporto in corso di validità"],["cash","Qualche euro in contanti per i banchi del Viktualienmarkt, la torre del Alter Peter e i caffè"]],
+NUM:{1:["ein","ain"],2:["zwei","zvai"],3:["drei","drai"],4:["vier","fir"],5:["fünf","fünf"],6:["sechs","zeks"],7:["sieben","ZI-ben"],8:["acht","acht"],9:["neun","noin"],10:["zehn","zen"]},
+PHR:function(N,M){var nu=this.NUM[Math.min(10,N)]||this.NUM[2];var fr=[["Buongiorno / Buonasera","Grüß Gott / Guten Abend","grüs got / GU-ten A-bent"],["Ciao (informale, in Baviera)","Servus","SER-vus"],[N===1?"Un tavolo per una persona, per favore":"Un tavolo per "+N+", per favore","Einen Tisch für "+(N===1?"eine Person":nu[0])+", bitte","AI-nen tish für "+(N===1?"AI-ne per-ZON":nu[1])+", BIT-te"],["Mezzo litro di birra chiara, per favore","Eine Halbe Helles, bitte","AI-ne HAL-be HEL-les, BIT-te"],["Acqua del rubinetto, per favore","Leitungswasser, bitte","LAI-tungs-vas-ser, BIT-te"],["Il conto, per favore","Zahlen, bitte","TSA-len, BIT-te"],["Posso pagare con la carta?","Kann ich mit Karte zahlen?","kan ich mit KAR-te TSA-len"],["Quanto costa?","Wie viel kostet das?","vi fil KOS-tet das"],["Dov'è la metro?","Wo ist die U-Bahn?","vo ist di U-ban"],["Qual è il treno per l'aeroporto?","Welche S-Bahn fährt zum Flughafen?","VEL-che ES-ban fert tsum FLUG-ha-fen"]];
+if(M)fr=fr.concat([["Ho una prenotazione","Ich habe eine Reservierung","ich HA-be AI-ne re-ser-VI-rung"],["Posso lasciare i bagagli?","Kann ich meine Koffer hier lassen?","kan ich MAI-ne KOF-fer hir LAS-sen"],["A che ora è il check-out?","Um wie viel Uhr ist das Check-out?","um vi fil ur ist das tsek-AUT"]]);
+return fr.concat([["Mi scusi","Entschuldigung","ent-SHUL-di-gung"],["Grazie mille!","Vielen Dank!","FI-len dank"]])},
+taxTxt:function(tx){return "A Monaco di Baviera non c'è un'imposta di soggiorno"+(tx&&tx[0]==="no"?", e comunque non si paga se sei ospite di amici o parenti":"")+": la Baviera la vieta per legge e a novembre 2025 la Corte costituzionale bavarese ha respinto il ricorso del Comune. Se dovesse cambiare, la struttura lo indicherà nell'annuncio."},
+STAYTIPS:["U-Bahn, S-Bahn, tram e bus si usano con lo stesso biglietto MVV. Di notte la metro si ferma per qualche ora: ci sono tram e bus notturni (linee N), e la S8 per l'aeroporto gira tutta la notte."],
+ZONES:[
+["🚇 Metro, S-Bahn e biglietti",["Un solo biglietto vale su U-Bahn, S-Bahn, tram e bus: la corsa singola zona M costa 4,20 €, il giornaliero 10,10 €, la Kurzstrecke (poche fermate) 2,10 €.","L'aeroporto è nella zona 5: serve il biglietto M–5 (15,10 €) o l'Airport-City-Day-Ticket (da 17,50 €), che vale tutto il giorno anche in città.","I biglietti di carta vanno timbrati prima di salire. I controllori sono in borghese e la multa è salata: tieni sempre il biglietto.","In autunno 2026 ci sono molti lavori sulla S-Bahn e su alcune linee della metro: guarda l'app MVV o MVGO prima di muoverti."]],
+["🏛️ Centro: Marienplatz, Duomo e Residenz",["Marienplatz, il Duomo, il Viktualienmarkt, la Asamkirche e la Residenz sono tutti a meno di 10 minuti a piedi l'uno dall'altro.","Il Glockenspiel suona alle 11 e alle 12 (da marzo a ottobre anche alle 17): la piazza si riempie, arriva qualche minuto prima.","Per la vista sul centro c'è la torre del Alter Peter (5 €, 300 gradini) o la torre del Duomo con l'ascensore (da 7,50 €)."],["marien","frauen","viktu","residenz","asam"]],
+["🏰 Nymphenburg e il Parco Olimpico",["Per Nymphenburg prendi il tram 17 da Karlsplatz (Stachus) o dalla Hauptbahnhof fino a Schloss Nymphenburg.","Il parco del castello è gratuito; d'inverno i padiglioni del parco sono chiusi.","Il Parco Olimpico e la BMW Welt sono alla fermata Olympiazentrum della U3; la torre olimpica è chiusa fino al 2027."],["nymph","olympia"]],
+["🍺 Birrerie e Biergarten",["Nelle birrerie ci si siede ai tavoli in comune: chiedi «Ist hier noch frei?» (c'è posto?). I tavoli con il cartello «Stammtisch» sono riservati ai clienti abituali.","Una Maß è un litro di birra, una Halbe mezzo litro. Esiste sempre la birra analcolica (alkoholfrei) e lo Spezi (cola e aranciata).","Nei Biergarten self-service si paga un deposito (Pfand) sul boccale: riportalo al banco per riaverlo."],["hb","klosterwirt","chinaturm"]],
+["🌅 Un giorno fuori Monaco",["Il castello di Neuschwanstein è a circa 2 ore di treno e bus (via Füssen): conviene il biglietto regionale di gruppo e la prenotazione dell'ingresso.","Il memoriale del campo di concentramento di Dachau è a circa 40 minuti con la S2 e il bus (ingresso gratuito, chiuso il lunedì: da controllare)."]]],
+WTIPS:["L'acqua del rubinetto di Monaco è ottima: puoi chiederla in ogni locale («Leitungswasser, bitte») e riempire la borraccia, anche se nelle birrerie non sempre la servono gratis.","Attivate «Acqua» sulla mappa: mostra le fontanelle vicine al percorso, dai dati di OpenStreetMap.","Molti caffè riempiono la borraccia se la chiedi gentilmente.","Le fontane monumentali non sono da bere."],
+GEN:["La Germania usa l'euro e fa parte dello spazio Schengen: per entrare basta la carta d'identità valida.","Monaco ha lo stesso fuso orario dell'Italia.","Mancia: si arrotonda al tavolo (5–10%), dicendo la cifra al cameriere al momento di pagare, non lasciandola sul tavolo.","La domenica e nei festivi i negozi e il Viktualienmarkt sono chiusi; restano aperti ristoranti, birrerie e quasi tutti i musei. Il 1° novembre è festivo in Baviera.","Molti banchi del mercato e alcuni caffè accettano solo contanti: porta qualche euro.","Sulle bottiglie e sui boccali c'è spesso un deposito (Pfand) da 0,25 € in su: riportali per riaverlo.","Le piste ciclabili sono sul marciapiede, spesso di colore rosso: non camminarci sopra.","Controlla orari e prezzi dei locali qualche giorno prima: possono cambiare."],
+NUMS:'<li><a class="call" href="tel:112">📞 112</a> Emergenze (ambulanza, vigili del fuoco) · <a class="call" href="tel:110">📞 110</a> Polizia</li><li>🚇 Trasporti pubblici, anche per oggetti smarriti: <a href="https://www.mvg.de/" target="_blank" rel="noopener">mvg.de</a> · biglietti e lavori: <a href="https://www.mvv-muenchen.de/" target="_blank" rel="noopener">mvv-muenchen.de</a>.</li><li>🇮🇹 Consolato Generale d\'Italia a Monaco di Baviera: <a href="https://consmonacodibaviera.esteri.it" target="_blank" rel="noopener">consmonacodibaviera.esteri.it</a>, per documenti persi o rubati.</li>',
+STRK:'Al 12 ottobre 2026 non ho trovato scioperi annunciati nei trasporti di Monaco. Nel 2026 la MVG (metro, tram e bus) ha avuto uno sciopero il 18 e 19 marzo. Gli scioperi vengono annunciati con pochi giorni di preavviso: nei giorni prima controllate <a href="https://www.mvg.de/" target="_blank" rel="noopener">mvg.de</a> e, per la S-Bahn e i treni, <a href="https://www.bahn.de/" target="_blank" rel="noopener">bahn.de</a>.',
+SKY:'<g class="sk-back" style="--k:0"><circle cx="352" cy="26" r="11"/><path d="M0 106 V96 Q40 80 90 88 Q120 92 140 106 Z"/></g>'+
+'<g class="sk-main">'+
+'<g style="--k:1"><path d="M40 106 V40 H46 V106 Z M33 40 H53 V32 H33 Z M36 32 H50 V27 H36 Z M42 27 V6 H44 V27 Z M54 106 Q68 84 86 96 Q94 88 104 106 Z"/></g>'+
+'<g style="--k:2"><path d="M112 106 V72 H180 V106 Z M126 72 Q146 32 166 72 Z M143 42 V30 H149 V42 Z M114 72 V52 H126 V72 Z M166 72 V52 H178 V72 Z M114 52 Q120 40 126 52 Z M166 52 Q172 40 178 52 Z"/></g>'+
+'<g style="--k:3"><path d="M194 106 V66 H268 V106 Z M222 66 V30 H236 V66 Z M220 30 H238 L229 10 Z M228 10 V2 H230 V10 Z M194 66 L200 56 L206 66 Z M256 66 L262 56 L268 66 Z"/></g>'+
+'<g style="--k:4"><path d="M296 106 V70 L306 60 H366 L376 70 V106 Z M300 70 V38 H320 V70 Z M352 70 V38 H372 V70 Z M300 38 Q310 12 320 38 Z M352 38 Q362 12 372 38 Z M309 18 V10 H311 V18 Z M361 18 V10 H363 V18 Z"/></g>'+
+'<g style="--k:5"><path d="M386 106 V62 H392 V106 Z M383 62 H395 V57 H383 Z M388 57 V46 H390 V57 Z M384 46 Q389 36 394 46 Z"/></g>'+
+'</g>'+
+'<g class="sk-lines"><path d="M204 76 v30 M214 76 v30 M246 76 v30 M258 76 v30"/><path d="M226 44 h6 M226 54 h6"/><path d="M120 82 h52 M120 92 h52"/><path d="M306 50 h8 M358 50 h8"/></g>'+
+'<g class="sk-spark" style="--k:6"><circle cx="43" cy="12" r="1.6"/><circle cx="146" cy="24" r="1.3"/><circle cx="229" cy="6" r="1.3"/><circle cx="310" cy="8" r="1.3"/><circle cx="362" cy="8" r="1.3"/><circle cx="389" cy="32" r="1.3"/></g>'+
+'<rect class="sk-ground" x="0" y="105" width="400" height="2.5" rx="1.2" style="--k:8"/>'
+});
+})(CITIES.monaco);
+
+;var n=window.CITIES["monaco"];if(n&&o&&n!==o)for(var k in o)if(k!=="lazy"&&!(k in n))n[k]=o[k]})(window.CITIES&&window.CITIES["monaco"]);

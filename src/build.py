@@ -18,10 +18,25 @@ have=[c for c in ORDER if os.path.exists(os.path.join(d,'cities',c+'.js'))]
 RG={"paris":"eu","bcn":"eu","roma":"eu","londra":"eu","amsterdam":"eu","lisbona":"eu","berlino":"eu","praga":"eu","vienna":"eu","bruxelles":"eu","cracovia":"eu","budapest":"eu","porto":"eu","monaco":"eu","madrid":"eu","milano":"eu","firenze":"eu","venezia":"eu","napoli":"eu","siviglia":"eu","valencia":"eu","varsavia":"eu","amburgo":"eu","zurigo":"eu","copenaghen":"eu","stoccolma":"eu","oslo":"eu","helsinki":"eu","reykjavik":"eu","dublino":"eu","edimburgo":"eu","atene":"eu","istanbul":"eu","vilnius":"eu","lubiana":"eu","zagabria":"eu","bucarest":"eu","sofia":"eu","riga":"eu","tallinn":"eu","valletta":"eu","salisburgo":"eu","ginevra":"eu","malaga":"eu"}
 soon=[dict(id=c,r=RG[c],**META[c]) for c in ORDER if c not in have and c in META]
 soon+=[dict(id=i,n=n,c=c,e=e,r=r,col=col,k=k) for (i,n,c,e,r,col,k) in W if i not in have]
-cities=r('cities/_it.js')+'\n'+''.join(r('cities/'+c+'.js')+'\n' for c in have)+r('foodtags.js')+'\n'+''.join(r(f)+'\n' for f in sorted(os.listdir(d)) if re.match(r'(cat|mov)[a-z0-9]*\.js$',f))+'\n'+r('words.js')+'\n'
+# v266 città su richiesta: in pagina solo Parigi e i dati leggeri delle altre; il resto in c/<id>.js
+import subprocess,tempfile
+LAZY=[c for c in have if c!='paris']
+_tf=tempfile.mktemp(suffix='.json')
+subprocess.run(['node',os.path.join(d,'stub_city.js'),d,json.dumps(have),_tf],check=True,stderr=subprocess.DEVNULL)
+_ST=json.load(open(_tf));os.remove(_tf)
+_VER=re.search(r'via-v(\d+)',open('sw.js').read()).group(1)
+_cd=os.path.join(os.path.dirname(d),'c');os.makedirs(_cd,exist_ok=True)
+for _f in os.listdir(_cd):
+    if _f.endswith('.js') and _f[:-3] not in LAZY: os.remove(os.path.join(_cd,_f))
+for c in LAZY:
+    open(os.path.join(_cd,c+'.js'),'w').write('(function(o){\n'+r('cities/'+c+'.js')+'\n;var n=window.CITIES["'+c+'"];if(n&&o&&n!==o)for(var k in o)if(k!=="lazy"&&!(k in n))n[k]=o[k]})(window.CITIES&&window.CITIES["'+c+'"]);\n')
+STUBS='(function(S){for(var k in S)if(!CITIES[k]){S[k].lazy=1;CITIES[k]=S[k]}})('+json.dumps({c:_ST[c] for c in LAZY},ensure_ascii=False,separators=(',',':')).replace('</','<\\/')+');\n'
+LOADER='''(function(){var id=null;try{id=sessionStorage.getItem("via-pick")}catch(e){}if(!id||!CITIES[id]){id=null;try{var t=JSON.parse(localStorage.getItem("via-trip")||"null");if(t&&t.date)id=t.dest||"paris"}catch(e){}}
+if(id&&CITIES[id]&&CITIES[id].lazy){document.write('<scr'+'ipt src="c/'+id+'.js?v='''+_VER+'''"></scr'+'ipt>')}})();\n'''
+cities=r('cities/_it.js')+'\n'+r('cities/paris.js')+'\n'+STUBS+r('foodtags.js')+'\n'+''.join(r(f)+'\n' for f in sorted(os.listdir(d)) if re.match(r'(cat|mov)[a-z0-9]*\.js$',f))+'\n'+r('words.js')+'\n'+LOADER
 boot='window.CITY_ORDER='+json.dumps(have)+';window.REG='+json.dumps(RG)+';window.REGN='+json.dumps(REGN,ensure_ascii=False)+';window.SOON='+json.dumps(soon,ensure_ascii=False)+''';
 (function(){var id=null;try{id=sessionStorage.getItem("via-pick")}catch(e){}if(!id||!CITIES[id]){id=null;try{var t=JSON.parse(localStorage.getItem("via-trip")||"null");if(t&&t.date)id=t.dest||"paris"}catch(e){}}
-window.PD=CITIES[id]||CITIES[CITY_ORDER[0]];Object.keys(CITIES).forEach(function(k){var C=CITIES[k];C.fx=C.fx||{};C.T=C.T||{}});
+window.PD=CITIES[id]||CITIES[CITY_ORDER[0]];if(PD.lazy){try{console.warn("città non caricata: "+id)}catch(e){}PD=window.PD=CITIES.paris}Object.keys(CITIES).forEach(function(k){var C=CITIES[k];C.fx=C.fx||{};C.T=C.T||{}});
 /* skyline della città */
 if(PD.SKY)[].forEach.call(document.querySelectorAll("svg.sky:not(.zsk),svg.spsky"),function(sv){var df=sv.querySelector("defs");sv.innerHTML="";if(df)sv.appendChild(df);sv.insertAdjacentHTML("beforeend",PD.SKY)})})();'''
 cfgp=os.path.join(d,'supabase.json')
@@ -50,7 +65,7 @@ import importlib.util as _iu,json as _js
 _sp=_iu.spec_from_file_location("i18n_en","/home/claude/viatico/src/i18n_en.py");_m=_iu.module_from_spec(_sp);_sp.loader.exec_module(_m)
 _F=[[a,re.sub(r'\\(\d)',r'$\1',b)] for a,b in _m.F]
 I18N='window.__I18N='+_js.dumps({'D':_m.D,'F':_F,'MON':_m.MON,'DAY':_m.DAY,'DAB':_m.DAB},ensure_ascii=False).replace('</','<\\/')+';'
-html=head+body+'<script>\n'+r('guard.js')+'\n</script>\n<script>\n'+I18N+'\n'+r('i18n.js')+'\n</script>\n<script>\n'+icons_js+'\n</script>\n<script>\n'+cities+boot+'\n</script>\n<script>\n'+r('app1.js')+'\n</script>\n<script>\n'+SHARED+'\n</script>\n<script>\n'+r('app2.js')+'\n</script>\n<script>\n'+r('skyfx.js')+'\n</script>\n<script>\n'+r('mapbg.js')+'\n</script>\n<script>\n'+r('anim.js')+'\n</script>\n<script>\n'+r('tabnav.js')+'\n</script>\n<script>\n'+r('season.js')+'\n</script>\n<script>\n'+r('pdf.js')+'\n</script>\n<script>\n'+SYNC+'\n</script>\n<script>\n'+r('offline.js')+'\n</script>\n<script>\n'+r('help.js')+'\n</script>\n<script>\n'+r('tutorial.js')+'\n</script>\n<script>\n'+r('coach.js')+'\n</script>\n<script>\n'+r('nui.js')+'\n</script>\n<script>\n'+r('notify.js')+'\n</script>\n<script>\nwindow.__viaOK=1;try{window.__zinReady&&window.__zinReady()}catch(e){}\n</script>\n</body>\n</html>\n'
+html=head+body+'<script>\n'+r('guard.js')+'\n</script>\n<script>\n'+I18N+'\n'+r('i18n.js')+'\n</script>\n<script>\n'+icons_js+'\n</script>\n<script>\n'+cities+'\n</script>\n<script>\n'+boot+'\n</script>\n<script>\n'+r('app1.js')+'\n</script>\n<script>\n'+SHARED+'\n</script>\n<script>\n'+r('app2.js')+'\n</script>\n<script>\n'+r('skyfx.js')+'\n</script>\n<script>\n'+r('mapbg.js')+'\n</script>\n<script>\n'+r('anim.js')+'\n</script>\n<script>\n'+r('tabnav.js')+'\n</script>\n<script>\n'+r('season.js')+'\n</script>\n<script>\n'+r('pdf.js')+'\n</script>\n<script>\n'+SYNC+'\n</script>\n<script>\n'+r('offline.js')+'\n</script>\n<script>\n'+r('help.js')+'\n</script>\n<script>\n'+r('tutorial.js')+'\n</script>\n<script>\n'+r('coach.js')+'\n</script>\n<script>\n'+r('nui.js')+'\n</script>\n<script>\n'+r('notify.js')+'\n</script>\n<script>\nwindow.__viaOK=1;try{window.__zinReady&&window.__zinReady()}catch(e){}\n</script>\n</body>\n</html>\n'
 # Content-Security-Policy: hash di ogni script inline, niente 'unsafe-inline' per gli script
 import hashlib
 def b64h(t): return base64.b64encode(hashlib.sha256(t.encode('utf-8')).digest()).decode()
