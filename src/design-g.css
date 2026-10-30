@@ -2859,3 +2859,7 @@ html.hc .hero .sky{opacity:.35!important}
 .pdots button.on::before{width:22px;background:#fff}
 .hero.post .sky{z-index:-1}
 @media (prefers-reduced-motion:reduce){.pcbi,.ppm,.pcf{transition:none}}
+/* v258 skyline come nell'anteprima: solo città, più grande, niente mare, colline, nuvole, uccelli */
+svg.sky .hills,svg.sky .cl1,svg.sky .cl2,svg.sky .sea,svg.sky .spk,svg.sky .flock,svg.sky .gl{display:none!important}
+svg.sky .gnd{fill:var(--skc)!important}
+.hero .sky{height:128px!important;width:100%!important;-webkit-mask-image:linear-gradient(transparent 0,#000 22%)!important;mask-image:linear-gradient(transparent 0,#000 22%)!important}

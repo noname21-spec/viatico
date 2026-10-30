@@ -22,7 +22,7 @@ set();setInterval(set,300000);document.addEventListener("visibilitychange",funct
 var reduce=matchMedia("(prefers-reduced-motion: reduce)"),exts=[],px=0,tx=null,raf=0,vis=true;
 function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
 function build(svg,sfx,sky,lite){
-  var exts=[];svg.innerHTML="";svg.setAttribute("viewBox",lite?"0 -4 400 132":"-30 -4 460 132");
+  var exts=[];svg.innerHTML="";svg.setAttribute("viewBox",lite?"0 4 400 106":"0 4 400 104");if(!lite)svg.setAttribute("preserveAspectRatio","xMidYMax slice");
   var src=new DOMParser().parseFromString('<svg xmlns="'+NS+'">'+sky+"</svg>","image/svg+xml").documentElement;
   var defs=el("defs",{},svg);
   var gf=el("linearGradient",{id:sfx+"gFace",x1:0,y1:0,x2:.35,y2:1},defs);el("stop",{offset:0,style:"stop-color:var(--f1)"},gf);el("stop",{offset:1,style:"stop-color:var(--f2)"},gf);
@@ -79,8 +79,8 @@ function addNight(far,mons,sky,sunX,sunY,rnd,lite){
 /* generatore ripetibile per città: stessa fila di palazzi a ogni apertura */
 function seedR(str){var h=7;for(var i=0;i<str.length;i+=7)h=(h*31+str.charCodeAt(i))%233280;var s=h||7;return function(){s=(s*9301+49297)%233280;return s/233280}}
 /* fila di palazzi qualsiasi dietro i monumenti, con le loro finestre */
-function backRow(g,R){var x=-36;while(x<436){var w=11+R()*17,h=12+R()*24,y=106-h;el("rect",{x:x.toFixed(1),y:y.toFixed(1),width:w.toFixed(1),height:(h+1).toFixed(1)},g);
-  for(var yy=y+4;yy<101;yy+=6)for(var xx=x+2.6;xx<x+w-3.2;xx+=5)if(R()<.46)el("rect",{"class":"wn","data-o":R().toFixed(3),x:xx.toFixed(1),y:yy.toFixed(1),width:2,height:2.8,rx:.3},g);
+function backRow(g,R){var x=-6;while(x<406){var w=12+R()*18,h=20+R()*30,y=106-h;el("rect",{x:x.toFixed(1),y:y.toFixed(1),width:w.toFixed(1),height:(h+1).toFixed(1)},g);
+  for(var yy=y+4;yy<103;yy+=6)for(var xx=x+2.6;xx<x+w-3.2;xx+=5)if(R()<.5)el("rect",{"class":"wn","data-o":R().toFixed(3),x:xx.toFixed(1),y:yy.toFixed(1),width:2,height:2.8,rx:.3},g);
   x+=w+(R()<.25?2+R()*7:0)}}
 function buildHero(){var parent=svg.parentNode,next=svg.nextSibling;parent.removeChild(svg);exts=build(svg,"",PD.SKY,false);parent.insertBefore(svg,next);persp(0)}
 function zSky(id,sfx){var C=window.CITIES&&CITIES[id];if(!C||!C.SKY)return null;var z=document.createElementNS(NS,"svg");z.setAttribute("class","sky zsk");z.setAttribute("aria-hidden","true");if(C.TZ)z.setAttribute("data-tz",C.TZ);build(z,sfx||"z",C.SKY,true);skyLit(z);return z}
