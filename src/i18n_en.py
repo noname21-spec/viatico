@@ -1,6 +1,7 @@
 # Dizionario IT -> EN dell'interfaccia (corrispondenza esatta del testo, spazi ignorati).
 # I testi delle guide delle città restano in italiano.
 D = {
+'Pausa': 'Break',
 'Saluti da': 'Greetings from', 'Scegli tre momenti': 'Pick three moments', 'Scorri per vedere il retro.': 'Swipe to see the back.',
 "Carta d'imbarco": 'Boarding pass',
 'città': 'cities', 'paesi': 'countries', 'paese': 'country', 'giorni in viaggio': 'days travelling', 'giorno in viaggio': 'day travelling', 'anni': 'years', 'anno': 'year',
@@ -352,4 +353,8 @@ F += [
 (r'^Volo (\S+) alle ([\d:]+)\. Atterraggio a (.+?) alle ([\d:]+)\.(.*)$', r'Flight \1 at \2. Landing at \3 at \4.\5'), (r'^Volo (\S+)\. Atterraggio a (.+) alle ([\d:]+)(.*)$', r'Flight \1. Landing at \2 at \3\4'), (r'^Atterraggio a (.+) alle ([\d:]+)(.*)$', r'Landing at \1 at \2\3'),
 (r'^Check-out entro le ([\d:]+)\. Decollo alle ([\d:]+)\.$', r'Check-out by \1. Take-off at \2.'), (r'^Buongiorno! Giorno (\d+)$', r'Good morning! Day \1'),
 (r'^(.+), poi in alloggio\.$', r'\1, then to your accommodation.'),
+]
+F += [
+(r'^circa ([\d,]+) tappe al giorno$', r'about \1 stops a day'), (r'^(\d+) tappe$', r'\1 stops'), (r'^1 tappa$', '1 stop'),
+(r'^([\d h]+min|\d+ h) senza programmi: un caffè seduti, una panchina al parco o un gelato\. Poi si riparte con calma\.$', r'\1 with nothing planned: a coffee, a park bench or an ice cream. Then off again, slowly.'),
 ]

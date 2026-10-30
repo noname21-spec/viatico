@@ -2903,3 +2903,4 @@ body:has(#hero.post) #tgr .tg:not(.pct){display:none!important}
 #hero .live.board .lb2{background:#241d33!important;color:#f6f2ec!important}
 .hero.pre .sky{height:92px!important;opacity:.75!important}
 html.en body:has(#hero.post) .nbrow .ntl::before{content:"Trip finished · how did it go?"}
+.pcn{display:block;margin-top:3px;font:700 .74rem Outfit,system-ui,sans-serif;color:inherit;opacity:.9}

@@ -17,9 +17,9 @@ var ST={th:"mix",pc:"mid"},THS=["mix","cul","eno"],PCS=["rel","mid","int"];
 function sty(c){return{th:THS.indexOf(c&&c.th)>=0?c.th:"mix",pc:PCS.indexOf(c&&c.pc)>=0?c.pc:"mid"}}
 function MD(){var d={col:30,pra:60,cen:55};if(ST.th==="eno"){d.col+=10;d.pra+=30;d.cen+=45}else if(ST.th==="cul"){d.pra-=10;d.cen-=5}
 if(ST.pc==="rel"){d.col+=5;d.pra+=15;d.cen+=15}else if(ST.pc==="int"){d.col-=10;d.pra-=15;d.cen-=10}
-d.col=Math.min(45,Math.max(20,d.col));d.pra=Math.min(95,Math.max(40,d.pra));d.cen=Math.min(100,Math.max(45,d.cen));return d}
+d.col=Math.min(45,Math.max(20,d.col));d.pra=Math.min(95,Math.max(ST.pc==="int"?35:40,d.pra));d.cen=Math.min(100,Math.max(ST.pc==="int"?40:45,d.cen));return d}
 var PSH={rel:{c:45,e:-15},mid:{c:0,e:0},int:{c:-30,e:30}};
-function LF(){return({rel:.8,mid:1,int:1.25})[ST.pc]*({mix:1,cul:1.1,eno:.75})[ST.th]}
+function LF(){return({rel:.65,mid:1,int:1.4})[ST.pc]*({mix:1,cul:1.1,eno:.75})[ST.th]}
 function pri(id){var q=S[id],v=q.p;if(ST.th==="eno"&&q.tk)v+=1.5;else if(ST.th==="cul"&&!q.tk&&q.cls==="walk")v+=1.5;return v}
 function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){return null}if(window.viaSync)viaSync.dirty(k)}
 function lj(k,d){try{return JSON.parse(ls(k)||"null")||d}catch(e){return d}}
@@ -305,10 +305,12 @@ function sim(acts,dur,ctx){
 var t=ctx.c0,prev=ctx.start,items=[],B=false,L=false,D=false,late=0,lastEnd=0,LO=PD.LUNCHO||0;
 function meal(k,d){var w=prev==="start"||prev==="home"?3:8;t+=w;items.push({k:"meal",m:k,t:t,d:d,z:zoneOf(prev),walk:w,near:prev==="home",hotel:k==="col"&&prev==="home"&&!!ctx.multi&&COPT.hb===1});t+=d}
 var MX=MD();if(ctx.wantB){meal("col",MX.col);B=true}
+var PAU=ST.pc==="rel"?40:0,PD0=false;
 acts.forEach(function(id){
 var lg=legOf(prev,id);
 if(!L&&ctx.wantL&&(t>=11*60+50+LO||(t>=11*60+15+LO&&t+lg.min+dur[id]>13*60+50+LO)||(t>=11*60+LO&&t+lg.min+dur[id]>14*60+15+LO))){meal("pra",MX.pra);L=true}
 if(!D&&ctx.wantD&&t>=ctx.dinAt){meal("cen",MX.cen);D=true}
+if(PAU&&!PD0&&L&&!D&&t>=13*60+45&&t<18*60){items.push({k:"free",pau:1,t:t,d:PAU,z:zoneOf(prev)});t+=PAU;PD0=true}
 t+=lg.min;var w=win(id,ctx.wd,ctx.date);if(w&&t<w[0])t=w[0];
 if(D&&ctx.multi)late+=60;
 if(w&&t+dur[id]>w[1])late+=t+dur[id]-w[1];
@@ -320,7 +322,7 @@ if(ctx.snx&&!D&&t>=15*60&&t<ctx.dinAt-40){t+=5;items.push({k:"snk",x:1,t:t,d:25,
 if(!D&&ctx.wantD){
  if((ctx.free||(ctx.multi&&!acts.length))&&t<ctx.dinAt-45){var fl=legOf(prev,"home");items.push({k:"free",t:t+2,d:ctx.dinAt-t-2,leg:fl,from:prev});t=ctx.dinAt;prev="home";R=ctx.endOf(prev)}
  meal("cen",MX.cen);D=true}
-if(ctx.snack&&!D&&t>=15*60+30&&t+25+R.min<=ctx.dl){t+=5;items.push({k:"snk",t:t,d:20,z:zoneOf(prev)});t+=20}
+if(ctx.snack&&ST.pc!=="int"&&!D&&t>=15*60+30&&t+25+R.min<=ctx.dl){t+=5;items.push({k:"snk",t:t,d:20,z:zoneOf(prev)});t+=20}
 var slack=ctx.dl-(t+R.min);if(late>0)slack=Math.min(slack,-late);
 return{items:items,end:t,prev:prev,ret:R,slack:slack,B:B,L:L,D:D}}
 /* se il biglietto è tolto dai costi, la visita si accorcia: ci si ferma fuori */
@@ -335,6 +337,25 @@ function dId(id){var q=S[id];if(outOff(id)&&q.out==="b")return 20;return tOn(id)
 function dMax(id){var q=S[id];if(outOff(id)&&q.out==="b")return 30;return tOn(id)?q.max:Math.max(dId(id),Math.round(q.max*.6/5)*5)}
 /* anticipo dichiarato oggi: minuti guadagnati e momento in cui li hai guadagnati */
 function earlyOf(date){var o=lateGet();if(!o||o.day!==date)return null;var tot=0,f=0;o.s.forEach(function(x){tot+=x.m;if(x.m<0&&x.f>f)f=x.f});return tot<0?{B:-tot,f:f}:null}
+/* ritmo intenso: con il tempo che avanza aggiungo tappe vicine invece di allungare le visite */
+var XPOOL=[];
+function fillInt(acts,dur,ctx,r,dropped){var wd=ctx.wd,skp=ctx.sk||[],added=0,cand=[],keep={},r0=r;acts.forEach(function(id){keep[id]=dur[id];dur[id]=dMin(id)});r=sim(acts,dur,ctx);
+ function bad(id){var q=S[id];if(!q||acts.indexOf(id)>=0||skp.indexOf(id)>=0||(q.cl&&q.cl.indexOf(wd)>=0))return true;
+  if(q.tk&&!q.tk[2]&&!(typeof COPT!=="undefined"&&COPT[id]===1))return true;
+  if(q.win&&!win(id,wd,ctx.date))return true;
+  return acts.some(function(a){var z=S[a];return z&&z.pos&&q.pos&&Math.abs(z.pos[0]-q.pos[0])<0.0025&&Math.abs(z.pos[1]-q.pos[1])<0.0035})}
+ dropped.concat(XPOOL).forEach(function(id){if(cand.indexOf(id)<0)cand.push(id)});
+ if(ctx.single)Object.keys(S).forEach(function(id){if(S[id].t&&cand.indexOf(id)<0)cand.push(id)});
+ cand.sort(function(a,b){return pri(a)-pri(b)});
+ while(added<(ctx.single?3:2)&&r.slack>=20){var best=null;
+  for(var ci=0;ci<cand.length&&ci<40;ci++){var id=cand[ci];if(bad(id))continue;
+   for(var p=0;p<=acts.length;p++){var a2=acts.slice();a2.splice(p,0,id);var d0=dur[id];dur[id]=dMin(id);var r2=sim(a2,dur,ctx);
+    if(r2.slack>=5&&(!best||r2.slack>best.r.slack))best={id:id,a:a2,r:r2,d:dur[id]};if(d0==null)delete dur[id];else dur[id]=d0}}
+  if(!best)break;
+  acts.splice(0,acts.length);best.a.forEach(function(x){acts.push(x)});dur[best.id]=best.d;r=best.r;added++;
+  var di=dropped.indexOf(best.id);if(di>=0)dropped.splice(di,1);var xi=XPOOL.indexOf(best.id);if(xi>=0)XPOOL.splice(xi,1)}
+ if(!added){Object.keys(keep).forEach(function(id){dur[id]=keep[id]});return r0}
+ return r}
 function planDay(acts,ctx,opt){
 var dur={},dropped=[],r,g=0,minLen=ctx.single?1:0,need=ST.pc==="rel"?30:0;
 acts=acts.slice();acts.forEach(function(id){dur[id]=ST.pc==="int"?Math.round((dMin(id)+dId(id))/10)*5:dId(id);if(dur[id]<dMin(id))dur[id]=dMin(id)});
@@ -356,6 +377,7 @@ function tryIns(id,after){var i=acts.indexOf(after);if(i<0||r.slack<60||acts.ind
 if(!none){
 (ST.pc==="rel"?[]:PD.SINGLE.ins||[]).forEach(function(x){if(x[3]&&!(opt&&opt.single))return;if(x[2]&&acts.indexOf(x[2])<0)return;tryIns(x[0],x[1])});
 var order=acts.slice().sort(function(a,b){return pri(a)-pri(b)}),ch=true,k=0;
+if(ST.pc==="int")r=fillInt(acts,dur,ctx,r,dropped);order=acts.slice().sort(function(a,b){return pri(a)-pri(b)});
 while(r.slack>=15&&ch&&k++<200){ch=false;for(var i=0;i<order.length;i++){var id=order[i];if(dur[id]+5<=(ST.pc==="int"?dId(id):dMax(id))){dur[id]+=5;var r2=sim(acts,dur,ctx);if(r2.slack>=10){r=r2;ch=true}else dur[id]-=5}}}}
 var eadd=[],egr=[];
 if(!none&&ctx.eb&&ctx.eb.B>=20){var B=ctx.eb.B,f=ctx.eb.f,c2=Object.assign({},ctx,{dl:ctx.dl+B}),pool=[];
@@ -384,11 +406,11 @@ return{r:r,acts:acts,dropped:dropped,shrunk:shrunk,none:none,eadd:eadd,egr:egr.f
 function ridesOf(items){var n=0;items.forEach(function(x){var l=x.leg;if(x.k==="act"||x.k==="free"||x.k==="night"){if(l&&l.mode==="metro")n++}});return n}
 
 /* gita in giornata: come la prima versione dell'app */
-function planSingle(c){
+function planSingle(c,base){
 var A=PD.PAR[c.to],R=PD.PAR[c.rt||c.to],land=toMin(c.a_arr),dep=toMin(c.r_dep),imb=toMin(c.r_imb),wd=wdOf(c.date);
 var c0=land+A.inMin,dl=Math.min(dep-R.buf,imb!=null?imb-45:1e9);
 var ctx={single:1,c0:c0,start:"start",dl:dl,wd:wd,date:c.date,endOf:function(p){return retOf(c.rt||c.to,p)},wantB:c0<10*60+45,wantL:c0<14*60+(PD.LUNCHO||0)&&dl>13*60+30+(PD.LUNCHO||0),wantD:dl>=18*60+15,dinAt:18*60+45,snack:1,eb:earlyOf(c.date),sk:skipGet().d[0]||[]};
-var sa=PD.SINGLE.acts.slice();xForced().forEach(function(id){if(!(S[id].cl&&S[id].cl.indexOf(wd)>=0))insNear(sa,id)});var x=planDay(skipF(0,sa),ctx,{single:1}),r=x.r;
+var sa=PD.SINGLE.acts.slice();xForced().forEach(function(id){if(!(S[id].cl&&S[id].cl.indexOf(wd)>=0))insNear(sa,id)});var x=planDay(base||skipF(0,sa),ctx,{single:1}),r=x.r;
 var items=[{k:"air",t:land,d:A.inMin,c0:c0}].concat(r.items);
 items.push({k:"ret",t:r.end,d:r.ret.min,ret:r.ret,arr:r.end+r.ret.min,slack:r.slack,dl:dl});
 var n=0;items.forEach(function(it){if(it.k==="act")it.n=++n});
@@ -400,7 +422,7 @@ if(kind==="first"){var land=toMin(c.a_arr),tC=land+A.inMin,lh=arrLeg(),tH=tC+lh.
 else{f.c0=8*60+45+PSH[ST.pc].c;f.dl=22*60+45+PSH[ST.pc].e}
 if(kind==="last"){var dep=toMin(c.r_dep),imb=toMin(c.r_imb);f.dep=dep;f.imb=imb;f.dl=Math.min(dep-R.buf,imb!=null?imb-45:1e9);f.cap=f.dl-homeAir().min-15-f.c0-30-(f.dl>14*60?60:0)-30}
 else f.cap=f.dl-f.c0-(f.c0<10*60+45?30:0)-(f.c0<14*60?60:0)-55-45-60;
-f.cap=Math.round(f.cap*LF());return f}
+f.cap=Math.round(f.cap*(ST.pc==="int"&&kind!=="mid"?1:LF()));return f}
 function assign(days,n){var cap=days.map(function(d){return d.cap}),left=[],pri=function(b){return b.full?(n>=4?0:2):b.core?1:2};
 PD.BUNDLES.map(function(b,i){return[b,i]}).sort(function(x,y){return pri(x[0])-pri(y[0])||x[1]-y[1]}).map(function(x){return x[0]}).forEach(function(b){var best=-1,bv=-1e9;
 days.forEach(function(d,i){if(b.cl&&b.cl.indexOf(d.wd)>=0)return;if(b.full&&d.kind!=="mid")return;var v=cap[i]-b.need;if(v>bv){bv=v;best=i}});
@@ -423,11 +445,16 @@ else if(r.prev!=="home"||items[items.length-1].k==="meal")items.push({k:"night",
 var n=0;items.forEach(function(it){if(it.k==="act")it.n=++n});
 var rides=ridesOf(items)+(last&&r.ret.rides?1:0)+(f.kind==="first"?(f.A.xrm||0):0)+(last?(f.R.xrm||0):0);
 return Object.assign(f,{items:items,acts:x.acts,dropped:x.dropped,eadd:x.eadd,egr:x.egr,shrunk:x.shrunk,none:x.none,leave:rt,prev:r.prev,B:r.B,L:r.L,D:r.D,rides:rides,end:rt+(last?0:r.ret.min)})}
-function buildTrip(c){ST=sty(c);if(!c.rt||!PD.PAR[c.rt])c.rt=c.to;var n=nDays(c),A=PD.PAR[c.to],R=PD.PAR[c.rt];
-if(n===1){POOL0=PD.SINGLE.acts.slice();return{multi:false,n:1,A:A,R:R,days:[planSingle(c)],left:[]}}
+/* il ritmo parte dal piano equilibrato: tranquillo ne tiene circa due terzi (le più importanti), intenso le tiene tutte e ne aggiunge */
+function buildTrip(c){var pc=sty(c).pc;if(pc==="mid")return buildRaw(c,null);var M=buildRaw(Object.assign({},c,{pc:"mid"}),null);return buildRaw(c,M)}
+function pacePick(list){if(ST.pc!=="rel")return list.slice();var n=list.length;if(n<2)return list.slice();var k=Math.max(1,Math.min(n-1,Math.round(n*.65))),top=list.slice().sort(function(a,b){return pri(a)-pri(b)}).slice(0,k);return list.filter(function(x){return top.indexOf(x)>=0})}
+function buildRaw(c,M){ST=sty(c);if(!c.rt||!PD.PAR[c.rt])c.rt=c.to;var n=nDays(c),A=PD.PAR[c.to],R=PD.PAR[c.rt];
+if(n===1){POOL0=PD.SINGLE.acts.slice();return{multi:false,n:1,A:A,R:R,days:[planSingle(c,M?pacePick(M.days[0].acts):null)],left:[]}}
 var days=[];for(var i=0;i<n;i++)days.push(frame(c,i,n));
-var left=assign(days,n);POOL0=[];days.forEach(function(d){d.acts.forEach(function(a){if(POOL0.indexOf(a)<0)POOL0.push(a)})});assignX(days);
-return{multi:true,n:n,A:A,R:R,days:days.map(function(f){return planMulti(f,c)}),left:left}}
+var left;if(M){left=M.left;days.forEach(function(d,i){d.acts=pacePick(M.days[i].acts||[])});POOL0=[];M.days.forEach(function(d){(d.acts||[]).forEach(function(a){if(POOL0.indexOf(a)<0)POOL0.push(a)})})}
+else{left=assign(days,n);POOL0=[];days.forEach(function(d){d.acts.forEach(function(a){if(POOL0.indexOf(a)<0)POOL0.push(a)})});assignX(days)}
+XPOOL=[];if(ST.pc==="int")Object.keys(S).forEach(function(id){if(POOL0.indexOf(id)<0&&S[id].t)XPOOL.push(id)});
+var out={multi:true,n:n,A:A,R:R,days:days.map(function(f){return planMulti(f,c)}),left:left};XPOOL=[];return out}
 
 /* ===== stato dei locali nel giorno scelto ===== */
 function ivs(h){return h?h.split(",").map(function(s){var p=s.split("-"),a=toMin(p[0]),b=toMin(p[1]);if(b<=a)b+=1440;return[a,b]}):[]}
@@ -534,6 +561,7 @@ if(!tOn(it.id))meta=(outOff(it.id)&&s.out==="b"?"Senza biglietto: lo vedi da fuo
 if(s.sun){var ss=sunset(P.date);if(Math.abs(it.t+it.d/2-ss)<120)meta+=" Il sole tramonta alle "+fmt(ss)+": "+(it.t+it.d>ss?"sei qui al momento giusto per la luce del tramonto.":"goditi l'ultima luce.")}
 (PD.EXCL||[]).forEach(function(x){if(it.id===x[1]&&TRIP.multi&&TRIP.days.some(function(d){return d.acts.indexOf(x[0])>=0}))meta=x[2]});
 body=legBox(lg)+'<p>'+esc(s.d)+'</p>'+(meta?'<p class="meta">'+esc(meta)+'</p>':'')+goBtn(s.q,lg.mode==="walk"?"walking":"transit","Portami lì",lg.mode==="walk"?"🚶":"🚇")}
+else if(it.k==="free"&&it.pau){cls="home";ti="Pausa";body='<p>'+fdur(it.d)+' senza programmi: un caffè seduti, una panchina al parco o un gelato. Poi si riparte con calma.</p>'}
 else if(it.k==="free"&&it.last){cls="home";ti="Mattinata libera";body='<p>Hai circa '+fdur(it.d)+' prima di partire: lascia i bagagli all\'alloggio e goditi il quartiere, con un caffè in terrazza, gli ultimi acquisti o una passeggiata. Alle '+fmt(it.t+it.d)+' si riparte per l\'aeroporto.</p>'}
 else if(it.k==="free"){cls="home";var lng=it.d>=150;ti=lng?"Pomeriggio libero":"Tempo libero";body=legBox(it.leg)+'<p>'+(lng?"Hai circa "+fdur(it.d)+" senza tappe fisse. "+PD.T.freeLong:PD.T.freeShort)+' La cena è verso le '+fmt(it.t+it.d)+'.</p>'}
 else if(it.k==="night"){cls="home";ti="Rientro all'alloggio";var nx=TRIP.days[P.i+1];body=legBox(it.leg)+'<p>Buonanotte! '+(nx?(nx.kind==="last"?"Domani è l'ultimo giorno: check-out entro le "+esc(h.cout)+".":"Domani si riparte alle "+fmt(nx.c0)+(nx.acts.length?" con "+esc(S[nx.acts[0]].t)+".":".")):"")+'</p>'+goBtn(h.q,it.leg.mode==="walk"?"walking":"transit","Portami all'alloggio","🏨")}
@@ -1691,8 +1719,14 @@ $("#sstp").addEventListener("click",function(e){var b=e.target.closest("button[d
 /* stile: scelta di tema e ritmo */
 var STYT={th:{cul:"culturale",eno:"enogastronomico",mix:""},pc:{rel:"tranquillo",int:"intenso",mid:""}};
 function styVals(){return{th:($('input[name=th]:checked',form)||{}).value||"mix",pc:($('input[name=pc]:checked',form)||{}).value||"mid"}}
-function styDesc(){var v=styVals(),a=[];
-a.push(v.pc==="rel"?"si parte più tardi, con meno tappe e più pause":v.pc==="int"?"giornate lunghe, più tappe e pasti veloci":"un ritmo equilibrato");
+function styCount(){try{var d0=form.date.value,d1=form.date_r.value||d0;if(!d0)return;var to=($('input[name=to]:checked',form)||{}).value||APK[0],rt=($('input[name=rto]:checked',form)||{}).value||to;
+ var base={dest:PD.id,date:d0,date_r:d1,ppl:2,to:to,rt:rt,a_arr:form.a_arr.value||"09:00",r_dep:form.r_dep.value||(d1>d0?"18:00":"20:00"),r_imb:form.r_imb.value,th:styVals().th};
+ if(d1>d0)base.stay={zone:form.sz.value||"altro",addr:"",cin:"15:00",cout:"11:00",price:0,type:"h3"};
+ var sST=ST,sP=POOL0,sX=XPOOL,sC=CFG;try{["rel","mid","int"].forEach(function(pc){var cc=Object.assign({},base,{pc:pc});CFG=cc;var T=buildTrip(cc),n=0;T.days.forEach(function(D){D.items.forEach(function(it){if(it.k==="act")n++})});
+  var per=Math.round(n/T.n*10)/10,lab=$('input[name=pc][value="'+pc+'"]',form),hold=lab&&(lab.parentNode.querySelector("b+span")||lab.parentNode),sp=hold&&hold.querySelector(".pcn");if(!lab)return;if(!sp){sp=document.createElement("small");sp.className="pcn";hold.appendChild(sp)}
+  sp.textContent=(T.n>1?"circa "+String(per).replace(".",",")+" tappe al giorno":n+(n===1?" tappa":" tappe"))})}finally{CFG=sC;ST=sST;POOL0=sP;XPOOL=sX}}catch(e){}}
+function styDesc(){var v=styVals(),a=[];try{styCount()}catch(e){}
+a.push(v.pc==="rel"?"circa un terzo di tappe in meno, visite senza fretta, si parte più tardi e c'è una pausa vera nel pomeriggio":v.pc==="int"?"più tappe al giorno (visite più brevi per farcene stare di più), si parte prima, pranzo veloce":"il numero di tappe pensato per la città, con visite della durata consigliata");
 a.push(v.th==="eno"?"tavole lunghe con piatti tipici, un aperitivo nel pomeriggio e meno monumenti":v.th==="cul"?"più musei e monumenti, visite più approfondite e pasti più rapidi":"il mix classico di monumenti, quartieri e buon cibo");
 $("#sstyd").textContent="Così: "+a.join("; ")+". Potrai cambiarlo quando vuoi."}
 form.addEventListener("change",function(e){if(e.target&&(e.target.name==="th"||e.target.name==="pc"))styDesc()});
