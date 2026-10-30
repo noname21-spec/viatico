@@ -89,6 +89,7 @@ def _nohas(css):
     css=css.replace('body:not(:has(#t-itinerario:checked))','body:not(.k-t-itinerario)')
     css=css.replace('body:has(#dest.on,#setup.on)','body:is(.k-dest,.k-setup)')
     css=css.replace(':has(#hero.pre)','.k-heropre')
+    css=css.replace(':has(#hero.post)','.k-heropost')
     css=re.sub(r':has\(#(t-[a-z]+):checked\)',r'.k-\1',css)
     css=css.replace(':has(#dm:checked)','.k-dm')
     css=css.replace(':has(#sheet.on)','.k-sheet').replace(':has(#dest.on)','.k-dest')
