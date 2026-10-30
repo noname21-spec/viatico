@@ -1175,7 +1175,7 @@ function pcTiles(on){var g=$("#tgr");if(!g)return;var w=$(".pct",g);if(!on){$$("
  var b=document.createElement("button");b.type="button";b.className="tg pct";b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg><span>Le tappe fatte</span>';
  b.addEventListener("click",function(){var h=$("#pchint")||$("#itinerario .wbox");if(h)h.scrollIntoView({behavior:"smooth",block:"start"})});
  g.insertBefore(b,g.firstChild);g.insertBefore(a,g.firstChild)}
-function pcSky(box){var f=$(".pcf",box);if(!f||$("svg",f)||!window.zSky)return;try{var z=zSky(PD.id,"pc");if(z){f.appendChild(z);if(window.skyLit)skyLit(z,.62)}}catch(e){}}
+function pcSky(box){var f=$(".pcf",box);if(!f||$("svg",f)||!window.zSky)return;try{var z=zSky(PD.id,"pc");if(z){z.setAttribute("data-lit",".62");f.appendChild(z);if(window.skyLit)skyLit(z,.62)}}catch(e){}}
 function postCard(){var h=$("#hero");if(!h)return;var k=pcKey(),box=$("#pcd");
  if(box&&box.dataset.k===k){$$("[data-clk]",box).forEach(function(e){e.textContent=pcClock()});pcSky(box);return}
  if(box)box.remove();
@@ -1241,7 +1241,7 @@ function pcImage(st){var W=1200,H=1640,cv=document.createElement("canvas");cv.wi
    if(fi&&navigator.canShare&&navigator.canShare({files:[fi]})&&navigator.share){navigator.share({files:[fi],title:"Saluti da "+PD.n}).catch(function(){});return}
    var u=URL.createObjectURL(b),o=document.createElement("div");o.className="rcap";o.innerHTML='<div class="rcc"><img alt="La cartolina" src="'+u+'"><p>Tieni premuta l\'immagine per salvarla o condividerla.</p><a class="btn" download="cartolina-'+esc(PD.id)+'.png" href="'+u+'">Scarica</a><button type="button" class="btn ghost">Chiudi</button></div>';document.body.appendChild(o);function cl(){o.remove();setTimeout(function(){URL.revokeObjectURL(u)},500)}o.querySelector("button").addEventListener("click",cl);o.addEventListener("click",function(ev){if(ev.target===o)cl()})},"image/png")}
  /* skyline della città come immagine: sagome scure e finestre accese */
- function sky(cb){try{var z=window.zSky&&zSky(PD.id,"pi");if(!z)return cb(null);skyLit(z,.62);
+ function sky(cb){try{var z=window.zSky&&zSky(PD.id,"pi");if(!z)return cb(null);z.setAttribute("data-lit",".62");skyLit(z,.62);
    [].forEach.call(z.querySelectorAll(".far,.spk,.flock,.gl"),function(e){e.remove()});
    [].forEach.call(z.querySelectorAll(".face,.face *,.gnd"),function(e){e.setAttribute("style","fill:rgba(40,24,52,.78)")});
    [].forEach.call(z.querySelectorAll(".bk>rect:not(.wn)"),function(e){e.setAttribute("style","fill:rgba(40,24,52,.5)")});
@@ -1559,7 +1559,7 @@ window.__tkMenu=function(x,y){var b=mine.querySelector(".tk:not(.dn) .tkb");if(b
 var hcE=$("#dhc");if(hcE&&!hcE.__lpb){hcE.__lpb=1;lpAttach(hcE,function(x,y){if(window.__tkMenu)window.__tkMenu(x,y)},function(){return hcE.dataset.mode==="trip"})}
 $$(".tcl",mine).forEach(function(b){b.addEventListener("click",function(){var k=b.closest(".tk");k.querySelector(".tkd").hidden=true;k.querySelector(".tkb").setAttribute("aria-expanded","false")})});
 $$(".tgo",mine).forEach(function(b){b.addEventListener("click",function(){var t=all[+b.dataset.k];if(!t)return;if(t.cur){if(!SAVED||!SAVED.dest){closeDest();return}if(SAVED.dest===PD.id&&CFG){closeDest();setCity(PD.id)}else goCity(SAVED.dest)}else switchTrip(t.i)})});
-$("#dnew",mine).addEventListener("click",function(){try{sessionStorage.removeItem("via-pastmode")}catch(x){}setPick(1)});$("#dpastb",mine).addEventListener("click",pastStart);$$(".tpcs .pcmi",mine).forEach(function(m){if(m.querySelector("svg")||!window.zSky)return;try{var z=zSky(m.dataset.c,"m"+m.dataset.k);if(z){m.appendChild(z);if(window.skyLit)skyLit(z,.62)}}catch(x){}});
+$("#dnew",mine).addEventListener("click",function(){try{sessionStorage.removeItem("via-pastmode")}catch(x){}setPick(1)});$("#dpastb",mine).addEventListener("click",pastStart);$$(".tpcs .pcmi",mine).forEach(function(m){if(m.querySelector("svg")||!window.zSky)return;try{var z=zSky(m.dataset.c,"m"+m.dataset.k);if(z){z.setAttribute("data-lit",".62");m.appendChild(z);if(window.skyLit)skyLit(z,.62)}}catch(x){}});
 $$(".tdel",mine).forEach(function(b){b.addEventListener("click",function(){var t=all[+b.dataset.k],d=dOf(t.cfg.dest),snap={};try{for(var q=0;q<localStorage.length;q++){var kk=localStorage.key(q);if(kk&&kk.indexOf("via-")===0)snap[kk]=localStorage.getItem(kk)}}catch(x){}var wasCur=!!t.cur;if(t.cur)dropCur();else{var a=trips();a.splice(t.i,1);putTrips(a)}renderDest();
 window.__undoToast("Viaggio eliminato","Annulla",function(){try{Object.keys(snap).forEach(function(kk){localStorage.setItem(kk,snap[kk])})}catch(x){}if(wasCur){location.reload();return}renderDest();toast("Viaggio ripristinato")})})})}else{mine.hidden=true;mine.innerHTML=""}
 destEl.classList.toggle("empty",!all.length);var dx=$("#dex");if(dx)dx.hidden=!!all.length;var dl2=$("#dal");if(dl2&&!dl2.hidden){dl2.dataset.go=up.length&&!up[0].now&&up[0].dd<=3?"1":"";dl2.setAttribute("role",dl2.dataset.go?"button":"note");dl2.tabIndex=dl2.dataset.go?0:-1}db.classList.toggle("open",DOPEN&&all.length>0);destEl.classList.toggle("myo",DOPEN&&all.length>0);dl.setAttribute("aria-expanded",DOPEN&&all.length>0)}
