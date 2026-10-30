@@ -1,6 +1,8 @@
 # Dizionario IT -> EN dell'interfaccia (corrispondenza esatta del testo, spazi ignorati).
 # I testi delle guide delle città restano in italiano.
 D = {
+'città': 'cities', 'paesi': 'countries', 'paese': 'country', 'giorni in viaggio': 'days travelling', 'giorno in viaggio': 'day travelling', 'anni': 'years', 'anno': 'year',
+'Fuori programma': 'Off the plan', 'Un posto che hai visitato e non è in lista': 'A place you visited that is not listed', 'Aggiungi': 'Add',
 'Spese del viaggio': 'Trip expenses', 'Le tappe fatte': 'Stops done',
 '＋ Aggiungi un viaggio già fatto': '＋ Add a past trip', 'Scegli la città dove sei stato': 'Pick the city you visited',
 'Viaggio già fatto: scegli le date. Dopo potrai segnare le tappe che hai fatto davvero.': 'Past trip: pick the dates. Then you can mark the stops you actually did.',

@@ -2902,3 +2902,22 @@ body:has(#hero.post) .nfab{display:none!important}
 body:has(#hero.post) #wx{display:none!important}
 body:has(#hero.post) #tgr .tg:not(.pct){display:none!important}
 #tgr .tg.pct svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* v263 posti fuori programma nei viaggi finiti */
+.pcx{margin:0 4px 14px;padding:12px 14px;border-radius:var(--gr2,20px);background:var(--surf)}
+.pxh{display:block;font:800 .66rem Outfit,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:8px}
+.pxl{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:6px}
+.pxl[hidden]{display:none}
+.pxl li{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:var(--gsoft,rgba(0,0,0,.04));font-weight:700;font-size:.92rem}
+.pxl li::before{content:"✓";color:var(--ga);font-weight:800}
+.pxl li span{flex:1;min-width:0}
+.pxl li small{display:block;font:700 .64rem Outfit,system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.pxd{all:unset;cursor:pointer;width:32px;height:32px;display:grid;place-items:center;border-radius:50%;color:var(--mute)}
+.pxd:focus-visible,.pxf button:focus-visible{outline:3px solid var(--ga);outline-offset:2px}
+.pxf{display:flex;gap:8px}
+.pxf input{flex:1;min-width:0;min-height:44px;box-sizing:border-box;padding:0 12px;border-radius:12px;border:1px solid var(--line,rgba(0,0,0,.15));background:var(--paper,#fff);color:var(--ink);font:500 .92rem Outfit,system-ui,sans-serif}
+.pxf button{all:unset;cursor:pointer;min-height:44px;padding:0 16px;border-radius:12px;background:var(--ga);color:var(--gon,#fff);font:700 .9rem Outfit,system-ui,sans-serif}
+/* v263 riepilogo sopra le cartoline */
+.tpst{display:grid;grid-template-columns:repeat(auto-fit,minmax(68px,1fr));gap:8px;margin:0 0 12px}
+.tpst div{display:grid;gap:2px;padding:10px 12px;border-radius:16px;background:var(--surf)}
+.tpst b{font:800 1.35rem/1 Outfit,system-ui,sans-serif;letter-spacing:-.02em;color:var(--ink)}
+.tpst span{font-size:.72rem;line-height:1.2;color:var(--mute);font-weight:600}
