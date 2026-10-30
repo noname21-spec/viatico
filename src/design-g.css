@@ -3003,3 +3003,13 @@ html.en body:has(#hero.post) .nbrow .ntl::before{content:"Trip finished · how d
 #dmine .tmls{margin:0 0 6px}
 @media (prefers-reduced-motion:reduce){.tmx,.tma button{transition:none}.tmfl span,.tmb i,.tmw.hint .tmx{animation:none}}
 html.lite .tmfl span{animation:none}
+/* v277: pulsante principale con testo lungo (Portami all'alloggio, in aeroporto): da solo sulla prima riga */
+#hero .wdet .wc .wca.lg{flex-wrap:wrap!important;row-gap:8px}
+#hero .wdet .wc .wca.lg .go{order:1;flex:1 1 calc(100% - 60px)!important;max-width:none;justify-content:center}
+#hero .wdet .wc .wca.lg .wcd{order:2}
+#hero .wdet .wc .wca.lg .wcs{order:3;flex:1 1 100%!important;width:auto!important;min-width:0!important;max-width:none!important}
+#hero .wdet .wc .wca.lg .wcx{order:4;flex:1 1 calc(50% - 4px)!important;width:auto!important;padding:0 12px!important}
+#hero .wdet .wc .wca.lg2{flex-wrap:wrap!important;row-gap:8px}
+#hero .wdet .wc .wca.lg2 .go{order:1;flex:1 1 100%!important;max-width:none;justify-content:center}
+#hero .wdet .wc .wca.lg2 .wcs{order:3;flex:1 1 calc(100% - 60px)!important;width:auto!important;min-width:0!important;max-width:none!important}
+#hero .wdet .wc .wca.lg2 .wcd{order:4}
