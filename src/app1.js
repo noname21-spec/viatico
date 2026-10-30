@@ -187,19 +187,45 @@ var mg=$("#mgrid");if(mg&&TRIP.multi&&!mg.dataset.dsw){mg.dataset.dsw="1";mg.set
 var hero=$("#hero"),hl=$("#hlate"),he=$("#hearly");if(hl)hl.remove();if(he)he.remove();
 if(today&&P.items.some(function(it){return it.t>paris().m&&it.k!=="ret"})){var b=document.createElement("button");b.type="button";b.id="hlate";b.className="hlate";b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg><span>'+(P.late>0?"In ritardo di "+P.late+" min · modifica":"Sono in ritardo")+'</span>';b.addEventListener("click",function(){lateAsk(false)});hero.appendChild(b);var e=document.createElement("button");e.type="button";e.id="hearly";e.className="hlate";e.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l-2.5 2M9 2h6"/></svg><span>'+(P.late<0?"In anticipo di "+(-P.late)+" min · modifica":"Sono in anticipo")+'</span>';e.addEventListener("click",function(){lateAsk(true)});hero.appendChild(e)}
 eveCard();preHero();heroTod();try{topoSet();tlProg();skyIn()}catch(e){}if(document.getElementById("vcover0"))setTimeout(function(){try{coverIn()}catch(e){var c=document.getElementById("vcover0");c&&c.remove()}},60);setTimeout(function(){try{if(!destEl.classList.contains("on"))welcome()}catch(e){}},1600)}
+/* v270 Cambia tappa: foglio con le alternative vicine; per i luoghi che si vedono anche da fuori gratis si sceglie dentro o fuori */
+function chHint(){try{return !localStorage.getItem("via-chseen")}catch(e){return false}}
+function chSeen(){try{localStorage.setItem("via-chseen","1")}catch(e){}$$(".wcx.hot").forEach(function(x){x.classList.remove("hot")})}
+function inOut(id){var q=S[id];if(!outable(id))return null;if(q.out||q.x)return{inD:q.id,outD:q.out==="a"?Math.max(15,Math.round(q.id*.5/5)*5):20,p:q.tk[0],area:q.out==="a"};return{inD:q.id,outD:Math.max(15,Math.round(q.id*.5/5)*5),p:q.tk[0]}}
+function chIcon(q){return q.cls==="walk"?"🚶":q.tk?"🎟️":"📍"}
+function chCost(q){return q.tk&&q.tk[0]?eur(q.tk[0]):"gratis"}
+function repCands(it){var o=S[it.id],used=allActs(),wd=P.wd;return Object.keys(S).filter(function(id){var q=S[id];return q&&q.t&&id!==it.id&&used.indexOf(id)<0&&!(q.cl&&q.cl.indexOf(wd)>=0)&&!(q.multi&&!TRIP.multi)&&q.pos}).sort(function(a,b){return hav(S[a].pos,o.pos)-hav(S[b].pos,o.pos)}).slice(0,6)}
+function kmTxt(a,b){var k=hav(a,b);return k<1?Math.round(k*1000/50)*50+" m":(Math.round(k*10)/10).toString().replace(".",",")+" km"}
+function repSheet(it){var o=S[it.id];if(!o)return;var cand=repCands(it),old=$("#chs");if(old)old.remove();
+ var cur=inOut(it.id),curIn=tOn(it.id);
+ var el=document.createElement("div");el.id="chs";el.className="chs";el.setAttribute("role","dialog");el.setAttribute("aria-modal","true");el.setAttribute("aria-label","Cambia tappa");
+ el.innerHTML='<div class="chb"></div><div class="chp" tabindex="-1"><div class="chg"></div><b class="chh">Al posto di '+esc(o.t.replace(/,?\s*dentro$/i,""))+'</b>'+
+  (cur?'<div class="chc"><span>Questa tappa</span><div class="cio" role="group" aria-label="Dentro o da fuori"><button type="button" data-m="in" aria-pressed="'+curIn+'"><b>Dentro</b><small>'+fdur(cur.inD)+' · '+eur(cur.p)+'</small></button><button type="button" data-m="out" aria-pressed="'+(!curIn)+'"><b>'+(cur.area?"Senza biglietti":"Da fuori")+'</b><small>'+fdur(cur.outD)+' · gratis</small></button></div></div>':'')+
+  (cand.length?'<ul class="chl">'+cand.map(function(id){var q=S[id],io=inOut(id);return'<li><button type="button" class="cha" data-id="'+id+'" aria-expanded="false"><i aria-hidden="true">'+chIcon(q)+'</i><span><b>'+esc(q.t)+'</b><small>'+kmTxt(o.pos,q.pos)+' · '+fdur(q.id)+(io?' · si vede anche da fuori':'')+'</small></span><em class="'+(q.tk&&q.tk[0]?"":"fr")+'">'+chCost(q)+'</em></button>'+
+   (io?'<div class="cio" hidden role="group" aria-label="Dentro o da fuori"><button type="button" data-id="'+id+'" data-m="in"><b>Dentro</b><small>'+fdur(io.inD)+' · '+eur(io.p)+'</small></button><button type="button" data-id="'+id+'" data-m="out"><b>'+(io.area?"Senza biglietti":"Da fuori")+'</b><small>'+fdur(io.outD)+' · gratis</small></button></div>':'')+'</li>'}).join("")+'</ul>':'<p class="che">Non ci sono altre tappe vicine da proporre.</p>')+
+  '<button type="button" class="chx">Annulla</button></div>';
+ document.body.appendChild(el);requestAnimationFrame(function(){el.classList.add("on")});
+ function close(){el.classList.remove("on");setTimeout(function(){el.remove()},300);document.removeEventListener("keydown",key)}
+ function key(e){if(e.key==="Escape")close()}document.addEventListener("keydown",key);
+ $(".chb",el).addEventListener("click",close);$(".chx",el).addEventListener("click",close);
+ function go(id,mode){close();var q=S[id];if(mode==="out")outMark(id);if(mode&&q.tk){COPT[id]=mode==="in"?1:0}repDo(P.i,it.id,id,mode);chFlip()}
+ $$(".cha",el).forEach(function(b){b.addEventListener("click",function(){var li=b.parentNode,io=$(".cio",li);if(!io){go(b.dataset.id);return}var op=io.hidden;$$(".chl .cio",el).forEach(function(x){x.hidden=true});$$(".cha",el).forEach(function(x){x.setAttribute("aria-expanded","false")});io.hidden=!op;b.setAttribute("aria-expanded",String(op))})});
+ $$(".chl .cio button",el).forEach(function(b){b.addEventListener("click",function(){go(b.dataset.id,b.dataset.m)})});
+ $$(".chc .cio button",el).forEach(function(b){b.addEventListener("click",function(){close();if(b.dataset.m==="out")outMark(it.id);COPT[it.id]=b.dataset.m==="in"?1:0;ls("via-copt",JSON.stringify(COPT));renderAll();chFlip();toast(b.dataset.m==="in"?"Visita dentro: "+fdur(cur.inD):"Da fuori: "+fdur(cur.outD)+", gratis")})});
+ setTimeout(function(){try{$(".chp",el).focus()}catch(e){}},50)}
+function chFlip(){setTimeout(function(){var w=$("#hero .wdet .wc");if(w&&!matchMedia("(prefers-reduced-motion:reduce)").matches){w.classList.remove("chf");void w.offsetWidth;w.classList.add("chf")}},60)}
 function repAsk(it){var o=S[it.id];if(!o)return;var used=allActs(),wd=P.wd,cand=Object.keys(S).filter(function(id){var q=S[id];return id!==it.id&&used.indexOf(id)<0&&!(q.cl&&q.cl.indexOf(wd)>=0)&&!(q.multi&&!TRIP.multi)});
 cand.sort(function(a,b){return hav(S[a].pos,o.pos)-hav(S[b].pos,o.pos)});cand=cand.slice(0,5);
 if(!cand.length){toast("Non ci sono altre tappe da proporre");return}
 ask("Sostituisci «"+o.t+"»","Scegli un'alternativa vicina: sostituisce solo questa tappa e ricalcolo gli orari del giorno. Se non ci sta nel tempo, resta quella di prima.",cand.map(function(id){var q=S[id],tk=q.tk&&q.tk[0]?" · "+eur(q.tk[0]):"";return{t:q.t+" · "+fdur(q.id)+tk,fn:function(){repDo(P.i,it.id,id)}}}))}
-function repDo(di,old,nw){var ro=repGet(),sv=JSON.stringify(COPT),q=S[nw];ro.d[di]=ro.d[di]||{};var prev=ro.d[di];
+function repDo(di,old,nw,mode){var ro=repGet(),sv=JSON.stringify(COPT),q=S[nw];ro.d[di]=ro.d[di]||{};var prev=ro.d[di];
 /* se la tappa da sostituire era già una sostituzione, risalgo all'originale */
 var orig=old;Object.keys(prev).forEach(function(k){if(prev[k]===old){orig=k;delete prev[k]}});prev[orig]=nw;
 if(S[old]&&S[old].tk&&POOL0.indexOf(old)<0)delete COPT[old];
-if(q.tk)COPT[nw]=1;
+if(q.tk)COPT[nw]=mode==="out"?0:1;
 ls("via-copt",JSON.stringify(COPT));repSave(ro);renderAll();
 var ok=TRIP.days[di]&&TRIP.days[di].acts.indexOf(nw)>=0;
 if(!ok){delete ro.d[di][orig];if(!Object.keys(ro.d[di]).length)delete ro.d[di];repSave(ro);try{COPT=JSON.parse(sv)}catch(e){}ls("via-copt",JSON.stringify(COPT));renderAll();toast(q.t+" non ci sta nel tempo del giorno: lascio la tappa di prima");return}
-toast("Sostituita con "+q.t)}
+toast("Sostituita con "+(mode==="out"?q.t.replace(/,?\s*dentro$/i,"")+", da fuori":q.t))}
 function skipAsk(it){var x=S[it.id];if(!x)return;ask("Saltare questa tappa?",x.t+": la tolgo dal giorno e ricalcolo gli orari delle tappe dopo. Puoi rimetterla quando vuoi.",[{t:"Salta la tappa",fn:function(){var di=P.i;skipSet(di,it.id,true);renderAll();
 if(window.__undoToast)__undoToast("Tappa saltata","Annulla",function(){skipSet(di,it.id,false);renderAll()});else toast("Tappa saltata")}}])}
 function daySwipe(el){if(el.dataset.dsb)return;el.dataset.dsb="1";var x0=0,y0=0,t0=0,on=0;
@@ -328,7 +354,13 @@ return{items:items,end:t,prev:prev,ret:R,slack:slack,B:B,L:L,D:D}}
 /* se il biglietto è tolto dai costi, la visita si accorcia: ci si ferma fuori */
 /* v260 tappe con biglietto obbligatorio che valgono anche da fuori: se togli il biglietto nei Costi restano, più brevi */
 (function(){var O={"bcn": "sagradains parkguell batllo santpau pedrera", "roma": "colosseoins castel caracalla", "londra": "abbeyins stpaulins toweroflondon", "amsterdam": "annefrankins rijks", "lisbona": "jeronimosins", "cracovia": "rynek:a sukiennice planty:a kazimierz:a ghetto:a", "firenze": "pitti", "valencia": "lonja seu", "varsavia": "zamek pkin"},L=(O[PD.id]||"").split(" ").filter(Boolean);L.forEach(function(x){var p=x.split(":"),q=S[p[0]];if(q&&q.tk&&!q.tk[2])q.out=p[1]||"b"})})();
-function outOff(id){var q=S[id];return !!(q&&q.out&&q.tk&&!q.tk[2]&&typeof COPT!=="undefined"&&COPT&&COPT[id]===0)}
+function outOff(id){var q=S[id];return !!(q&&q.out&&q.tk&&(!q.tk[2]||q.x)&&typeof COPT!=="undefined"&&COPT&&COPT[id]===0)}
+/* luoghi del catalogo che si vedono anche da fuori (palazzi, chiese, torri…), non musei o attrazioni al chiuso */
+var OUTY=/\b(casa|casas|palau|palazzo|palais|palace|palacio|palácio|pałac|palota|schloss|castello|castell|castillo|castelo|castle|château|zamek|hrad|vár|cattedrale|catedral|cathedral|cathédrale|dom|duomo|basilica|basílica|chiesa|church|église|kirche|iglesia|igreja|kościół|kostel|sinagoga|synagogue|moschea|mosque|camii|torre|tower|tour|turm|wieża|věž|ponte|bridge|pont|most|arco|arc|porta|gate|tor|teatro|theatre|théâtre|opera|opéra|oper|ópera|municipio|rathaus|hôtel de ville|ayuntamiento|monastero|monasterio|mosteiro|abbazia|abbey|klášter|klasztor|mercato|mercat|mercado|market|markt|faro|lighthouse|villa|pavilion|padiglione|recinte|fortezza|fortress|bastion|bastione)\b/i,
+ NOOUT=/\b(museo|museu|museum|musée|muzeum|múzeum|muzej|fundació|fundación|fundação|galleria|gallery|galerie|galería|kunsthalle|pinacoteca|acquario|aquàrium|aquarium|aquário|zoo|funivia|teleferic|cable car|parco divertimenti|atraccions|escape|spa|terme|tour in|giro in|crociera|cruise|mostra|exhibition|experience|planetari|planetarium|cinema|wunderland)\b/i;
+function outable(id){var q=S[id];if(!q||!q.tk)return false;if(q.out)return true;if(q.tk[2]&&!q.x)return true;return !!q.x&&OUTY.test(q.t)&&!NOOUT.test(q.t)}
+(function(){var a=[];try{a=JSON.parse(localStorage.getItem("via-outx")||"[]")}catch(e){}(a||[]).forEach(function(id){if(S[id]&&S[id].x&&S[id].tk)S[id].out="b"})})();
+function outMark(id){var q=S[id];if(!q||!q.x||q.out)return;q.out="b";try{var a=JSON.parse(localStorage.getItem("via-outx")||"[]");if(a.indexOf(id)<0)a.push(id);localStorage.setItem("via-outx",JSON.stringify(a))}catch(e){}}
 function outTwin(id,a){var q=S[id];return (a||[]).some(function(j){var z=S[j];return j!==id&&z&&z.pos&&q.pos&&!(z.tk&&!z.tk[2])&&Math.abs(z.pos[0]-q.pos[0])<0.0025&&Math.abs(z.pos[1]-q.pos[1])<0.0035})}
 function tTitle(id){var q=S[id];if(!q)return"";if(!outOff(id))return q.t;var t=q.t.replace(/,?\s*dentro$/i,"");return t+(q.out==="a"?" (senza biglietti)":" (da fuori)")}
 function tOn(id){var t=S[id]&&S[id].tk;if(t&&!t[2])return !outOff(id);if(!t||!t[2])return true;var k=typeof COPT!=="undefined"&&COPT?COPT[id]:null;return k==null?!t[3]:!!k}
@@ -359,7 +391,7 @@ function fillInt(acts,dur,ctx,r,dropped){var wd=ctx.wd,skp=ctx.sk||[],added=0,ca
 function planDay(acts,ctx,opt){
 var dur={},dropped=[],r,g=0,minLen=ctx.single?1:0,need=ST.pc==="rel"?30:0;
 acts=acts.slice();acts.forEach(function(id){dur[id]=ST.pc==="int"?Math.round((dMin(id)+dId(id))/10)*5:dId(id);if(dur[id]<dMin(id))dur[id]=dMin(id)});
-acts.filter(function(id){return S[id].x&&S[id].win}).forEach(function(id){var base=acts.filter(function(a){return a!==id}),bp=acts.indexOf(id),bs=-1e9;
+acts.filter(function(id){return S[id].x&&S[id].win&&!repTarget(id)}).forEach(function(id){var base=acts.filter(function(a){return a!==id}),bp=acts.indexOf(id),bs=-1e9;
 for(var p=0;p<=base.length;p++){var a2=base.slice();a2.splice(p,0,id);var sl=sim(a2,dur,ctx).slack;if(sl>bs+1){bs=sl;bp=p}}acts=base;acts.splice(bp,0,id)});
 if(need){var b0=sim([],dur,ctx).slack;need=Math.max(0,Math.min(need,b0-10))}
 while(g++<80){r=sim(acts,dur,ctx);if(r.slack>=0&&(r.slack>=need||!(acts.length>minLen||acts.some(function(id){return dur[id]>dMin(id)}))))break;
@@ -653,10 +685,11 @@ var c=document.createElement("article");c.className="wc sel";c.setAttribute("ari
 c.innerHTML='<div class="wch"><span>Tappa '+(i+1)+' di '+N+'</span><b class="wcp"></b></div><div class="wct"></div><div class="wcb"></div><div class="wca"><button type="button" class="wcs"></button></div><div class="wcst" aria-hidden="true">VISTO<small>'+esc(stampTxt())+'</small></div>';
 $(".wct",c).textContent=$(".t",steps[i]).textContent;
 var b=$(".wcb",c);b.innerHTML=$(".body",steps[i]).innerHTML;
-if(it.k==="act"&&S[it.id]){var rw=document.createElement("div");rw.className="wcrw";rw.innerHTML='<button type="button" class="wcr"><span aria-hidden="true">⇄</span> Sostituisci tappa</button>';$(".wcr",rw).addEventListener("click",function(){repAsk(it)});b.appendChild(rw)}
+if(it.k==="act"&&S[it.id]){var cb=document.createElement("button");cb.type="button";cb.className="wcx"+(chHint()?" hot":"");cb.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg><span>Cambia</span>';cb.setAttribute("aria-label","Cambia tappa: "+tt(i));cb.addEventListener("click",function(){chSeen();repSheet(it)});c.__cb=cb}
 var ac=$(".wca",c),eat=$(".eat",b);if(eat)eat.parentNode.removeChild(eat);$$("a.go",b).filter(function(g){return g.parentNode===b}).reverse().forEach(function(g){g.parentNode.removeChild(g);ac.insertBefore(g,ac.firstChild)});if(eat){var pb=document.createElement("button");pb.type="button";pb.className="wcp2";pb.innerHTML="<span aria-hidden=\"true\">🍽️</span> "+(mPick(it)?"Cambia":"Scegli");pb.addEventListener("click",function(){wToPasti(it)});ac.insertBefore(pb,ac.firstChild)}
 if($("p",b)){var dt=document.createElement("button");dt.type="button";dt.className="wcd";dt.setAttribute("aria-expanded","false");dt.setAttribute("aria-label","Mostra i dettagli");dt.addEventListener("click",function(){var o=c.classList.toggle("open");dt.setAttribute("aria-label",o?"Nascondi i dettagli":"Mostra i dettagli");dt.setAttribute("aria-expanded",o)});ac.appendChild(dt)}
 $$("[data-edit]",c).forEach(function(x){x.addEventListener("click",function(){openSetup(false)})});
+if(c.__cb){var ws=$(".wcs",c);ws.parentNode.insertBefore(c.__cb,ws.nextSibling)}
 $(".wcs",c).addEventListener("click",function(){var on=wStamp(it);paint();if(on&&i<N-1)setTimeout(function(){if(WSEL.i===i&&WSEL.d===P.i)pick(i,"drum")},800)});
 cards.push(c);
 var bl=document.createElement("i");bl.style.flex=String(lens[i]);gbt.appendChild(bl);blocks.push(bl);

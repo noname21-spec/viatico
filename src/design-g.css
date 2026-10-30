@@ -2912,3 +2912,46 @@ html.en body:has(#hero.post) .nbrow .ntl::before{content:"Trip finished · how d
 .chero>.csky{--skc:rgba(0,0,0,.85);--skc2:rgba(0,0,0,.55)}
 .pcf svg.sky *,.pcmi svg.sky *,.dhero svg.zsk .mon,.dhero svg.zsk .bk{animation:none!important}
 .pcf svg.sky .mon,.pcmi svg.sky .mon,.pcf svg.sky .bk,.pcmi svg.sky .bk,.pcf svg.sky .ln,.pcmi svg.sky .ln{opacity:1!important;transform:none!important}
+
+/* v270 Cambia tappa: pulsante sulla pagina e foglio con le alternative */
+#hero .wdet .wc .wca .wcx{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:44px;padding:0 12px!important;border-radius:15px;cursor:pointer;font:700 .84rem Outfit,system-ui,sans-serif;background:rgba(43,36,56,.08)!important;color:#2b2438!important;border:1px solid rgba(43,36,56,.18)!important}
+#hero .wdet .wc .wca .wcx svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+#hero .wdet .wc .wca .wcx.hot{background:#ffd56b!important;color:#3a2a06!important;border-color:transparent!important;animation:chPulse 2.4s infinite}
+@keyframes chPulse{0%{box-shadow:0 0 0 0 rgba(255,213,107,.65)}70%{box-shadow:0 0 0 10px rgba(255,213,107,0)}100%{box-shadow:0 0 0 0 rgba(255,213,107,0)}}
+@media (max-width:400px){#hero .wdet .wc .wca .wcx{padding:0 10px!important;gap:4px}#hero .wdet .wc .wca .wcs{flex-basis:78px!important;width:78px!important;min-width:78px!important}}
+#hero .wdet .wc.chf{animation:chFlip .6s cubic-bezier(.2,1.2,.3,1)}
+@keyframes chFlip{0%{transform:perspective(700px) rotateX(70deg);opacity:0}100%{transform:rotate(-.4deg);opacity:1}}
+.chs{position:fixed;inset:0;z-index:90;pointer-events:none}
+.chs .chb{position:absolute;inset:0;background:rgba(10,12,24,.42);opacity:0;transition:opacity .25s;pointer-events:auto}
+.chs .chp{position:absolute;left:0;right:0;bottom:0;max-width:620px;margin:0 auto;max-height:82vh;overflow:auto;padding:10px max(16px,env(safe-area-inset-left,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-right,0px));border-radius:24px 24px 0 0;background:#fbf7ef;color:#2b2438;box-shadow:0 -10px 30px rgba(0,0,0,.25);transform:translateY(105%);transition:transform .42s cubic-bezier(.2,1.2,.3,1);pointer-events:auto;outline:none}
+.chs.on .chb{opacity:1}.chs.on .chp{transform:none}
+.chg{width:38px;height:4px;border-radius:4px;background:#d4c9b6;margin:0 auto 10px}
+.chh{display:block;font:800 1.05rem/1.2 Outfit,system-ui,sans-serif;margin:0 4px 10px}
+.chc{margin:0 0 12px;padding:10px;border-radius:14px;background:rgba(43,36,56,.05)}
+.chc>span{display:block;font:800 .64rem Outfit,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#8a7f96;margin:0 2px 8px}
+.chl{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.cha{all:unset;cursor:pointer;box-sizing:border-box;width:100%;display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;padding:9px 8px;border-radius:14px;min-height:56px}
+.cha:hover,.cha[aria-expanded=true]{background:rgba(43,36,56,.07)}
+.cha i{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-style:normal;font-size:1.25rem;background:#efe6d6}
+.cha span{min-width:0}.cha b{display:block;font:700 .95rem/1.2 Outfit,system-ui,sans-serif}
+.cha small{display:block;font:500 .78rem/1.3 Outfit,system-ui,sans-serif;color:#6a5f7d}
+.cha em{font:700 .78rem Outfit,system-ui,sans-serif;font-style:normal;color:#2b2438;white-space:nowrap}
+.cha em.fr{color:#2e7d4f}
+.cio{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:2px 8px 10px 60px}
+.chc .cio{padding:0}
+.cio[hidden]{display:none}
+.cio button{all:unset;cursor:pointer;box-sizing:border-box;display:grid;gap:2px;padding:10px 12px;border-radius:12px;background:#fff;border:1.5px solid #e2d8c6;min-height:52px}
+.cio button b{font:700 .9rem Outfit,system-ui,sans-serif}
+.cio button small{font:500 .76rem Outfit,system-ui,sans-serif;color:#6a5f7d}
+.cio button[aria-pressed=true]{border-color:#2b2438;background:#2b2438;color:#fbf7ef}.cio button[aria-pressed=true] small{color:#e9dfce}
+.cio button:hover{border-color:#2b2438}
+.che{margin:6px 4px;color:#6a5f7d}
+.chx{all:unset;cursor:pointer;display:block;width:100%;box-sizing:border-box;text-align:center;margin-top:10px;padding:12px;border-radius:14px;font:700 .92rem Outfit,system-ui,sans-serif;color:#5b4a70}
+.cha:focus-visible,.cio button:focus-visible,.chx:focus-visible{outline:3px solid #2b4a9a;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.chs .chp,.chs .chb{transition:none}#hero .wdet .wc .wca .wcx.hot,#hero .wdet .wc.chf{animation:none}}
+/* con Cambia i pulsanti vanno su due righe: Portami lì e dettagli sopra, Timbra e Cambia sotto */
+#hero .wdet .wc .wca:has(.wcx){flex-wrap:wrap!important;row-gap:8px}
+#hero .wdet .wc .wca:has(.wcx) .go{order:1;flex:1 1 calc(100% - 60px)!important;max-width:none}
+#hero .wdet .wc .wca:has(.wcx) .wcd{order:2}
+#hero .wdet .wc .wca:has(.wcx) .wcs{order:3;flex:1 1 calc(50% - 4px)!important;width:auto!important;min-width:0!important;max-width:none!important}
+#hero .wdet .wc .wca:has(.wcx) .wcx{order:4;flex:1 1 calc(50% - 4px)!important;width:auto!important;padding:0 12px!important}

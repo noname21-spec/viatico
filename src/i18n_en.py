@@ -1,6 +1,7 @@
 # Dizionario IT -> EN dell'interfaccia (corrispondenza esatta del testo, spazi ignorati).
 # I testi delle guide delle città restano in italiano.
 D = {
+'Cambia': 'Change', 'Dentro': 'Inside', 'Da fuori': 'From outside', 'Senza biglietti': 'No tickets', 'Questa tappa': 'This stop', 'Annulla': 'Cancel', 'gratis': 'free', 'Non ci sono altre tappe vicine da proporre.': 'There are no other stops nearby to suggest.',
 'Pausa': 'Break',
 'Saluti da': 'Greetings from', 'Scegli tre momenti': 'Pick three moments', 'Scorri per vedere il retro.': 'Swipe to see the back.',
 "Carta d'imbarco": 'Boarding pass',
@@ -358,3 +359,5 @@ F += [
 (r'^circa ([\d,]+) tappe al giorno$', r'about \1 stops a day'), (r'^(\d+) tappe$', r'\1 stops'), (r'^1 tappa$', '1 stop'),
 (r'^([\d h]+min|\d+ h) senza programmi: un caffè seduti, una panchina al parco o un gelato\. Poi si riparte con calma\.$', r'\1 with nothing planned: a coffee, a park bench or an ice cream. Then off again, slowly.'),
 ]
+F += [(r'^Al posto di (.+)$', r'Instead of \1'), (r'^Cambia tappa: (.+)$', r'Change stop: \1'), (r'^Sostituita con (.+)$', r'Replaced with \1'),
+(r'^(.+) · si vede anche da fuori$', r'\1 · also worth seeing from outside')]
