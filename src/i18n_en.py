@@ -1,6 +1,7 @@
 # Dizionario IT -> EN dell'interfaccia (corrispondenza esatta del testo, spazi ignorati).
 # I testi delle guide delle città restano in italiano.
 D = {
+'Spese del viaggio': 'Trip expenses', 'Le tappe fatte': 'Stops done',
 '＋ Aggiungi un viaggio già fatto': '＋ Add a past trip', 'Scegli la città dove sei stato': 'Pick the city you visited',
 'Viaggio già fatto: scegli le date. Dopo potrai segnare le tappe che hai fatto davvero.': 'Past trip: pick the dates. Then you can mark the stops you actually did.',
 'Per un viaggio già fatto le date devono essere nel passato.': 'For a past trip the dates must be in the past.',

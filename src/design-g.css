@@ -2799,7 +2799,7 @@ svg.sky .wn.on{opacity:.92}
 svg.sky .bk{animation:skFade 1s ease both}
 #hero[data-tod=dawn] svg.sky,#dest[data-tod=dawn] svg.sky{--skc:rgba(40,18,52,.46);--skc2:rgba(40,18,52,.28)}
 #hero[data-tod=dusk] svg.sky,#dest[data-tod=dusk] svg.sky{--skc:rgba(30,10,40,.55);--skc2:rgba(30,10,40,.34)}
-#hero[data-tod=night] svg.sky,#dest[data-tod=night] svg.sky{--skc:rgba(3,5,14,.74);--skc2:rgba(3,5,14,.5)}
+#hero[data-tod=night] svg.sky,#dest[data-tod=night] svg.sky{--skc:rgba(38,46,88,.82);--skc2:rgba(38,46,88,.5)}
 .hero .sky{opacity:1!important;-webkit-mask-image:linear-gradient(transparent 0,#000 30%)!important;mask-image:linear-gradient(transparent 0,#000 30%)!important}
 html.hc .hero .sky{opacity:.35!important}
 @media (prefers-reduced-motion:reduce){svg.sky .wn{transition:none}}
@@ -2897,3 +2897,8 @@ body:has(#hero.post) .nbrow .ntl::before{content:"Viaggio concluso · com'è and
 #dmine .tpcs .tk .tm{text-align:left;align-items:flex-start}
 body:has(form[data-past="1"]) #sfast{display:none!important}
 body:has(#hero.post) .nfab{display:none!important}
+
+/* v262 dopo il viaggio: niente meteo di oggi, riquadri utili al posto di Voli e Alloggio */
+body:has(#hero.post) #wx{display:none!important}
+body:has(#hero.post) #tgr .tg:not(.pct){display:none!important}
+#tgr .tg.pct svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}

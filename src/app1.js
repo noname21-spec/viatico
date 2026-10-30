@@ -678,7 +678,7 @@ function todayIdx(){if(!TRIP)return -1;var d=paris().d;for(var i=0;i<TRIP.days.l
 var lastDay=null;
 function liveTick(){if(document.hidden)return;var live=$("#live");if(!TRIP||!CFG){live.hidden=true;var hp=$("#hero");if(hp)hp.classList.remove("post");var op=$("#pcd");if(op)op.remove();return}var dd=paris().d;if(lastDay&&dd!==lastDay){lastDay=dd;try{renderAll()}catch(e){console.error(e)}return}lastDay=dd;
 var n=paris(),c=CFG,A=TRIP.A,D0=TRIP.days[0],DN=TRIP.days[TRIP.n-1];
-var post=n.d>DN.date,hro=$("#hero");if(hro&&hro.classList.contains("post")!==post){hro.classList.toggle("post",post);try{WH.paint&&WH.paint()}catch(e){}}if(post){try{postCard();pcHint(1);pcCount()}catch(e){console.error(e)}}else{var opc=$("#pcd");if(opc)opc.remove();pcHint(0)}
+var post=n.d>DN.date,hro=$("#hero");if(hro&&hro.classList.contains("post")!==post){hro.classList.toggle("post",post);try{WH.paint&&WH.paint()}catch(e){}}if(post){try{postCard();pcHint(1);pcCount();pcTiles(1);setTimeout(function(){window.__apPaint&&__apPaint("")},0)}catch(e){console.error(e)}}else{var opc=$("#pcd");if(opc)opc.remove();pcHint(0);pcTiles(0)}
 function set(cls,b,sp){try{localStorage.setItem("via-live",JSON.stringify({k:c.dest+c.date,b:b,s:sp,t:Date.now(),bar:LB}))}catch(e){}live.className="live "+cls;var lk="",tt=b,mm=/^(Ora|Prima tappa): /.exec(b);if(mm){lk=mm[1]==="Ora"?"Adesso":"Prima tappa";tt=b.slice(mm[0].length)}live.innerHTML='<i class="dot"></i><div class="lt">'+(lk?'<small class="lk"></small>':'')+'<b></b><span></span></div>';live.classList.toggle("lnow",lk==="Adesso");live.classList.toggle("ldup",/^Mancano /.test(b));if(lk)$(".lk",live).textContent=lk;$("b",live).textContent=tt;$("span",live).textContent=sp;live.hidden=false;window.__apPaint&&__apPaint(/^Prossima:/.test(sp)?"":b)}
 var steps=$$("#steps .step");steps.forEach(function(li){li.classList.remove("now")});
 if(n.d<D0.date){var d=Math.round((dateObj(D0.date)-dateObj(n.d))/864e5);set("calm",d===1?"Domani si parte! ✈️":"Mancano "+d+" giorni al viaggio",(c.a_num?"Volo "+c.a_num+(c.a_dep?" alle "+c.a_dep:"")+". ":"")+"Atterraggio a "+A.n+" alle "+c.a_arr+"."+(d<=2&&PD.T.remind?" "+PD.T.remind:""));return}
@@ -1068,12 +1068,18 @@ function pcKey(){return"via-pc:"+CFG.dest+":"+CFG.date}
 function pcGet(){try{return JSON.parse(localStorage.getItem(pcKey())||"{}")||{}}catch(e){return{}}}
 function pcPut(o){try{localStorage.setItem(pcKey(),JSON.stringify(o))}catch(e){}}
 function pcMoments(){var seen={},out=[];TRIP.days.forEach(function(T){T.items.forEach(function(it){if(it.k!=="act")return;var t=stepTitle(T,it);if(t&&!seen[t]){seen[t]=1;out.push(t)}})});return out}
-function pcCode(){var n=(PD.n||"").normalize?PD.n.normalize("NFD").replace(/[̀-ͯ]/g,""):PD.n;return n.replace(/[^A-Za-z]/g,"").slice(0,3).toUpperCase()}
+function pcCode(){var ap=(CFG&&CFG.to)||Object.keys(PD.PAR||{})[0]||"";if(/^[A-Z]{3}$/.test(ap))return ap;var n=(PD.n||"").normalize?PD.n.normalize("NFD").replace(/[̀-ͯ]/g,""):PD.n;return n.replace(/[^A-Za-z]/g,"").slice(0,3).toUpperCase()}
 function pcStamp(){var a=dateObj(CFG.date_r||CFG.date);return pcCode()+"<br>"+a.getUTCDate()+"·"+(a.getUTCMonth()+1)+"<br>"+a.getUTCFullYear()}
 function pcClock(){var n=paris();return fmt(n.m).replace(/^(\d):/,"0$1:")+" a "+PD.n}
 function pcDone(){var n=0;[MEALS.v||{},MEALS.s||{}].forEach(function(v){Object.keys(v).forEach(function(k){if(v[k])n++})});return n}
 function pcCount(){var b=$("#pcd .psl .psub");if(b&&b.dataset.base){var n=pcDone();b.textContent=b.dataset.base+(n?" "+(n===1?"1 fatta.":n+" fatte."):"")}}
 function pcHint(on){var it=$("#itinerario"),h=$("#pchint");if(!on){if(h)h.remove();return}if(h||!it)return;h=document.createElement("p");h.id="pchint";h.className="pchint";h.textContent="Tocca le tappe che hai fatto davvero: si segnano con il timbro.";var w=$("#itinerario .wbox");if(w)w.parentNode.insertBefore(h,w)}
+function pcTiles(on){var g=$("#tgr");if(!g)return;var w=$(".pct",g);if(!on){$$(".pct",g).forEach(function(x){x.remove()});return}if(w)return;
+ var a=document.createElement("button");a.type="button";a.className="tg pct";a.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v12H4zM4 7l2-3h12l2 3M9 12h6"/></svg><span>Spese del viaggio</span>';
+ a.addEventListener("click",function(){var t=$("#t-costi");if(t){t.checked=true;t.dispatchEvent(new Event("change",{bubbles:true}))}});
+ var b=document.createElement("button");b.type="button";b.className="tg pct";b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg><span>Le tappe fatte</span>';
+ b.addEventListener("click",function(){var h=$("#pchint")||$("#itinerario .wbox");if(h)h.scrollIntoView({behavior:"smooth",block:"start"})});
+ g.insertBefore(b,g.firstChild);g.insertBefore(a,g.firstChild)}
 function pcSky(box){var f=$(".pcf",box);if(!f||$("svg",f)||!window.zSky)return;try{var z=zSky(PD.id,"pc");if(z){f.appendChild(z);if(window.skyLit)skyLit(z,.62)}}catch(e){}}
 function postCard(){var h=$("#hero");if(!h)return;var k=pcKey(),box=$("#pcd");
  if(box&&box.dataset.k===k){$$("[data-clk]",box).forEach(function(e){e.textContent=pcClock()});pcSky(box);return}
