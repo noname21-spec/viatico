@@ -137,7 +137,7 @@ function repSave(o){ls("via-rep",Object.keys(o.d).length?JSON.stringify(o):null)
 function repTarget(id){var d=repGet().d,f=false;Object.keys(d).forEach(function(i){Object.keys(d[i]).forEach(function(k){if(d[i][k]===id)f=true})});return f}
 function isOptT(id){var t=S[id]&&S[id].tk;return !!(t&&t[2]&&!S[id].x)}
 function skipF(i,acts){var s=skipGet().d[i]||[],rp=repGet().d[i]||{};
-return acts.map(function(x){return rp[x]||x}).filter(function(x,k,a){return a.indexOf(x)===k&&s.indexOf(x)<0&&!(S[x]&&S[x].tk&&!isOptT(x)&&typeof COPT!=="undefined"&&COPT[x]===0)})}
+return acts.map(function(x){return rp[x]||x}).filter(function(x,k,a){return a.indexOf(x)===k&&s.indexOf(x)<0&&!(S[x]&&S[x].tk&&!isOptT(x)&&typeof COPT!=="undefined"&&COPT[x]===0&&!(S[x].out&&!outTwin(x,a)))})}
 /* le attrazioni spuntate nei Costi che non fanno parte del giro base */
 var POOL0=[];
 function xForced(){return Object.keys(S).filter(function(id){return S[id].tk&&COPT[id]===1&&POOL0.indexOf(id)<0&&!repTarget(id)})}
@@ -324,10 +324,15 @@ if(ctx.snack&&!D&&t>=15*60+30&&t+25+R.min<=ctx.dl){t+=5;items.push({k:"snk",t:t,
 var slack=ctx.dl-(t+R.min);if(late>0)slack=Math.min(slack,-late);
 return{items:items,end:t,prev:prev,ret:R,slack:slack,B:B,L:L,D:D}}
 /* se il biglietto è tolto dai costi, la visita si accorcia: ci si ferma fuori */
-function tOn(id){var t=S[id]&&S[id].tk;if(!t||!t[2])return true;var k=typeof COPT!=="undefined"&&COPT?COPT[id]:null;return k==null?!t[3]:!!k}
-function dMin(id){var q=S[id];return tOn(id)?q.min:Math.max(15,Math.round(q.min*.5/5)*5)}
-function dId(id){var q=S[id];return tOn(id)?q.id:Math.max(dMin(id),Math.round(q.id*.5/5)*5)}
-function dMax(id){var q=S[id];return tOn(id)?q.max:Math.max(dId(id),Math.round(q.max*.6/5)*5)}
+/* v260 tappe con biglietto obbligatorio che valgono anche da fuori: se togli il biglietto nei Costi restano, più brevi */
+(function(){var O={"bcn": "sagradains parkguell batllo santpau pedrera", "roma": "colosseoins castel caracalla", "londra": "abbeyins stpaulins toweroflondon", "amsterdam": "annefrankins rijks", "lisbona": "jeronimosins", "cracovia": "rynek:a sukiennice planty:a kazimierz:a ghetto:a", "firenze": "pitti", "valencia": "lonja seu", "varsavia": "zamek pkin"},L=(O[PD.id]||"").split(" ").filter(Boolean);L.forEach(function(x){var p=x.split(":"),q=S[p[0]];if(q&&q.tk&&!q.tk[2])q.out=p[1]||"b"})})();
+function outOff(id){var q=S[id];return !!(q&&q.out&&q.tk&&!q.tk[2]&&typeof COPT!=="undefined"&&COPT&&COPT[id]===0)}
+function outTwin(id,a){var q=S[id];return (a||[]).some(function(j){var z=S[j];return j!==id&&z&&z.pos&&q.pos&&!(z.tk&&!z.tk[2])&&Math.abs(z.pos[0]-q.pos[0])<0.0025&&Math.abs(z.pos[1]-q.pos[1])<0.0035})}
+function tTitle(id){var q=S[id];if(!q)return"";if(!outOff(id))return q.t;var t=q.t.replace(/,?\s*dentro$/i,"");return t+(q.out==="a"?" (senza biglietti)":" (da fuori)")}
+function tOn(id){var t=S[id]&&S[id].tk;if(t&&!t[2])return !outOff(id);if(!t||!t[2])return true;var k=typeof COPT!=="undefined"&&COPT?COPT[id]:null;return k==null?!t[3]:!!k}
+function dMin(id){var q=S[id];if(outOff(id)&&q.out==="b")return 15;return tOn(id)?q.min:Math.max(15,Math.round(q.min*.5/5)*5)}
+function dId(id){var q=S[id];if(outOff(id)&&q.out==="b")return 20;return tOn(id)?q.id:Math.max(dMin(id),Math.round(q.id*.5/5)*5)}
+function dMax(id){var q=S[id];if(outOff(id)&&q.out==="b")return 30;return tOn(id)?q.max:Math.max(dId(id),Math.round(q.max*.6/5)*5)}
 /* anticipo dichiarato oggi: minuti guadagnati e momento in cui li hai guadagnati */
 function earlyOf(date){var o=lateGet();if(!o||o.day!==date)return null;var tot=0,f=0;o.s.forEach(function(x){tot+=x.m;if(x.m<0&&x.f>f)f=x.f});return tot<0?{B:-tot,f:f}:null}
 function planDay(acts,ctx,opt){
@@ -503,6 +508,7 @@ window.PAR={get S(){return S},get MN(){return MN},get cfg(){return CFG},get plan
  L:{},on:function(fn){(this.L.f=this.L.f||[]).push(fn)},emit:function(){if(this.quiet)return;(this.L.f||[]).forEach(function(f){try{f()}catch(e){console.error(e)}})}};
 
 var E={get S(){return S},get V(){return V},get cfg(){return CFG},get trip(){return TRIP},get plan(){return P},get wd(){return WD},home:home,legOf:legOf,posOf:posOf,access:access,hav:hav,est:estMin,fmt:fmt,fdur:fdur,eur:eur,esc:esc,toMin:toMin,sunset:sunset,dateObj:dateObj,lc:lc,allActs:function(){return allActs()},has:function(id){return allActs().indexOf(id)>=0},get copt(){return COPT}};
+window.__vE=E;
 function goBtn(q,mode,label,icon){return '<a class="go" href="'+esc(gdir(q,mode))+'" target="_blank" rel="noopener"><span>'+icon+'</span> '+label+'</a>'}
 var LPN=0;
 function legBox(lg){var h='<div class="leg"><i>'+(lg.mode==="walk"?"🚶":"🚇")+'</i><span>'+esc(lg.txt)+'</span></div>';
@@ -522,9 +528,9 @@ else{var pl=prefList(ids,WD,it.t,it.m,it.z,0,it),L=pl.main,first=L.filter(functi
 body='<p>'+(it.m==="col"?(it.near?"A pochi passi dall'alloggio.":"Appena usciti dalla stazione, a pochi passi."):it.m==="pra"?((PD.T.praZ||{})[it.z]||PD.T.pra+": "+(it.d>=60?"un'ora a tavola, con calma.":"un pranzo veloce.")):(TRIP.multi&&P.kind!=="last"?"La cena della giornata, senza fretta.":"Mangia qui e non in aeroporto: si spende meno e si mangia meglio. Tieni d'occhio l'orologio."))+'</p>'+(ST.th==="eno"&&it.m!=="col"?'<p class="meta">🍷 Tavola lunga: piatti tipici e un calice di vino locale. Se puoi, prenota.</p>':'')+'<div class="eat"><h3>Dove mangiare</h3>'+eatUL(pl,WD,it.m,it.z)+fpNote()+'</div>'+mPickBlock(it,first)}}
 else if(it.k==="snk"){cls="food";ti=it.x?"Aperitivo e assaggi":"Ultimo assaggio prima di partire";var sids=PD.MEAL.snk[it.z]||(it.z==="X"?null:PD.MEAL.snk.A);
 body=(it.x?'<p>Una pausa golosa prima di cena: stuzzichini, un calice o un dolce tipico, assaggiando senza fretta.</p>':'<p>Non c\'è tempo per una cena seduti: prendete qualcosa da mangiare in viaggio o in aeroporto prima dei controlli.</p>')+(sids?'<div class="eat"><h3>Dove prenderlo</h3>'+eatUL(prefList(sids,WD,it.t,"snk",it.z,0,it),WD,"snk",it.z)+fpNote()+'</div>':nearBox("snk"))}
-else if(it.k==="act"){var s=S[it.id];cls=s.cls;ti=s.t;var meta=s.m,lg=it.leg;
+else if(it.k==="act"){var s=S[it.id];cls=s.cls;ti=tTitle(it.id);var meta=s.m,lg=it.leg;
 if(PD.fx.meta)meta=PD.fx.meta(it,meta,E);
-if(!tOn(it.id))meta="Senza biglietto: ti fermi fuori e nelle vie, circa "+it.d+" minuti."+(meta?" "+meta:"");
+if(!tOn(it.id))meta=(outOff(it.id)&&s.out==="b"?"Senza biglietto: lo vedi da fuori, circa "+it.d+" minuti per il giro intorno e le foto.":"Senza biglietto: ti fermi fuori e nelle vie, circa "+it.d+" minuti.")+(meta?" "+meta:"");
 if(s.sun){var ss=sunset(P.date);if(Math.abs(it.t+it.d/2-ss)<120)meta+=" Il sole tramonta alle "+fmt(ss)+": "+(it.t+it.d>ss?"sei qui al momento giusto per la luce del tramonto.":"goditi l'ultima luce.")}
 (PD.EXCL||[]).forEach(function(x){if(it.id===x[1]&&TRIP.multi&&TRIP.days.some(function(d){return d.acts.indexOf(x[0])>=0}))meta=x[2]});
 body=legBox(lg)+'<p>'+esc(s.d)+'</p>'+(meta?'<p class="meta">'+esc(meta)+'</p>':'')+goBtn(s.q,lg.mode==="walk"?"walking":"transit","Portami lì",lg.mode==="walk"?"🚶":"🚇")}
@@ -935,7 +941,7 @@ if(on){var di=-1;TRIP.days.forEach(function(d,i){if(di<0&&d.acts.indexOf(id)>=0)
 if(di<0){if(bf.indexOf(id)<0)toast(nm+" non entra nei tuoi giorni: libera tempo togliendo un'altra tappa");return}
 var rm=bf.filter(function(a){return af.indexOf(a)<0&&a!==id});
 toast(bf.indexOf(id)>=0?nm+" è già nel tuo itinerario":"Aggiunta"+(TRIP.multi?" al giorno "+(di+1):"")+": "+nm+(rm.length?". Per fare posto ho tolto "+rm.map(function(a){return S[a].t}).join(", "):""))}
-else if(bf.indexOf(id)>=0&&af.indexOf(id)<0)toast("Tolta dall'itinerario: "+nm)}
+else if(bf.indexOf(id)>=0&&af.indexOf(id)<0)toast("Tolta dall'itinerario: "+nm);else if(af.indexOf(id)>=0&&outOff(id))toast("Resta nell'itinerario, da fuori: "+tTitle(id)+", circa "+(q.out==="b"?"15":dMin(id))+" minuti")}
 function tgRows(acts){var AT=[];
 Object.keys(S).filter(function(id){return S[id].tk}).sort(function(a,b){var ia=acts.indexOf(a),ib=acts.indexOf(b);return (ia<0?1e3:ia)-(ib<0?1e3:ib)||(S[a].x?1:0)-(S[b].x?1:0)}).forEach(function(id){var t=S[id].tk,inA=acts.indexOf(id)>=0,def=isOptT(id)?(t[3]?1:0):(POOL0.indexOf(id)<0?1:0),r=[id,t[1],t[0],1,def];
 if(!inA){r[6]=1;if(COPT[id]===1||(def===0&&COPT[id]!==0&&!isOptT(id)))r[5]=1}AT.push(r)});
