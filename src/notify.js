@@ -8,10 +8,20 @@ function lj(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v&&typeof 
 function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 var ST=Object.assign({},DEF,lj(KEY,{}));
 function toast(t){try{if(window.VNUI&&VNUI.toast(t))return}catch(e){}var el=$("#toast");if(!el)return;el.textContent=t;el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove("on")},3200)}
-var supported="Notification" in window;
+/* nell'app Android le notifiche passano dal telefono: si programmano in anticipo e arrivano anche con l'app chiusa */
+var NAT=null,NPERM="default";try{var CP=window.Capacitor;if(window.__IS_APP&&CP&&CP.isNativePlatform&&CP.isNativePlatform()){NAT=(CP.Plugins&&CP.Plugins.LocalNotifications)||(CP.registerPlugin&&CP.registerPlugin("LocalNotifications"))}}catch(e){NAT=null}
+function nmap(r){var d=r&&r.display;return d==="granted"?"granted":d==="denied"?"denied":"default"}
+if(NAT)try{NAT.checkPermissions().then(function(r){NPERM=nmap(r);try{label()}catch(e){}}).catch(function(){})}catch(e){}
+function nid(s){var h=0;s=String(s);for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0}return Math.abs(h%2000000000)+1}
+var NSIG="";
+function natSync(force){if(!NAT)return;try{refresh()}catch(e){}var now=Date.now(),f=fired(),sig=JSON.stringify([sigNow,ST.on,NPERM]);if(!force&&sig===NSIG)return;NSIG=sig;
+ var L=ST.on&&NPERM==="granted"?list.filter(function(e){return e.at>now+30000&&!f[e.id]}).sort(function(a,b){return a.at-b.at}).slice(0,60):[];
+ var out=[];L.forEach(function(e){var b=e.body;if(e.dyn){try{b=e.dyn()}catch(x){b=null}if(!b)return}out.push({id:nid(e.id),title:e.title,body:b||"",schedule:{at:new Date(e.at),allowWhileIdle:true},extra:{via:1,k:e.id}})});
+ Promise.resolve(NAT.getPending?NAT.getPending():{notifications:[]}).then(function(p){var old=(p&&p.notifications||[]).filter(function(n){return n.extra&&n.extra.via||true}).map(function(n){return{id:n.id}});return old.length?NAT.cancel({notifications:old}):null}).catch(function(){}).then(function(){if(out.length)return NAT.schedule({notifications:out})}).catch(function(e){console.error("notifiche",e)})}
+var supported=NAT?true:"Notification" in window;
 var ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 var standalone=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
-function perm(){return supported?Notification.permission:"unsupported"}
+function perm(){return NAT?NPERM:supported?Notification.permission:"unsupported"}
 /* fuso orario della città */
 function tzOff(ms,tz){var p={};new Intl.DateTimeFormat("en-US",{timeZone:tz,hourCycle:"h23",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit"}).formatToParts(new Date(ms)).forEach(function(x){p[x.type]=+x.value});return(Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute,p.second)-ms)/6e4}
 function utcOf(date,min,tz){var a=date.split("-").map(Number),g=Date.UTC(a[0],a[1]-1,a[2],0,min),o=tzOff(g,tz);o=tzOff(g-o*6e4,tz);return g-o*6e4}
@@ -54,14 +64,15 @@ function show(title,body,tag,type){
  var vis=document.visibilityState==="visible";
  var inApp=function(){try{if(window.VNUI&&VNUI.show(type||"test",title,body,tag))return}catch(e){}toast(title.replace(/^\S+\s/,"")+(body?" · "+body:""))};
  if(perm()!=="granted"){inApp();return Promise.resolve(false)}
+ if(NAT){return Promise.resolve(NAT.schedule({notifications:[{id:nid(tag+":"+Date.now()),title:title,body:body||"",schedule:{at:new Date(Date.now()+1500),allowWhileIdle:true},extra:{via:1}}]})).then(function(){return true}).catch(function(){inApp();return false})}
  if(vis)inApp();
  var p=navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration():Promise.resolve(null);
  return p.then(function(reg){if(reg&&reg.showNotification)return reg.showNotification(title,opt).then(function(){return true});new Notification(title,opt);return true}).catch(function(){try{new Notification(title,opt);return true}catch(e){return false}})
 }
 var list=[],sigNow="";
-function refresh(){var s=JSON.stringify([window.PAR&&PAR.cfg,ST]);if(s===sigNow&&list.length)return;sigNow=s;try{list=build()}catch(e){list=[];console.error(e)}}
+function refresh(){var s=JSON.stringify([window.PAR&&PAR.cfg,ST]);if(s===sigNow&&list.length)return;sigNow=s;try{list=build()}catch(e){list=[];console.error(e)}if(NAT)setTimeout(function(){natSync()},0)}
 function tick(){
- if(!ST.on)return;refresh();var now=Date.now(),f=fired();
+ if(!ST.on){if(NAT)natSync();return}refresh();if(NAT){natSync();return}var now=Date.now(),f=fired();
  list.forEach(function(e){if(f[e.id]||e.at>now||now-e.at>e.grace)return;
   var b=e.body;if(e.dyn){b=e.dyn();if(!b){mark(e.id);return}}
   mark(e.id);show(e.title,b,e.id,e.type)})
@@ -71,7 +82,7 @@ document.addEventListener("visibilitychange",function(){if(document.visibilitySt
 window.addEventListener("focus",tick);window.addEventListener("pageshow",tick);
 if(window.PAR&&PAR.on)PAR.on(function(){sigNow="";if(ST.on)tick()});
 /* impostazioni */
-var btn=$("#shnot"),box=$("#nbox");if(!btn||!box)return;if(window.__IS_APP){btn.hidden=true;box.hidden=true;box.setAttribute("data-off","1");return}
+var btn=$("#shnot"),box=$("#nbox");if(!btn||!box)return;if(window.__IS_APP&&!NAT){btn.hidden=true;box.hidden=true;box.setAttribute("data-off","1");return}
 var on=$("#non"),opts=$("#nopts"),st=$("#nst"),sub=$("#shnots"),note=$("#nnote"),lead=$("#nlead");
 function label(){
  var p=perm(),t;
@@ -83,11 +94,12 @@ function label(){
  st.textContent=t;sub.textContent=ST.on?t:"Voli, tappe, pasti, alloggio e lista";
  opts.classList.toggle("off",!ST.on);
  var m="I promemoria suonano quando l'app è aperta o appena usata. Per avere gli avvisi anche con l'app chiusa, aggiungi il viaggio al calendario del telefono.";
- if(ios&&!standalone)m="Su iPhone le notifiche funzionano solo se Viaticum è sulla schermata Home: apri la condivisione di Safari e scegli «Aggiungi alla schermata Home». "+m;
+ if(NAT)m="I promemoria arrivano sul telefono anche con l'app chiusa. Se cambi il viaggio, si aggiornano da soli.";
+ if(!NAT&&ios&&!standalone)m="Su iPhone le notifiche funzionano solo se Viaticum è sulla schermata Home: apri la condivisione di Safari e scegli «Aggiungi alla schermata Home». "+m;
  if(p==="denied")m="Le notifiche sono bloccate per Viaticum: puoi riattivarle dalle impostazioni del telefono o del browser. Nel frattempo i promemoria compaiono dentro l'app. "+m;
  note.textContent=m}
 function sync(){on.checked=!!ST.on;[].forEach.call(box.querySelectorAll(".nsw[data-k]"),function(c){c.checked=!!ST[c.dataset.k]});lead.value=String(ST.lead);label()}
-function save(){sv(KEY,ST);sigNow="";label();if(!box.hidden)renderNext()}
+function save(){sv(KEY,ST);sigNow="";label();if(!box.hidden)renderNext();if(NAT)natSync(true)}
 document.body.appendChild(box);box.classList.add("npage");box.setAttribute("role","dialog");box.setAttribute("aria-label","Notifiche e promemoria");
 box.insertAdjacentHTML("afterbegin",'<div class="npg-h"><button type="button" class="npg-b" aria-label="Torna alle impostazioni"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span>Impostazioni</span></button><h3>Notifiche e promemoria</h3></div>');
 var nb=box.querySelector(".nbtns");nb.insertAdjacentHTML("beforebegin",'<div class="nnext"><h4>Prossimi promemoria</h4><ul id="nnext"></ul></div>');
@@ -100,12 +112,12 @@ function openP(){box.hidden=false;box.scrollTop=0;btn.setAttribute("aria-expande
 function closeP(){box.hidden=true;btn.setAttribute("aria-expanded","false");document.documentElement.classList.remove("npgo");try{btn.focus()}catch(e){}}
 btn.addEventListener("click",openP);back.addEventListener("click",closeP);
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!box.hidden){e.stopPropagation();e.preventDefault();closeP()}},true);
-function ask(){if(!supported||Notification.permission!=="default")return Promise.resolve(perm());
+function ask(){if(NAT){return Promise.resolve(NAT.requestPermissions()).then(function(r){NPERM=nmap(r);NSIG="";natSync(true);return NPERM}).catch(function(){return NPERM})}if(!supported||Notification.permission!=="default")return Promise.resolve(perm());
  try{var r=Notification.requestPermission(function(){});return Promise.resolve(r).then(function(){return perm()})}catch(e){return Promise.resolve(perm())}}
 on.addEventListener("change",function(){
  ST.on=on.checked;save();
  if(ST.on){ask().then(function(p){label();if(p==="granted")toast("Promemoria attivati");else if(p==="denied")toast("Notifiche bloccate dal telefono: i promemoria restano dentro l'app");else if(ios&&!standalone)toast("Aggiungi Viaticum alla schermata Home per le notifiche");else toast("Promemoria attivi dentro l'app");start()})}
- else{stop();toast("Promemoria disattivati")}});
+ else{stop();if(NAT)natSync(true);toast("Promemoria disattivati")}});
 [].forEach.call(box.querySelectorAll(".nsw[data-k]"),function(c){c.addEventListener("change",function(){ST[c.dataset.k]=c.checked?1:0;save();tick()})});
 lead.addEventListener("change",function(){ST.lead=+lead.value||15;save();tick()});
 $("#ntest").addEventListener("click",function(){

@@ -13,7 +13,7 @@ for f in glob.glob(os.path.join(here, "res", "*", "*")):
 p = os.path.join(app, "AndroidManifest.xml")
 s = open(p).read()
 rec = ""
-for c, k in (("Next", "next"), ("Spend", "spend"), ("Map", "map"), ("Pass", "pass"), ("Ticket", "ticket"), ("Transit", "transit"), ("Board", "board"), ("Day", "day"), ("Food", "food"), ("Debts", "debts"), ("Fx", "fx")):
+for c, k in (("Next", "next"), ("Spend", "spend"), ("Map", "map"), ("Pass", "pass"), ("Ticket", "ticket"), ("Transit", "transit"), ("Board", "board"), ("Day", "day"), ("Food", "food"), ("Debts", "debts"), ("Fx", "fx"), ("NextS", "next_s"), ("SpendS", "spend_s"), ("FxS", "fx_s"), ("BoardS", "board_s")):
     rec += f"""
         <receiver android:name=".Vw{c}" android:exported="true">
             <intent-filter>
@@ -25,6 +25,8 @@ for c, k in (("Next", "next"), ("Spend", "spend"), ("Map", "map"), ("Pass", "pas
         </receiver>"""
 rec += """
         <activity android:name=".VwFxActivity" android:exported="false" android:excludeFromRecents="true" android:taskAffinity="it.viaticum.app.fx" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:windowSoftInputMode="stateVisible|adjustResize" />"""
+if "POST_NOTIFICATIONS" not in s:
+    s = s.replace("</manifest>", '    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n</manifest>')
 i = s.rindex("</application>")
 s = s[:i] + rec + "\n    " + s[i:]
 open(p, "w").write(s)

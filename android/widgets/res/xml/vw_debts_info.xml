@@ -4,7 +4,7 @@
     android:previewImage="@drawable/vw_prev_debts"
     android:description="@string/vw_debts_d"
     android:minWidth="250dp" android:minHeight="110dp"
-    android:minResizeWidth="200dp" android:minResizeHeight="100dp"
+    android:minResizeWidth="110dp" android:minResizeHeight="100dp"
     android:targetCellWidth="4" android:targetCellHeight="2"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"

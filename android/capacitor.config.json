@@ -2,6 +2,16 @@
   "appId": "it.viaticum.app",
   "appName": "Viaticum",
   "webDir": "www",
-  "server": { "androidScheme": "https" },
-  "android": { "backgroundColor": "#f0f9fc" }
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#f0f9fc"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_viaticum",
+      "iconColor": "#8E1F26"
+    }
+  }
 }

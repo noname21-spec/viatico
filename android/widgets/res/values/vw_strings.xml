@@ -11,4 +11,8 @@
     <string name="vw_food_d">Il prossimo pasto e il locale consigliato</string>
     <string name="vw_debts_d">Chi deve cosa a chi nel gruppo</string>
     <string name="vw_fx_d">Converti una cifra nella valuta del posto</string>
+    <string name="vw_next_s_d">Prossima tappa, piccolo</string>
+    <string name="vw_spend_s_d">Spese, piccolo</string>
+    <string name="vw_fx_s_d">Cambio veloce, piccolo</string>
+    <string name="vw_board_s_d">Prossimo volo, piccolo</string>
 </resources>
