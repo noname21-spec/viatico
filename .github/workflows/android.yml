@@ -39,6 +39,11 @@ jobs:
         run: |
           python3 ../patch_manifest.py
           grep -c "it.viaticum.app" app/src/main/AndroidManifest.xml
+      - name: Widget
+        working-directory: android/android
+        run: |
+          python3 ../widgets/install.py
+          grep -c "appwidget.provider" app/src/main/AndroidManifest.xml
       - name: Versione
         working-directory: android/android
         run: |

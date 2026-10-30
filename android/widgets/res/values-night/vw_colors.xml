@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="vw_bg">#2A1B20</color>
+    <color name="vw_w2">#3B2830</color>
+    <color name="vw_ink">#F8ECE6</color>
+    <color name="vw_mute">#BBA5A2</color>
+    <color name="vw_acc">#FF8A80</color>
+    <color name="vw_acc2">#FFCF5A</color>
+    <color name="vw_onacc">#2A1416</color>
+    <color name="vw_land">#2B2328</color>
+    <color name="vw_street">#3D3238</color>
+    <color name="vw_park">#2F3D2C</color>
+    <color name="vw_board">#0E0D12</color>
+    <color name="vw_board_ink">#F6E7A8</color>
+    <color name="vw_board_mute">#8F8A78</color>
+</resources>

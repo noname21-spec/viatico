@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="vw_next_d">Prossima tappa, con il tempo che manca</string>
+    <string name="vw_spend_d">Spese del viaggio rispetto alla stima</string>
+    <string name="vw_map_d">Mappa con il percorso di oggi</string>
+    <string name="vw_pass_d">I timbri delle città visitate</string>
+    <string name="vw_ticket_d">Il prossimo ingresso a pagamento</string>
+    <string name="vw_transit_d">Metro e bus da prendere oggi</string>
+</resources>
