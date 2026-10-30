@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/row_t" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="12.5sp" android:textColor="@color/vw_board_mute" android:maxLines="1" android:ellipsize="end" android:gravity="center_vertical"/>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/row_t" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="12.5sp" android:textColor="@color/vw_on2" android:maxLines="1" android:ellipsize="end" android:gravity="center_vertical"/>

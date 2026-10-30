@@ -1421,6 +1421,10 @@ if(!CFG||!TRIP){o.none=1}else{var tz=PD.TZ,N=CFG.ppl||1;o.city=PD.n;o.cc=PD.cn||
  try{var Lg=ledger(N),bc={};(SP.x||[]).forEach(function(x){var a=+x.a||0;bc[x.c||"ex"]=(bc[x.c||"ex"]||0)+a});
   var cats=Object.keys(bc).map(function(k){return{n:catName(k),a:Math.round(bc[k]*100)/100}}).sort(function(a,b){return b.a-a.a});
   o.spend={tot:Math.round(Lg.total)/100,est:Math.round(window.PAREST||0),cats:cats.slice(0,4),last:(SP.x||[]).slice().sort(function(a,b){return (b.t||0)-(a.t||0)}).slice(0,6).map(function(x){return{d:String(x.d||catName(x.c)).slice(0,40),a:+x.a||0}})}}catch(e){}}
+ /* colori dei widget: il viaggio in programma più vicino (o quello in corso) */
+ try{var td=new Date().toISOString().slice(0,10),cands=[];if(SAVED&&SAVED.date&&CITIES[SAVED.dest])cands.push(SAVED);trips().forEach(function(t){cands.push(t.cfg)});
+  cands=cands.filter(function(c){return c&&CITIES[c.dest]&&(c.date_r||c.date)>=td&&!c.past}).sort(function(a,b){return a.date<b.date?-1:1});
+  var tc=cands[0]||(CFG&&CITIES[CFG.dest]?CFG:null);if(tc){var cl=CITIES[tc.dest].col||["#0a6f95","#1cc0d6"];o.theme={a:tmLum(cl[0])>.32?tmMix(cl[0],"#1a0f14",.35):cl[0],b:tmKb(cl),c:cl[1]||cl[0],city:CITIES[tc.dest].n}}}catch(e){}
  /* passaporto: viaggi fatti e quello in corso */
  var all=[];try{if(SAVED&&SAVED.date&&CITIES[SAVED.dest])all.push(SAVED);trips().forEach(function(t){all.push(t.cfg)})}catch(e){}
  var today=new Date().toISOString().slice(0,10);o.pass=all.filter(function(c){return c&&CITIES[c.dest]}).map(function(c){var C=CITIES[c.dest],d=c.date;return{n:C.n,q:C.QN||C.n,cn:C.cn||"",col:(C.col&&C.col[0])||"#8e1f26",m:+d.slice(5,7),y:+d.slice(0,4),done:(c.date_r||c.date)<today?1:0}}).sort(function(a,b){return (b.y*13+b.m)-(a.y*13+a.m)}).slice(0,24);

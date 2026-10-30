@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="horizontal" android:gravity="center_vertical" android:padding="14dp" android:background="@drawable/vw_bg">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/vw_bg">
+    <ImageView android:id="@+id/bgimg" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitXY" android:contentDescription="@null"/>
+<LinearLayout android:id="@+id/inner" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="horizontal" android:gravity="center_vertical" android:padding="14dp">
     <ImageView android:id="@+id/stub" android:layout_width="72dp" android:layout_height="90dp" android:scaleType="fitCenter" android:contentDescription="@null"/>
     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="14dp" android:orientation="vertical">
-        <TextView android:id="@+id/lab" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="10.5sp" android:letterSpacing="0.1" android:textColor="@color/vw_mute" android:maxLines="1"/>
-        <TextView android:id="@+id/name" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="17sp" android:textStyle="bold" android:textColor="@color/vw_ink" android:maxLines="1" android:ellipsize="end"/>
-        <TextView android:id="@+id/desc" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="12sp" android:textColor="@color/vw_mute" android:maxLines="1" android:ellipsize="end"/>
-        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="4dp" android:paddingBottom="4dp" android:background="@drawable/vw_chip">
-            <TextView android:id="@+id/chip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="12sp" android:textStyle="bold" android:textColor="@color/vw_acc"/>
-            <Chronometer android:id="@+id/chrono" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="4dp" android:textSize="12sp" android:textStyle="bold" android:textColor="@color/vw_acc"/>
+        <TextView android:id="@+id/lab" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="10.5sp" android:letterSpacing="0.1" android:textColor="@color/vw_on2" android:maxLines="1"/>
+        <TextView android:id="@+id/name" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="17sp" android:textStyle="bold" android:textColor="@color/vw_on" android:maxLines="1" android:ellipsize="end"/>
+        <TextView android:id="@+id/desc" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="12sp" android:textColor="@color/vw_on2" android:maxLines="1" android:ellipsize="end"/>
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="4dp" android:paddingBottom="4dp" android:background="@drawable/vw_glass">
+            <TextView android:id="@+id/chip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="12sp" android:textStyle="bold" android:textColor="@color/vw_on"/>
+            <Chronometer android:id="@+id/chrono" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="4dp" android:textSize="12sp" android:textStyle="bold" android:textColor="@color/vw_on"/>
         </LinearLayout>
         <ViewFlipper android:id="@+id/flip" android:layout_width="match_parent" android:layout_height="wrap_content" android:autoStart="true" android:flipInterval="3500" android:inAnimation="@anim/vw_in" android:outAnimation="@anim/vw_out" android:layout_marginTop="6dp"/>
     </LinearLayout>
 </LinearLayout>
+</FrameLayout>

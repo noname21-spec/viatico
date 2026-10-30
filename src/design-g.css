@@ -3013,3 +3013,5 @@ html.lite .tmfl span{animation:none}
 #hero .wdet .wc .wca.lg2 .go{order:1;flex:1 1 100%!important;max-width:none;justify-content:center}
 #hero .wdet .wc .wca.lg2 .wcs{order:3;flex:1 1 calc(100% - 60px)!important;width:auto!important;min-width:0!important;max-width:none!important}
 #hero .wdet .wc .wca.lg2 .wcd{order:4}
+/* v277: meteo e impostazioni allineati, stessa altezza */
+.appbar .wx{background:color-mix(in srgb,var(--bg) 94%,transparent)!important;align-self:flex-start!important;box-sizing:border-box!important;height:44px!important;min-height:44px!important;padding-top:0!important;padding-bottom:0!important;margin-top:calc(var(--abh)/2 - 36px)!important;align-items:center!important;transition:margin-top .25s ease}

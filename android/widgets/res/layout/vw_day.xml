@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="16dp" android:background="@drawable/vw_bg">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/vw_bg">
+    <ImageView android:id="@+id/bgimg" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitXY" android:contentDescription="@null"/>
+<LinearLayout android:id="@+id/inner" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="16dp">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
-        <TextView android:id="@+id/title" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/vw_ink" android:maxLines="1" android:ellipsize="end"/>
-        <TextView android:id="@+id/count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="12sp" android:textColor="@color/vw_mute"/>
+        <TextView android:id="@+id/title" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/vw_on" android:maxLines="1" android:ellipsize="end"/>
+        <TextView android:id="@+id/count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="12sp" android:textColor="@color/vw_on2"/>
     </LinearLayout>
-    <ProgressBar android:id="@+id/prog" style="@android:style/Widget.ProgressBar.Horizontal" android:layout_width="match_parent" android:layout_height="6dp" android:layout_marginTop="8dp" android:layout_marginBottom="6dp" android:progressDrawable="@drawable/vw_prog" android:max="10" android:progress="3"/>
+    <ProgressBar android:id="@+id/prog" style="@android:style/Widget.ProgressBar.Horizontal" android:layout_width="match_parent" android:layout_height="6dp" android:layout_marginTop="8dp" android:layout_marginBottom="6dp" android:progressDrawable="@drawable/vw_prog_w" android:max="10" android:progress="3"/>
     <LinearLayout android:id="@+id/rows" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="vertical"/>
     <ViewFlipper android:id="@+id/flip" android:layout_width="match_parent" android:layout_height="wrap_content" android:autoStart="true" android:flipInterval="3800" android:inAnimation="@anim/vw_in" android:outAnimation="@anim/vw_out"/>
 </LinearLayout>
+</FrameLayout>

@@ -12,7 +12,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.graphics.LinearGradient;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Shader;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -39,6 +43,48 @@ public final class VwUtil {
     public static final String PREFS = "via_widgets", KEY = "snap", TICK = "it.viaticum.app.WIDGET_TICK";
     static final Class<?>[] ALL = {VwNext.class, VwSpend.class, VwMap.class, VwPass.class, VwTicket.class, VwTransit.class, VwBoard.class, VwDay.class, VwFood.class, VwDebts.class, VwFx.class};
     private VwUtil() {}
+    /* colori del viaggio in programma più vicino */
+    static int TA = 0xFF0A6F95, TB = 0xFF0E3B52;
+    static void theme(JSONObject o) {
+        TA = 0xFF0A6F95; TB = 0xFF0E3B52;
+        JSONObject t = o.optJSONObject("theme");
+        if (t == null) return;
+        try { TA = Color.parseColor(t.optString("a")); } catch (Exception ignored) {}
+        try { TB = Color.parseColor(t.optString("b")); } catch (Exception ignored) { TB = mix(TA, 0xFF000000, .35f); }
+    }
+    static int mix(int a, int b, float f) {
+        return Color.rgb(Math.round(Color.red(a) * (1 - f) + Color.red(b) * f), Math.round(Color.green(a) * (1 - f) + Color.green(b) * f), Math.round(Color.blue(a) * (1 - f) + Color.blue(b) * f));
+    }
+    /* sfondo: sfumatura nei colori della città, un velo scuro a sinistra per il testo e un cerchio chiaro in alto a destra */
+    static Bitmap bg(Context c, int w, int h, float dark) {
+        Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas k = new Canvas(b);
+        float r = 24 * dens(c) * Math.min(1f, 900f / Math.max(w, h) * 1.4f);
+        int a = mix(TA, 0xFF000000, dark), bb = mix(TB, 0xFF000000, dark);
+        Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+        p.setShader(new LinearGradient(0, 0, w, h * .6f, a, bb, Shader.TileMode.CLAMP));
+        RectF rr = new RectF(0, 0, w, h);
+        k.drawRoundRect(rr, r, r, p);
+        p.setShader(new LinearGradient(0, 0, w * .7f, 0, 0x2E000000, 0x00000000, Shader.TileMode.CLAMP));
+        k.drawRoundRect(rr, r, r, p);
+        p.setShader(null);
+        p.setColor(0x14FFFFFF);
+        k.save();
+        Path clip = new Path();
+        clip.addRoundRect(rr, r, r, Path.Direction.CW);
+        k.clipPath(clip);
+        float cr = Math.min(w, h) * .75f;
+        k.drawCircle(w - cr * .25f, -cr * .3f, cr, p);
+        p.setColor(0x0DFFFFFF);
+        k.drawCircle(w * .1f, h * 1.15f, cr * .6f, p);
+        k.restore();
+        return b;
+    }
+    static void skin(Context c, AppWidgetManager m, RemoteViews v, int id, int dw, int dh, float dark) {
+        int[] sz = m != null ? sizePx(c, m, id, dw, dh) : new int[]{Math.round(dw * dens(c)), Math.round(dh * dens(c))};
+        float k = Math.min(1f, 520f / Math.max(sz[0], sz[1]));
+        v.setImageViewBitmap(R.id.bgimg, bg(c, Math.max(60, Math.round(sz[0] * k)), Math.max(60, Math.round(sz[1] * k)), dark));
+    }
 
     /* ---------- dati ---------- */
     static JSONObject snap(Context c) {
@@ -167,6 +213,7 @@ public final class VwUtil {
         RemoteViews v;
         try {
             JSONObject o = snap(c);
+            theme(o);
             switch (kind) {
                 case "next": v = next(c, o, id); break;
                 case "spend": v = spend(c, o, id); break;
@@ -185,6 +232,10 @@ public final class VwUtil {
             v.setTextViewText(R.id.e_t, "Apri Viaticum");
             v.setTextViewText(R.id.e_s, "Il widget si aggiorna quando apri l'app.");
             v.setOnClickPendingIntent(R.id.root, openApp(c, id));
+        }
+        if (!"map".equals(kind)) {
+            int dh = "day".equals(kind) ? 250 : 110;
+            try { skin(c, m, v, id, 250, dh, "transit".equals(kind) ? .45f : 0f); } catch (Exception ignored) {}
         }
         m.updateAppWidget(id, v);
     }
@@ -235,6 +286,7 @@ public final class VwUtil {
         v.setOnClickPendingIntent(R.id.root, openApp(c, id));
         if (s.optInt("ret") == 1 || s.optJSONArray("ll") == null) v.setViewVisibility(R.id.go, View.GONE);
         else { v.setViewVisibility(R.id.go, View.VISIBLE); v.setOnClickPendingIntent(R.id.go, maps(c, 1000 + id, s)); }
+        v.setTextColor(R.id.go, TA);
         return v;
     }
     static Bitmap ring(Context c, float frac, String mid, JSONObject s) {
@@ -246,13 +298,13 @@ public final class VwUtil {
         float sw = n * 0.11f;
         p.setStrokeWidth(sw);
         RectF r = new RectF(sw / 2 + 1, sw / 2 + 1, n - sw / 2 - 1, n - sw / 2 - 1);
-        p.setColor(col(c, R.color.vw_w2));
+        p.setColor(0x40FFFFFF);
         k.drawArc(r, 0, 360, false, p);
-        p.setColor(col(c, R.color.vw_acc));
+        p.setColor(Color.WHITE);
         p.setStrokeCap(Paint.Cap.ROUND);
         k.drawArc(r, -90, 360 * frac, false, p);
         Paint tp = new Paint(Paint.ANTI_ALIAS_FLAG);
-        tp.setColor(col(c, R.color.vw_ink));
+        tp.setColor(Color.WHITE);
         tp.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
         tp.setTextAlign(Paint.Align.CENTER);
         String txt = mid.isEmpty() ? (s.optInt("meal") == 1 ? "☕" : "★") : mid;
@@ -287,7 +339,7 @@ public final class VwUtil {
         v.setOnClickPendingIntent(R.id.root, openApp(c, id));
         return v;
     }
-    static final int[] CAT = {0xFF8E1F26, 0xFFF2B33D, 0xFF2F8F5B, 0xFF2F6F9E};
+    static final int[] CAT = {0xFFFFFFFF, 0xFFFFE08A, 0xFF9EE6C4, 0xFFA9D4FF};
     static Bitmap donut(Context c, double tot, double est, JSONArray cats) {
         int n = Math.round(92 * dens(c));
         Bitmap b = Bitmap.createBitmap(n, n, Bitmap.Config.ARGB_8888);
@@ -297,7 +349,7 @@ public final class VwUtil {
         float sw = n * 0.12f;
         p.setStrokeWidth(sw);
         RectF r = new RectF(sw / 2 + 1, sw / 2 + 1, n - sw / 2 - 1, n - sw / 2 - 1);
-        p.setColor(col(c, R.color.vw_w2));
+        p.setColor(0x40FFFFFF);
         k.drawArc(r, 0, 360, false, p);
         double full = Math.max(est, tot);
         if (full <= 0) full = 1;
@@ -307,13 +359,13 @@ public final class VwUtil {
             double a = cats.optJSONObject(i).optDouble("a");
             rest -= a;
             float sweep = (float) (360 * a / full);
-            p.setColor(i == 0 ? col(c, R.color.vw_acc) : CAT[i]);
+            p.setColor(CAT[i]);
             k.drawArc(r, a0, Math.max(0, sweep - 2), false, p);
             a0 += sweep;
         }
-        if (rest > 0.01) { p.setColor(col(c, R.color.vw_mute)); k.drawArc(r, a0, (float) (360 * rest / full), false, p); }
+        if (rest > 0.01) { p.setColor(0x80FFFFFF); k.drawArc(r, a0, (float) (360 * rest / full), false, p); }
         Paint tp = new Paint(Paint.ANTI_ALIAS_FLAG);
-        tp.setColor(col(c, R.color.vw_ink));
+        tp.setColor(Color.WHITE);
         tp.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
         tp.setTextAlign(Paint.Align.CENTER);
         tp.setTextSize(n * 0.2f);
@@ -354,6 +406,7 @@ public final class VwUtil {
         v.setOnClickPendingIntent(R.id.root, openApp(c, id));
         if (ended || s.optJSONArray("ll") == null) v.setViewVisibility(R.id.go, View.GONE);
         else { v.setViewVisibility(R.id.go, View.VISIBLE); v.setOnClickPendingIntent(R.id.go, maps(c, 2000 + id, s)); }
+        if (Build.VERSION.SDK_INT >= 31) try { v.setColorStateList(R.id.go, "setBackgroundTintList", android.content.res.ColorStateList.valueOf(TA)); } catch (Exception ignored) {}
         return v;
     }
     static Bitmap mapBmp(Context c, List<double[]> pts, int nextP, int w, int h, String city) {
@@ -398,7 +451,7 @@ public final class VwUtil {
         ln.setColor(Color.WHITE);
         ln.setStrokeWidth(9 * d);
         k.drawPath(all, ln);
-        ln.setColor(col(c, R.color.vw_acc));
+        ln.setColor(TA);
         ln.setStrokeWidth(4.5f * d);
         ln.setPathEffect(new DashPathEffect(new float[]{1, 0}, 0));
         k.drawPath(all, ln);
@@ -418,7 +471,7 @@ public final class VwUtil {
             if (nx) { pin.setColor(col(c, R.color.vw_acc2)); k.drawCircle(xy[i][0], xy[i][1], rr + 6 * d, pin); }
             pin.setColor(Color.WHITE);
             k.drawCircle(xy[i][0], xy[i][1], rr + 2.5f * d, pin);
-            pin.setColor(done ? col(c, R.color.vw_mute) : col(c, R.color.vw_acc));
+            pin.setColor(done ? col(c, R.color.vw_mute) : TA);
             k.drawCircle(xy[i][0], xy[i][1], rr, pin);
             tx.setColor(Color.WHITE);
             tx.setTextSize(rr * 1.15f);
@@ -466,9 +519,7 @@ public final class VwUtil {
         boolean night = (c.getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES;
         for (int i = 0; i < nCol && from + i < ps.length(); i++) {
             JSONObject s = ps.optJSONObject(from + i);
-            int cc;
-            try { cc = Color.parseColor(s.optString("col", "#8e1f26")); } catch (Exception e) { cc = 0xFF8E1F26; }
-            if (night) { float[] hsv = new float[3]; Color.colorToHSV(cc, hsv); hsv[2] = Math.max(hsv[2], .85f); hsv[1] = Math.min(hsv[1], .55f); cc = Color.HSVToColor(hsv); }
+            int cc = Color.WHITE;
             float cx = (w / (float) nCol) * (i + .5f), cy = h / 2f;
             k.save();
             k.rotate(rot[i % 4], cx, cy);
@@ -533,14 +584,14 @@ public final class VwUtil {
         Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         Canvas k = new Canvas(b);
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
-        p.setColor(col(c, R.color.vw_acc));
+        p.setColor(Color.WHITE);
         RectF r = new RectF(0, 0, w, h);
         k.drawRoundRect(r, 14 * d, 14 * d, p);
-        p.setColor(col(c, R.color.vw_bg));
+        p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         for (int i = 0; i < 7; i++) k.drawCircle(w, (i + .5f) * h / 7f, 3.2f * d, p);
-        k.drawCircle(w * .5f, 0, 0, p);
+        p.setXfermode(null);
         Paint t = new Paint(Paint.ANTI_ALIAS_FLAG);
-        t.setColor(col(c, R.color.vw_bg));
+        t.setColor(TA);
         t.setTextAlign(Paint.Align.CENTER);
         t.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
         t.setTextSize(11 * d);
@@ -652,7 +703,7 @@ public final class VwUtil {
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeWidth(1.8f * d);
-        p.setColor(col(c, R.color.vw_mute));
+        p.setColor(0x99FFFFFF);
         p.setPathEffect(new DashPathEffect(new float[]{4 * d, 5 * d}, 0));
         float x0 = 6 * d, x1 = w - 6 * d, y0 = h - 8 * d, cy = -h * .35f;
         Path path = new Path();
@@ -664,7 +715,7 @@ public final class VwUtil {
         float dx = 2 * mt * (w / 2f - x0) + 2 * t * (x1 - w / 2f), dy = 2 * mt * (cy - y0) + 2 * t * (y0 - cy);
         float ang = (float) Math.toDegrees(Math.atan2(dy, dx));
         Paint tp = new Paint(Paint.ANTI_ALIAS_FLAG);
-        tp.setColor(col(c, R.color.vw_acc));
+        tp.setColor(Color.WHITE);
         tp.setTextAlign(Paint.Align.CENTER);
         tp.setTextSize(18 * d);
         k.save();
@@ -695,7 +746,7 @@ public final class VwUtil {
         v.setTextViewText(R.id.count, done + " di " + L.size());
         v.setProgressBar(R.id.prog, Math.max(1, L.size()), done, false);
         v.removeAllViews(R.id.rows);
-        int ink = col(c, R.color.vw_ink), mute = col(c, R.color.vw_mute), acc = col(c, R.color.vw_acc);
+        int ink = Color.WHITE, mute = 0xA6FFFFFF, acc = 0xFFFFE08A;
         int shown = 0;
         int start = Math.max(0, Math.min(done - 1, L.size() - 9));
         for (int i = start; i < L.size() && shown < 9; i++, shown++) {
@@ -744,6 +795,7 @@ public final class VwUtil {
         v.setOnClickPendingIntent(R.id.root, openApp(c, id));
         if (m.optJSONArray("ll") == null && m.optString("q").isEmpty()) v.setViewVisibility(R.id.go, View.GONE);
         else { v.setViewVisibility(R.id.go, View.VISIBLE); JSONObject q = new JSONObject(); try { q.put("q", m.optString("q")); q.put("ll", m.optJSONArray("ll")); q.put("mo", "walk"); q.put("lm", 5); } catch (Exception ignored) {} v.setOnClickPendingIntent(R.id.go, maps(c, 3000 + id, q)); }
+        v.setTextColor(R.id.go, TA);
         return v;
     }
 
@@ -788,18 +840,19 @@ public final class VwUtil {
             return bm;
         }
         Paint ln = new Paint(Paint.ANTI_ALIAS_FLAG);
-        ln.setColor(col(c, R.color.vw_mute));
+        ln.setColor(0x99FFFFFF);
         ln.setStrokeWidth(2 * d);
         ln.setPathEffect(new DashPathEffect(new float[]{4 * d, 4 * d}, 0));
         k.drawLine(r * 2 + 2 * d, h / 2f, w - r * 2 - 2 * d, h / 2f, ln);
-        p.setColor(0xFFC7782A);
+        p.setColor(Color.WHITE);
+        t.setColor(TA);
         k.drawCircle(r + 1, h / 2f, r, p);
         k.drawText(a.isEmpty() ? "?" : a.substring(0, 1).toUpperCase(Locale.ITALY), r + 1, h / 2f - (t.descent() + t.ascent()) / 2, t);
-        p.setColor(col(c, R.color.vw_acc));
+        p.setColor(0xFFFFE08A);
         k.drawCircle(w - r - 1, h / 2f, r, p);
         k.drawText(b.isEmpty() ? "?" : b.substring(0, 1).toUpperCase(Locale.ITALY), w - r - 1, h / 2f - (t.descent() + t.ascent()) / 2, t);
         Paint e = new Paint(Paint.ANTI_ALIAS_FLAG);
-        e.setColor(0xFF2F8F5B);
+        e.setColor(Color.WHITE);
         e.setTextAlign(Paint.Align.CENTER);
         e.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
         e.setTextSize(13 * d);
@@ -833,6 +886,7 @@ public final class VwUtil {
         PendingIntent pi = PendingIntent.getActivity(c, 4000 + id, i, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         v.setOnClickPendingIntent(R.id.root, pi);
         v.setOnClickPendingIntent(R.id.go, pi);
+        v.setTextColor(R.id.go, TA);
         return v;
     }
 
