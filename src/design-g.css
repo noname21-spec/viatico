@@ -2921,3 +2921,40 @@ body:has(#hero.post) #tgr .tg:not(.pct){display:none!important}
 .tpst div{display:grid;gap:2px;padding:10px 12px;border-radius:16px;background:var(--surf)}
 .tpst b{font:800 1.35rem/1 Outfit,system-ui,sans-serif;letter-spacing:-.02em;color:var(--ink)}
 .tpst span{font-size:.72rem;line-height:1.2;color:var(--mute);font-weight:600}
+
+/* v264 durante il viaggio: la tappa è una pagina di taccuino */
+#hero .wdet .wc{position:relative;margin-top:10px;padding:12px 14px 14px 26px!important;border-radius:14px!important;background:#fbf7ef!important;color:#2b2438!important;
+ background-image:repeating-linear-gradient(transparent 0 25px,#e9dfce 25px 26px)!important;background-position:0 38px!important;box-shadow:0 14px 26px -14px rgba(0,0,0,.55)!important;transform:rotate(-.4deg)}
+#hero .wdet .wc::before{content:"";position:absolute;left:14px;top:0;bottom:0;width:1px;background:#e3a3a0}
+#hero .wdet .wc .wch,#hero .wdet .wc .wch *{color:#8a7f96!important}
+#hero .wdet .wc .wch{font-family:Outfit,system-ui,sans-serif}
+#hero .wdet .wc .wcp{background:#2b2438!important;color:#fbf7ef!important}
+#hero .wdet .wc .wcp.dn{background:#e8e0d2!important;color:#5b4a70!important}
+#hero .wdet .wc .wct{color:#2b2438!important}
+#hero .wdet .wc .wcb h2{color:#2b2438!important}
+#hero .wdet .wc .wcb p,#hero .wdet .wc .wcb li,#hero .wdet .wc .wcb small,#hero .wdet .wc .wcb span,#hero .wdet .wc .wcb a:not(.go){color:#4a405c!important}
+#hero .wdet .wc .wcb .leg,#hero .wdet .wc .wcb .leg *{background:transparent!important;color:#5b4a70!important}
+#hero .wdet .wc .wcb .leg{font:600 1.08rem/1.3 Caveat,"Segoe Print","Bradley Hand",cursive!important;padding-left:0!important}
+#hero .wdet .wc .wcb .leg::after{color:#5b4a70!important}
+#hero .wdet .wc .legp{background:rgba(43,36,56,.07)!important;color:#2b2438!important}
+#hero .wdet .wc .legp *{color:#2b2438!important}
+#hero .wdet .wc .wca .go{background:#2b2438!important;color:#fbf7ef!important}
+#hero .wdet .wc .wca .go *{color:#fbf7ef!important}
+#hero .wdet .wc .wca>*:not(.go),#hero .wdet .wc .wca .btn,#hero .wdet .wc .wca button:not(.wcd){background:rgba(43,36,56,.08)!important;color:#2b2438!important;border:1px solid rgba(43,36,56,.18)!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+#hero .wdet .wc .wca .wcd::after{border-color:#2b2438!important}
+#hero .wdet .wc .wcst{border:3px double #b8503c!important;color:#b8503c!important;background:rgba(251,247,239,.6)}
+#hero .wdet .wc.dn .wct,#hero .wdet .wc.dn .wcb h2{opacity:.55}
+#hero .wdet .wc .wcrw .wcr{color:#5b4a70!important}
+#hero .hlate,#hero .hlate *{}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #hero .wdet .wc{background-color:#efe7d8!important}}
+/* v264 al ritorno: la carta d'imbarco */
+#hero .live.board{position:relative;display:grid!important;grid-template-columns:auto 1fr;gap:4px 10px;margin:10px 0 0!important;padding:12px 16px 14px!important;border-radius:14px!important;background:#f6f2ec!important;color:#241d33!important;box-shadow:0 14px 26px -14px rgba(0,0,0,.55)!important;
+ -webkit-mask:radial-gradient(circle 9px at 0 46px,transparent 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 9px at 100% 46px,transparent 98%,#000) right/51% 100% no-repeat;mask:radial-gradient(circle 9px at 0 46px,transparent 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 9px at 100% 46px,transparent 98%,#000) right/51% 100% no-repeat}
+#hero .live.board .bph{grid-column:1/-1;display:flex;justify-content:space-between;gap:10px;padding-bottom:10px;margin-bottom:6px;border-bottom:2px dashed #cfc3b0;font:700 .62rem/1.2 Outfit,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#6a5f7d}
+#hero .live.board .bph b{color:#241d33;letter-spacing:.06em}
+#hero .live.board .dot{background:#b8503c!important}
+#hero .live.board .lt b{color:#241d33!important}
+#hero .live.board .lt span,#hero .live.board .lk{color:#4a405c!important}
+#hero .live.board .lb{background:rgba(36,29,51,.08)!important;color:#241d33!important}
+#hero .live.board .lb2{background:#241d33!important;color:#f6f2ec!important}
+.hero.pre .sky{height:92px!important;opacity:.75!important}

@@ -1,6 +1,7 @@
 # Dizionario IT -> EN dell'interfaccia (corrispondenza esatta del testo, spazi ignorati).
 # I testi delle guide delle città restano in italiano.
 D = {
+"Carta d'imbarco": 'Boarding pass',
 'città': 'cities', 'paesi': 'countries', 'paese': 'country', 'giorni in viaggio': 'days travelling', 'giorno in viaggio': 'day travelling', 'anni': 'years', 'anno': 'year',
 'Fuori programma': 'Off the plan', 'Un posto che hai visitato e non è in lista': 'A place you visited that is not listed', 'Aggiungi': 'Add',
 'Spese del viaggio': 'Trip expenses', 'Le tappe fatte': 'Stops done',
