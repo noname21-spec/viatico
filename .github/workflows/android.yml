@@ -23,6 +23,8 @@ jobs:
           rm -rf android/www && mkdir -p android/www
           cp index.html sw.js manifest.webmanifest privacy.html icon-*.png apple-touch-icon.png android/www/
           [ -d lib ] && cp -r lib android/www/ || true
+          cp -r c android/www/
+          test -f android/www/c/roma.js && echo "città: $(ls android/www/c | wc -l)"
       - name: Progetto Android
         working-directory: android
         run: |
