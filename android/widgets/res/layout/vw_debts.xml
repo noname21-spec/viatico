@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="14dp" android:gravity="center_vertical" android:background="@drawable/vw_bg">
+    <TextView android:id="@+id/lab" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="10.5sp" android:letterSpacing="0.1" android:textColor="@color/vw_mute" android:maxLines="1"/>
+    <TextView android:id="@+id/title" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:textSize="17sp" android:textStyle="bold" android:textColor="@color/vw_ink" android:maxLines="2" android:ellipsize="end"/>
+    <ImageView android:id="@+id/pair" android:layout_width="96dp" android:layout_height="40dp" android:layout_marginTop="6dp" android:contentDescription="@null"/>
+    <ViewFlipper android:id="@+id/flip" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:autoStart="true" android:flipInterval="3800" android:inAnimation="@anim/vw_in" android:outAnimation="@anim/vw_out"/>
+</LinearLayout>

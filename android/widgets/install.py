@@ -13,7 +13,7 @@ for f in glob.glob(os.path.join(here, "res", "*", "*")):
 p = os.path.join(app, "AndroidManifest.xml")
 s = open(p).read()
 rec = ""
-for c, k in (("Next", "next"), ("Spend", "spend"), ("Map", "map"), ("Pass", "pass"), ("Ticket", "ticket"), ("Transit", "transit")):
+for c, k in (("Next", "next"), ("Spend", "spend"), ("Map", "map"), ("Pass", "pass"), ("Ticket", "ticket"), ("Transit", "transit"), ("Board", "board"), ("Day", "day"), ("Food", "food"), ("Debts", "debts"), ("Fx", "fx")):
     rec += f"""
         <receiver android:name=".Vw{c}" android:exported="true">
             <intent-filter>
@@ -23,6 +23,8 @@ for c, k in (("Next", "next"), ("Spend", "spend"), ("Map", "map"), ("Pass", "pas
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/vw_{k}_info" />
         </receiver>"""
+rec += """
+        <activity android:name=".VwFxActivity" android:exported="false" android:excludeFromRecents="true" android:taskAffinity="it.viaticum.app.fx" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:windowSoftInputMode="stateVisible|adjustResize" />"""
 i = s.rindex("</application>")
 s = s[:i] + rec + "\n    " + s[i:]
 open(p, "w").write(s)

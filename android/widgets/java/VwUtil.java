@@ -37,7 +37,7 @@ import java.util.Random;
 /* disegno e dati dei widget di Viaticum */
 public final class VwUtil {
     public static final String PREFS = "via_widgets", KEY = "snap", TICK = "it.viaticum.app.WIDGET_TICK";
-    static final Class<?>[] ALL = {VwNext.class, VwSpend.class, VwMap.class, VwPass.class, VwTicket.class, VwTransit.class};
+    static final Class<?>[] ALL = {VwNext.class, VwSpend.class, VwMap.class, VwPass.class, VwTicket.class, VwTransit.class, VwBoard.class, VwDay.class, VwFood.class, VwDebts.class, VwFx.class};
     private VwUtil() {}
 
     /* ---------- dati ---------- */
@@ -84,6 +84,11 @@ public final class VwUtil {
         if (k == VwMap.class) return "map";
         if (k == VwPass.class) return "pass";
         if (k == VwTicket.class) return "ticket";
+        if (k == VwBoard.class) return "board";
+        if (k == VwDay.class) return "day";
+        if (k == VwFood.class) return "food";
+        if (k == VwDebts.class) return "debts";
+        if (k == VwFx.class) return "fx";
         return "transit";
     }
     /* il prossimo cambio (inizio o fine di una tappa), al massimo fra 15 minuti */
@@ -96,6 +101,12 @@ public final class VwUtil {
             long t = s.optLong("t"), e = t + s.optInt("d") * 60000L;
             if (t > now + 30000 && t < when) when = t;
             if (e > now + 30000 && e < when) when = e;
+        }
+        JSONArray fl = snap(c).optJSONArray("flights");
+        if (fl != null) for (int i = 0; i < fl.length(); i++) {
+            JSONObject f = fl.optJSONObject(i);
+            if (f == null) continue;
+            for (String k : new String[]{"imb", "dep", "arr"}) { long t = f.optLong(k); if (t > now + 30000 && t < when) when = t; }
         }
         try {
             AlarmManager am = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
@@ -162,6 +173,11 @@ public final class VwUtil {
                 case "map": v = map(c, m, o, id); break;
                 case "pass": v = pass(c, m, o, id); break;
                 case "ticket": v = ticket(c, o, id); break;
+                case "board": v = board(c, o, id); break;
+                case "day": v = day(c, o, id); break;
+                case "food": v = food(c, o, id); break;
+                case "debts": v = debts(c, o, id); break;
+                case "fx": v = fx(c, o, id); break;
                 default: v = transit(c, m, o, id); break;
             }
         } catch (Exception e) {
@@ -597,4 +613,227 @@ public final class VwUtil {
         k.drawText(lab, w / 2f, h / 2f - (t.descent() + t.ascent()) / 2, t);
         return b;
     }
+    /* ---------- 3 carta d'imbarco ---------- */
+    static RemoteViews board(Context c, JSONObject o, int id) {
+        JSONArray fl = o.optJSONArray("flights");
+        if (noTrip(o) || fl == null || fl.length() == 0) return empty(c, id, "Carta d'imbarco", "Inserisci i voli nel viaggio: qui vedrai il prossimo volo.");
+        long now = System.currentTimeMillis();
+        JSONObject f = null;
+        for (int i = 0; i < fl.length(); i++) { JSONObject x = fl.optJSONObject(i); if (x.optLong("arr") > now) { f = x; break; } }
+        if (f == null) return empty(c, id, "Bentornato", "Il viaggio a " + o.optString("city") + " è finito. Buon rientro!");
+        long dep = f.optLong("dep"), arr = f.optLong("arr"), imb = f.optLong("imb");
+        RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.vw_board);
+        boolean ret = "r".equals(f.optString("k"));
+        v.setTextViewText(R.id.lab, ret ? "VOLO DI RITORNO" : "CARTA D'IMBARCO");
+        v.setTextViewText(R.id.num, f.optString("num").isEmpty() ? new SimpleDateFormat("d MMM", Locale.ITALY).format(new Date(dep)) : f.optString("num") + " · " + new SimpleDateFormat("d MMM", Locale.ITALY).format(new Date(dep)));
+        v.setTextViewText(R.id.from, f.optString("from").isEmpty() ? "—" : f.optString("from"));
+        v.setTextViewText(R.id.to, f.optString("to").isEmpty() ? "—" : f.optString("to"));
+        v.setTextViewText(R.id.fromN, f.optString("fromN") + " · " + hm(dep));
+        v.setTextViewText(R.id.toN, f.optString("toN") + " · " + hm(arr));
+        float frac = now < dep ? 0f : now > arr ? 1f : (float) (now - dep) / Math.max(1, arr - dep);
+        v.setImageViewBitmap(R.id.arc, arc(c, frac));
+        String st;
+        long target;
+        String fmt;
+        if (now < imb) { st = "Imbarco " + hm(imb); target = imb; fmt = "· tra %s"; }
+        else if (now < dep) { st = "Imbarco in corso"; target = dep; fmt = "· decollo tra %s"; }
+        else { st = "In volo"; target = arr; fmt = "· atterri tra %s"; }
+        v.setTextViewText(R.id.st, st);
+        if (target - now < 3 * 3600000L) { chrono(v, R.id.chrono, target, fmt); v.setViewVisibility(R.id.chrono, View.VISIBLE); }
+        else { v.setViewVisibility(R.id.chrono, View.GONE); v.setTextViewText(R.id.st, st + " · " + inTxt(target - now)); }
+        v.setOnClickPendingIntent(R.id.root, openApp(c, id));
+        return v;
+    }
+    static Bitmap arc(Context c, float frac) {
+        float d = dens(c);
+        int w = Math.round(150 * d), h = Math.round(44 * d);
+        Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas k = new Canvas(b);
+        Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+        p.setStyle(Paint.Style.STROKE);
+        p.setStrokeWidth(1.8f * d);
+        p.setColor(col(c, R.color.vw_mute));
+        p.setPathEffect(new DashPathEffect(new float[]{4 * d, 5 * d}, 0));
+        float x0 = 6 * d, x1 = w - 6 * d, y0 = h - 8 * d, cy = -h * .35f;
+        Path path = new Path();
+        path.moveTo(x0, y0);
+        path.quadTo(w / 2f, cy, x1, y0);
+        k.drawPath(path, p);
+        float t = frac, mt = 1 - t;
+        float px = mt * mt * x0 + 2 * mt * t * (w / 2f) + t * t * x1, py = mt * mt * y0 + 2 * mt * t * cy + t * t * y0;
+        float dx = 2 * mt * (w / 2f - x0) + 2 * t * (x1 - w / 2f), dy = 2 * mt * (cy - y0) + 2 * t * (y0 - cy);
+        float ang = (float) Math.toDegrees(Math.atan2(dy, dx));
+        Paint tp = new Paint(Paint.ANTI_ALIAS_FLAG);
+        tp.setColor(col(c, R.color.vw_acc));
+        tp.setTextAlign(Paint.Align.CENTER);
+        tp.setTextSize(18 * d);
+        k.save();
+        k.rotate(ang, px, py);
+        k.drawText("✈", px, py - (tp.descent() + tp.ascent()) / 2, tp);
+        k.restore();
+        return b;
+    }
+
+    /* ---------- 5 la giornata ---------- */
+    static RemoteViews day(Context c, JSONObject o, int id) {
+        if (noTrip(o)) return empty(c, id, "La giornata", "Pianifica un viaggio: qui vedrai tutte le tappe di oggi.");
+        JSONArray st = o.optJSONArray("stops");
+        long now = System.currentTimeMillis();
+        int ci = curIdx(st, now, false);
+        boolean ended = ci < 0;
+        if (ended) ci = st.length() - 1;
+        int day = st.optJSONObject(ci).optInt("day");
+        List<JSONObject> L = new ArrayList<>();
+        for (int i = 0; i < st.length(); i++) { JSONObject s = st.optJSONObject(i); if (s.optInt("day") == day) L.add(s); }
+        int done = 0;
+        for (JSONObject s : L) if (s.optLong("t") + s.optInt("d") * 60000L <= now) done++;
+        RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.vw_day);
+        boolean multi = o.optString("from").compareTo(o.optString("to")) < 0;
+        long first = L.isEmpty() ? now : L.get(0).optLong("t");
+        String when = now < first - 12 * 3600000L ? new SimpleDateFormat("EEEE d MMMM", Locale.ITALY).format(new Date(first)) : "Oggi";
+        v.setTextViewText(R.id.title, when.substring(0, 1).toUpperCase(Locale.ITALY) + when.substring(1) + " a " + o.optString("city") + (multi ? " · giorno " + (day + 1) : ""));
+        v.setTextViewText(R.id.count, done + " di " + L.size());
+        v.setProgressBar(R.id.prog, Math.max(1, L.size()), done, false);
+        v.removeAllViews(R.id.rows);
+        int ink = col(c, R.color.vw_ink), mute = col(c, R.color.vw_mute), acc = col(c, R.color.vw_acc);
+        int shown = 0;
+        int start = Math.max(0, Math.min(done - 1, L.size() - 9));
+        for (int i = start; i < L.size() && shown < 9; i++, shown++) {
+            JSONObject s = L.get(i);
+            long t = s.optLong("t"), e = t + s.optInt("d") * 60000L;
+            boolean isDone = e <= now, isNow = t <= now && now < e, isNext = !isDone && !isNow && (i == 0 || L.get(i - 1).optLong("t") + L.get(i - 1).optInt("d") * 60000L <= now);
+            RemoteViews r = new RemoteViews(c.getPackageName(), R.layout.vw_day_row);
+            r.setTextViewText(R.id.dot, isDone ? "✓" : isNow || isNext ? "●" : "○");
+            r.setTextColor(R.id.dot, isDone ? mute : acc);
+            r.setTextViewText(R.id.nm, s.optString("n"));
+            r.setTextColor(R.id.nm, isDone ? mute : isNow || isNext ? acc : ink);
+            r.setTextViewText(R.id.tm, hm(t));
+            r.setTextColor(R.id.tm, isDone ? mute : ink);
+            v.addView(R.id.rows, r);
+        }
+        v.removeAllViews(R.id.flip);
+        if (ended) v.addView(R.id.flip, row(c, "Giornata finita: tocca per la cartolina"));
+        else {
+            JSONObject s = st.optJSONObject(ci);
+            v.addView(R.id.flip, row(c, (now >= s.optLong("t") ? "Ora: " : "Dopo: ") + s.optString("n") + " · " + hm(s.optLong("t"))));
+            int lm = s.optInt("lm");
+            if (lm > 0) v.addView(R.id.flip, row(c, lm + ("walk".equals(s.optString("mo")) ? " min a piedi" : " min con i mezzi") + " per arrivarci"));
+        }
+        v.setOnClickPendingIntent(R.id.root, openApp(c, id));
+        return v;
+    }
+
+    /* ---------- 30 da assaggiare: il prossimo pasto con il locale scelto ---------- */
+    static RemoteViews food(Context c, JSONObject o, int id) {
+        JSONArray ml = o.optJSONArray("meals");
+        if (noTrip(o) || ml == null || ml.length() == 0) return empty(c, id, "Da assaggiare", "Pianifica un viaggio: qui vedrai dove mangiare.");
+        long now = System.currentTimeMillis();
+        JSONObject m = null;
+        for (int i = 0; i < ml.length(); i++) { JSONObject x = ml.optJSONObject(i); if (x.optLong("t") + x.optInt("d") * 60000L > now && !x.optString("vn").isEmpty()) { m = x; break; } }
+        if (m == null) return empty(c, id, "Buon rientro", "I pasti del viaggio a " + o.optString("city") + " sono finiti.");
+        RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.vw_food);
+        String mk = m.optString("m");
+        v.setTextViewText(R.id.ico, "col".equals(mk) ? "☕" : "cen".equals(mk) ? "🍷" : "pra".equals(mk) ? "🍝" : "🥐");
+        long t = m.optLong("t");
+        v.setTextViewText(R.id.lab, (m.optString("n") + " · " + (now >= t ? "adesso" : hm(t))).toUpperCase(Locale.ITALY));
+        v.setTextViewText(R.id.name, m.optString("vn"));
+        v.removeAllViews(R.id.flip);
+        if (!m.optString("vd").isEmpty()) v.addView(R.id.flip, row(c, m.optString("vd")));
+        if (!m.optString("vp").isEmpty()) v.addView(R.id.flip, row(c, m.optString("vp")));
+        if (!m.optString("va").isEmpty()) v.addView(R.id.flip, row(c, m.optString("va")));
+        v.setOnClickPendingIntent(R.id.root, openApp(c, id));
+        if (m.optJSONArray("ll") == null && m.optString("q").isEmpty()) v.setViewVisibility(R.id.go, View.GONE);
+        else { v.setViewVisibility(R.id.go, View.VISIBLE); JSONObject q = new JSONObject(); try { q.put("q", m.optString("q")); q.put("ll", m.optJSONArray("ll")); q.put("mo", "walk"); q.put("lm", 5); } catch (Exception ignored) {} v.setOnClickPendingIntent(R.id.go, maps(c, 3000 + id, q)); }
+        return v;
+    }
+
+    /* ---------- 37 conti tra amici ---------- */
+    static RemoteViews debts(Context c, JSONObject o, int id) {
+        JSONObject db = o.optJSONObject("debts");
+        if (noTrip(o) || db == null) return empty(c, id, "Conti tra amici", "Pianifica un viaggio in compagnia: qui vedrai chi deve cosa a chi.");
+        if (db.optInt("n") < 2) return empty(c, id, "Conti tra amici", "Viaggi da solo: niente conti da fare. Aggiungi persone nel viaggio per dividere le spese.");
+        RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.vw_debts);
+        v.setTextViewText(R.id.lab, ("Spese di gruppo · " + o.optString("city")).toUpperCase(Locale.ITALY));
+        JSONArray L = db.optJSONArray("list");
+        v.removeAllViews(R.id.flip);
+        if (L == null || L.length() == 0) {
+            v.setTextViewText(R.id.title, db.optDouble("tot") > 0 ? "Tutti in pari ✓" : "Nessuna spesa ancora");
+            v.setImageViewBitmap(R.id.pair, pair(c, "✓", "", 0));
+            v.addView(R.id.flip, row(c, db.optDouble("tot") > 0 ? "Spesi " + eur(db.optDouble("tot")) + " in " + db.optInt("n") : "Aggiungi le spese da Costi nell'app"));
+        } else {
+            JSONObject f = L.optJSONObject(0);
+            v.setTextViewText(R.id.title, f.optString("f") + " deve " + eur(f.optDouble("a")) + " a " + f.optString("t"));
+            v.setImageViewBitmap(R.id.pair, pair(c, f.optString("f"), f.optString("t"), 1));
+            for (int i = 0; i < L.length(); i++) { JSONObject x = L.optJSONObject(i); v.addView(R.id.flip, row(c, x.optString("f") + " → " + x.optString("t") + " · " + eur(x.optDouble("a")))); }
+            v.addView(R.id.flip, row(c, "Totale speso " + eur(db.optDouble("tot"))));
+        }
+        v.setOnClickPendingIntent(R.id.root, openApp(c, id));
+        return v;
+    }
+    static Bitmap pair(Context c, String a, String b, int mode) {
+        float d = dens(c);
+        int w = Math.round(96 * d), h = Math.round(40 * d);
+        Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas k = new Canvas(bm);
+        Paint p = new Paint(Paint.ANTI_ALIAS_FLAG), t = new Paint(Paint.ANTI_ALIAS_FLAG);
+        t.setColor(Color.WHITE);
+        t.setTextAlign(Paint.Align.CENTER);
+        t.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
+        t.setTextSize(15 * d);
+        float r = 16 * d;
+        if (mode == 0) {
+            p.setColor(0xFF2F8F5B);
+            k.drawCircle(w / 2f, h / 2f, r, p);
+            k.drawText("✓", w / 2f, h / 2f - (t.descent() + t.ascent()) / 2, t);
+            return bm;
+        }
+        Paint ln = new Paint(Paint.ANTI_ALIAS_FLAG);
+        ln.setColor(col(c, R.color.vw_mute));
+        ln.setStrokeWidth(2 * d);
+        ln.setPathEffect(new DashPathEffect(new float[]{4 * d, 4 * d}, 0));
+        k.drawLine(r * 2 + 2 * d, h / 2f, w - r * 2 - 2 * d, h / 2f, ln);
+        p.setColor(0xFFC7782A);
+        k.drawCircle(r + 1, h / 2f, r, p);
+        k.drawText(a.isEmpty() ? "?" : a.substring(0, 1).toUpperCase(Locale.ITALY), r + 1, h / 2f - (t.descent() + t.ascent()) / 2, t);
+        p.setColor(col(c, R.color.vw_acc));
+        k.drawCircle(w - r - 1, h / 2f, r, p);
+        k.drawText(b.isEmpty() ? "?" : b.substring(0, 1).toUpperCase(Locale.ITALY), w - r - 1, h / 2f - (t.descent() + t.ascent()) / 2, t);
+        Paint e = new Paint(Paint.ANTI_ALIAS_FLAG);
+        e.setColor(0xFF2F8F5B);
+        e.setTextAlign(Paint.Align.CENTER);
+        e.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
+        e.setTextSize(13 * d);
+        k.drawText("€ →", w / 2f, h / 2f - 4 * d, e);
+        return bm;
+    }
+
+    /* ---------- 40 cambio: la cifra la scrive chi usa il widget ---------- */
+    static String num(double a) {
+        if (Math.abs(a) >= 1000) return String.format(Locale.ITALY, "%,.0f", a);
+        return String.format(Locale.ITALY, a == Math.rint(a) ? "%.0f" : "%.2f", a);
+    }
+    static RemoteViews fx(Context c, JSONObject o, int id) {
+        JSONObject cu = o.optJSONObject("cur");
+        if (noTrip(o)) return empty(c, id, "Cambio veloce", "Pianifica un viaggio fuori dall'euro: qui convertirai le cifre.");
+        if (cu == null) return empty(c, id, "Cambio veloce", "A " + o.optString("city") + " si paga in euro: niente da cambiare.");
+        double e = cu.optDouble("e", 1);
+        String s = cu.optString("s");
+        SharedPreferences pr = c.getSharedPreferences(PREFS, 0);
+        double amt = pr.getFloat("fx_amt", 20f);
+        boolean toEur = pr.getBoolean("fx_dir", false);
+        RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.vw_fx);
+        v.setTextViewText(R.id.lab, (o.optString("city") + " · " + cu.optString("c")).toUpperCase(Locale.ITALY));
+        v.setTextViewText(R.id.res, toEur ? num(amt) + " " + s + " = " + num(amt * e) + " €" : num(amt) + " € = " + num(amt / e) + " " + s);
+        v.setTextViewText(R.id.rate, "1 € = " + num(1 / e) + " " + s + " · cambio indicativo");
+        double[] q = toEur ? new double[]{100 / e > 1000 ? 1000 : 100, 500, 1000} : new double[]{10, 50, 100};
+        if (toEur && 1 / e > 50) q = new double[]{1000, 5000, 10000};
+        int[] qi = {R.id.q1, R.id.q2, R.id.q3};
+        for (int i = 0; i < 3; i++) v.setTextViewText(qi[i], toEur ? num(q[i]) + " " + s + "\n" + num(q[i] * e) + " €" : num(q[i]) + " €\n" + num(q[i] / e) + " " + s);
+        Intent i = new Intent(c, VwFxActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pi = PendingIntent.getActivity(c, 4000 + id, i, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        v.setOnClickPendingIntent(R.id.root, pi);
+        v.setOnClickPendingIntent(R.id.go, pi);
+        return v;
+    }
+
 }

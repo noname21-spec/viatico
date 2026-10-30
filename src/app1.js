@@ -1407,6 +1407,16 @@ if(!CFG||!TRIP){o.none=1}else{var tz=PD.TZ,N=CFG.ppl||1;o.city=PD.n;o.cc=PD.cn||
   else if(it.k==="meal"){st.push({n:(it.m==="col"?"Colazione":it.m==="pra"?"Pranzo":it.m==="cen"?"Cena":"Pausa"),t:t0,d:it.d,day:di,ll:it.np||null,meal:1,q:"",lm:it.walk||0,mo:"walk",tk:0,tkn:"",ln:[]})}
   else if(it.k==="ret"){st.push({n:"Ritorno all'aeroporto",t:t0,d:it.d||0,day:di,ll:null,ret:1,q:"",lm:0,mo:"",tk:0,tkn:"",ln:[]})}})});
  o.stops=st;o.trans=tr;
+ /* voli: andata e ritorno */
+ try{var F=fromInfo(CFG),fl=[],rt=CFG.date_r||CFG.date;if(CFG.a_dep||CFG.a_arr){var ad=CFG.a_dep?wgEpoch(CFG.date,toMin(CFG.a_dep),"Europe/Rome"):0,aa=CFG.a_arr?wgEpoch(CFG.date,toMin(CFG.a_arr),tz):0;fl.push({k:"a",num:CFG.a_num||"",from:F.code||"",fromN:F.name||"",to:CFG.to||"",toN:PD.n,dep:ad||(aa-90*60000),arr:aa||(ad+120*60000),imb:ad?ad-45*60000:0})}
+  if(CFG.r_dep){var rd=wgEpoch(rt,toMin(CFG.r_dep),tz);fl.push({k:"r",num:CFG.r_num||"",from:CFG.to||"",fromN:PD.n,to:F.code||"",toN:F.name||"",dep:rd,arr:rd+120*60000,imb:CFG.r_imb?wgEpoch(rt,toMin(CFG.r_imb),tz):rd-45*60000})}o.flights=fl}catch(e){}
+ /* pasti con il locale scelto dall'itinerario */
+ try{var ml=[];TRIP.days.forEach(function(D){D.items.forEach(function(it){if(it.k!=="meal")return;var ids=null;try{ids=mealIds(it.m,it.z,it.np)}catch(e){}var v=ids&&ids.length&&PD.V&&PD.V[ids[0]];var t0=wgEpoch(D.date,it.t,tz);
+  ml.push({m:it.m,t:t0,d:it.d,n:it.m==="col"?"Colazione":it.m==="pra"?"Pranzo":it.m==="cen"?"Cena":"Spuntino",vn:v?v.n:"",va:v?String(v.a||""):"",vd:v?(String(v.d||"").split(/\.\s/)[0]+".").slice(0,140):"",vp:v?String(v.pr||"").replace(/\s*\(listino[^)]*\)/,"").slice(0,90):"",ll:v&&v.pos?v.pos:(it.np||null),q:v?v.n+", "+(v.a||"")+", "+PD.n:""})})});o.meals=ml;o.food=(PD.FOOD&&PD.FOOD.co)?String(PD.FOOD.co[1]||""):""}catch(e){}
+ /* conti tra amici */
+ try{if(N>1){var nm=names(),sl=settle(ledger(N).net);o.debts={n:N,list:sl.map(function(x){return{f:nm[x.f],t:nm[x.t],a:Math.round(x.a)/100}}),tot:Math.round(ledger(N).total)/100}}else o.debts={n:1,list:[],tot:0}}catch(e){}
+ /* valuta del posto */
+ if(PD.CUR)o.cur={c:PD.CUR.c,s:PD.CUR.s,e:PD.CUR.e};
  try{var Lg=ledger(N),bc={};(SP.x||[]).forEach(function(x){var a=+x.a||0;bc[x.c||"ex"]=(bc[x.c||"ex"]||0)+a});
   var cats=Object.keys(bc).map(function(k){return{n:catName(k),a:Math.round(bc[k]*100)/100}}).sort(function(a,b){return b.a-a.a});
   o.spend={tot:Math.round(Lg.total)/100,est:Math.round(window.PAREST||0),cats:cats.slice(0,4),last:(SP.x||[]).slice().sort(function(a,b){return (b.t||0)-(a.t||0)}).slice(0,6).map(function(x){return{d:String(x.d||catName(x.c)).slice(0,40),a:+x.a||0}})}}catch(e){}}

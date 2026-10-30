@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="14dp" android:background="@drawable/vw_bg">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal" android:gravity="center_vertical">
+        <TextView android:id="@+id/ico" android:layout_width="56dp" android:layout_height="56dp" android:gravity="center" android:textSize="34sp" android:background="@drawable/vw_field"/>
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
+            <TextView android:id="@+id/lab" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="10.5sp" android:letterSpacing="0.1" android:textColor="@color/vw_mute" android:maxLines="1"/>
+            <TextView android:id="@+id/name" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/vw_ink" android:maxLines="2" android:ellipsize="end"/>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginTop="8dp">
+        <ViewFlipper android:id="@+id/flip" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:autoStart="true" android:flipInterval="3800" android:inAnimation="@anim/vw_in" android:outAnimation="@anim/vw_out"/>
+        <TextView android:id="@+id/go" android:layout_width="wrap_content" android:layout_height="34dp" android:layout_marginStart="8dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:background="@drawable/vw_btn" android:textColor="@color/vw_onacc" android:textStyle="bold" android:textSize="13sp" android:text="Portami lì"/>
+    </LinearLayout>
+</LinearLayout>
