@@ -419,7 +419,6 @@ public final class VwUtil {
         v.setOnClickPendingIntent(R.id.root, openApp(c, id));
         if (ended || s.optJSONArray("ll") == null) v.setViewVisibility(R.id.go, View.GONE);
         else { v.setViewVisibility(R.id.go, View.VISIBLE); v.setOnClickPendingIntent(R.id.go, maps(c, 2000 + id, s)); }
-        if (Build.VERSION.SDK_INT >= 31) try { v.setColorStateList(R.id.go, "setBackgroundTintList", android.content.res.ColorStateList.valueOf(TA)); } catch (Exception ignored) {}
         return v;
     }
     static Bitmap mapBmp(Context c, List<double[]> pts, int nextP, int w, int h, String city) {
