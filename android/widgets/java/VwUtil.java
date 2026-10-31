@@ -573,8 +573,16 @@ public final class VwUtil {
         if (s == null) return empty(c, id, "Nessun biglietto da mostrare", "Le prossime tappe sono gratuite.");
         int ppl = Math.max(1, o.optInt("ppl"));
         RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.vw_ticket);
-        v.setImageViewBitmap(R.id.stub, stub(c, s.optDouble("tk")));
-        v.setTextViewText(R.id.lab, ("Biglietto · " + (ppl == 1 ? "1 persona" : ppl + " persone")).toUpperCase(Locale.ITALY));
+        JSONObject qr = s.optJSONObject("qr");
+        Bitmap qb = qr != null ? VwQrActivity.code(qr.optString("t"), qr.optString("f"), Math.round(110 * dens(c))) : null;
+        if (qb != null) {
+            v.setImageViewBitmap(R.id.stub, qb);
+            Intent qi = new Intent(c, VwQrActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                .putExtra("t", qr.optString("t")).putExtra("f", qr.optString("f")).putExtra("n", s.optString("n"))
+                .putExtra("s", (Math.max(1, o.optInt("ppl")) > 1 ? o.optInt("ppl") + " persone · " : "") + "entrata " + hm(s.optLong("t")) + " · mostra il codice all'ingresso");
+            v.setOnClickPendingIntent(R.id.stub, PendingIntent.getActivity(c, 6000 + id, qi, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT));
+        } else v.setImageViewBitmap(R.id.stub, stub(c, s.optDouble("tk")));
+        v.setTextViewText(R.id.lab, ("Biglietto · " + (ppl == 1 ? "1 persona" : ppl + " persone") + (s.optJSONObject("qr") != null ? " · tocca il codice" : "")).toUpperCase(Locale.ITALY));
         v.setTextViewText(R.id.name, s.optString("n"));
         String tkn = s.optString("tkn");
         v.setTextViewText(R.id.desc, tkn.isEmpty() || tkn.equals(s.optString("n")) ? "Ingresso " + eur(s.optDouble("tk")) + " a testa" : tkn);
@@ -585,6 +593,7 @@ public final class VwUtil {
         else { v.setViewVisibility(R.id.chrono, View.GONE); if (!on) v.setTextViewText(R.id.chip, "Entrata " + hm(t) + " · " + inTxt(t - now)); }
         v.removeAllViews(R.id.flip);
         v.addView(R.id.flip, row(c, "Totale " + eur(s.optDouble("tk") * ppl) + (ppl > 1 ? " per " + ppl : "")));
+        if (s.optJSONObject("qr") == null) v.addView(R.id.flip, row(c, "Aggiungi il biglietto dall'app per avere il codice qui"));
         v.addView(R.id.flip, row(c, "Tieni pronto un documento"));
         v.addView(R.id.flip, row(c, "Prezzi indicativi: controlla il sito ufficiale"));
         v.setOnClickPendingIntent(R.id.root, openApp(c, id));
@@ -1003,7 +1012,13 @@ public final class VwUtil {
                 JSONObject s = null;
                 for (int i = 0; i < st.length(); i++) { JSONObject x = st.optJSONObject(i); if (x.optDouble("tk") > 0 && x.optLong("t") + x.optInt("d") * 60000L > now) { s = x; break; } }
                 if (s == null) return sm(c, id, "Biglietti", "Niente da pagare", "Le prossime tappe sono gratis", null);
-                RemoteViews v = sm(c, id, "Biglietto · " + eur(s.optDouble("tk")), s.optString("n"), "Entrata " + hm(s.optLong("t")), null);
+                JSONObject qr = s.optJSONObject("qr");
+                Bitmap qb = qr != null ? VwQrActivity.code(qr.optString("t"), qr.optString("f"), Math.round(44 * dens(c))) : null;
+                RemoteViews v = sm(c, id, "Biglietto · " + eur(s.optDouble("tk")), s.optString("n"), "Entrata " + hm(s.optLong("t")), qb);
+                if (qb != null) {
+                    Intent qi = new Intent(c, VwQrActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK).putExtra("t", qr.optString("t")).putExtra("f", qr.optString("f")).putExtra("n", s.optString("n"));
+                    v.setOnClickPendingIntent(R.id.root, PendingIntent.getActivity(c, 7000 + id, qi, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT));
+                }
                 smChrono(v, s.optLong("t"), "entrata tra %s");
                 return v;
             }

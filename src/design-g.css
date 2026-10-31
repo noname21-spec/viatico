@@ -3038,3 +3038,22 @@ html.lite #dest:not(.pick) .dsheet{background:color-mix(in srgb,var(--bg) 70%,tr
 #dmine .tpcs .tk.dn .pcmi svg.sky .wn{fill:#ffd98a}
 #dmine .tpcs .tk.dn::before{z-index:0}
 #dest.pick>.mapbg.mb-sky::after{background:color-mix(in srgb,var(--bg) 72%,transparent)!important}
+/* v283: biglietto con il codice, a tutto schermo */
+#hero .wdet .wc .wca .wtk{order:6;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 12px!important;border-radius:15px;border:0;cursor:pointer;font:700 .84rem Outfit,system-ui,sans-serif;background:color-mix(in srgb,var(--ink,#222) 7%,transparent);color:inherit;flex:1 1 100%}
+#hero .wdet .wc .wca .wtk svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#hero .wdet .wc .wca .wtk.on{background:color-mix(in srgb,#2f8f5b 18%,transparent)!important;color:#2f8f5b!important}
+.tixo{position:fixed;inset:0;z-index:400;background:#fff;color:#1a1416;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top,0px) + 12px) max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 16px) max(16px,env(safe-area-inset-left,0px));opacity:0;transform:scale(.96);transition:opacity .22s ease,transform .25s cubic-bezier(.2,.8,.2,1)}
+.tixo.on{opacity:1;transform:none}
+.tixh{display:flex}
+.tixb{border:0;background:#f1ece6;color:#1a1416;border-radius:999px;padding:10px 18px;font:700 1rem Outfit,system-ui,sans-serif;cursor:pointer}
+.tixm{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center}
+.tixm b{font:800 1.5rem/1.15 Outfit,system-ui,sans-serif}
+.tixm small{color:#6b5a58;font-size:.92rem}
+.tixbox{margin-top:14px;width:min(86vw,440px);display:grid;place-items:center}
+.tixc,.tixi{width:100%;height:auto;image-rendering:pixelated;border-radius:12px}
+.tixi{image-rendering:auto;max-height:62vh;object-fit:contain}
+.tixw{max-width:36ch}
+.tixa{display:flex;gap:10px;justify-content:center}
+.tixa button{border:0;border-radius:999px;padding:10px 18px;font:600 .95rem Outfit,system-ui,sans-serif;background:#f1ece6;color:#1a1416;cursor:pointer}
+.tixa .tixd{color:#c62828}
+@media (prefers-reduced-motion:reduce){.tixo{transition:none}}

@@ -713,6 +713,7 @@ if($("p",b)){var dt=document.createElement("button");dt.type="button";dt.classNa
 {var gg=$$("a.go",ac);if(gg.length&&!c.__cb&&(gg.length>1||(gg[0].textContent||"").trim().length>13))ac.classList.add(gg.length>1?"lg2":"lg")}
 $$("[data-edit]",c).forEach(function(x){x.addEventListener("click",function(){openSetup(false)})});
 if(c.__cb){var ws=$(".wcs",c);ws.parentNode.insertBefore(c.__cb,ws.nextSibling)}
+if(it.k==="act"&&S[it.id]&&S[it.id].tk&&S[it.id].tk[0]>0&&tOn(it.id)){var tb=document.createElement("button");tb.type="button";tb.className="wtk"+(tixGet(it.id)?" on":"");tb.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M14 5v12" stroke-dasharray="2 2"/></svg><span>'+(tixGet(it.id)?"Biglietto":"Aggiungi biglietto")+'</span>';tb.setAttribute("aria-label",(tixGet(it.id)?"Mostra il biglietto: ":"Aggiungi il biglietto: ")+tt(i));tb.addEventListener("click",function(){tixOpen(it.id)});$(".wca",c).appendChild(tb);$(".wca",c).classList.add("htk")}
 $(".wcs",c).addEventListener("click",function(){var on=wStamp(it);paint();if(on&&i<N-1)setTimeout(function(){if(WSEL.i===i&&WSEL.d===P.i)pick(i,"drum")},800)});
 cards.push(c);
 var bl=document.createElement("i");bl.style.flex=String(lens[i]);gbt.appendChild(bl);blocks.push(bl);
@@ -1402,6 +1403,38 @@ var ul=x.closest("ul"),hd=ul&&ul.previousElementSibling;if(hd){var sm=hd.querySe
 [].forEach.call(document.querySelectorAll(".tabr"),function(r){r.addEventListener("change",function(){if(this.id!=="t-consigli"&&CS.back)CS.back()})})}
 $("#foot").textContent="Itinerario per "+(N===1?"una persona":N+" persone")+", "+rangeTxt()+" "+dateObj(c.date).getUTCFullYear()+". Dati verificati il "+PD.VER+"."}
 
+
+/* ===== biglietti: la foto o lo screenshot del biglietto, con il codice (QR, Aztec...) letto e salvato solo sul telefono ===== */
+/* salvati per viaggio in una chiave a parte, che non si sincronizza: le foto dei biglietti restano sul telefono */
+function tixKey(){return CFG?String(CFG.tid||((CFG.dest||"")+(CFG.date||""))):"_"}
+function tixRoot(){var o=lj("via-tix",{});return o&&typeof o==="object"?o:{}}
+function tixAll(){var r=tixRoot()[tixKey()];return r&&typeof r==="object"?r:{}}
+function tixGet(id){var o=tixAll()[id];return o&&(o.t||o.img)?o:null}
+function tixSet(id,v){var R=tixRoot(),k=tixKey(),o=R[k]||{};if(v)o[id]=v;else delete o[id];if(Object.keys(o).length)R[k]=o;else delete R[k];try{localStorage.setItem("via-tix",JSON.stringify(R))}catch(e){toast("Memoria piena: non riesco a salvare il biglietto")}wgSoon()}
+var LSCR={};function loadLib(src){if(LSCR[src])return LSCR[src];return LSCR[src]=new Promise(function(ok,ko){var e=document.createElement("script");e.src=src;e.onload=ok;e.onerror=function(){LSCR[src]=null;ko()};document.head.appendChild(e)})}
+function imgOf(file){return new Promise(function(ok,ko){var u=URL.createObjectURL(file),im=new Image();im.onload=function(){ok(im)};im.onerror=ko;im.src=u})}
+function tixRead(file){return imgOf(file).then(function(im){var W=im.naturalWidth,H=im.naturalHeight,k=Math.min(1,1600/Math.max(W,H)),cv=document.createElement("canvas");cv.width=Math.round(W*k);cv.height=Math.round(H*k);var g=cv.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,cv.width,cv.height);g.drawImage(im,0,0,cv.width,cv.height);
+ var k2=Math.min(1,700/Math.max(W,H)),c2=document.createElement("canvas");c2.width=Math.round(W*k2);c2.height=Math.round(H*k2);c2.getContext("2d").drawImage(im,0,0,c2.width,c2.height);var img=c2.toDataURL("image/jpeg",.82);
+ function viaJs(){return loadLib("lib/jsqr.min.js").then(function(){var tries=[1,.6,.35],r=null;for(var i=0;i<tries.length&&!r;i++){var w=Math.round(cv.width*tries[i]),h=Math.round(cv.height*tries[i]),c3=document.createElement("canvas");c3.width=w;c3.height=h;var g3=c3.getContext("2d");g3.drawImage(cv,0,0,w,h);var d=g3.getImageData(0,0,w,h);r=window.jsQR&&jsQR(d.data,w,h,{inversionAttempts:"attemptBoth"})}return r&&r.data?{t:r.data,f:"qr_code"}:null})}
+ var p=("BarcodeDetector" in window)?Promise.resolve().then(function(){var bd=new BarcodeDetector({formats:["qr_code","aztec","pdf417","data_matrix"]});return bd.detect(cv)}).then(function(a){a=(a||[]).filter(function(x){return x.rawValue});return a.length?{t:a[0].rawValue,f:a[0].format}:viaJs()}).catch(viaJs):viaJs();
+ return p.then(function(r){return{t:r?r.t:"",f:r?r.f:"",img:img}})})}
+function tixDraw(box,o){box.innerHTML="";if(o.t&&(o.f==="qr_code"||!o.f)){loadLib("lib/qrcode.min.js").then(function(){var q=qrcode(0,"M");q.addData(o.t);q.make();var n=q.getModuleCount(),cs=Math.max(4,Math.floor(560/(n+8))),cv=document.createElement("canvas");cv.width=cv.height=cs*(n+8);var g=cv.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,cv.width,cv.height);g.fillStyle="#000";for(var r=0;r<n;r++)for(var c=0;c<n;c++)if(q.isDark(r,c))g.fillRect((c+4)*cs,(r+4)*cs,cs,cs);cv.className="tixc";cv.setAttribute("role","img");cv.setAttribute("aria-label","Codice del biglietto");box.appendChild(cv)}).catch(function(){if(o.img){var im=new Image();im.src=o.img;im.className="tixi";box.appendChild(im)}})}
+ else if(o.img){var im=new Image();im.src=o.img;im.alt="Biglietto";im.className="tixi";box.appendChild(im)}}
+function tixBright(on){try{var C=window.Capacitor;if(C&&C.isNativePlatform&&C.isNativePlatform()){var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));if(pl&&pl.bright)pl.bright({on:!!on}).catch(function(){})}}catch(e){}}
+var TIXWL=null;
+function tixPick(id,done){var inp=document.createElement("input");inp.type="file";inp.accept="image/*";inp.style.display="none";document.body.appendChild(inp);inp.addEventListener("change",function(){var f=inp.files&&inp.files[0];inp.remove();if(!f)return;toast("Leggo il biglietto…");
+ tixRead(f).then(function(r){var q=S[id];tixSet(id,{t:r.t,f:r.f,img:r.img,at:Date.now(),n:q?q.t:""});toast(r.t?"Biglietto salvato: codice letto":"Biglietto salvato come immagine: non ho trovato un codice leggibile");renderAll();if(done)done()}).catch(function(){toast("Non riesco ad aprire l'immagine")})});inp.click()}
+function tixOpen(id){var o=tixGet(id);if(!o){tixPick(id,function(){tixOpen(id)});return}var q=S[id]||{},old=$("#tixo");if(old)old.remove();
+ var el=document.createElement("div");el.id="tixo";el.className="tixo";el.setAttribute("role","dialog");el.setAttribute("aria-modal","true");el.setAttribute("aria-label","Biglietto: "+(q.t||""));
+ el.innerHTML='<div class="tixh"><button type="button" class="tixb">‹ Indietro</button></div><div class="tixm"><b>'+esc(q.t||o.n||"Biglietto")+'</b><small>'+(CFG&&CFG.ppl>1?CFG.ppl+" persone · ":"")+'Mostra il codice all\'ingresso</small><div class="tixbox"></div>'+(!o.t?'<small class="tixw">Non ho trovato un codice da ridisegnare: ti mostro l\'immagine che hai scelto.</small>':'')+'</div><div class="tixa"><button type="button" class="tixr">Sostituisci</button><button type="button" class="tixd">Elimina</button></div>';
+ document.body.appendChild(el);tixDraw($(".tixbox",el),o);requestAnimationFrame(function(){el.classList.add("on")});tixBright(true);
+ try{if(navigator.wakeLock)navigator.wakeLock.request("screen").then(function(w){TIXWL=w}).catch(function(){})}catch(e){}
+ function close(){tixBright(false);try{if(TIXWL){TIXWL.release();TIXWL=null}}catch(e){}el.classList.remove("on");setTimeout(function(){el.remove()},250);document.removeEventListener("keydown",key);window.removeEventListener("popstate",pop)}
+ function key(e){if(e.key==="Escape")close()}function pop(){close()}document.addEventListener("keydown",key);
+ $(".tixb",el).addEventListener("click",close);
+ $(".tixr",el).addEventListener("click",function(){close();tixPick(id,function(){tixOpen(id)})});
+ $(".tixd",el).addEventListener("click",function(){var keep=tixGet(id);tixSet(id,null);close();renderAll();if(window.__undoToast)__undoToast("Biglietto eliminato","Annulla",function(){tixSet(id,keep);renderAll()});else toast("Biglietto eliminato")})}
+window.__tixOpen=tixOpen;
 /* ===== widget Android (versione APK): un'istantanea del viaggio per i widget della schermata home ===== */
 function wgEpoch(ds,min,tz){var y=+ds.slice(0,4),mo=+ds.slice(5,7)-1,d=+ds.slice(8,10),g=Date.UTC(y,mo,d,0,min);try{var o={};new Intl.DateTimeFormat("en-CA",{timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date(g)).forEach(function(x){o[x.type]=x.value});var loc=Date.UTC(+o.year,+o.month-1,+o.day,+o.hour%24,+o.minute);return g-(loc-g)}catch(e){return g}}
 function wgLines(leg){var out=[];((leg&&leg.g)||[]).forEach(function(r){if(Array.isArray(r)&&typeof r[0]==="string"&&PD.SEG&&PD.SEG[r[0]]){var sg=PD.SEG[r[0]],nm=String(sg.n||r[0]);out.push({l:nm.replace(/^(Metro|Linea|Line|Tram|Bus|U-Bahn|S-Bahn|Metrò)\s*/i,"").slice(0,4)||nm.slice(0,3),n:nm,c:sg.c||"#8e1f26",a:r[1],b:r[2]})}});return out}
@@ -1409,7 +1442,7 @@ function wgSnap(){var now=Date.now(),o={v:1,at:now,app:"Viaticum"};
 if(!CFG||!TRIP){o.none=1}else{var tz=PD.TZ,N=CFG.ppl||1;o.city=PD.n;o.cc=PD.cn||"";o.col=(PD.col&&PD.col[0])||"#8e1f26";o.ppl=N;o.from=CFG.date;o.to=CFG.date_r||CFG.date;
  var st=[],tr=[];TRIP.days.forEach(function(D,di){var prevEnd=null;D.items.forEach(function(it){var t0=wgEpoch(D.date,it.t,tz);
   if(it.k==="act"&&S[it.id]){var q=S[it.id],tk=q.tk&&q.tk[0]&&tOn(it.id)?q.tk:null,lg=it.leg||null;
-   st.push({n:q.t,t:t0,d:it.d,day:di,ll:q.pos||null,q:q.q||q.t,lm:lg?lg.min:0,mo:lg?lg.mode:"",tk:tk?tk[0]:0,tkn:tk?String(tk[1]||""):"",ln:wgLines(lg)});
+   var tx=tixGet(it.id);st.push({n:q.t,id:it.id,t:t0,d:it.d,day:di,ll:q.pos||null,q:q.q||q.t,lm:lg?lg.min:0,mo:lg?lg.mode:"",tk:tk?tk[0]:0,tkn:tk?String(tk[1]||""):"",ln:wgLines(lg),qr:tx&&tx.t?{t:tx.t,f:tx.f||"qr_code"}:null});
    if(lg&&lg.mode!=="walk"){var L=wgLines(lg);tr.push({t:t0-lg.min*60000,to:q.t,min:lg.min,ln:L,tx:String(lg.txt||"").slice(0,140)})}}
   else if(it.k==="meal"){st.push({n:(it.m==="col"?"Colazione":it.m==="pra"?"Pranzo":it.m==="cen"?"Cena":"Pausa"),t:t0,d:it.d,day:di,ll:it.np||null,meal:1,q:"",lm:it.walk||0,mo:"walk",tk:0,tkn:"",ln:[]})}
   else if(it.k==="ret"){st.push({n:"Ritorno all'aeroporto",t:t0,d:it.d||0,day:di,ll:null,ret:1,q:"",lm:0,mo:"",tk:0,tkn:"",ln:[]})}})});
@@ -1951,7 +1984,7 @@ c.addEventListener("touchend",end);c.addEventListener("touchcancel",end)})();
 $$("[data-edit]").forEach(function(b){b.addEventListener("click",function(){openSetup(false,+b.dataset.edit||0)})});
 ["via-adb-key","par-adb-key","via-vlive","via-vlive-n"].forEach(function(k){try{localStorage.removeItem(k)}catch(e){}});
 $("#shreset").addEventListener("click",function(){if(!confirm("Cancellare TUTTI i viaggi, spese, liste e la chiave salvati su questo telefono?"))return;
-["via-trip","via-trips","via-spese","via-check","via-copt","via-meals","via-adb-key","via-vlive","via-vlive-n","via-water","via-fp","via-notif","via-nfired","via-ckfold","via-wxd","via-wx"].forEach(function(k){ls(k,null)});FP.d=[];FP.p=0;FP.k=[];if(PAR.fpPaint)PAR.fpPaint();CFG=null;SAVED=null;TRIP=null;SP={};CK={};COPT={};MEALS={};closeSheet();openDest()});
+["via-trip","via-trips","via-tix","via-spese","via-check","via-copt","via-meals","via-adb-key","via-vlive","via-vlive-n","via-water","via-fp","via-notif","via-nfired","via-ckfold","via-wxd","via-wx"].forEach(function(k){ls(k,null)});FP.d=[];FP.p=0;FP.k=[];if(PAR.fpPaint)PAR.fpPaint();CFG=null;SAVED=null;TRIP=null;SP={};CK={};COPT={};MEALS={};closeSheet();openDest()});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeSheet();if(CFG){closeSetup();closeDest();setCity(PD.id)}}});
 
 /* invio e importazione di un viaggio tramite link */

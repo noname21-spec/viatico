@@ -24,6 +24,8 @@ for c, k in (("Next", "next"), ("Spend", "spend"), ("Map", "map"), ("Pass", "pas
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/vw_{k}_info" />
         </receiver>"""
 rec += """
+        <activity android:name=".VwQrActivity" android:exported="false" android:excludeFromRecents="true" android:taskAffinity="it.viaticum.app.qr" android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar" android:screenOrientation="portrait" />"""
+rec += """
         <activity android:name=".VwFxActivity" android:exported="false" android:excludeFromRecents="true" android:taskAffinity="it.viaticum.app.fx" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:windowSoftInputMode="stateVisible|adjustResize" />"""
 if "POST_NOTIFICATIONS" not in s:
     s = s.replace("</manifest>", '    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n</manifest>')
@@ -31,3 +33,11 @@ i = s.rindex("</application>")
 s = s[:i] + rec + "\n    " + s[i:]
 open(p, "w").write(s)
 print("widget ok:", len(glob.glob(os.path.join(jd, "Vw*.java"))), "classi")
+
+# ZXing per disegnare i codici dei biglietti nei widget
+g = "app/build.gradle"
+gs = open(g).read()
+if "com.google.zxing:core" not in gs:
+    gs = gs.replace("dependencies {", "dependencies {\n    implementation 'com.google.zxing:core:3.5.3'", 1)
+    open(g, "w").write(gs)
+print("zxing ok")
