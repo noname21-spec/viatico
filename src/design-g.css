@@ -3016,7 +3016,7 @@ html.lite .tmfl span{animation:none}
 /* v277: meteo e impostazioni allineati, stessa altezza */
 .appbar .wx{background:color-mix(in srgb,var(--bg) 94%,transparent)!important;align-self:flex-start!important;box-sizing:border-box!important;height:44px!important;min-height:44px!important;padding-top:0!important;padding-bottom:0!important;margin-top:calc(var(--abh)/2 - 36px)!important;align-items:center!important;transition:margin-top .25s ease}
 /* v280: home con il cielo che segue l'ora, lo skyline della città e la mappa sotto, come la pagina del viaggio */
-#dest>.mapbg.mb-sky{position:fixed!important;inset:0!important;top:0!important;z-index:0;-webkit-mask-image:none!important;mask-image:none!important;contain:strict}
+#dest>.mapbg.mb-sky{position:fixed!important;inset:0!important;top:0!important;z-index:-1!important;-webkit-mask-image:none!important;mask-image:none!important;contain:strict}
 #dest>.mapbg.mb-sky svg{opacity:1!important}
 #dest .dfull{background:none!important;filter:none!important}
 #dest .dhero{text-shadow:0 1px 10px rgba(0,0,0,.28)}
@@ -3024,3 +3024,17 @@ html.lite .tmfl span{animation:none}
 html.lite #dest:not(.pick) .dsheet{background:color-mix(in srgb,var(--bg) 70%,transparent)!important}
 #dest #dsk svg.sky .sun,#dest #dsk svg.sky .sunG,#dest #dsk svg.sky .halo,#dest #dsk svg.sky .mooncut,#dest #dsk svg.sky .stars,#dest #dsk svg.sky .cloud{display:none!important}
 #dest>.mapbg.mb-sky::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,14,36,.34),rgba(8,14,36,.12) 38%,transparent 58%);pointer-events:none}
+/* v281: cartoline dei viaggi fatti nello stile delle schede: colori della città, skyline in basso, timbro "fatto" */
+#dmine .tpcs .tk.dn{position:relative;border-radius:22px;overflow:hidden;background:linear-gradient(130deg,var(--ka),var(--kb))!important;box-shadow:0 6px 18px rgba(0,0,0,.14);isolation:isolate;border:0!important}
+#dmine .tpcs .tk.dn::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.2),transparent 70%);z-index:0;pointer-events:none}
+#dmine .tpcs .tk.dn::after{content:"✓";position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;border:2px dashed rgba(255,255,255,.75);color:#fff;font:800 14px/26px Outfit,system-ui,sans-serif;text-align:center;transform:rotate(-12deg);z-index:2;box-sizing:border-box}
+#dmine .tpcs .tk.dn .tkb{opacity:1!important;background:transparent!important;color:#fff!important;padding:14px 12px 0!important;gap:4px!important;position:relative;z-index:1;border:0!important;box-shadow:none!important}
+#dmine .tpcs .tk.dn .tm{order:1;padding:0 34px 0 2px!important}
+#dmine .tpcs .tk.dn .tm b{color:#fff!important;font-size:1.2rem!important;font-weight:800;letter-spacing:-.01em}
+#dmine .tpcs .tk.dn .tm>span{color:rgba(255,255,255,.88)!important;font-size:.82rem}
+#dmine .tpcs .tk.dn .pcmi{order:2;aspect-ratio:auto!important;height:62px;margin:6px -12px 0;border-radius:0!important;background:none!important;box-shadow:none!important;transform:none!important;display:block}
+#dmine .tpcs .tk.dn .pcmi b{display:none}
+#dmine .tpcs .tk.dn .pcmi svg.sky{bottom:-2px;--skc:rgba(10,6,20,.42);--skc2:rgba(10,6,20,.26)}
+#dmine .tpcs .tk.dn .pcmi svg.sky .wn{fill:#ffd98a}
+#dmine .tpcs .tk.dn::before{z-index:0}
+#dest.pick>.mapbg.mb-sky::after{background:color-mix(in srgb,var(--bg) 72%,transparent)!important}
