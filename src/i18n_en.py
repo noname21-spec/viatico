@@ -1,6 +1,26 @@
 # Dizionario IT -> EN dell'interfaccia (corrispondenza esatta del testo, spazi ignorati).
 # I testi delle guide delle città restano in italiano.
 D = {
+# v285 orario prenotato
+'Ho prenotato un altro orario': 'I booked a different time', 'Ho un orario prenotato qui': 'I have a booked time here',
+'Prenota sul sito ufficiale ↗': 'Book on the official site ↗', 'Cerca i biglietti ufficiali ↗': 'Find the official tickets ↗',
+'Cambia orario': 'Change time', 'Sblocca': 'Unlock', 'A che ora hai prenotato?': 'What time did you book?',
+'Slot più comuni': 'Common slots', 'evidenziati: dentro la fascia': 'highlighted: within the window', 'Altro orario': 'Other time',
+"Vedi l'anteprima": 'See the preview', 'Applica le modifiche': 'Apply the changes', 'Ricalcolo la giornata…': 'Recalculating the day…',
+'Anteprima': 'Preview', 'Non ci sta tutto': "It doesn't all fit", 'consigliata': 'recommended', 'Orario sbloccato': 'Time unlocked',
+'Modifica annullata': 'Change undone', 'invariata': 'unchanged', 'invariato': 'unchanged', 'anticipata': 'earlier', 'posticipata': 'later',
+'anticipato': 'earlier', 'posticipato': 'later', 'aggiunto': 'added', 'tolta dal giorno': 'removed from the day', 'il tuo orario prenotato': 'your booked time',
+"L'orario resta fisso: il resto della giornata si adatta": 'The time stays fixed: the rest of the day adapts',
+'Dentro la fascia.': 'Within the window.', "Il resto della giornata si adatta senza togliere tappe: salvo l'orario e blocco la tappa.": 'The rest of the day adapts without removing stops: I save the time and lock the stop.',
+'Fuori dalla fascia.': 'Outside the window.',
+'Se prenoti uno slot in questa fascia non devo togliere nessuna tappa.': "If you book a slot in this window I don't have to remove any stop.",
+"È l'orario che fa tornare la giornata senza togliere tappe.": "It's the time that makes the day work without removing stops.",
+'La giornata è piena: con un altro orario dovrò spostare o togliere qualcosa, e ti mostro cosa prima di farlo.': "The day is full: with another time I'll have to move or remove something, and I'll show you what first.",
+'È la tappa meno importante della giornata: le altre restano.': "It's the least important stop of the day: the others stay.",
+'Disponibile solo nei viaggi di più giorni.': 'Only available on trips of several days.', "Negli altri giorni non c'è spazio.": 'There is no room on the other days.',
+'Volo e rientro in aeroporto restano come sono.': 'Flight and return to the airport stay as they are.',
+"L'alloggio e gli altri giorni restano come sono.": 'Your stay and the other days stay as they are.', "L'alloggio resta com'è.": 'Your stay stays as it is.',
+'Le altre tappe da prenotare non ancora bloccate aggiornano da sole la loro fascia.': 'The other stops to book that are not locked yet update their window by themselves.',
 'Cambia': 'Change', 'Dentro': 'Inside', 'Da fuori': 'From outside', 'Senza biglietti': 'No tickets', 'Questa tappa': 'This stop', 'Annulla': 'Cancel', 'gratis': 'free', 'Non ci sono altre tappe vicine da proporre.': 'There are no other stops nearby to suggest.',
 'Pausa': 'Break',
 'Saluti da': 'Greetings from', 'Scegli tre momenti': 'Pick three moments', 'Scorri per vedere il retro.': 'Swipe to see the back.',
@@ -262,6 +282,12 @@ D = {
 }
 # frammenti per testi composti (applicati solo a testi brevi)
 F = [
+(r'^Orario ideale (\d{1,2}:\d{2})$', r'Ideal time \1'), (r'^va bene (\S+)$', r'fine \1'), (r'^Prenotato alle (\d{1,2}:\d{2})$', r'Booked for \1'),
+(r'^Prenota per le (\d{1,2}:\d{2})$', r'Book for \1'), (r'^Salva e blocca alle (.+)$', r'Save and lock at \1'), (r'^Lascia alle (.+)$', r'Keep at \1'),
+(r'^Orario bloccato: (.+)$', r'Time locked: \1'), (r'^Togli (.+) invece$', r'Remove \1 instead'), (r'^Togli (.+)$', r'Remove \1'),
+(r'^Sposta (.+) a un altro giorno$', r'Move \1 to another day'), (r'^(.+) alle (\d{1,2}:\d{2}): ecco cosa cambia$', r'\1 at \2: here is what changes'),
+(r'^Con (.+) alle (\d{1,2}:\d{2}) non ci sta tutto$', r'With \1 at \2 not everything fits'), (r'^Così (.+) resta in programma\.$', r'This way \1 stays in the plan.'),
+(r'^(\d+ h(?: \d+ min)?|\d+ min) invece di (\d+ h(?: \d+ min)?|\d+ min)$', r'\1 instead of \2'),
 (r'^Apri (.+)$', r'Open \1'), (r'^Pianifica (.+)$', r'Plan \1'), (r'^Giorno (\d+) del viaggio a (.+)$', r'Day \1 of your trip to \2'),
 (r'^(\d+) viaggi$', r'\1 trips'), (r'^1 viaggio$', '1 trip'),
 (r'^🕐 (\d{1,2}:\d{2}) ora locale$', r'🕐 \1 local time'), (r'^Città di (\w+)$', r'City of the month'),

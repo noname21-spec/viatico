@@ -130,9 +130,36 @@ function skyIn(){var src=$("#hero svg.sky");if(!src)return;$$("#cdonut .chero,#c
 /* ===== v212: vibrazione, ritardo, tappe saltate, icone, gesti, riepilogo serale, conto alla rovescia ===== */
 function buzz(p){try{if(navigator.vibrate)navigator.vibrate(p)}catch(e){}}
 function tKey(){return CFG?CFG.dest+"|"+CFG.date+"|"+(CFG.tid||""):""}
-function skipGet(){var o=lj("via-skip",null);return o&&o.k===tKey()&&o.d?o:{k:tKey(),d:{}}}
+/* v285 prove di ricalcolo: stato provvisorio (orari prenotati, tappe saltate, sostituzioni) senza toccare quello salvato */
+var OVR=null;
+function skipGet(){if(OVR&&OVR.sk)return OVR.sk;var o=lj("via-skip",null);return o&&o.k===tKey()&&o.d?o:{k:tKey(),d:{}}}
 /* sostituzioni di tappa: {giorno:{vecchia:nuova}} */
-function repGet(){var o=lj("via-rep",null);return o&&o.k===tKey()&&o.d?o:{k:tKey(),d:{}}}
+function repGet(){if(OVR&&OVR.rp)return OVR.rp;var o=lj("via-rep",null);return o&&o.k===tKey()&&o.d?o:{k:tKey(),d:{}}}
+/* v285 orari prenotati: {k, d:{giorno:{tappa:minuti}}, m:{tappa:giorno in cui è stata spostata}} */
+function bkGet(){if(OVR&&OVR.bk)return OVR.bk;var o=lj("via-bk",null);return o&&o.k===tKey()&&o.d?{k:o.k,d:o.d,m:o.m||{}}:{k:tKey(),d:{},m:{}}}
+function bkSave(o){ls("via-bk",(Object.keys(o.d||{}).length||Object.keys(o.m||{}).length)?JSON.stringify({k:o.k||tKey(),d:o.d||{},m:o.m||{}}):null)}
+function bkClone(){var o=bkGet();return JSON.parse(JSON.stringify({k:o.k||tKey(),d:o.d||{},m:o.m||{}}))}
+function bkDay(i){var d=bkGet().d[i];return d&&typeof d==="object"?d:{}}
+function bkIds(i){return Object.keys(bkDay(i)).filter(function(id){return !!S[id]})}
+/* tappe con ingresso a orario: lo dice la scheda della tappa (prenotazione dell'orario, fascia oraria, numero chiuso…), per tutte le città e il catalogo */
+var BKS=/(prenot\w*[^.]{0,40}\b(orari[oa]?|slot|fascia)|orario d.ingresso|fascia oraria|con orario|\ba orario\b|numero chiuso|orari fissi|prenotazione[^.]{0,25}obbligatori|obbligatori[^.]{0,30}prenot|prenota uno slot|fortemente consigliat)/i,
+BKP=/(serve (la )?prenota|serve prenotare|solo online|vanno prenotati|si prenota online|prenota online|prenotare online|meglio prenotare|conviene prenotare|prenotalo|prenota in anticipo|prenotare è[^.]{0,20}consigliat|esaurisc)/i,
+BKN=/(senza prenot|non si prenot|non serve prenot|si entra senza)/i,
+BKI={bcn:"parkguell",berlino:"reichstag"};
+function bkAble(id){var q=S[id];if(!q||!q.t||/da fuori/i.test(q.t)||!tOn(id))return false;if((BKI[PD.id]||"").split(" ").indexOf(id)>=0)return true;if(q.cls==="walk")return false;var tx=(q.d||"")+" "+(q.m||"");return BKS.test(tx)||(BKP.test(tx)&&!BKN.test(tx))}
+function bkUrl(id){var q=S[id],tx=(q.m||"")+" "+(q.d||""),m=tx.match(/\b((?:[a-z0-9-]+\.)+(?:fr|com|org|it|es|de|at|uk|nl|gr|hu|pt|is|ie|cz|pl|dk|se|no|fi|be|ch|mt|ro|bg|lt|lv|ee|si|hr|tr|va|eu|info|net|cat|brussels|scot|museum))\b/i);
+return m?{u:"https://"+m[1],o:1}:{u:"https://www.google.com/search?q="+encodeURIComponent((q.q||q.t)+" biglietti sito ufficiale"),o:0}}
+/* spostamenti di tappa tra i giorni (scelti quando un orario prenotato non lascia spazio) */
+function bkMoves(days){var m=bkGet().m||{};Object.keys(m).forEach(function(id){var to=m[id];if(!S[id]||!days[to])return;days.forEach(function(d){var j=d.acts.indexOf(id);if(j>=0)d.acts.splice(j,1)});if(!(S[id].cl&&S[id].cl.indexOf(days[to].wd)>=0))insNear(days[to].acts,id)})}
+/* la fascia in cui prenotare senza togliere tappe: prima dell'orario ideale le tappe precedenti possono accorciarsi, dopo si sposta il resto */
+function bwOf(pd,id,t0){if(!pd||pd.acts.indexOf(id)<0)return null;var ctx=pd.ctx,acts=pd.acts,dur=pd.dur,k=acts.indexOf(id),d=dur[id],ow=win(id,ctx.wd,ctx.date),dpre={},dpost={};
+ Object.keys(dur).forEach(function(x){dpre[x]=dur[x];dpost[x]=dur[x]});acts.forEach(function(x,i){if(ctx.bk&&ctx.bk[x]!=null)return;if(i<k)dpre[x]=dMin(x);else if(i>k)dpost[x]=dMin(x)});
+ function ok(T){if(ow&&(T<ow[0]||T+d>ow[1]))return false;var b={};Object.keys(ctx.bk||{}).forEach(function(x){b[x]=ctx.bk[x]});b[id]=T;var r=sim(acts,T<t0?dpre:dpost,Object.assign({},ctx,{bk:b}));if(r.slack<0)return false;var x=r.items.filter(function(i){return i.k==="act"&&i.id===id})[0];return !!x&&x.t<=T}
+ /* fascia sugli orari degli slot (ogni 15 minuti) attorno all'orario ideale: solo orari che non costringono a togliere tappe */
+ var a=Math.floor(t0/15)*15,b=Math.ceil(t0/15)*15,lo=null,hi=null,T;
+ for(T=b;T<=t0+240;T+=15){if(!ok(T))break;hi=T;if(lo==null&&T===a)lo=T}
+ for(T=a;T>=t0-180;T-=15){if(T===b&&hi!=null)continue;if(!ok(T))break;lo=T;if(hi==null)hi=T}
+ return lo==null?(hi==null?null:[b,hi]):[lo,hi]}
 function repSave(o){ls("via-rep",Object.keys(o.d).length?JSON.stringify(o):null)}
 function repTarget(id){var d=repGet().d,f=false;Object.keys(d).forEach(function(i){Object.keys(d[i]).forEach(function(k){if(d[i][k]===id)f=true})});return f}
 function isOptT(id){var t=S[id]&&S[id].tk;return !!(t&&t[2]&&!S[id].x)}
@@ -150,12 +177,13 @@ if(best<0)best=0;insNear(days[best].acts,id)})}
 function skipSet(i,id,on){var o=skipGet(),s=(o.d[i]||[]).filter(function(a){return a!==id});if(on)s.push(id);if(s.length)o.d[i]=s;else delete o.d[i];ls("via-skip",Object.keys(o.d).length?JSON.stringify(o):null)}
 function lateGet(){var o=lj("via-late",null);return o&&o.k===tKey()&&o.s?o:null}
 function lateApply(T){var o=lateGet();if(!o)return;var D=T.days.filter(function(d){return d.date===o.day})[0];if(!D)return;var tot=0;
-o.s.forEach(function(sh){tot+=sh.m;var fl=sh.f;D.items.forEach(function(it){if(it.k==="air")return;if(it.k==="ret"&&!(sh.m<0&&((D.eadd&&D.eadd.length)||(D.egr&&D.egr.length))))return;if(it.t>=sh.f){if(it.t0==null)it.t0=it.t;var nt=it.t+sh.m;if(sh.m<0){nt=Math.max(nt,fl);fl=nt}it.t=nt}})});D.late=tot}
+o.s.forEach(function(sh){tot+=sh.m;var fl=sh.f,tb=1e9;D.items.forEach(function(it){if(it.k==="act"&&it.bk!=null&&it.t>=sh.f&&it.t<tb)tb=it.t});D.items.forEach(function(it){if(it.k==="air"||it.t>=tb)return;if(it.k==="ret"&&!(sh.m<0&&((D.eadd&&D.eadd.length)||(D.egr&&D.egr.length))))return;if(it.t>=sh.f){if(it.t0==null)it.t0=it.t;var nt=it.t+sh.m;if(sh.m<0){nt=Math.max(nt,fl);fl=nt}it.t=nt}})});D.late=tot}
 function lateAdd(m){var n=paris(),o=lateGet();if(!o||o.day!==n.d)o={k:tKey(),day:n.d,s:[]};o.s.push({f:n.m,m:m});ls("via-late",JSON.stringify(o));buzz(15);renderAll();toast(m<0?"Prossime tappe anticipate di "+(-m)+" minuti":"Prossime tappe spostate di "+m+" minuti")}
 function lateAsk(early){var n=paris(),o=lateGet(),sg=early?-1:1,b=[15,30,60].map(function(m){return{t:early?m+" minuti prima":"+"+m+" minuti",fn:function(){lateAdd(sg*m)}}});
 if(o&&o.day===n.d)b.push({t:"Torna agli orari previsti",fn:function(){ls("via-late",null);renderAll();toast("Orari previsti ripristinati")}});
-if(early)ask("Sei in anticipo?","Sposto prima le prossime tappe di oggi, mai prima di adesso. Le prenotazioni restano agli orari fissati: controllale. Il volo e il rientro in aeroporto restano come sono.",b);
-else ask("Sei in ritardo?","Sposto in avanti le prossime tappe di oggi. Il volo e il rientro in aeroporto restano come sono.",b)}
+var hb=P&&P.items.some(function(it){return it.k==="act"&&it.bk!=null&&it.t>=n.m});
+if(early)ask("Sei in anticipo?","Sposto prima le prossime tappe di oggi, mai prima di adesso. "+(hb?"Gli orari prenotati restano fissi: sposto solo le tappe che vengono prima.":"Le prenotazioni restano agli orari fissati: controllale.")+" Il volo e il rientro in aeroporto restano come sono.",b);
+else ask("Sei in ritardo?","Sposto in avanti le prossime tappe di oggi."+(hb?" Gli orari prenotati restano fissi: sposto solo le tappe che vengono prima.":"")+" Il volo e il rientro in aeroporto restano come sono.",b)}
 var GIC={air:'<path d="M2 16l20-6-20-6 3 6zM5 10h10"/>',home:'<path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7M3 18v2M21 18v2M3 15h18M7 9V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/>',
 cup:'<path d="M5 8h12v5a5 5 0 0 1-5 5h-2a5 5 0 0 1-5-5zM17 9h2a2 2 0 0 1 0 4h-2M8 3v2M12 3v2"/>',fork:'<path d="M7 3v8a2 2 0 0 0 2 2v8M7 3v5M11 3v5M17 3c-2 2-2 6 0 8v10"/>',
 snk:'<path d="M12 21 7 10h10zM7 10a5 5 0 0 1 10 0"/>',free:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
@@ -174,6 +202,7 @@ function gSvg(k){return '<svg viewBox="0 0 24 24" aria-hidden="true">'+(GIC[k]||
 function legPts(it){var g=it&&it.leg&&it.leg.g,a=[];(g||[]).forEach(function(s){(s.w||[]).forEach(function(p){if(p&&p.length===2)a.push(p)})});return a}
 function v212Itin(){var its=P.items,ds=$("#itinerario .gds"),today=todayIdx()===SEL;
 if(ds){var rows=$$(".gdr",ds);rows.forEach(function(r,i){var it=its[i];if(!it)return;var k=gKind(it),ic=document.createElement("i");ic.className="gic";ic.dataset.k=k;ic.innerHTML=gSvg(k)+gSvg("ok");r.insertBefore(ic,$(".b",r));
+if(it.k==="act"&&it.bk!=null){r.classList.add("bkd");var lk=document.createElement("i");lk.className="gbk";lk.setAttribute("aria-label","orario prenotato");lk.innerHTML=BKLOCK;r.appendChild(lk)}
 if(it.k==="act"){var tm=0,sx=0,sy=0;r.addEventListener("pointerdown",function(e){sx=e.clientX;sy=e.clientY;clearTimeout(tm);tm=setTimeout(function(){tm=-1;buzz(20);skipAsk(it)},560)});
 r.addEventListener("pointermove",function(e){if(tm>0&&(Math.abs(e.clientX-sx)>10||Math.abs(e.clientY-sy)>10)){clearTimeout(tm);tm=0}});
 ["pointerup","pointercancel","pointerleave"].forEach(function(ev){r.addEventListener(ev,function(){if(tm>0)clearTimeout(tm);setTimeout(function(){tm=0},0)})});
@@ -226,6 +255,110 @@ ls("via-copt",JSON.stringify(COPT));repSave(ro);renderAll();
 var ok=TRIP.days[di]&&TRIP.days[di].acts.indexOf(nw)>=0;
 if(!ok){delete ro.d[di][orig];if(!Object.keys(ro.d[di]).length)delete ro.d[di];repSave(ro);try{COPT=JSON.parse(sv)}catch(e){}ls("via-copt",JSON.stringify(COPT));renderAll();toast(q.t+" non ci sta nel tempo del giorno: lascio la tappa di prima");return}
 toast("Sostituita con "+(mode==="out"?q.t.replace(/,?\s*dentro$/i,"")+", da fuori":q.t))}
+/* ===== v285 orario prenotato: fascia consigliata sulla tappa, orario fisso, ricalcolo con anteprima e scelte se non ci sta ===== */
+var BKLOCK='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',BKST=null;
+function bkWin(it){return P&&P.pd?bwOf(P.pd,it.id,it.t0!=null?it.t0:it.t):null}
+function bkBlock(it){var q=S[it.id];if(!q||!P)return"";var id=esc(it.id);
+ if(it.bk!=null){var late=it.t>it.bk+10;
+  return '<div class="bkb on"><div class="bkr"><i class="bklk">'+BKLOCK+'</i><span><b>Prenotato alle '+fmt(it.bk)+'</b><small>'+(late?"Con le tappe di prima arrivi alle "+fmt(it.t)+": controlla l'orario":"L'orario resta fisso: il resto della giornata si adatta")+'</small></span></div><div class="bka"><button type="button" class="bkbt" data-bk="set" data-id="'+id+'">Cambia orario</button><button type="button" class="bkbt g" data-bk="off" data-id="'+id+'">Sblocca</button></div></div>'}
+ if(bkAble(it.id)){var t0=it.t0!=null?it.t0:it.t,w=bkWin(it),u=bkUrl(it.id),rg=!!w&&w[1]>w[0],t5=Math.round(t0/5)*5,lab,note;if(rg)t5=Math.max(w[0],Math.min(w[1],t5));
+  if(rg){lab='<b>Orario ideale '+fmt(t5)+'</b><span>va bene '+fmt(w[0])+'–'+fmt(w[1])+'</span>';note="Se prenoti uno slot in questa fascia non devo togliere nessuna tappa."}
+  else if(w){lab='<b>Prenota per le '+fmt(w[0])+'</b>';note="È l'orario che fa tornare la giornata senza togliere tappe."}
+  else{lab='<b>Orario ideale '+fmt(t5)+'</b>';note="La giornata è piena: con un altro orario dovrò spostare o togliere qualcosa, e ti mostro cosa prima di farlo."}
+  var bar="";if(rg){var a=Math.floor((Math.min(w[0],t0)-60)/60)*60,b=Math.ceil((Math.max(w[1],t0)+60)/60)*60,L=Math.max(60,b-a),pc=function(x){return (Math.max(0,Math.min(1,(x-a)/L))*100).toFixed(1)+"%"};
+   bar='<div class="bkt" aria-hidden="true"><i style="left:'+pc(w[0])+';width:'+((w[1]-w[0])/L*100).toFixed(1)+'%"></i><em style="left:'+pc(t5)+'"></em></div><div class="bkx" aria-hidden="true"><span>'+fmt(a)+'</span><span>'+fmt(b)+'</span></div>'}
+  return '<div class="bkb"><div class="bkr2">'+lab+'</div>'+bar+'<p class="bkn">'+note+'</p>'+
+   '<div class="bka"><a class="bkgo" href="'+esc(u.u)+'" target="_blank" rel="noopener">'+(u.o?"Prenota sul sito ufficiale":"Cerca i biglietti ufficiali")+' ↗</a><button type="button" class="bkbt" data-bk="set" data-id="'+id+'">Ho prenotato un altro orario</button></div></div>'}
+ if(q.cls!=="walk")return '<button type="button" class="bkm" data-bk="set" data-id="'+id+'">Ho un orario prenotato qui</button>';
+ return""}
+function bkItem(T,di,id){var D=T&&T.days[di];return D?D.items.filter(function(x){return x.k==="act"&&x.id===id})[0]:null}
+/* prova di ricalcolo: costruisce il viaggio con uno stato provvisorio e rimette tutto com'era */
+function bkTrial(o){var s0={st:ST,p0:POOL0.slice(),xp:XPOOL.slice()};OVR=o;try{var T=buildTrip(CFG);try{lateApply(T)}catch(e){}return T}finally{OVR=null;ST=s0.st;POOL0=s0.p0;XPOOL=s0.xp}}
+function bkDiff(A,B,bid){var ma={},mb={},mo={},rows=[],n=0;A.items.forEach(function(x){if(x.k==="act")ma[x.id]=x;else if(x.k==="meal"&&!mo[x.m])mo[x.m]=x});B.items.forEach(function(x){if(x.k==="act")mb[x.id]=x});
+ B.items.forEach(function(x){
+  if(x.k==="act"){var o=ma[x.id],r={t:x.t,ti:stTitle(x.id)};
+   if(x.id===bid){r.c="lock";r.o=o&&Math.abs(o.t-x.t)>=5?o.t:null;r.s=x.t>x.bk+10?"arrivi alle "+fmt(x.t)+", "+(x.t-x.bk)+" minuti dopo l'orario prenotato":"il tuo orario prenotato"}
+   else if(!o){r.c="add";r.s="aggiunta · "+fdur(x.d);n++}
+   else{var dt=x.t-o.t,dd=x.d-o.d,p=[];r.o=Math.abs(dt)>=5?o.t:null;
+    if(dt<=-5)p.push("anticipata");else if(dt>=5)p.push("posticipata");
+    if(dd<=-5)p.push(fdur(x.d)+" invece di "+fdur(o.d));else if(dd>=5)p.push(fdur(x.d)+" invece di "+fdur(o.d));
+    if(p.length){r.c=dd<=-5?"short":"chg";r.s=p.join(" · ");n++}else{r.c="same";r.s="invariata"}}
+   rows.push(r)}
+  else if(x.k==="meal"&&!x.hotel){var om=mo[x.m],r2={t:x.t,ti:MN[x.m]||"Pasto",c:"meal",s:om?"invariato":"aggiunto"};
+   if(om&&Math.abs(x.t-om.t)>=10){r2.o=om.t;r2.s=x.t<om.t?"anticipato":"posticipato";r2.c="mealc";n++}rows.push(r2)}});
+ var lost=Object.keys(ma).filter(function(k){return !mb[k]&&k!==bid});lost.forEach(function(k){rows.push({c:"lost",t:ma[k].t,ti:stTitle(k),s:"tolta dal giorno"});n++});
+ var bi=mb[bid];return{rows:rows,lost:lost,n:n,de:(B.leave||0)-(A.leave||0),slk:B.pd&&B.pd.ctx&&B.pd.ctx.slk||0,late:bi&&bi.bk!=null&&bi.t>bi.bk+10?bi.t-bi.bk:0}}
+/* se l'orario prenotato non lascia spazio: cosa sacrificare, dalla soluzione che perde meno */
+function bkOpts(nb,df,T1){var di=BKST.di,v=df.lost[0],vq=S[v],D0=TRIP.days[di],o=[],used=allActs(),wd=D0.wd,cmp=function(T){return bkDiff(D0,T.days[di],BKST.id)};
+ var alt=null;if(vq&&vq.pos){var cs=Object.keys(S).filter(function(id){var q=S[id];return q&&q.t&&q.pos&&id!==v&&used.indexOf(id)<0&&!q.x&&!(q.cl&&q.cl.indexOf(wd)>=0)&&!(q.multi&&!TRIP.multi)&&(q.tk?q.tk[0]===0:q.cls==="walk")&&hav(q.pos,vq.pos)<=1.5}).sort(function(a,b){return hav(S[a].pos,vq.pos)-hav(S[b].pos,vq.pos)}).slice(0,3);
+  for(var i=0;i<cs.length&&!alt;i++){var rp=JSON.parse(JSON.stringify(repGet()));rp.k=rp.k||tKey();rp.d[di]=rp.d[di]||{};rp.d[di][v]=cs[i];var T2=bkTrial({bk:nb,rp:rp});
+   if(T2.days[di].acts.indexOf(cs[i])>=0&&cmp(T2).lost.filter(function(k){return k!==v}).length===0)alt={id:cs[i],o:{bk:nb,rp:rp},T:T2}}}
+ o.push(alt?{t:"Togli "+vq.t,d:"Al suo posto "+S[alt.id].t+", a "+kmTxt(vq.pos,S[alt.id].pos)+" da lì e senza biglietto.",rec:1,o:alt.o,T:alt.T}:{t:"Togli "+vq.t,d:"È la tappa meno importante della giornata: le altre restano.",rec:1,o:{bk:nb},T:T1});
+ var bks=Object.keys(nb.d[di]||{}),n2=0;D0.acts.filter(function(a){return a!==v&&bks.indexOf(a)<0}).sort(function(a,b){return pri(b)-pri(a)}).slice(0,3).forEach(function(z){if(n2>=2)return;
+  var sk=JSON.parse(JSON.stringify(skipGet()));sk.k=sk.k||tKey();sk.d[di]=(sk.d[di]||[]).concat([z]);var T3=bkTrial({bk:nb,sk:sk});
+  if(T3.days[di].acts.indexOf(v)>=0&&cmp(T3).lost.filter(function(k){return k!==z}).length===0){o.push({t:"Togli "+stTitle(z)+" invece",d:"Così "+vq.t+" resta in programma.",o:{bk:nb,sk:sk},T:T3});n2++}});
+ var mv=null;if(TRIP.multi){var ord=[];for(var k=1;k<TRIP.n;k++){if(di+k<TRIP.n)ord.push(di+k);if(di-k>=0)ord.push(di-k)}
+  for(var j=0;j<ord.length&&!mv;j++){var tj=ord[j],nb2=JSON.parse(JSON.stringify(nb));nb2.m=nb2.m||{};nb2.m[v]=tj;var T4=bkTrial({bk:nb2});
+   if(T4.days[tj].acts.indexOf(v)>=0&&bkDiff(TRIP.days[tj],T4.days[tj],null).lost.length===0&&cmp(T4).lost.filter(function(k){return k!==v}).length===0)mv={d:tj,o:{bk:nb2},T:T4}}}
+ o.push(mv?{t:"Sposta "+vq.t+" a un altro giorno",d:"La metto nel giorno "+(mv.d+1)+" ("+dateShort(TRIP.days[mv.d].date)+"), dove c'è spazio.",o:mv.o,T:mv.T}:{t:"Sposta "+vq.t+" a un altro giorno",d:TRIP.multi?"Negli altri giorni non c'è spazio.":"Disponibile solo nei viaggi di più giorni.",off:1});
+ return o}
+function bkCommit(o,msg){var sv={b:ls("via-bk"),s:ls("via-skip"),r:ls("via-rep")};if(o.bk)bkSave(o.bk);if(o.sk)ls("via-skip",Object.keys(o.sk.d).length?JSON.stringify(o.sk):null);if(o.rp)repSave(o.rp);renderAll();buzz(15);chFlip();
+ var und=function(){ls("via-bk",sv.b);ls("via-skip",sv.s);ls("via-rep",sv.r);renderAll();toast("Modifica annullata")};
+ if(window.__undoToast)__undoToast(msg,"Annulla",und);else toast(msg)}
+function bkOff(id){if(!P)return;var di=P.i,nb=bkClone();if(nb.d[di]){delete nb.d[di][id];if(!Object.keys(nb.d[di]).length)delete nb.d[di]}bkCommit({bk:nb},"Orario sbloccato")}
+function bkSheet(id){if(!TRIP||!P||!S[id])return;var di=P.i,it=bkItem(TRIP,di,id);if(!it)return;var q=S[id],old=$("#bks");if(old)old.remove();
+ var cur=it.bk!=null?it.bk:null,t0=it.t0!=null?it.t0:it.t,w=bwOf(P.pd,id,cur!=null?cur:t0),ow=win(id,P.wd,P.date),d=it.d,
+  a=ow?ow[0]:Math.max(8*60,(P.c0||8*60)),b=ow?ow[1]-d:Math.min(20*60,(P.dl||21*60)-d),st=30,sl=[];a=Math.ceil(a/30)*30;if((b-a)/30>11)st=60;for(var t=a;t<=b&&sl.length<16;t+=st)sl.push(t);
+ BKST={id:id,di:di,it:it,cur:cur,w:w,sl:sl,T:cur!=null?cur:Math.round(t0/15)*15,v:"time",oi:0};
+ var el=document.createElement("div");el.id="bks";el.className="bks";el.setAttribute("role","dialog");el.setAttribute("aria-modal","true");el.setAttribute("aria-label","Orario prenotato: "+q.t);
+ el.innerHTML='<div class="bkbg"></div><div class="bkp" tabindex="-1"><div class="bkgr" aria-hidden="true"></div><div class="bkv"></div></div>';
+ document.body.appendChild(el);requestAnimationFrame(function(){el.classList.add("on")});
+ function close(){el.classList.remove("on");setTimeout(function(){el.remove()},300);document.removeEventListener("keydown",key);BKST=null}
+ function key(e){if(e.key==="Escape")close()}document.addEventListener("keydown",key);
+ function inW(T){return !!BKST.w&&T>=BKST.w[0]&&T<=BKST.w[1]}
+ function busy(){BKST.v="busy";draw();setTimeout(run,40)}
+ function run(){if(!BKST)return;var T=BKST.T,nb=bkClone();nb.d[di]=nb.d[di]||{};nb.d[di][id]=T;var T1;
+  try{T1=bkTrial({bk:nb})}catch(e){console.error(e);toast("Non riesco a ricalcolare la giornata");BKST.v="time";draw();return}
+  var df=bkDiff(TRIP.days[di],T1.days[di],id);
+  if(df.lost.length){BKST.opts=bkOpts(nb,df,T1);BKST.oi=0;BKST.v="opts";draw();return}
+  if(inW(T)&&!df.late&&!(df.slk<0)){close();bkCommit({bk:nb},"Orario bloccato: "+fmt(T));return}
+  BKST.res={o:{bk:nb},T:T1,df:df};BKST.v="prev";draw()}
+ function head(k,h,sub,cls){return '<small class="bkk'+(cls?" "+cls:"")+'">'+k+'</small><h3 class="bkh">'+h+'</h3>'+(sub?'<p class="bksub">'+sub+'</p>':'')}
+ function draw(){if(!BKST)return;var v=$(".bkv",el),T=BKST.T,h="";
+  if(BKST.v==="time"){var iw=inW(T),same=cur!=null&&T===cur;
+   h=head(esc(q.t)+" · "+fdur(d),"A che ora hai prenotato?")+
+    '<div class="bkl"><span>Slot più comuni</span>'+(BKST.sl.some(inW)?'<span class="bkli">evidenziati: dentro la fascia</span>':'')+'</div>'+
+    '<div class="bkg">'+BKST.sl.map(function(s){return '<button type="button" data-t="'+s+'" class="'+(inW(s)?"in":"")+'" aria-pressed="'+(s===T)+'">'+fmt(s)+'</button>'}).join("")+'</div>'+
+    '<label class="bkal"><span>Altro orario</span><input type="time" step="300" value="'+(fmt(T).length<5?"0":"")+fmt(T)+'"></label>'+
+    (same?'':'<div class="bkfb '+(iw?"in":"out")+'">'+(iw?'<b>Dentro la fascia.</b> Il resto della giornata si adatta senza togliere tappe: salvo l\'orario e blocco la tappa.':'<b>Fuori dalla fascia.</b> Riorganizzo la giornata attorno alle '+fmt(T)+' e ti mostro cosa cambia prima di applicare.')+'</div>')+
+    '<button type="button" class="bkmain" data-go>'+(same?"Lascia alle "+fmt(T):iw?"Salva e blocca alle "+fmt(T):"Vedi l'anteprima")+'</button><button type="button" class="bkx2" data-x>Annulla</button>'}
+  else if(BKST.v==="busy")h='<div class="bkbusy" role="status"><span class="bksp" aria-hidden="true"></span>Ricalcolo la giornata…</div>';
+  else if(BKST.v==="opts"){   h=head("Non ci sta tutto","Con "+esc(q.t)+" alle "+fmt(T)+" non ci sta tutto",esc(q.t)+" resta all'orario prenotato. Scegli cosa sacrificare: la prima è la soluzione che perde meno.","w")+
+    '<div class="bko" role="radiogroup">'+BKST.opts.map(function(o,i){return '<label class="bkop'+(o.off?" off":"")+(i===BKST.oi&&!o.off?" sel":"")+'"><input type="radio" name="bkopt" value="'+i+'"'+(i===BKST.oi&&!o.off?" checked":"")+(o.off?" disabled":"")+'><span><b>'+esc(o.t)+(o.rec?' <em>consigliata</em>':'')+'</b><small>'+esc(o.d)+'</small></span></label>'}).join("")+'</div>'+
+    '<button type="button" class="bkmain" data-pv>Vedi l\'anteprima</button><button type="button" class="bkx2" data-back>Cambia orario</button>'}
+  else if(BKST.v==="prev"){var R=BKST.res,df=R.df,D1=R.T.days[di],end=D1.kind==="single"||D1.kind==="last",ae=Math.abs(df.de),
+    sub=(df.n?df.n+(df.n===1?" cambio":" cambi"):"nessun'altra tappa cambia")+" · "+(ae<5?(end?"si parte per l'aeroporto alla stessa ora":"la giornata finisce alla stessa ora"):(end?"si parte per l'aeroporto ":"la giornata finisce ")+fdur(ae)+(df.de>0?" più tardi":" prima")),
+    oth=D1.items.some(function(x){return x.k==="act"&&x.id!==id&&x.bk==null&&bkAble(x.id)}),notes=[];
+   if(df.slk<0)notes.push('<p class="bknt w">'+(end?"Attenzione: con questo orario arrivi in aeroporto con circa "+fdur(-df.slk)+" di margine in meno di quello consigliato. Se puoi, prenota prima.":"Attenzione: con questo orario la giornata finisce più tardi del solito.")+'</p>');
+   if(df.late)notes.push('<p class="bknt w">Con le tappe di prima arrivi '+df.late+' minuti dopo l\'orario prenotato: valuta uno slot più tardi.</p>');
+   var m0=bkGet().m||{},m1=R.o.bk&&R.o.bk.m||{},mvd=0;Object.keys(m1).forEach(function(k){if(m0[k]!==m1[k]&&S[k]&&++mvd)notes.push('<p class="bknt">'+esc(stTitle(k))+' passa al giorno '+(m1[k]+1)+' ('+dateShort(TRIP.days[m1[k]].date)+'): l\'itinerario di quel giorno si aggiorna.</p>')});
+   notes.push('<p class="bknt">'+(oth?"Le altre tappe da prenotare non ancora bloccate aggiornano da sole la loro fascia. ":"")+(end?"Volo e rientro in aeroporto restano come sono.":mvd?"L'alloggio resta com'è.":"L'alloggio e gli altri giorni restano come sono.")+'</p>');
+   h=head("Anteprima",esc(q.t)+" alle "+fmt(T)+": ecco cosa cambia",sub)+
+    '<ol class="bkrows">'+df.rows.map(function(r){return '<li class="bkrw bk-'+r.c+'"><span class="bkrt"><b>'+(r.c==="lost"?"—":fmt(r.t))+'</b>'+(r.o!=null?'<s>'+fmt(r.o)+'</s>':r.c==="lost"?'<s>'+fmt(r.t)+'</s>':'')+'</span><span class="bkrn"><b>'+esc(r.ti)+'</b><small>'+esc(r.s)+'</small></span>'+(r.c==="lock"?'<i class="bklk">'+BKLOCK+'</i>':'')+'</li>'}).join("")+'</ol>'+notes.join("")+
+    '<button type="button" class="bkmain" data-ok>Applica le modifiche</button><button type="button" class="bkx2" data-back>Cambia orario</button>'}
+  v.innerHTML=h;
+  if(BKST.v!=="time")try{$(".bkp",el).scrollTop=0}catch(e){}}
+ el.addEventListener("click",function(e){var t=e.target;if(t.closest(".bkbg")||t.closest("[data-x]")){close();return}if(!BKST)return;
+  var s=t.closest("[data-t]");if(s){BKST.T=+s.dataset.t;buzz(8);draw();return}
+  if(t.closest("[data-back]")){BKST.v="time";draw();return}
+  if(t.closest("[data-go]")){if(cur!=null&&BKST.T===cur){close();return}busy();return}
+  if(t.closest("[data-pv]")){var o=BKST.opts[BKST.oi];if(!o||o.off)return;BKST.res={o:o.o,T:o.T,df:bkDiff(TRIP.days[di],o.T.days[di],id)};BKST.v="prev";draw();return}
+  if(t.closest("[data-ok]")){var R=BKST.res,T=BKST.T;close();bkCommit(R.o,"Orario bloccato: "+fmt(T));return}});
+ el.addEventListener("change",function(e){var t=e.target;if(!BKST)return;
+  if(t.type==="time"&&t.value){var p=t.value.split(":"),m=(+p[0])*60+(+p[1]||0);if(m>=0&&m<1440){BKST.T=m;draw();var i2=$("input[type=time]",el);if(i2)try{i2.focus()}catch(x){}}}
+  if(t.name==="bkopt"){BKST.oi=+t.value;$$(".bkop",el).forEach(function(l,i){l.classList.toggle("sel",i===BKST.oi)})}});
+ draw();setTimeout(function(){try{$(".bkp",el).focus()}catch(e){}},50)}
+document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("[data-bk]");if(!b||b.closest("#bks"))return;e.preventDefault();e.stopPropagation();var id=b.dataset.id;if(b.dataset.bk==="set")bkSheet(id);else if(b.dataset.bk==="off")bkOff(id)},true);
 function skipAsk(it){var x=S[it.id];if(!x)return;ask("Saltare questa tappa?",x.t+": la tolgo dal giorno e ricalcolo gli orari delle tappe dopo. Puoi rimetterla quando vuoi.",[{t:"Salta la tappa",fn:function(){var di=P.i;skipSet(di,it.id,true);renderAll();
 if(window.__undoToast)__undoToast("Tappa saltata","Annulla",function(){skipSet(di,it.id,false);renderAll()});else toast("Tappa saltata")}}])}
 function daySwipe(el){if(el.dataset.dsb)return;el.dataset.dsb="1";var x0=0,y0=0,t0=0,on=0;
@@ -328,19 +461,23 @@ return{min:(l?l.min:0)+15+HA.min,txt:(l?"Torna all'alloggio a ritirare i bagagli
 /* ===== pianificazione di una giornata ===== */
 function win(id,wd,date){var w=S[id].win;return w?w(wd,date,sunset(date)):null}
 function sim(acts,dur,ctx){
-var t=ctx.c0,prev=ctx.start,items=[],B=false,L=false,D=false,late=0,lastEnd=0,LO=PD.LUNCHO||0;
+var t=ctx.c0,prev=ctx.start,items=[],B=false,L=false,D=false,late=0,wait=0,lb=0,lbId=null,lastEnd=0,LO=PD.LUNCHO||0;
 function meal(k,d,nx){var w=prev==="start"||prev==="home"?3:8;t+=w;var np=null;if(k==="col"&&nx&&S[nx]&&S[nx].pos)np=S[nx].pos;else if(S[prev]&&S[prev].pos)np=S[prev].pos;else if(nx&&S[nx]&&S[nx].pos)np=S[nx].pos;items.push({k:"meal",m:k,t:t,d:d,z:np&&k==="col"?S[nx].z:zoneOf(prev),np:np,nx:k==="col"&&np?nx:null,walk:w,near:prev==="home"&&!np,hotel:k==="col"&&prev==="home"&&!!ctx.multi&&COPT.hb===1});t+=d}
 var MX=MD();if(ctx.wantB){meal("col",MX.col,acts[0]);B=true}
 var PAU=ST.pc==="rel"?40:0,PD0=false;
 acts.forEach(function(id){
-var lg=legOf(prev,id);
-if(!L&&ctx.wantL&&(t>=11*60+50+LO||(t>=11*60+15+LO&&t+lg.min+dur[id]>13*60+50+LO)||(t>=11*60+LO&&t+lg.min+dur[id]>14*60+15+LO))){meal("pra",MX.pra,id);L=true}
-if(!D&&ctx.wantD&&t>=ctx.dinAt){meal("cen",MX.cen,id);D=true}
-if(PAU&&!PD0&&L&&!D&&t>=13*60+45&&t<18*60){items.push({k:"free",pau:1,t:t,d:PAU,z:zoneOf(prev)});t+=PAU;PD0=true}
-t+=lg.min;var w=win(id,ctx.wd,ctx.date);if(w&&t<w[0])t=w[0];
+var lg=legOf(prev,id),bt=ctx.bk&&ctx.bk[id]!=null?ctx.bk[id]:null,fits=function(m){return bt==null||t+8+m+lg.min<=bt+10},nb=null;
+if(ctx.bk&&bt==null&&!L&&ctx.wantL)for(var j=acts.indexOf(id)+1;j<acts.length;j++)if(ctx.bk[acts[j]]!=null){nb=ctx.bk[acts[j]]+dur[acts[j]];break}
+if(!L&&ctx.wantL&&fits(MX.pra)&&((nb!=null&&t>=11*60+LO&&nb>14*60+15+LO)||t>=11*60+50+LO||(t>=11*60+15+LO&&t+lg.min+dur[id]>13*60+50+LO)||(t>=11*60+LO&&t+lg.min+dur[id]>14*60+15+LO))){meal("pra",MX.pra,id);L=true}
+if(!D&&ctx.wantD&&t>=ctx.dinAt&&fits(MX.cen)){meal("cen",MX.cen,id);D=true}
+if(PAU&&!PD0&&L&&!D&&t>=13*60+45&&t<18*60&&fits(PAU-8)){items.push({k:"free",pau:1,t:t,d:PAU,z:zoneOf(prev)});t+=PAU;PD0=true}
+t+=lg.min;var w=bt!=null?null:win(id,ctx.wd,ctx.date);
+/* orario prenotato: si aspetta se si arriva prima; fino a 10 minuti di ritardo si recuperano, oltre è un problema da risolvere */
+if(bt!=null){if(t<bt){wait+=bt-t;t=bt}else if(t<=bt+10)t=bt;else{lb+=t-bt;if(!lbId)lbId=id}}
+if(w&&t<w[0])t=w[0];
 if(D&&ctx.multi)late+=60;
 if(w&&t+dur[id]>w[1])late+=t+dur[id]-w[1];
-items.push({k:"act",id:id,t:t,d:dur[id],leg:lg});t+=dur[id];lastEnd=t;prev=id});
+var ai={k:"act",id:id,t:t,d:dur[id],leg:lg};if(bt!=null)ai.bk=bt;items.push(ai);t+=dur[id];lastEnd=t;prev=id});
 var R=ctx.endOf(prev);
 if(!L&&ctx.wantL&&t<15*60+30+LO&&t>=11*60+15+LO){meal("pra",MX.pra-10);L=true}
 if(ctx.multi&&lastEnd>ctx.dinAt+20)late+=lastEnd-ctx.dinAt-20;
@@ -349,8 +486,8 @@ if(!D&&ctx.wantD){
  if((ctx.free||(ctx.multi&&!acts.length))&&t<ctx.dinAt-45){var fl=legOf(prev,"home");items.push({k:"free",t:t+2,d:ctx.dinAt-t-2,leg:fl,from:prev});t=ctx.dinAt;prev="home";R=ctx.endOf(prev)}
  meal("cen",MX.cen);D=true}
 if(ctx.snack&&ST.pc!=="int"&&!D&&t>=15*60+30&&t+25+R.min<=ctx.dl){t+=5;items.push({k:"snk",t:t,d:20,z:zoneOf(prev)});t+=20}
-var slack=ctx.dl-(t+R.min);if(late>0)slack=Math.min(slack,-late);
-return{items:items,end:t,prev:prev,ret:R,slack:slack,B:B,L:L,D:D}}
+var slack=ctx.dl-(t+R.min);if(late>0)slack=Math.min(slack,-late);var sl0=slack-(ctx.slk||0);lb=Math.max(0,lb-(ctx.lbF||0));if(lb>0)slack=Math.min(slack,-lb);if(ctx.slk)slack-=ctx.slk;
+return{items:items,end:t,prev:prev,ret:R,slack:slack,sl0:sl0,wait:wait,lb:lb,lbId:lb>0?lbId:null,B:B,L:L,D:D}}
 /* se il biglietto è tolto dai costi, la visita si accorcia: ci si ferma fuori */
 /* v260 tappe con biglietto obbligatorio che valgono anche da fuori: se togli il biglietto nei Costi restano, più brevi */
 (function(){var O={"bcn": "sagradains parkguell batllo santpau pedrera", "roma": "colosseoins castel caracalla", "londra": "abbeyins stpaulins toweroflondon", "amsterdam": "annefrankins rijks", "lisbona": "jeronimosins", "cracovia": "rynek:a sukiennice planty:a kazimierz:a ghetto:a", "firenze": "pitti", "valencia": "lonja seu", "varsavia": "zamek pkin"},L=(O[PD.id]||"").split(" ").filter(Boolean);L.forEach(function(x){var p=x.split(":"),q=S[p[0]];if(q&&q.tk&&!q.tk[2])q.out=p[1]||"b"})})();
@@ -390,29 +527,45 @@ function fillInt(acts,dur,ctx,r,dropped){var wd=ctx.wd,skp=ctx.sk||[],added=0,ca
  return r}
 function planDay(acts,ctx,opt){
 var dur={},dropped=[],r,g=0,minLen=ctx.single?1:0,need=ST.pc==="rel"?30:0;
-acts=acts.slice();acts.forEach(function(id){dur[id]=ST.pc==="int"?Math.round((dMin(id)+dId(id))/10)*5:dId(id);if(dur[id]<dMin(id))dur[id]=dMin(id)});
+acts=acts.slice();
+/* v285 una tappa con orario prenotato resta nel giorno anche se di solito è facoltativa (aggiunta solo se avanza tempo) */
+Object.keys(ctx.bk||{}).forEach(function(id){var q=S[id],rp=repGet().d;if(!q||!q.t||acts.indexOf(id)>=0||(ctx.sk||[]).indexOf(id)>=0||(q.cl&&q.cl.indexOf(ctx.wd)>=0)||(typeof COPT!=="undefined"&&COPT[id]===0)||Object.keys(rp).some(function(i){return rp[i]&&rp[i][id]}))return;acts.push(id)});
+acts.forEach(function(id){dur[id]=ST.pc==="int"?Math.round((dMin(id)+dId(id))/10)*5:dId(id);if(dur[id]<dMin(id))dur[id]=dMin(id)});
 acts.filter(function(id){return S[id].x&&S[id].win&&!repTarget(id)}).forEach(function(id){var base=acts.filter(function(a){return a!==id}),bp=acts.indexOf(id),bs=-1e9;
 for(var p=0;p<=base.length;p++){var a2=base.slice();a2.splice(p,0,id);var sl=sim(a2,dur,ctx).slack;if(sl>bs+1){bs=sl;bp=p}}acts=base;acts.splice(bp,0,id)});
+/* v285 orario prenotato: la tappa è un punto fisso, le altre si mettono prima o dopo dove fanno perdere meno tempo; non si toglie e non si accorcia */
+var BK=ctx.bk||{},isB=function(id){return BK[id]!=null},bkPos=function(){acts.filter(isB).forEach(function(id){var base=acts.filter(function(a){return a!==id}),bp=acts.indexOf(id),bs=-1e9;
+for(var p=0;p<=base.length;p++){var a2=base.slice();a2.splice(p,0,id);var s2=sim(a2,dur,ctx),sl=s2.slack-s2.wait*.05;if(sl>bs+.01){bs=sl;bp=p}}acts=base;acts.splice(bp,0,id)})},
+ bestOf=function(list){var keep=acts;acts=list.slice();bkPos();var r2=sim(acts,dur,ctx),out={a:acts,s:r2.slack};acts=keep;return out};
+if(acts.some(isB)){var fl=sim(acts.filter(isB),dur,Object.assign({},ctx,{wantB:false,wantL:false,wantD:false,snack:0,snx:0})).slack;if(fl<0)ctx.slk=fl;
+ var lf=0;acts.filter(isB).forEach(function(id){lf+=sim([id],dur,Object.assign({},ctx,{lbF:0})).lb});if(lf>0)ctx.lbF=lf}
+bkPos();
 if(need){var b0=sim([],dur,ctx).slack;need=Math.max(0,Math.min(need,b0-10))}
 while(g++<80){r=sim(acts,dur,ctx);if(r.slack>=0&&(r.slack>=need||!(acts.length>minLen||acts.some(function(id){return dur[id]>dMin(id)}))))break;
-var cand=acts.slice().sort(function(a,b){return pri(b)-pri(a)});
-var sh=cand.filter(function(id){return dur[id]>dMin(id)})[0];
-if(sh){dur[sh]=dMin(sh);continue}
-if(acts.length>minLen){dropped.push(cand[0]);acts.splice(acts.indexOf(cand[0]),1);continue}
+/* il ritardo su un orario prenotato si recupera solo con le tappe che vengono prima, ma solo se è quello il problema principale */
+var pre=r.lb>0&&r.lb>=-r.sl0?acts.slice(0,acts.indexOf(r.lbId)):null;
+var cand=acts.filter(function(id){return !isB(id)}).sort(function(a,b){return pri(b)-pri(a)});
+var sh=cand.filter(function(id){return dur[id]>dMin(id)})[0],dr=cand[0];
+/* con un orario prenotato si accorcia o si toglie solo ciò che serve davvero (prima, se il problema è il ritardo, le tappe che vengono prima) */
+if(acts.some(isB)){var s0=r.slack,c2=pre?cand.filter(function(id){return pre.indexOf(id)>=0}).concat(cand.filter(function(id){return pre.indexOf(id)<0})):cand;
+ sh=c2.filter(function(id){if(dur[id]<=dMin(id))return false;var d0=dur[id];dur[id]=dMin(id);var s2=bestOf(acts).s;dur[id]=d0;return s2>s0})[0];
+ dr=sh?null:c2.filter(function(id){return bestOf(acts.filter(function(a){return a!==id})).s>s0})[0]}
+if(sh){dur[sh]=dMin(sh);bkPos();continue}
+if(dr&&acts.length>minLen){dropped.push(dr);acts.splice(acts.indexOf(dr),1);bkPos();continue}
 if(ctx.wantD){ctx.wantD=false;continue}
 if(!ctx.single&&ctx.wantL){ctx.wantL=false;continue}
 if(!ctx.single&&ctx.wantB){ctx.wantB=false;continue}
 break}
 var none=false;
-if(r.slack<0){acts=[];ctx.wantB=false;ctx.wantL=false;ctx.wantD=false;r=sim(acts,dur,ctx);none=true}
+if(r.slack<0){var kb=acts.filter(isB);if(kb.length){acts=kb;r=sim(acts,dur,ctx)}else{acts=[];ctx.wantB=false;ctx.wantL=false;ctx.wantD=false;r=sim(acts,dur,ctx);none=true}}
 function tryIns(id,after){var i=acts.indexOf(after);if(i<0||r.slack<60||acts.indexOf(id)>=0)return;var a2=acts.slice();a2.splice(i+1,0,id);dur[id]=dId(id);var r2=sim(a2,dur,ctx);if(r2.slack>=15){acts=a2;r=r2}}
 if(!none){
 (ST.pc==="rel"?[]:PD.SINGLE.ins||[]).forEach(function(x){if(x[3]&&!(opt&&opt.single))return;if(x[2]&&acts.indexOf(x[2])<0)return;tryIns(x[0],x[1])});
 var order=acts.slice().sort(function(a,b){return pri(a)-pri(b)}),ch=true,k=0;
 if(ST.pc==="int")r=fillInt(acts,dur,ctx,r,dropped);order=acts.slice().sort(function(a,b){return pri(a)-pri(b)});
 while(r.slack>=15&&ch&&k++<200){ch=false;for(var i=0;i<order.length;i++){var id=order[i];if(dur[id]+5<=(ST.pc==="int"?dId(id):dMax(id))){dur[id]+=5;var r2=sim(acts,dur,ctx);if(r2.slack>=10){r=r2;ch=true}else dur[id]-=5}}}}
-var eadd=[],egr=[];
-if(!none&&ctx.eb&&ctx.eb.B>=20){var B=ctx.eb.B,f=ctx.eb.f,c2=Object.assign({},ctx,{dl:ctx.dl+B}),pool=[];
+var eadd=[],egr=[],pctx=ctx;
+if(!none&&ctx.eb&&ctx.eb.B>=20){var B=ctx.eb.B,f=ctx.eb.f,c2=Object.assign({},ctx,{dl:ctx.dl+B}),pool=[];pctx=c2;
  dropped.forEach(function(id){pool.push(id)});
  if(ctx.single)Object.keys(S).forEach(function(id){var q=S[id];if(!q.multi||pool.indexOf(id)>=0)return;pool.push(id)});
  var done=0,wd=ctx.wd,skp=ctx.sk||[],exact=function(id){return S[id]&&dropped.indexOf(id)<0&&S[id].tk&&!(S[id].tk[2]&&S[id].tk[3])};
@@ -434,19 +587,19 @@ if(!none&&ctx.eb&&ctx.eb.B>=20){var B=ctx.eb.B,f=ctx.eb.f,c2=Object.assign({},ct
  egr=Object.keys(gr);
  if(eadd.length)dropped=dropped.filter(function(id){return acts.indexOf(id)<0})}
 var shrunk=acts.filter(function(id){return dur[id]<dId(id)-4});
-return{r:r,acts:acts,dropped:dropped,shrunk:shrunk,none:none,eadd:eadd,egr:egr.filter(function(id){return eadd.indexOf(id)<0})}}
+return{r:r,acts:acts,dropped:dropped,shrunk:shrunk,none:none,eadd:eadd,egr:egr.filter(function(id){return eadd.indexOf(id)<0}),pd:{acts:acts.slice(),dur:dur,ctx:pctx}}}
 function ridesOf(items){var n=0;items.forEach(function(x){var l=x.leg;if(x.k==="act"||x.k==="free"||x.k==="night"){if(l&&l.mode==="metro")n++}});return n}
 
 /* gita in giornata: come la prima versione dell'app */
 function planSingle(c,base){
 var A=PD.PAR[c.to],R=PD.PAR[c.rt||c.to],land=toMin(c.a_arr),dep=toMin(c.r_dep),imb=toMin(c.r_imb),wd=wdOf(c.date);
 var c0=land+A.inMin,dl=Math.min(dep-R.buf,imb!=null?imb-45:1e9);
-var ctx={single:1,c0:c0,start:"start",dl:dl,wd:wd,date:c.date,endOf:function(p){return retOf(c.rt||c.to,p)},wantB:c0<10*60+45,wantL:c0<14*60+(PD.LUNCHO||0)&&dl>13*60+30+(PD.LUNCHO||0),wantD:dl>=18*60+15,dinAt:18*60+45,snack:1,eb:earlyOf(c.date),sk:skipGet().d[0]||[]};
+var ctx={single:1,c0:c0,start:"start",dl:dl,wd:wd,date:c.date,endOf:function(p){return retOf(c.rt||c.to,p)},wantB:c0<10*60+45,wantL:c0<14*60+(PD.LUNCHO||0)&&dl>13*60+30+(PD.LUNCHO||0),wantD:dl>=18*60+15,dinAt:18*60+45,snack:1,eb:earlyOf(c.date),sk:skipGet().d[0]||[],bk:bkDay(0)};
 var sa=PD.SINGLE.acts.slice();xForced().forEach(function(id){if(!(S[id].cl&&S[id].cl.indexOf(wd)>=0))insNear(sa,id)});var x=planDay(base||skipF(0,sa),ctx,{single:1}),r=x.r;
 var items=[{k:"air",t:land,d:A.inMin,c0:c0}].concat(r.items);
 items.push({k:"ret",t:r.end,d:r.ret.min,ret:r.ret,arr:r.end+r.ret.min,slack:r.slack,dl:dl});
 var n=0;items.forEach(function(it){if(it.k==="act")it.n=++n});
-return{kind:"single",i:0,date:c.date,wd:wd,items:items,acts:x.acts,dropped:x.dropped,eadd:x.eadd,egr:x.egr,shrunk:x.shrunk,none:x.none,c0:c0,dl:dl,land:land,dep:dep,imb:imb,leave:r.end,prev:r.prev,B:r.B,L:r.L,D:r.D,A:A,R:R,rides:ridesOf(items)+((A.xr||0)+(R.xr||0))/2}}
+return{kind:"single",i:0,date:c.date,wd:wd,items:items,acts:x.acts,pd:x.pd,dropped:x.dropped,eadd:x.eadd,egr:x.egr,shrunk:x.shrunk,none:x.none,c0:c0,dl:dl,land:land,dep:dep,imb:imb,leave:r.end,prev:r.prev,B:r.B,L:r.L,D:r.D,A:A,R:R,rides:ridesOf(items)+((A.xr||0)+(R.xr||0))/2}}
 
 /* viaggio di più giorni */
 function frame(c,i,n){var A=PD.PAR[c.to],R=PD.PAR[c.rt||c.to],date=addDays(c.date,i),wd=wdOf(date),kind=i===0?"first":i===n-1?"last":"mid",f={i:i,date:date,wd:wd,kind:kind,A:A,R:R,acts:[]};
@@ -466,7 +619,7 @@ return left}
 function planMulti(f,c){var last=f.kind==="last";
 var ctx={multi:1,c0:f.c0,start:"home",dl:f.dl,wd:f.wd,date:f.date,
 endOf:last?lastRet:function(p){return legOf(p,"home")},
-wantB:f.c0<10*60+45,wantL:f.c0<14*60+(PD.LUNCHO||0)&&f.dl>13*60+30+(PD.LUNCHO||0),wantD:last?f.dl>=18*60+15:f.c0<21*60+30,dinAt:last?18*60+45:19*60+30+(PD.DINO||0),free:!last,snack:last,snx:!last&&ST.th==="eno",eb:earlyOf(f.date),sk:skipGet().d[f.i]||[]};
+wantB:f.c0<10*60+45,wantL:f.c0<14*60+(PD.LUNCHO||0)&&f.dl>13*60+30+(PD.LUNCHO||0),wantD:last?f.dl>=18*60+15:f.c0<21*60+30,dinAt:last?18*60+45:19*60+30+(PD.DINO||0),free:!last,snack:last,snx:!last&&ST.th==="eno",eb:earlyOf(f.date),sk:skipGet().d[f.i]||[],bk:bkDay(f.i)};
 var x=planDay(skipF(f.i,f.acts),ctx,null),r=x.r,items=[];
 if(f.kind==="first"){items.push({k:"air",t:f.land,d:f.A.inMin,c0:f.tC,multi:1});items.push({k:"home",t:f.tH,d:15,arr:1,leg:f.lh})}
 else items.push({k:"home",t:f.c0,d:0,co:last?1:0,mor:last?0:1});
@@ -476,15 +629,15 @@ if(last)items.push({k:"ret",t:rt,d:r.ret.min,ret:r.ret,arr:rt+r.ret.min,slack:r.
 else if(r.prev!=="home"||items[items.length-1].k==="meal")items.push({k:"night",t:r.end,d:r.ret.min,leg:r.ret});
 var n=0;items.forEach(function(it){if(it.k==="act")it.n=++n});
 var rides=ridesOf(items)+(last&&r.ret.rides?1:0)+(f.kind==="first"?(f.A.xrm||0):0)+(last?(f.R.xrm||0):0);
-return Object.assign(f,{items:items,acts:x.acts,dropped:x.dropped,eadd:x.eadd,egr:x.egr,shrunk:x.shrunk,none:x.none,leave:rt,prev:r.prev,B:r.B,L:r.L,D:r.D,rides:rides,end:rt+(last?0:r.ret.min)})}
+return Object.assign(f,{items:items,acts:x.acts,pd:x.pd,dropped:x.dropped,eadd:x.eadd,egr:x.egr,shrunk:x.shrunk,none:x.none,leave:rt,prev:r.prev,B:r.B,L:r.L,D:r.D,rides:rides,end:rt+(last?0:r.ret.min)})}
 /* il ritmo parte dal piano equilibrato: tranquillo ne tiene circa due terzi (le più importanti), intenso le tiene tutte e ne aggiunge */
 function buildTrip(c){var pc=sty(c).pc;if(pc==="mid")return buildRaw(c,null);var M=buildRaw(Object.assign({},c,{pc:"mid"}),null);return buildRaw(c,M)}
-function pacePick(list){if(ST.pc!=="rel")return list.slice();var n=list.length;if(n<2)return list.slice();var k=Math.max(1,Math.min(n-1,Math.round(n*.65))),top=list.slice().sort(function(a,b){return pri(a)-pri(b)}).slice(0,k);return list.filter(function(x){return top.indexOf(x)>=0})}
+function pacePick(list,di){if(ST.pc!=="rel")return list.slice();var n=list.length;if(n<2)return list.slice();var kb=di!=null?bkIds(di):[],k=Math.max(1,Math.min(n-1,Math.round(n*.65))),top=list.slice().sort(function(a,b){return pri(a)-pri(b)}).slice(0,k);return list.filter(function(x){return top.indexOf(x)>=0||kb.indexOf(x)>=0})}
 function buildRaw(c,M){ST=sty(c);if(!c.rt||!PD.PAR[c.rt])c.rt=c.to;var n=nDays(c),A=PD.PAR[c.to],R=PD.PAR[c.rt];
-if(n===1){POOL0=PD.SINGLE.acts.slice();return{multi:false,n:1,A:A,R:R,days:[planSingle(c,M?pacePick(M.days[0].acts):null)],left:[]}}
+if(n===1){POOL0=PD.SINGLE.acts.slice();return{multi:false,n:1,A:A,R:R,days:[planSingle(c,M?pacePick(M.days[0].acts,0):null)],left:[]}}
 var days=[];for(var i=0;i<n;i++)days.push(frame(c,i,n));
-var left;if(M){left=M.left;days.forEach(function(d,i){d.acts=pacePick(M.days[i].acts||[])});POOL0=[];M.days.forEach(function(d){(d.acts||[]).forEach(function(a){if(POOL0.indexOf(a)<0)POOL0.push(a)})})}
-else{left=assign(days,n);POOL0=[];days.forEach(function(d){d.acts.forEach(function(a){if(POOL0.indexOf(a)<0)POOL0.push(a)})});assignX(days)}
+var left;if(M){left=M.left;days.forEach(function(d,i){d.acts=pacePick(M.days[i].acts||[],i)});POOL0=[];M.days.forEach(function(d){(d.acts||[]).forEach(function(a){if(POOL0.indexOf(a)<0)POOL0.push(a)})})}
+else{left=assign(days,n);POOL0=[];days.forEach(function(d){d.acts.forEach(function(a){if(POOL0.indexOf(a)<0)POOL0.push(a)})});assignX(days);bkMoves(days)}
 XPOOL=[];if(ST.pc==="int")Object.keys(S).forEach(function(id){if(POOL0.indexOf(id)<0&&S[id].t)XPOOL.push(id)});
 var out={multi:true,n:n,A:A,R:R,days:days.map(function(f){return planMulti(f,c)}),left:left};XPOOL=[];return out}
 
@@ -600,7 +753,7 @@ if(PD.fx.meta)meta=PD.fx.meta(it,meta,E);
 if(!tOn(it.id))meta=(outOff(it.id)&&s.out==="b"?"Senza biglietto: lo vedi da fuori, circa "+it.d+" minuti per il giro intorno e le foto.":"Senza biglietto: ti fermi fuori e nelle vie, circa "+it.d+" minuti.")+(meta?" "+meta:"");
 if(s.sun){var ss=sunset(P.date);if(Math.abs(it.t+it.d/2-ss)<120)meta+=" Il sole tramonta alle "+fmt(ss)+": "+(it.t+it.d>ss?"sei qui al momento giusto per la luce del tramonto.":"goditi l'ultima luce.")}
 (PD.EXCL||[]).forEach(function(x){if(it.id===x[1]&&TRIP.multi&&TRIP.days.some(function(d){return d.acts.indexOf(x[0])>=0}))meta=x[2]});
-body=legBox(lg)+'<p>'+esc(s.d)+'</p>'+(meta?'<p class="meta">'+esc(meta)+'</p>':'')+goBtn(s.q,lg.mode==="walk"?"walking":"transit","Portami lì",lg.mode==="walk"?"🚶":"🚇")}
+body=legBox(lg)+'<p>'+esc(s.d)+'</p>'+(meta?'<p class="meta">'+esc(meta)+'</p>':'')+bkBlock(it)+goBtn(s.q,lg.mode==="walk"?"walking":"transit","Portami lì",lg.mode==="walk"?"🚶":"🚇")}
 else if(it.k==="free"&&it.pau){cls="home";ti="Pausa";body='<p>'+fdur(it.d)+' senza programmi: un caffè seduti, una panchina al parco o un gelato. Poi si riparte con calma.</p>'}
 else if(it.k==="free"&&it.last){cls="home";ti="Mattinata libera";body='<p>Hai circa '+fdur(it.d)+' prima di partire: lascia i bagagli all\'alloggio e goditi il quartiere, con un caffè in terrazza, gli ultimi acquisti o una passeggiata. Alle '+fmt(it.t+it.d)+' si riparte per l\'aeroporto.</p>'}
 else if(it.k==="free"){cls="home";var lng=it.d>=150;ti=lng?"Pomeriggio libero":"Tempo libero";body=legBox(it.leg)+'<p>'+(lng?"Hai circa "+fdur(it.d)+" senza tappe fisse. "+PD.T.freeLong:PD.T.freeShort)+' La cena è verso le '+fmt(it.t+it.d)+'.</p>'}
@@ -1524,7 +1677,7 @@ function dOf(id){return DEST.filter(function(d){return d.id===id})[0]||DEST[0]}
 function setCity(id){var r=document.documentElement,cur=r.getAttribute("data-city")||"";if((id||"")===cur)return;if(id)r.setAttribute("data-city",id);else r.removeAttribute("data-city");
 r.classList.remove("recolor");void r.offsetWidth;r.classList.add("recolor");clearTimeout(setCity._t);setCity._t=setTimeout(function(){r.classList.remove("recolor")},950);try{window.dispatchEvent(new Event("citycolor"))}catch(e){}}
 function setHead(){$("#sem").textContent=PD.e;$("#sdest").textContent=PD.n;$("#sdsub").textContent=PD.cn+" · guida completa";$("#alab").textContent="Atterraggio a "+PD.n}
-var TK=["via-spese","via-check","via-copt","via-meals","via-water","via-vlive","via-vlive-n"];
+var TK=["via-spese","via-check","via-copt","via-meals","via-water","via-vlive","via-vlive-n","via-bk"];
 function trips(){var a=lj("via-trips",[]);return Array.isArray(a)?a.filter(function(t){return t&&t.cfg&&t.cfg.date&&CITIES[t.cfg.dest]}):[]}
 function putTrips(a){ls("via-trips",a.length?JSON.stringify(a.slice(0,12)):null)}
 function newTid(){return Date.now().toString(36)+Math.floor(Math.random()*1296).toString(36)}
@@ -2004,14 +2157,16 @@ function readLink(){var m=/^#t=([\w-]+)/.exec(location.hash||"");if(!m)return nu
 /* viaggio condiviso: ponte verso shared.js */
 function shRep(r){var o={};if(r&&typeof r==="object")Object.keys(r).forEach(function(i){var m=r[i];if(!/^\d{1,2}$/.test(i)||!m||typeof m!=="object")return;var q={};Object.keys(m).slice(0,20).forEach(function(k){if(shId(k)&&shId(m[k]))q[k]=m[k]});if(Object.keys(q).length)o[i]=q});return o}
 function shId(x){return typeof x==="string"&&/^[\w-]{1,48}$/.test(x)}
+function shBk(b){var o={d:{},m:{}};if(!b||typeof b!=="object")return o;var d=b.d&&typeof b.d==="object"?b.d:{},m=b.m&&typeof b.m==="object"?b.m:{};Object.keys(d).forEach(function(i){var x=d[i];if(!/^\d{1,2}$/.test(i)||!x||typeof x!=="object")return;var q={};Object.keys(x).slice(0,20).forEach(function(k){var t=x[k];if(shId(k)&&typeof t==="number"&&t>=0&&t<1440)q[k]=Math.round(t)});if(Object.keys(q).length)o.d[i]=q});Object.keys(m).slice(0,20).forEach(function(k){var t=m[k];if(shId(k)&&typeof t==="number"&&t>=0&&t<60)o.m[k]=t|0});return o}
+function shBkPut(k,b){ls("via-bk",(Object.keys(b.d).length||Object.keys(b.m).length)?JSON.stringify({k:k,d:b.d,m:b.m}):null)}
 window.__viaSh={code:function(){return CFG&&CFG.sh||""},has:function(){return !!CFG},toast:toast,ask:ask,closeSheet:closeSheet,
-doc:function(){if(!CFG)return null;var c=cleanCfg(CFG);if(!c)return null;var tk={};Object.keys(COPT).forEach(function(k){if(S[k]&&S[k].tk&&(COPT[k]===0||COPT[k]===1))tk[k]=COPT[k]});return{v:1,cfg:c,skip:JSON.parse(JSON.stringify(skipGet().d)),tk:tk,rep:JSON.parse(JSON.stringify(repGet().d))}},
+doc:function(){if(!CFG)return null;var c=cleanCfg(CFG);if(!c)return null;var tk={};Object.keys(COPT).forEach(function(k){if(S[k]&&S[k].tk&&(COPT[k]===0||COPT[k]===1))tk[k]=COPT[k]});return{v:1,cfg:c,skip:JSON.parse(JSON.stringify(skipGet().d)),tk:tk,rep:JSON.parse(JSON.stringify(repGet().d)),bk:shBk(bkGet())}},
 apply:function(d){if(!d||!CFG)return false;var c=cleanCfg(d.cfg);if(!c)return false;c.tid=CFG.tid;c.sh=CFG.sh;var tk={},sk={};
 if(d.tk&&typeof d.tk==="object")Object.keys(d.tk).forEach(function(k){if(shId(k)&&(d.tk[k]===0||d.tk[k]===1))tk[k]=d.tk[k]});
 if(d.skip&&typeof d.skip==="object")Object.keys(d.skip).forEach(function(k){var a=d.skip[k];if(/^\d{1,2}$/.test(k)&&Array.isArray(a)){a=a.filter(shId).slice(0,40);if(a.length)sk[k]=a}});
-var rp2=shRep(d.rep);
-if(c.dest!==CFG.dest){ls("via-rep",Object.keys(rp2).length?JSON.stringify({k:c.dest+"|"+c.date+"|"+c.tid,d:rp2}):null);ls("via-trip",JSON.stringify(c));ls("via-skip",Object.keys(sk).length?JSON.stringify({k:c.dest+"|"+c.date+"|"+c.tid,d:sk}):null);ls("via-copt",Object.keys(tk).length?JSON.stringify(tk):null);goCity(c.dest);return true}
-CFG=c;SAVED=c;ls("via-trip",JSON.stringify(c));ls("via-skip",Object.keys(sk).length?JSON.stringify({k:tKey(),d:sk}):null);ls("via-rep",Object.keys(rp2).length?JSON.stringify({k:tKey(),d:rp2}):null);
+var rp2=shRep(d.rep),bk2=shBk(d.bk);
+if(c.dest!==CFG.dest){if(d.bk)shBkPut(c.dest+"|"+c.date+"|"+c.tid,bk2);ls("via-rep",Object.keys(rp2).length?JSON.stringify({k:c.dest+"|"+c.date+"|"+c.tid,d:rp2}):null);ls("via-trip",JSON.stringify(c));ls("via-skip",Object.keys(sk).length?JSON.stringify({k:c.dest+"|"+c.date+"|"+c.tid,d:sk}):null);ls("via-copt",Object.keys(tk).length?JSON.stringify(tk):null);goCity(c.dest);return true}
+CFG=c;SAVED=c;ls("via-trip",JSON.stringify(c));ls("via-skip",Object.keys(sk).length?JSON.stringify({k:tKey(),d:sk}):null);if(d.bk)shBkPut(tKey(),bk2);ls("via-rep",Object.keys(rp2).length?JSON.stringify({k:tKey(),d:rp2}):null);
 Object.keys(COPT).forEach(function(k){if(S[k]&&S[k].tk)delete COPT[k]});Object.keys(tk).forEach(function(k){COPT[k]=tk[k]});ls("via-copt",JSON.stringify(COPT));
 renderAll();try{window.dispatchEvent(new Event("voli"))}catch(e){}return true},
 attach:function(code){if(!CFG||!shId(code))return;CFG.sh=code;SAVED=CFG;ls("via-trip",JSON.stringify(CFG))},
@@ -2019,7 +2174,7 @@ detach:function(){if(!CFG)return;delete CFG.sh;SAVED=CFG;ls("via-trip",JSON.stri
 join:function(code,d){if(!shId(code)||!d)return false;var c=cleanCfg(d.cfg);if(!c)return false;parkCur();c.tid=newTid();c.sh=code;var k=c.dest+"|"+c.date+"|"+c.tid,sk={},tk={};
 if(d.skip&&typeof d.skip==="object")Object.keys(d.skip).forEach(function(i){var a=d.skip[i];if(/^\d{1,2}$/.test(i)&&Array.isArray(a)){a=a.filter(shId).slice(0,40);if(a.length)sk[i]=a}});
 if(d.tk&&typeof d.tk==="object")Object.keys(d.tk).forEach(function(i){if(shId(i)&&(d.tk[i]===0||d.tk[i]===1))tk[i]=d.tk[i]});
-var rp3=shRep(d.rep);if(Object.keys(rp3).length)ls("via-rep",JSON.stringify({k:k,d:rp3}));
+var rp3=shRep(d.rep);if(Object.keys(rp3).length)ls("via-rep",JSON.stringify({k:k,d:rp3}));if(d.bk)shBkPut(k,shBk(d.bk));
 ls("via-trip",JSON.stringify(c));if(Object.keys(sk).length)ls("via-skip",JSON.stringify({k:k,d:sk}));if(Object.keys(tk).length)ls("via-copt",JSON.stringify(tk));goCity(c.dest);return true}};
 window.VIA_TRIPLINK=function(){return CFG?tripLink(CFG):""};
 $("#shlink").addEventListener("click",function(){if(!CFG){toast("Imposta prima il tuo viaggio");return}var u=tripLink(CFG),d=dOf(CFG.dest);closeSheet();
