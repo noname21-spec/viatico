@@ -748,7 +748,51 @@ public final class VwUtil {
         if (target - now < 3 * 3600000L) { chrono(v, R.id.chrono, target, fmt); v.setViewVisibility(R.id.chrono, View.VISIBLE); }
         else { v.setViewVisibility(R.id.chrono, View.GONE); v.setTextViewText(R.id.st, st + " · " + inTxt(target - now)); }
         v.setOnClickPendingIntent(R.id.root, openApp(c, id));
+        /* v286 la carta d'imbarco salvata nell'app: si tocca e si apre grande */
+        JSONArray bp = f.optJSONArray("bp");
+        JSONObject b0 = bp != null && bp.length() > 0 ? bp.optJSONObject(0) : null;
+        Bitmap bb = b0 != null ? codeTile(c, b0.optString("t"), b0.optString("f")) : null;
+        if (bb != null) {
+            v.setImageViewBitmap(R.id.bp, bb);
+            v.setViewVisibility(R.id.bp, View.VISIBLE);
+            JSONArray l = new JSONArray();
+            for (int i = 0; i < bp.length(); i++) {
+                JSONObject x = bp.optJSONObject(i);
+                if (x == null) continue;
+                try {
+                    JSONObject y = new JSONObject();
+                    y.put("t", x.optString("t")); y.put("f", x.optString("f"));
+                    y.put("n", "Carta d'imbarco · " + f.optString("from") + " → " + f.optString("to"));
+                    String who = x.optString("p"), seat = x.optString("s");
+                    y.put("s", (who.isEmpty() ? "" : who) + (seat.isEmpty() ? "" : (who.isEmpty() ? "" : " · ") + "posto " + seat) + (imb > 0 ? " · imbarco " + hm(imb) : ""));
+                    l.put(y);
+                } catch (Exception e) {}
+            }
+            Intent qi = new Intent(c, VwQrActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK).putExtra("list", l.toString());
+            v.setOnClickPendingIntent(R.id.bp, PendingIntent.getActivity(c, 6500 + id, qi, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT));
+            v.setTextViewText(R.id.lab, (ret ? "VOLO DI RITORNO" : "CARTA D'IMBARCO") + " · TOCCA IL CODICE");
+        } else v.setViewVisibility(R.id.bp, View.GONE);
         return v;
+    }
+    /* il codice su una tessera bianca arrotondata, per il widget */
+    static Bitmap codeTile(Context c, String t, String f) {
+        float d = dens(c);
+        int W = Math.round(112 * d), H = Math.round(48 * d), pad = Math.round(5 * d);
+        boolean wide = "pdf417".equals(f);
+        Bitmap code = VwQrActivity.code(t, f, wide ? W - 2 * pad : H - 2 * pad);
+        if (code == null) return null;
+        int cw = wide ? W : H + Math.round(6 * d);
+        Bitmap b = Bitmap.createBitmap(cw, H, Bitmap.Config.ARGB_8888);
+        Canvas k = new Canvas(b);
+        Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+        p.setColor(Color.WHITE);
+        k.drawRoundRect(new RectF(0, 0, cw, H), 9 * d, 9 * d, p);
+        float sc = Math.min((cw - 2f * pad) / code.getWidth(), (H - 2f * pad) / code.getHeight());
+        float dw = code.getWidth() * sc, dh = code.getHeight() * sc;
+        Paint q = new Paint();
+        q.setFilterBitmap(false);
+        k.drawBitmap(code, null, new RectF((cw - dw) / 2f, (H - dh) / 2f, (cw + dw) / 2f, (H + dh) / 2f), q);
+        return b;
     }
     static Bitmap arc(Context c, float frac) {
         float d = dens(c);

@@ -22,6 +22,7 @@ var cid=cur&&cur.cfg?cur.cfg.tid:null;return{v:1,cur:cid?all[cid]:null,trips:ord
 /* libreria caricata solo quando serve */
 function lib(){return new Promise(function(res,rej){if(window.supabase)return res();var s=document.createElement("script");s.src="lib/supabase.js";s.onload=res;s.onerror=function(){rej(new Error("offline"))};document.head.appendChild(s)})}
 function client(){return lib().then(function(){if(!CL)CL=window.supabase.createClient(SB.url,SB.key,{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});return CL})}
+window.__sbClient=client;
 function setSess(s){SESS=s;UID=s&&s.user?s.user.id:null;paint()}
 function mail(){return SESS&&SESS.user?(SESS.user.email||"account collegato"):""}
 function paint(){var on=!!UID;[["#dacct",1],["#shacct",0]].forEach(function(x){var el=$(x[0]);if(!el)return;el.hidden=!ok;var t=el.querySelector(".at"),s=el.querySelector(".as");if(!t)return;
@@ -60,4 +61,23 @@ var has=false;try{for(var i=0;i<localStorage.length;i++)if(/^sb-.*-auth-token/.t
 if(has||/[?&]code=|access_token=/.test(location.search+location.hash)){client().then(function(c){c.auth.onAuthStateChange(function(ev,s){if(ev==="SIGNED_OUT"){setSess(null)}else if(s&&(!UID||s.user.id!==UID)){setSess(s);pull()}});return c.auth.getSession()}).then(function(r){if(r&&r.data&&r.data.session&&!UID){setSess(r.data.session);pull()}}).catch(function(){})}
 document.addEventListener("visibilitychange",function(){if(!document.hidden&&UID&&Date.now()-lastPull>20000)pull()})}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+})();
+
+/* ===== v286 rapporti anonimi sugli errori: tipo di errore, punto del codice e versione; niente dati del viaggio ===== */
+(function(){
+var SB={url:"__SB_URL__",key:"__SB_KEY__"};if(!/^https:\/\//.test(SB.url))return;
+function on(){try{return localStorage.getItem("via-errrep")!=="0"}catch(e){return true}}
+var VER=(function(){var e=document.getElementById("hlver");var m=e&&/versione (\d+)/.exec(e.textContent);return m?m[1]:""})(),
+ PLAT=(function(){try{var C=window.Capacitor;if(C&&C.isNativePlatform&&C.isNativePlatform())return"apk"}catch(e){}return matchMedia("(display-mode: standalone)").matches?"pwa":"web"})();
+var seen={},q=[],sent=0,tm=0;
+function clean(s){return String(s||"").replace(/https?:\/\/[^\s)]+/g,function(u){try{var x=new URL(u);return x.origin===location.origin?x.pathname.split("/").pop():x.hostname}catch(e){return"url"}}).replace(/[\w.+-]+@[\w-]+\.[\w.]+/g,"email").replace(/\d{6,}/g,"#").slice(0,1500)}
+function add(kind,msg,src,stack){if(!on()||sent>=6)return;msg=clean(msg);if(!msg||/^Script error\.?$/.test(msg)||/ResizeObserver loop|AbortError|NetworkError|Failed to fetch|Load failed|The user aborted/i.test(msg))return;
+ var k=kind+msg+src;if(seen[k]){seen[k].n++;return}var o={kind:kind,msg:msg,src:clean(src),stack:clean(stack),n:1};seen[k]=o;q.push(o);clearTimeout(tm);tm=setTimeout(flush,4000)}
+function flush(){if(!navigator.onLine)return;var a=q.splice(0,6-sent);a.forEach(function(o){sent++;try{fetch(SB.url+"/rest/v1/rpc/report_error",{method:"POST",keepalive:true,headers:{"apikey":SB.key,"Content-Type":"application/json"},body:JSON.stringify({p_ver:VER,p_plat:PLAT,p_kind:o.kind,p_msg:o.msg,p_src:o.src,p_stack:o.stack,p_n:o.n})}).catch(function(){})}catch(e){}})}
+window.addEventListener("error",function(e){var f=e&&e.filename||"";if(f&&f.indexOf(location.origin)!==0)return;var er=e&&e.error;add("error",e&&e.message,f.split("/").pop()+":"+(e&&e.lineno||0)+":"+(e&&e.colno||0),er&&er.stack)});
+window.addEventListener("unhandledrejection",function(e){var r=e&&e.reason;if(!r||!(r instanceof Error))return;add("promise",r.message,"",r.stack)});
+document.addEventListener("visibilitychange",function(){if(document.hidden&&q.length)flush()});
+function ui(){var c=document.getElementById("errc");if(!c||c.__w)return;c.__w=1;c.checked=on();c.addEventListener("change",function(){try{localStorage.setItem("via-errrep",c.checked?"1":"0")}catch(e){}})}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",ui);else ui();
+window.__errTest=function(){add("test","prova del rapporto errori","sync.js:0:0","")};
 })();

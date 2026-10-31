@@ -268,6 +268,10 @@ function curD(){var t=root.getAttribute("data-theme");return t?t==="dark":mq.mat
 function sync(){cb.checked=curD();if(meta)setTimeout(function(){var v=getComputedStyle(root).getPropertyValue("--tc").trim();meta.setAttribute("content",v||(cb.checked?"#04121a":"#0388b0"))},30)}
 window.addEventListener("citycolor",sync);
 function themeNow(){return root.getAttribute("data-theme")||"auto"}
+/* v286 dimensione del testo */
+(function(){function paint(){var z=document.documentElement.getAttribute("data-tsz")||"";[].forEach.call(document.querySelectorAll("#tszg [data-z]"),function(b){var on=b.dataset.z===z;b.setAttribute("aria-checked",on?"true":"false");b.classList.toggle("on",on)})}
+document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("#tszg [data-z]");if(!b)return;var z=b.dataset.z;if(z)document.documentElement.setAttribute("data-tsz",z);else document.documentElement.removeAttribute("data-tsz");try{if(z)localStorage.setItem("via-tsz",z);else localStorage.removeItem("via-tsz")}catch(x){}paint();try{window.dispatchEvent(new Event("resize"))}catch(x){}});
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",paint);else paint()})();
 function paintTheme(){var c=themeNow();[].forEach.call(document.querySelectorAll(".seg3 [data-t]"),function(b){var on=b.dataset.t===c;b.setAttribute("aria-checked",on?"true":"false");b.classList.toggle("on",on)})}
 function setTheme(t){if(t==="auto"){root.removeAttribute("data-theme");try{localStorage.removeItem("via-theme")}catch(e){}}else{root.setAttribute("data-theme",t);try{localStorage.setItem("via-theme",t)}catch(e){}}sync();paintTheme()}
 [].forEach.call(document.querySelectorAll(".seg3 [data-t]"),function(b){b.addEventListener("click",function(){setTheme(b.dataset.t)})});paintTheme();

@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.view.View;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -28,10 +31,27 @@ public class VwQrActivity extends Activity {
         lp.screenBrightness = 1f;
         getWindow().setAttributes(lp);
         setContentView(R.layout.vw_qr_act);
+        findViewById(R.id.qr_back).setOnClickListener(v -> finish());
+        /* più codici (una carta d'imbarco per persona): «Avanti» passa al successivo */
+        try { String l = getIntent().getStringExtra("list"); if (l != null) list = new JSONArray(l); } catch (Exception e) { list = null; }
+        TextView nx = findViewById(R.id.qr_next);
+        if (list != null && list.length() > 1) { nx.setVisibility(View.VISIBLE); nx.setOnClickListener(v -> { idx = (idx + 1) % list.length(); show(); }); }
+        else nx.setVisibility(View.GONE);
+        show();
+    }
+
+    private JSONArray list = null;
+    private int idx = 0;
+
+    private void show() {
         String txt = getIntent().getStringExtra("t"), fmt = getIntent().getStringExtra("f"), name = getIntent().getStringExtra("n"), sub = getIntent().getStringExtra("s");
+        if (list != null && list.length() > 0) {
+            JSONObject o = list.optJSONObject(idx);
+            if (o != null) { txt = o.optString("t"); fmt = o.optString("f"); if (!o.optString("n").isEmpty()) name = o.optString("n"); if (!o.optString("s").isEmpty()) sub = o.optString("s"); }
+            if (list.length() > 1) sub = (sub == null ? "" : sub + " · ") + (idx + 1) + " di " + list.length();
+        }
         ((TextView) findViewById(R.id.qr_title)).setText(name == null ? "Biglietto" : name);
         ((TextView) findViewById(R.id.qr_sub)).setText(sub == null ? "Mostra il codice all'ingresso" : sub);
-        findViewById(R.id.qr_back).setOnClickListener(v -> finish());
         int w = Math.min(getResources().getDisplayMetrics().widthPixels, 1200) * 86 / 100;
         Bitmap bm = code(txt, fmt, w);
         if (bm != null) ((ImageView) findViewById(R.id.qr_img)).setImageBitmap(bm);

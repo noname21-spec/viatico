@@ -55,7 +55,30 @@ used=set(re.findall(r'm\("(\w+)"',r('icons.js')))
 mono={'check','arrow','back','up','refresh','close','dl'}
 
 icons_js=r('icons.js').replace('__IMG__',json.dumps(imgs,separators=(',',':')))
-theme=''.join(css_for(c) for c in have if c!='paris')
+# v286 i colori delle città stanno in c/<id>.css, caricato solo per la città aperta (la pagina pesa ~180 KB in meno)
+for c in have:
+    if c!='paris': open(os.path.join(_cd,c+'.css'),'w').write(css_for(c))
+for _f in os.listdir(_cd):
+    if _f.endswith('.css') and _f[:-4] not in have: os.remove(os.path.join(_cd,_f))
+theme=''
+# v286 guide in inglese: src/en/<id>.json = {tappa:[titolo, descrizione]} -> c/<id>.en.js con il dizionario italiano -> inglese
+_ed=os.path.join(d,'en')
+_tf2=tempfile.mktemp(suffix='.json')
+subprocess.run(['node',os.path.join(d,'en_dump.js'),d,_tf2],check=True)
+_IT=json.load(open(_tf2));os.remove(_tf2)
+for _f in os.listdir(_cd):
+    if _f.endswith('.en.js'): os.remove(os.path.join(_cd,_f))
+for c in have:
+    p_=os.path.join(_ed,c+'.json')
+    if not os.path.exists(p_): continue
+    en=json.load(open(p_));dic={}
+    for k,v in en.items():
+        it=_IT.get(c,{}).get(k)
+        if not it: continue
+        for a_,b_ in zip(it,v):
+            if a_ and b_ and a_!=b_: dic[a_]=b_
+    open(os.path.join(_cd,c+'.en.js'),'w').write('window.__I18N_ADD&&__I18N_ADD('+json.dumps(dic,ensure_ascii=False).replace('</','<\\/')+');\n')
+head=head.replace('__VER__',_VER)
 mark='html.pick #splash{display:none!important}'
 assert head.count(mark)==1
 head=head.replace(mark,theme+mark)

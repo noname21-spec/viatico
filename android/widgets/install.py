@@ -27,6 +27,25 @@ rec += """
         <activity android:name=".VwQrActivity" android:exported="false" android:excludeFromRecents="true" android:taskAffinity="it.viaticum.app.qr" android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar" android:screenOrientation="portrait" />"""
 rec += """
         <activity android:name=".VwFxActivity" android:exported="false" android:excludeFromRecents="true" android:taskAffinity="it.viaticum.app.fx" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:windowSoftInputMode="stateVisible|adjustResize" />"""
+# v286 «Condividi con Viaticum»: biglietti e carte d'imbarco (foto o PDF) da email, file e altre app
+if "android.intent.action.SEND" not in s:
+    share = """
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+                <data android:mimeType="application/pdf" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+                <data android:mimeType="application/pdf" />
+            </intent-filter>"""
+    j = s.index("android.intent.category.LAUNCHER")
+    j = s.index("</intent-filter>", j) + len("</intent-filter>")
+    s = s[:j] + share + s[j:]
 if "POST_NOTIFICATIONS" not in s:
     s = s.replace("</manifest>", '    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n</manifest>')
 i = s.rindex("</application>")

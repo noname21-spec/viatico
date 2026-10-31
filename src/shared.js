@@ -11,7 +11,12 @@ function g(k){try{return localStorage.getItem(k)}catch(e){return null}}
 function p(k,v){try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){}}
 var ME=g("via-sh-me");if(!ME){ME=Math.random().toString(36).slice(2,10);p("via-sh-me",ME)}
 var TICK=5000,busy=false,timer=0,note="",lastOk=0;
-function rpc(fn,args){var ctl=window.AbortController?new AbortController():null,tm=setTimeout(function(){ctl&&ctl.abort()},12000);
+/* v286 prima con lo stesso client della sincronizzazione (quello che funziona già sul telefono), poi con una richiesta diretta */
+var LASTERR="";
+function rpc(fn,args){var viaCl=window.__sbClient?Promise.race([window.__sbClient(),new Promise(function(_,ko){setTimeout(function(){ko(new Error("lento"))},6000)})]).then(function(cl){return cl.rpc(fn,args)}).then(function(r){if(r.error)throw new Error("rpc "+(r.error.code||"")+" "+(r.error.message||""));return r.data}):Promise.reject(new Error("no client"));
+ return viaCl.catch(function(e){LASTERR=String(e&&e.message||e);return rpc0(fn,args)}).catch(function(e){LASTERR=(LASTERR?LASTERR+" · ":"")+String(e&&e.message||e);try{console.warn("viaggio condiviso:",LASTERR)}catch(x){}throw e})}
+function errTag(){var t=LASTERR.replace(/\s+/g," ").trim();return t?" ("+t.slice(0,90)+")":""}
+function rpc0(fn,args){var ctl=window.AbortController?new AbortController():null,tm=setTimeout(function(){ctl&&ctl.abort()},12000);
  return fetch(SB.url+"/rest/v1/rpc/"+fn,{method:"POST",headers:{"apikey":SB.key,"Content-Type":"application/json"},body:JSON.stringify(args),signal:ctl?ctl.signal:undefined}).then(function(r){clearTimeout(tm);if(!r.ok)throw new Error("http "+r.status);return r.json()},function(e){clearTimeout(tm);throw e})}
 function one(r){return Array.isArray(r)?r[0]:r}
 /* memoria locale per codice: ultima versione vista (rev) e il documento a quel punto (base per unire) */
@@ -78,13 +83,13 @@ function paint(){var m=$("#shm");if(!m||!m.classList.contains("on"))return;var b
  $("#shmsend").onclick=function(){var t="Entra nel mio viaggio su Viaticum con il codice "+code+": "+linkOf(code);if(navigator.share)navigator.share({title:"Viaggio condiviso su Viaticum",text:t}).catch(function(){});else copy(t)};
  $("#shmcp").onclick=function(){copy(code)};
  $("#shmstop").onclick=function(){H.ask("Smettere di condividere?","Il viaggio resta sul tuo telefono com'è adesso. Chi ha il codice smette di ricevere i tuoi cambiamenti.",[{t:"Smetti di condividere",fn:function(){H.detach();note="";var mm=$("#shm");if(mm)mm.dataset.mode="";paint()}}])}}
-function create(){say("Creo il codice…");var doc=H.doc();if(!doc){say("Imposta prima il tuo viaggio");return}
- rpc("shared_create",{p_data:doc,p_by:ME}).then(function(r){r=one(r);if(!r||!r.code)throw 0;H.attach(r.code);stSet(r.code,{rev:r.rev,base:doc});lastOk=Date.now();note="";var m=$("#shm");if(m)m.dataset.mode="";paint()}).catch(function(){say(navigator.onLine?"Non riesco a creare il codice. Riprova tra poco.":"Per condividere serve internet")})}
+function create(){say("Creo il codice…");var doc=null;try{doc=H.doc()}catch(e){LASTERR="doc "+(e&&e.message||e);say("Non riesco a preparare il viaggio da condividere"+errTag());return}if(!doc){say("Imposta prima il tuo viaggio");return}
+ rpc("shared_create",{p_data:doc,p_by:ME}).then(function(r){r=one(r);if(!r||!r.code)throw 0;H.attach(r.code);stSet(r.code,{rev:r.rev,base:doc});lastOk=Date.now();note="";var m=$("#shm");if(m)m.dataset.mode="";paint()}).catch(function(){say(navigator.onLine?"Non riesco a creare il codice. Riprova tra poco."+errTag():"Per condividere serve internet")})}
 function join(code){say("Cerco il viaggio…");
  rpc("shared_get",{p_code:code,p_rev:0}).then(function(r){r=one(r);if(!r||!r.data){say("Non trovo nessun viaggio con questo codice");return}
   if(H.code()===code){say("Sei già dentro questo viaggio");return}
   var go=function(){stSet(code,{rev:r.rev,base:r.data});if(!H.join(code,r.data)){say("Il viaggio non si può aprire")}};
-  var cur=H.has();if(cur)H.ask("Entrare nel viaggio condiviso?","Il viaggio che hai ora resta salvato nella tua lista.",[{t:"Entra",fn:go}]);else go()}).catch(function(){say(navigator.onLine?"Non riesco a controllare il codice. Riprova tra poco.":"Per entrare serve internet")})}
+  var cur=H.has();if(cur)H.ask("Entrare nel viaggio condiviso?","Il viaggio che hai ora resta salvato nella tua lista.",[{t:"Entra",fn:go}]);else go()}).catch(function(){say(navigator.onLine?"Non riesco a controllare il codice. Riprova tra poco."+errTag():"Per entrare serve internet")})}
 function init(){var a=$("#shlive"),j=$("#shjoin");
  [a,j].forEach(function(b){if(b)b.addEventListener("click",function(){H.closeSheet();var m=$("#shm");m.dataset.mode=b===j?"join":(H.code()?"":"make");m.dataset.pre="";open()})});
  var c=$("#shmclose");if(c)c.addEventListener("click",close);var m=$("#shm");if(m)m.addEventListener("click",function(e){if(e.target===m)close()});

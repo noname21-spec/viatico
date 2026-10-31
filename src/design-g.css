@@ -3151,3 +3151,46 @@ html.lite #dest:not(.pick) .dsheet{background:color-mix(in srgb,var(--bg) 70%,tr
 .bknt.w{padding:10px 12px;border-radius:14px;color:var(--ink);background:color-mix(in srgb,var(--gold) 20%,var(--surf));border:1.5px solid var(--gold)}
 .bkg button:focus-visible,.bkop:focus-within,.bkmain:focus-visible,.bkx2:focus-visible{outline:3px solid var(--ga);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.bkp,.bkbg{transition:none}.bksp{animation-duration:2s}}
+/* v286 biglietti e carte d'imbarco da PDF, foto o mail */
+.tixh{justify-content:space-between}
+.tixn{border:0;background:#f1ece6;color:#1a1416;border-radius:999px;padding:10px 18px;font:700 1rem Outfit,system-ui,sans-serif;cursor:pointer}
+.tixci{image-rendering:pixelated;max-height:46vh;object-fit:contain;background:#fff}
+.tixci.wide{max-height:30vh}
+.tim{position:fixed;inset:0;z-index:390;display:flex;align-items:flex-end;justify-content:center}
+.timbg{position:absolute;inset:0;background:rgba(10,8,18,.5);opacity:0;transition:opacity .2s}
+.tim.on .timbg{opacity:1}
+.timp{position:relative;width:min(560px,100%);max-height:88vh;overflow:auto;background:var(--card,#fff);color:var(--ink,#1a1416);border-radius:24px 24px 0 0;padding:18px 16px calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateY(30px);opacity:0;transition:transform .28s cubic-bezier(.2,.8,.2,1),opacity .2s;box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+.tim.on .timp{transform:none;opacity:1}
+.timh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timh b{font:800 1.25rem/1.2 Outfit,system-ui,sans-serif}
+.timx{border:0;background:transparent;color:inherit;font-size:1.1rem;width:40px;height:40px;border-radius:50%;cursor:pointer}
+.timl{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.timr{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:16px;background:color-mix(in srgb,var(--c1,#16b6cf) 9%,transparent)}
+.timr b{display:block;font:700 1rem/1.25 Outfit,system-ui,sans-serif}
+.timr small{display:block;opacity:.75;margin:2px 0 8px;font-size:.88rem}
+.timr>div{flex:1;min-width:0}
+.timk{flex:none;width:34px;height:34px;border-radius:10px;background:var(--c1,#16b6cf) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z'/%3E%3C/svg%3E") center/20px no-repeat}
+.timk.bp{background-color:var(--c2,#a87900)}
+.timr select{width:100%;max-width:100%;font:inherit;padding:10px;border-radius:12px;border:1px solid color-mix(in srgb,currentColor 22%,transparent);background:var(--card,#fff);color:inherit}
+.timbk{display:flex;gap:8px;align-items:center;margin-top:8px;font-size:.92rem}
+.timn{opacity:.8;margin:6px 0 10px}
+.timt{margin-top:12px}
+.timt summary{cursor:pointer;font-weight:600;padding:8px 0}
+.timt textarea{width:100%;box-sizing:border-box;font:inherit;padding:10px;border-radius:12px;border:1px solid color-mix(in srgb,currentColor 22%,transparent);background:var(--card,#fff);color:inherit;resize:vertical}
+.timtb{margin-top:8px;border:0;border-radius:999px;padding:9px 16px;font:600 .95rem Outfit,system-ui,sans-serif;background:color-mix(in srgb,currentColor 10%,transparent);color:inherit;cursor:pointer}
+.tima{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+.tima button{border:0;border-radius:999px;padding:12px 20px;font:700 1rem Outfit,system-ui,sans-serif;cursor:pointer;background:color-mix(in srgb,currentColor 10%,transparent);color:inherit}
+.tima .tims{background:var(--c1,#16b6cf);color:#fff}
+@media (prefers-reduced-motion:reduce){.timp,.timbg{transition:none}}
+
+/* v286 accessibilità: la scheda del viaggio si apre con un vero pulsante (lettori di schermo e tastiera) */
+.tmx{position:relative}
+.tmgo{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;background:transparent;border-radius:inherit;z-index:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tmgo:focus-visible{outline:3px solid #fff;outline-offset:-5px}
+.tmx .tmt{position:relative;z-index:1;pointer-events:none}
+.tmx .tmm{pointer-events:auto}
+
+/* v286 dimensione del testo (le misure dell'app sono in rem) */
+html[data-tsz="l"]{font-size:112.5%}
+html[data-tsz="xl"]{font-size:125%}
+.shtsz{margin-bottom:10px}

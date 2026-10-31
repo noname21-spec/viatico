@@ -248,7 +248,12 @@ function ready(){if(!document.querySelector("#steps > li")){toast("Imposta prima
 function slug(s){return clean(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"viaggio"}
 function mk(){return grabAll().then(function(D){try{D.tripUrl=window.VIA_TRIPLINK&&VIA_TRIPLINK()}catch(e){}return{D:D,blob:makePdf(D),name:"Viaticum-"+slug(D.city)+"-itinerario.pdf"}})}
 var isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
-function download(blob,name){var u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=name;a.rel="noopener";document.body.appendChild(a);a.click();setTimeout(function(){a.remove();URL.revokeObjectURL(u)},4000)}
+/* v286 nell'app Android i download dei file non partono da soli: li salvo nella cartella Download con il ponte nativo */
+function natPl(){try{var C=window.Capacitor;if(C&&C.isNativePlatform&&C.isNativePlatform())return(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"))}catch(e){}return null}
+window.viaSaveFile=function(blob,name,mime){var pl=natPl();if(!pl||!pl.saveFile){download0(blob,name);return Promise.resolve("")}
+ return new Promise(function(ok){var fr=new FileReader();fr.onload=function(){pl.saveFile({b64:String(fr.result).split(",")[1],name:name,mime:mime||blob.type||"application/octet-stream"}).then(function(r){ok(r&&r.where?"Salvato in "+r.where+": "+name:"File pronto: "+name)}).catch(function(){ok("Non riesco a salvare il file")})};fr.readAsDataURL(blob)})};
+function download(blob,name){if(natPl()){viaSaveFile(blob,name,blob.type).then(function(m){if(m)toast(m)});return}download0(blob,name)}
+function download0(blob,name){var u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=name;a.rel="noopener";document.body.appendChild(a);a.click();setTimeout(function(){a.remove();URL.revokeObjectURL(u)},4000)}
 var pdfBtn=$("#shpdf"),pdfS=$("#shpdfs"),pdfS0=pdfS&&pdfS.textContent;
 function busy(b,on){b.disabled=on;b.style.opacity=on?".6":""}
 if(pdfBtn){pdfBtn.addEventListener("click",function(){
