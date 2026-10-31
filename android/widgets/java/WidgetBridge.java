@@ -33,4 +33,20 @@ public class WidgetBridge extends Plugin {
         });
         call.resolve();
     }
+
+    /* lo skyline della città, disegnato dalla pagina: lo uso come sfondo dei widget */
+    @PluginMethod
+    public void skyline(PluginCall call) {
+        try {
+            byte[] b = android.util.Base64.decode(call.getString("png", ""), android.util.Base64.DEFAULT);
+            java.io.FileOutputStream f = new java.io.FileOutputStream(new java.io.File(getContext().getFilesDir(), "vw_sky.png"));
+            f.write(b);
+            f.close();
+            VwUtil.SKY = null;
+            VwUtil.updateAll(getContext());
+            call.resolve();
+        } catch (Exception e) {
+            call.reject("skyline");
+        }
+    }
 }

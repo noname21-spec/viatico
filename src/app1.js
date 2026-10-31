@@ -1468,8 +1468,15 @@ if(!CFG||!TRIP){o.none=1}else{var tz=PD.TZ,N=CFG.ppl||1;o.city=PD.n;o.cc=PD.cn||
  var all=[];try{if(SAVED&&SAVED.date&&CITIES[SAVED.dest])all.push(SAVED);trips().forEach(function(t){all.push(t.cfg)})}catch(e){}
  var today=new Date().toISOString().slice(0,10);o.pass=all.filter(function(c){return c&&CITIES[c.dest]}).map(function(c){var C=CITIES[c.dest],d=c.date;return{n:C.n,q:C.QN||C.n,cn:C.cn||"",col:(C.col&&C.col[0])||"#8e1f26",m:+d.slice(5,7),y:+d.slice(0,4),done:(c.date_r||c.date)<today?1:0}}).sort(function(a,b){return (b.y*13+b.m)-(a.y*13+a.m)}).slice(0,24);
  return o}
-window.__wgSnap=wgSnap;var WGT=0;function wgSoon(){clearTimeout(WGT);WGT=setTimeout(wgPush,700)}
-function wgPush(){try{var C=window.Capacitor;if(!C||!(C.isNativePlatform&&C.isNativePlatform()))return;var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));if(!pl||!pl.save)return;pl.save({json:JSON.stringify(wgSnap())}).catch(function(){})}catch(e){}}
+window.__wgSnap=wgSnap;/* lo skyline della città per i widget: lo disegno qui (è lo stesso dell'app) e lo passo all'app Android come immagine */
+var WGSK="";
+function wgSky(pl,o){try{var th=o&&o.theme,id=null;Object.keys(CITIES).forEach(function(k){if(CITIES[k].n===(th&&th.city))id=k});if(!id||!window.zSky)return;
+ var z=zSky(id,"wg");if(!z)return;if(window.skyLit)skyLit(z);var lit=[].filter.call(z.querySelectorAll(".wn"),function(w){return w.classList.contains("on")}).length,key=id+":"+lit;if(key===WGSK)return;
+ var st=document.createElementNS("http://www.w3.org/2000/svg","style");st.textContent="*{stroke:none!important}svg *{fill:rgba(14,8,26,.34)}.far *,.far{fill:rgba(14,8,26,.18)}.wn{fill:#ffd98a!important;display:none}.wn.on{display:inline}.sun,.sunG,.halo,.stars,.cloud,.mooncut,.flock,.bird,.spk,.gl,.sea,.ln{display:none}";z.insertBefore(st,z.firstChild);
+ var vb=(z.getAttribute("viewBox")||"0 4 400 106").split(/\s+/).map(Number);z.setAttribute("width",String(vb[2]*3));z.setAttribute("height",String(vb[3]*3));z.setAttribute("xmlns","http://www.w3.org/2000/svg");
+ var xml=new XMLSerializer().serializeToString(z),im=new Image();im.onload=function(){try{var cv=document.createElement("canvas");cv.width=vb[2]*3;cv.height=vb[3]*3;cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);var png=cv.toDataURL("image/png").split(",")[1];if(pl.skyline)pl.skyline({png:png}).then(function(){WGSK=key}).catch(function(){})}catch(e){}};im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(xml)}catch(e){}}
+var WGT=0;function wgSoon(){clearTimeout(WGT);WGT=setTimeout(wgPush,700)}
+function wgPush(){try{var C=window.Capacitor;if(!C||!(C.isNativePlatform&&C.isNativePlatform()))return;var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));if(!pl||!pl.save)return;var sn=wgSnap();pl.save({json:JSON.stringify(sn)}).catch(function(){});wgSky(pl,sn)}catch(e){}}
 document.addEventListener("visibilitychange",function(){if(document.hidden)wgPush()});setInterval(function(){if(!document.hidden)wgPush()},5*60*1000);
 var BOOT=true;
 function renderAll(){if(!CFG)return;if(PAR.flush)PAR.flush();TRIP=buildTrip(CFG);try{lateApply(TRIP)}catch(e){}var ti=todayIdx();SEL=ti>=0?ti:Math.min(SEL,TRIP.n-1);if(SEL<0)SEL=0;P=TRIP.days[SEL];WD=P.wd;lastNow=-2;

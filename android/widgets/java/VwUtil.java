@@ -45,6 +45,25 @@ public final class VwUtil {
     private VwUtil() {}
     /* colori del viaggio in programma più vicino */
     static int TA = 0xFF0A6F95, TB = 0xFF0E3B52;
+    static Bitmap SKY = null;
+    static long SKYT = 0;
+    static Bitmap sky(Context c) {
+        java.io.File f = new java.io.File(c.getFilesDir(), "vw_sky.png");
+        if (!f.exists()) return null;
+        if (SKY == null || f.lastModified() != SKYT) { try { SKY = android.graphics.BitmapFactory.decodeFile(f.getAbsolutePath()); SKYT = f.lastModified(); } catch (Exception e) { SKY = null; } }
+        return SKY;
+    }
+    static Typeface TFB = null, TFK = null;
+    /* i caratteri dell'app (Outfit) anche nei disegni dei widget */
+    static Typeface tf(Context c, boolean black) {
+        try {
+            if (Build.VERSION.SDK_INT >= 26) {
+                if (black) { if (TFK == null) TFK = c.getResources().getFont(R.font.vw_outfit_black); return TFK; }
+                if (TFB == null) TFB = c.getResources().getFont(R.font.vw_outfit_bold); return TFB;
+            }
+        } catch (Exception ignored) {}
+        return Typeface.create("sans-serif", Typeface.BOLD);
+    }
     static void theme(JSONObject o) {
         TA = 0xFF0A6F95; TB = 0xFF0E3B52;
         JSONObject t = o.optJSONObject("theme");
@@ -77,14 +96,29 @@ public final class VwUtil {
         k.drawCircle(w - cr * .25f, -cr * .3f, cr, p);
         p.setColor(0x0DFFFFFF);
         k.drawCircle(w * .1f, h * 1.15f, cr * .6f, p);
+        Bitmap sk = SKYC;
+        if (sk != null) {
+            float sw = Math.max(w, h * 1.6f), sh = sw * sk.getHeight() / (float) sk.getWidth();
+            if (sh > h * .5f) { sh = h * .5f; sw = sh * sk.getWidth() / (float) sk.getHeight(); }
+            Paint bp = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+            float x0 = (w - sw) / 2f;
+            k.drawBitmap(sk, null, new RectF(x0, h - sh, x0 + sw, h), bp);
+            /* velo in basso per leggere il testo sopra lo skyline */
+            p.setShader(new LinearGradient(0, h - sh, 0, h, 0x00000000, 0x33000000, Shader.TileMode.CLAMP));
+            k.drawRect(0, h - sh, w, h, p);
+            p.setShader(null);
+        }
         k.restore();
         return b;
     }
+    static Bitmap SKYC = null;
     static void skinPx(Context c, RemoteViews v, int pw, int ph, float dark) {
+        SKYC = sky(c);
         float k = Math.min(1f, 520f / Math.max(pw, ph));
         v.setImageViewBitmap(R.id.bgimg, bg(c, Math.max(60, Math.round(pw * k)), Math.max(60, Math.round(ph * k)), dark));
     }
     static void skin(Context c, AppWidgetManager m, RemoteViews v, int id, int dw, int dh, float dark) {
+        SKYC = sky(c);
         int[] sz = m != null ? sizePx(c, m, id, dw, dh) : new int[]{Math.round(dw * dens(c)), Math.round(dh * dens(c))};
         float k = Math.min(1f, 520f / Math.max(sz[0], sz[1]));
         v.setImageViewBitmap(R.id.bgimg, bg(c, Math.max(60, Math.round(sz[0] * k)), Math.max(60, Math.round(sz[1] * k)), dark));
@@ -318,7 +352,7 @@ public final class VwUtil {
         k.drawArc(r, -90, 360 * frac, false, p);
         Paint tp = new Paint(Paint.ANTI_ALIAS_FLAG);
         tp.setColor(Color.WHITE);
-        tp.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
+        tp.setTypeface(tf(c, true));
         tp.setTextAlign(Paint.Align.CENTER);
         String txt = mid.isEmpty() ? (s.optInt("meal") == 1 ? "☕" : "★") : mid;
         tp.setTextSize(n * (txt.length() > 3 ? 0.22f : 0.28f));
@@ -354,7 +388,7 @@ public final class VwUtil {
     }
     static final int[] CAT = {0xFFFFFFFF, 0xFFFFE08A, 0xFF9EE6C4, 0xFFA9D4FF};
     static Bitmap donut(Context c, double tot, double est, JSONArray cats) {
-        int n = Math.round(92 * dens(c));
+        int n = Math.round(80 * dens(c));
         Bitmap b = Bitmap.createBitmap(n, n, Bitmap.Config.ARGB_8888);
         Canvas k = new Canvas(b);
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -379,7 +413,7 @@ public final class VwUtil {
         if (rest > 0.01) { p.setColor(0x80FFFFFF); k.drawArc(r, a0, (float) (360 * rest / full), false, p); }
         Paint tp = new Paint(Paint.ANTI_ALIAS_FLAG);
         tp.setColor(Color.WHITE);
-        tp.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
+        tp.setTypeface(tf(c, true));
         tp.setTextAlign(Paint.Align.CENTER);
         tp.setTextSize(n * 0.2f);
         String pct = est > 0 ? Math.round(100 * tot / est) + "%" : "€";
@@ -476,7 +510,7 @@ public final class VwUtil {
         }
         Paint pin = new Paint(Paint.ANTI_ALIAS_FLAG), tx = new Paint(Paint.ANTI_ALIAS_FLAG);
         tx.setTextAlign(Paint.Align.CENTER);
-        tx.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
+        tx.setTypeface(tf(c, true));
         for (int i = 0; i < xy.length; i++) {
             boolean nx = i == nextP, done = pts.get(i)[2] == 1 && !nx;
             float rr = (nx ? 13 : 10) * d;
@@ -526,7 +560,7 @@ public final class VwUtil {
         p.setStyle(Paint.Style.STROKE);
         Paint t = new Paint(Paint.ANTI_ALIAS_FLAG);
         t.setTextAlign(Paint.Align.CENTER);
-        t.setTypeface(Typeface.create("sans-serif-condensed", Typeface.BOLD));
+        t.setTypeface(tf(c, true));
         float[] rot = {-8, 6, -3, 9};
         boolean night = (c.getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES;
         for (int i = 0; i < nCol && from + i < ps.length(); i++) {
@@ -601,7 +635,7 @@ public final class VwUtil {
     }
     static Bitmap stub(Context c, double price) {
         float d = dens(c);
-        int w = Math.round(78 * d), h = Math.round(96 * d);
+        int w = Math.round(84 * d), h = Math.round(96 * d);
         Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         Canvas k = new Canvas(b);
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -614,7 +648,7 @@ public final class VwUtil {
         Paint t = new Paint(Paint.ANTI_ALIAS_FLAG);
         t.setColor(TA);
         t.setTextAlign(Paint.Align.CENTER);
-        t.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
+        t.setTypeface(tf(c, true));
         t.setTextSize(11 * d);
         t.setLetterSpacing(.12f);
         k.drawText("INGRESSO", w / 2f - 2 * d, h * .3f, t);
@@ -669,7 +703,7 @@ public final class VwUtil {
     }
     static Bitmap badge(Context c, String lab, String hex) {
         float d = dens(c);
-        int w = Math.round(38 * d), h = Math.round(24 * d);
+        int w = Math.round(40 * d), h = Math.round(26 * d);
         Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         Canvas k = new Canvas(b);
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -680,7 +714,7 @@ public final class VwUtil {
         Paint t = new Paint(Paint.ANTI_ALIAS_FLAG);
         t.setColor(Color.WHITE);
         t.setTextAlign(Paint.Align.CENTER);
-        t.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
+        t.setTypeface(tf(c, true));
         t.setTextSize((lab.length() > 2 ? 10 : 13) * d);
         k.drawText(lab, w / 2f, h / 2f - (t.descent() + t.ascent()) / 2, t);
         return b;
@@ -856,13 +890,13 @@ public final class VwUtil {
     }
     static Bitmap pair(Context c, String a, String b, int mode) {
         float d = dens(c);
-        int w = Math.round(96 * d), h = Math.round(40 * d);
+        int w = Math.round(104 * d), h = Math.round(44 * d);
         Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         Canvas k = new Canvas(bm);
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG), t = new Paint(Paint.ANTI_ALIAS_FLAG);
         t.setColor(Color.WHITE);
         t.setTextAlign(Paint.Align.CENTER);
-        t.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
+        t.setTypeface(tf(c, true));
         t.setTextSize(15 * d);
         float r = 16 * d;
         if (mode == 0) {
@@ -886,7 +920,7 @@ public final class VwUtil {
         Paint e = new Paint(Paint.ANTI_ALIAS_FLAG);
         e.setColor(Color.WHITE);
         e.setTextAlign(Paint.Align.CENTER);
-        e.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
+        e.setTypeface(tf(c, true));
         e.setTextSize(13 * d);
         k.drawText("€ →", w / 2f, h / 2f - 4 * d, e);
         return bm;
