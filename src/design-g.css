@@ -3196,3 +3196,21 @@ html.lite #dest:not(.pick) .dsheet{background:color-mix(in srgb,var(--bg) 70%,tr
 html[data-tsz="l"]{font-size:112.5%}
 html[data-tsz="xl"]{font-size:125%}
 .shtsz{margin-bottom:10px}
+
+/* ===== v289 «Il tuo viaggio»: barra dei pulsanti in fondo e rifiniture ===== */
+#setup .serr:empty{min-height:0;margin:0}
+#setup .sact{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:3;margin:16px 0 0;padding:6px;gap:6px;border-radius:30px;background:var(--surf);border:1px solid var(--edge);box-shadow:0 8px 28px rgba(20,10,12,.14),0 1px 2px rgba(20,10,12,.06);align-items:stretch}
+#setup .sact .btn{min-height:50px;margin:0;padding:0 20px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font:600 1rem Figtree,system-ui,sans-serif;letter-spacing:0;box-shadow:none!important;text-shadow:none!important;border:0!important;white-space:nowrap}
+#setup .sact .btn.ghost{background:var(--gsoft)!important;color:var(--ga)!important}
+#setup .sact #sfast{flex:0 0 auto;padding:0 18px 0 15px}
+#setup .sact #sprev{flex:0 0 50px;width:50px;padding:0}
+#setup .sact #snext,#setup .sact #ssub{flex:1 1 0}
+#setup .sact .bi{flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+#setup .sact #snext .bi{margin-right:-4px}
+#setup .sact #sfast .bi{stroke-width:2}
+#setup #sfuso{margin:14px 12px 4px;text-align:center;font-size:.76rem;line-height:1.45;color:var(--mute)}
+#setup .reqnote{background:none!important;padding:0 6px!important;margin:0 0 12px!important;font-weight:500;font-size:.8rem;color:var(--mute)}
+#spast .spon{display:inline-flex;align-items:center;min-height:36px;margin:0 2px 8px;color:var(--mute);font:600 .85rem Figtree,system-ui,sans-serif;text-decoration:none}
+#spast .spon u{margin-left:4px;color:var(--ga);text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px}
+#setup input[list]::-webkit-calendar-picker-indicator{display:none!important;opacity:0}
+.scard[data-st="1"] #spast .spon,.scard[data-st="2"] #spast .spon,.scard[data-st="3"] #spast .spon{display:none}
