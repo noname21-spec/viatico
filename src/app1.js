@@ -1751,7 +1751,11 @@ if(!CFG||!TRIP){o.none=1}else{var tz=PD.TZ,N=CFG.ppl||1;o.city=PD.n;o.cc=PD.cn||
  if(PD.CUR)o.cur={c:PD.CUR.c,s:PD.CUR.s,e:PD.CUR.e};
  try{var Lg=ledger(N),bc={};(SP.x||[]).forEach(function(x){var a=+x.a||0;bc[x.c||"ex"]=(bc[x.c||"ex"]||0)+a});
   var cats=Object.keys(bc).map(function(k){return{n:catName(k),a:Math.round(bc[k]*100)/100}}).sort(function(a,b){return b.a-a.a});
-  o.spend={tot:Math.round(Lg.total)/100,est:Math.round(window.PAREST||0),cats:cats.slice(0,4),last:(SP.x||[]).slice().sort(function(a,b){return (b.t||0)-(a.t||0)}).slice(0,6).map(function(x){return{d:String(x.d||catName(x.c)).slice(0,40),a:+x.a||0}})}}catch(e){}}
+  o.spend={tot:Math.round(Lg.total)/100,est:Math.round(window.PAREST||0),cats:cats.slice(0,4),last:(SP.x||[]).slice().sort(function(a,b){return (b.t||0)-(a.t||0)}).slice(0,6).map(function(x){return{d:String(x.d||catName(x.c)).slice(0,40),a:+x.a||0}})}}catch(e){}
+ /* v287 widget a una riga: spesa di oggi, giorni del viaggio, pioggia e piano B */
+ try{var sd=new Date(),dk=sd.toDateString(),dsum=0;(SP.x||[]).forEach(function(x){if(!x.t||x.mk)return;if(new Date(x.t).toDateString()===dk)dsum+=+x.a||0});if(o.spend){o.spend.day=Math.round(dsum*100)/100;o.spend.dayB=Math.round((window.PAREST||0)/Math.max(1,TRIP.n))}}catch(e){}
+ o.days=TRIP.n;o.rainM=String((PD.T&&PD.T.rainM)||"").slice(0,160);
+ try{var wh=lj("via-wxh",null);if(wh&&wh.id===PD.id&&Date.now()-wh.at<6*36e5)o.wx=wh.h.filter(function(r){return r[0]>now-36e5}).slice(0,30)}catch(e){}}
  /* colori dei widget: il viaggio in programma più vicino (o quello in corso) */
  try{var td=new Date().toISOString().slice(0,10),cands=[];if(SAVED&&SAVED.date&&CITIES[SAVED.dest])cands.push(SAVED);trips().forEach(function(t){cands.push(t.cfg)});
   cands=cands.filter(function(c){return c&&CITIES[c.dest]&&(c.date_r||c.date)>=td&&!c.past}).sort(function(a,b){return a.date<b.date?-1:1});
@@ -1768,7 +1772,17 @@ function wgSky(pl,o){try{var th=o&&o.theme,id=null;Object.keys(CITIES).forEach(f
  var vb=(z.getAttribute("viewBox")||"0 4 400 106").split(/\s+/).map(Number);z.setAttribute("width",String(vb[2]*3));z.setAttribute("height",String(vb[3]*3));z.setAttribute("xmlns","http://www.w3.org/2000/svg");
  var xml=new XMLSerializer().serializeToString(z),im=new Image();im.onload=function(){try{var cv=document.createElement("canvas");cv.width=vb[2]*3;cv.height=vb[3]*3;cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);var png=cv.toDataURL("image/png").split(",")[1];if(pl.skyline)pl.skyline({png:png}).then(function(){WGSK=key}).catch(function(){})}catch(e){}};im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(xml)}catch(e){}}
 var WGT=0;function wgSoon(){clearTimeout(WGT);WGT=setTimeout(wgPush,700)}
-function wgPush(){try{var C=window.Capacitor;if(!C||!(C.isNativePlatform&&C.isNativePlatform()))return;var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));if(!pl||!pl.save)return;var sn=wgSnap();pl.save({json:JSON.stringify(sn)}).catch(function(){});wgSky(pl,sn)}catch(e){}}
+/* v287 meteo ora per ora per il widget «Meteo e piano B»: solo a viaggio vicino o in corso, al massimo una volta l'ora */
+function wgWx(){try{if(!CFG||!PD||!PD.LL)return;var td=new Date().toISOString().slice(0,10),to=CFG.date_r||CFG.date,lim=new Date(Date.now()+2*864e5).toISOString().slice(0,10);if(to<td||CFG.date>lim)return;var wh=lj("via-wxh",null);if(wh&&wh.id===PD.id&&Date.now()-wh.at<36e5)return;
+ fetch("https://api.open-meteo.com/v1/forecast?latitude="+PD.LL[0]+"&longitude="+PD.LL[1]+"&hourly=weathercode,temperature_2m,precipitation_probability&timeformat=unixtime&forecast_days=3").then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){var H=j&&j.hourly;if(!H||!H.time)return;var h=H.time.map(function(t,i){return[t*1000,H.weathercode[i],Math.round(H.temperature_2m[i]),H.precipitation_probability?H.precipitation_probability[i]:null]}).filter(function(r){return r[1]!=null&&r[0]>Date.now()-36e5}).slice(0,48);ls("via-wxh",JSON.stringify({id:PD.id,at:Date.now(),h:h}));wgSoon()}).catch(function(){})}catch(e){}}
+/* v287 i pulsanti dei widget (spesa, mappa, biglietti, ritardo) aprono l'app nel punto giusto */
+function wgAct(a){if(!a)return;var n=0;function tab(k){var r=$("#t-"+k);if(r){r.checked=true;r.dispatchEvent(new Event("change",{bubbles:true}))}}
+ function ready(){return CFG&&TRIP&&$(".tabbar")&&!(destEl&&destEl.classList.contains("on"))}
+ function run(){try{if(a==="late"){tab("itinerario");setTimeout(function(){lateAsk(false)},350)}else if(a==="spend"){tab("costi");setTimeout(function(){openExp(null)},450)}else if(a==="map")tab("mappa");else if(a==="tix"&&window.__tixImport)window.__tixImport()}catch(e){}}
+ if(ready()){run();return}if(window.__openNext)window.__openNext();var iv=setInterval(function(){if(ready()&&++n>1){clearInterval(iv);run()}else if(++n>40)clearInterval(iv)},300)}
+function wgActPoll(){try{var C=window.Capacitor;if(!C||!(C.isNativePlatform&&C.isNativePlatform()))return;var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));if(!pl||!pl.act)return;pl.act().then(function(r){if(r&&r.a)wgAct(r.a)}).catch(function(){})}catch(e){}}
+window.addEventListener("viaact",wgActPoll);setTimeout(wgActPoll,1500);window.__wgAct=wgAct;
+function wgPush(){try{var C=window.Capacitor;if(!C||!(C.isNativePlatform&&C.isNativePlatform()))return;wgWx();var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));if(!pl||!pl.save)return;var sn=wgSnap();pl.save({json:JSON.stringify(sn)}).catch(function(){});wgSky(pl,sn)}catch(e){}}
 document.addEventListener("visibilitychange",function(){if(document.hidden)wgPush()});setInterval(function(){if(!document.hidden)wgPush()},5*60*1000);
 var BOOT=true;
 function renderAll(){if(!CFG)return;if(PAR.flush)PAR.flush();TRIP=buildTrip(CFG);try{lateApply(TRIP)}catch(e){}var ti=todayIdx();SEL=ti>=0?ti:Math.min(SEL,TRIP.n-1);if(SEL<0)SEL=0;P=TRIP.days[SEL];WD=P.wd;lastNow=-2;

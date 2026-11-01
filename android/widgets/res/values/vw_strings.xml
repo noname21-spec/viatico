@@ -15,4 +15,16 @@
     <string name="vw_spend_s_d">Spese, piccolo</string>
     <string name="vw_fx_s_d">Cambio veloce, piccolo</string>
     <string name="vw_board_s_d">Prossimo volo, piccolo</string>
+    <string name="vw_next_r_d">Prossima tappa, in una riga</string>
+    <string name="vw_leave_d">Quando uscire per arrivare in tempo</string>
+    <string name="vw_fx_r_d">Cambio veloce, in una riga</string>
+    <string name="vw_today_d">Quanto hai speso oggi</string>
+    <string name="vw_count_d">Giorni alla partenza o giorno del viaggio</string>
+    <string name="vw_late_d">Pulsante «Sono in ritardo»</string>
+    <string name="vw_line_d">Le tappe di oggi su una linea</string>
+    <string name="vw_go_d">Prossima tappa e come arrivarci</string>
+    <string name="vw_fly_d">Il prossimo volo, in una riga</string>
+    <string name="vw_acts_d">Spesa, mappa, biglietti e ritardo a portata di dito</string>
+    <string name="vw_wx_d">Pioggia in arrivo e piano B al coperto</string>
+    <string name="vw_meal_d">Il prossimo pasto, in una riga</string>
 </resources>

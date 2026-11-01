@@ -37,6 +37,17 @@ import org.json.JSONObject;
 /* ponte tra la pagina web e i widget: la pagina manda un'istantanea del viaggio, i widget la leggono */
 @CapacitorPlugin(name = "ViaWidget")
 public class WidgetBridge extends Plugin {
+    static volatile String ACT = null;
+
+    /* v287 l'azione scelta dal widget, una volta sola */
+    @PluginMethod
+    public void act(PluginCall call) {
+        JSObject r = new JSObject();
+        r.put("a", ACT == null ? "" : ACT);
+        ACT = null;
+        call.resolve(r);
+    }
+
     @PluginMethod
     public void save(PluginCall call) {
         String json = call.getString("json", "{}");

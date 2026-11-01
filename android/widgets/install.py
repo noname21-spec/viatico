@@ -13,7 +13,7 @@ for f in glob.glob(os.path.join(here, "res", "*", "*")):
 p = os.path.join(app, "AndroidManifest.xml")
 s = open(p).read()
 rec = ""
-for c, k in (("Next", "next"), ("Spend", "spend"), ("Map", "map"), ("Pass", "pass"), ("Ticket", "ticket"), ("Transit", "transit"), ("Board", "board"), ("Day", "day"), ("Food", "food"), ("Debts", "debts"), ("Fx", "fx"), ("NextS", "next_s"), ("SpendS", "spend_s"), ("FxS", "fx_s"), ("BoardS", "board_s")):
+for c, k in (("Next", "next"), ("Spend", "spend"), ("Map", "map"), ("Pass", "pass"), ("Ticket", "ticket"), ("Transit", "transit"), ("Board", "board"), ("Day", "day"), ("Food", "food"), ("Debts", "debts"), ("Fx", "fx"), ("NextS", "next_s"), ("SpendS", "spend_s"), ("FxS", "fx_s"), ("BoardS", "board_s"), ("NextR", "next_r"), ("Leave", "leave"), ("FxR", "fx_r"), ("Today", "today"), ("Count", "count"), ("Late", "late"), ("Line", "line"), ("Go", "go"), ("Fly", "fly"), ("Acts", "acts"), ("Wx", "wx"), ("Meal", "meal")):
     rec += f"""
         <receiver android:name=".Vw{c}" android:exported="true">
             <intent-filter>

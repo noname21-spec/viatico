@@ -41,7 +41,7 @@ import java.util.Random;
 /* disegno e dati dei widget di Viaticum */
 public final class VwUtil {
     public static final String PREFS = "via_widgets", KEY = "snap", TICK = "it.viaticum.app.WIDGET_TICK";
-    static final Class<?>[] ALL = {VwNext.class, VwSpend.class, VwMap.class, VwPass.class, VwTicket.class, VwTransit.class, VwBoard.class, VwDay.class, VwFood.class, VwDebts.class, VwFx.class, VwNextS.class, VwSpendS.class, VwFxS.class, VwBoardS.class};
+    static final Class<?>[] ALL = {VwNext.class, VwSpend.class, VwMap.class, VwPass.class, VwTicket.class, VwTransit.class, VwBoard.class, VwDay.class, VwFood.class, VwDebts.class, VwFx.class, VwNextS.class, VwSpendS.class, VwFxS.class, VwBoardS.class, VwNextR.class, VwLeave.class, VwFxR.class, VwToday.class, VwCount.class, VwLate.class, VwLine.class, VwGo.class, VwFly.class, VwActs.class, VwWx.class, VwMeal.class};
     private VwUtil() {}
     /* colori del viaggio in programma più vicino */
     static int TA = 0xFF0A6F95, TB = 0xFF0E3B52;
@@ -177,6 +177,18 @@ public final class VwUtil {
         if (k == VwSpendS.class) return "spend_s";
         if (k == VwFxS.class) return "fx_s";
         if (k == VwBoardS.class) return "board_s";
+        if (k == VwNextR.class) return "next_r";
+        if (k == VwLeave.class) return "leave";
+        if (k == VwFxR.class) return "fx_r";
+        if (k == VwToday.class) return "today";
+        if (k == VwCount.class) return "count";
+        if (k == VwLate.class) return "late";
+        if (k == VwLine.class) return "line";
+        if (k == VwGo.class) return "go";
+        if (k == VwFly.class) return "fly";
+        if (k == VwActs.class) return "acts";
+        if (k == VwWx.class) return "wx";
+        if (k == VwMeal.class) return "meal";
         return "transit";
     }
     /* il prossimo cambio (inizio o fine di una tappa), al massimo fra 15 minuti */
@@ -189,6 +201,9 @@ public final class VwUtil {
             long t = s.optLong("t"), e = t + s.optInt("d") * 60000L;
             if (t > now + 30000 && t < when) when = t;
             if (e > now + 30000 && e < when) when = e;
+            /* v287 «Esci adesso»: cambia colore 15 minuti prima dell'uscita e all'ora di uscire */
+            long lv = t - s.optInt("lm") * 60000L;
+            for (long q : new long[]{lv - 15 * 60000L, lv}) if (q > now + 30000 && q < when) when = q;
         }
         JSONArray fl = snap(c).optJSONArray("flights");
         if (fl != null) for (int i = 0; i < fl.length(); i++) {
@@ -256,6 +271,13 @@ public final class VwUtil {
         try {
             JSONObject o = snap(c);
             theme(o);
+            if (ROW.contains(kind)) {
+                RemoteViews rv = rowW(c, m, o, id, kind);
+                int[] sz = sizePx(c, m, id, wide(kind) ? 250 : 110, 50);
+                skinPx(c, rv, sz[0], sz[1], "fly".equals(kind) ? .3f : 0f);
+                m.updateAppWidget(id, rv);
+                return;
+            }
             boolean sm = kind.endsWith("_s");
             String base = sm ? kind.substring(0, kind.length() - 2) : kind;
             if (!sm && !"map".equals(base)) { Bundle op = m.getAppWidgetOptions(id); int wdp = op != null ? op.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 250) : 250; if (wdp > 0 && wdp < 190) sm = true; }
@@ -1115,5 +1137,489 @@ public final class VwUtil {
             }
         }
         return null;
+    }
+
+    /* ---------- v287 widget a una riga: 2x1 (un dato e un tocco) e 4x1 (una striscia) ---------- */
+    static final HashSet<String> ROW = new HashSet<>(java.util.Arrays.asList("next_r", "leave", "fx_r", "today", "count", "late", "line", "go", "fly", "acts", "wx", "meal"));
+    static boolean wide(String k) { return "line".equals(k) || "go".equals(k) || "fly".equals(k) || "acts".equals(k) || "wx".equals(k) || "meal".equals(k); }
+    static final int W1 = 0xFFFFFFFF, CHIP = 0x2EFFFFFF;
+    static String ip(String n) {
+        switch (n) {
+            case "pin": return "M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11zM12 7.5a2.5 2.5 0 1 0 0 5a2.5 2.5 0 1 0 0-5z";
+            case "walk": return "M13 3a1.6 1.6 0 1 0 0 3.2a1.6 1.6 0 1 0 0-3.2zM10 21l2.2-6.2L10 12.5l1-5L15 10l3 1M11 7.5L7.5 9.5V13M12.2 14.8L15 17l1 4";
+            case "swap": return "M7 7h12l-3.5-3.5M17 17H5l3.5 3.5";
+            case "wallet": return "M5.5 6h13A2.5 2.5 0 0 1 21 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 16.5v-8A2.5 2.5 0 0 1 5.5 6zM3 10h18M16 14.5h2";
+            case "cal": return "M5.5 5h13A2.5 2.5 0 0 1 21 7.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5v-11A2.5 2.5 0 0 1 5.5 5zM3 10h18M8 3v4M16 3v4";
+            case "clock": return "M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18zM12 7v5l3 2";
+            case "plus": return "M12 5v14M5 12h14";
+            case "map": return "M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14";
+            case "ticket": return "M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4zM14 7v2M14 11v2M14 15v2";
+            case "sun": return "M12 8a4 4 0 1 0 0 8a4 4 0 1 0 0-8zM12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4";
+            case "cloud": return "M7 18a4 4 0 1 1 0.9-7.9A5 5 0 0 1 17.5 11A3.5 3.5 0 0 1 17 18z";
+            case "rain": return "M7 15a4 4 0 1 1 0.9-7.9A5 5 0 0 1 17.5 8A3.5 3.5 0 0 1 17 15zM9 18l-1 2.5M13 18l-1 2.5M17 18l-1 2.5";
+            case "fork": return "M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 0-3 2-3 5s1 4 3 4v9";
+            case "plane": return "M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-0.5-3 0-4.5 1.5L13 8L4.8 6.2c-0.5-0.1-0.9 0.1-1.1 0.5l-0.3 0.5c-0.2 0.5-0.1 1 0.3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c0.3 0.4 0.8 0.5 1.3 0.3l0.5-0.2c0.4-0.3 0.6-0.7 0.5-1.2z";
+        }
+        return "M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18z";
+    }
+    /* icona a tratto (come nell'app) su un cerchio di vetro */
+    static Bitmap ico(Context c, String name, int dp, int bgc) {
+        float d = dens(c);
+        int n = Math.round(dp * d);
+        Bitmap b = Bitmap.createBitmap(n, n, Bitmap.Config.ARGB_8888);
+        Canvas k = new Canvas(b);
+        Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+        if (bgc != 0) { p.setColor(bgc); k.drawCircle(n / 2f, n / 2f, n / 2f, p); }
+        try {
+            Path path = svgPath(ip(name));
+            float s = n * (bgc != 0 ? .54f : .86f) / 24f;
+            android.graphics.Matrix mx = new android.graphics.Matrix();
+            mx.setScale(s, s);
+            mx.postTranslate((n - 24 * s) / 2f, (n - 24 * s) / 2f);
+            path.transform(mx);
+            p.setColor(W1);
+            p.setStyle(Paint.Style.STROKE);
+            p.setStrokeWidth(2f * s);
+            p.setStrokeCap(Paint.Cap.ROUND);
+            p.setStrokeJoin(Paint.Join.ROUND);
+            k.drawPath(path, p);
+        } catch (Throwable ignored) {}
+        return b;
+    }
+    /* i tracciati SVG delle icone (M L H V C S Q A Z, assoluti e relativi) in un Path */
+    static Path svgPath(String d) {
+        Path p = new Path();
+        java.util.regex.Matcher mt = java.util.regex.Pattern.compile("[MmLlHhVvCcSsQqAaZz]|-?(?:\\d+\\.?\\d*|\\.\\d+)").matcher(d);
+        List<String> tk = new ArrayList<>();
+        while (mt.find()) tk.add(mt.group());
+        float x = 0, y = 0, sx = 0, sy = 0, lx = 0, ly = 0;
+        char cmd = 'M', prev = ' ';
+        int i = 0;
+        while (i < tk.size()) {
+            String t = tk.get(i);
+            if (Character.isLetter(t.charAt(0))) {
+                cmd = t.charAt(0); i++;
+                if (cmd == 'Z' || cmd == 'z') { p.close(); x = sx; y = sy; prev = 'Z'; }
+                continue;
+            }
+            boolean rel = Character.isLowerCase(cmd);
+            char C = Character.toUpperCase(cmd);
+            float ox = rel ? x : 0, oy = rel ? y : 0;
+            int need = C == 'H' || C == 'V' ? 1 : C == 'C' ? 6 : C == 'S' || C == 'Q' ? 4 : C == 'A' ? 7 : 2;
+            if (i + need > tk.size()) break;
+            float[] a = new float[need];
+            for (int j = 0; j < need; j++) a[j] = Float.parseFloat(tk.get(i + j));
+            i += need;
+            switch (C) {
+                case 'M': x = ox + a[0]; y = oy + a[1]; p.moveTo(x, y); sx = x; sy = y; cmd = rel ? 'l' : 'L'; break;
+                case 'L': x = ox + a[0]; y = oy + a[1]; p.lineTo(x, y); break;
+                case 'H': x = ox + a[0]; p.lineTo(x, y); break;
+                case 'V': y = oy + a[0]; p.lineTo(x, y); break;
+                case 'C': p.cubicTo(ox + a[0], oy + a[1], ox + a[2], oy + a[3], ox + a[4], oy + a[5]); lx = ox + a[2]; ly = oy + a[3]; x = ox + a[4]; y = oy + a[5]; break;
+                case 'S': { float x1 = prev == 'C' || prev == 'S' ? 2 * x - lx : x, y1 = prev == 'C' || prev == 'S' ? 2 * y - ly : y; p.cubicTo(x1, y1, ox + a[0], oy + a[1], ox + a[2], oy + a[3]); lx = ox + a[0]; ly = oy + a[1]; x = ox + a[2]; y = oy + a[3]; break; }
+                case 'Q': p.quadTo(ox + a[0], oy + a[1], ox + a[2], oy + a[3]); x = ox + a[2]; y = oy + a[3]; break;
+                case 'A': { float nx = ox + a[5], ny = oy + a[6]; arcSvg(p, x, y, a[0], a[1], a[3] != 0, a[4] != 0, nx, ny); x = nx; y = ny; break; }
+            }
+            prev = C;
+        }
+        return p;
+    }
+    static double angU(double ux, double uy, double vx, double vy) { return Math.atan2(ux * vy - uy * vx, ux * vx + uy * vy); }
+    static void arcSvg(Path p, float x0, float y0, double rx, double ry, boolean large, boolean sweep, float x, float y) {
+        if (rx == 0 || ry == 0) { p.lineTo(x, y); return; }
+        double dx2 = (x0 - x) / 2.0, dy2 = (y0 - y) / 2.0;
+        double lam = dx2 * dx2 / (rx * rx) + dy2 * dy2 / (ry * ry);
+        if (lam > 1) { double s = Math.sqrt(lam); rx *= s; ry *= s; }
+        double rxs = rx * rx, rys = ry * ry, num = rxs * rys - rxs * dy2 * dy2 - rys * dx2 * dx2, den = rxs * dy2 * dy2 + rys * dx2 * dx2;
+        double co = den == 0 ? 0 : Math.sqrt(Math.max(0, num / den));
+        if (large == sweep) co = -co;
+        double cxp = co * rx * dy2 / ry, cyp = -co * ry * dx2 / rx;
+        double cx = cxp + (x0 + x) / 2.0, cy = cyp + (y0 + y) / 2.0;
+        double th1 = angU(1, 0, (dx2 - cxp) / rx, (dy2 - cyp) / ry), dth = angU((dx2 - cxp) / rx, (dy2 - cyp) / ry, (-dx2 - cxp) / rx, (-dy2 - cyp) / ry);
+        if (!sweep && dth > 0) dth -= 2 * Math.PI; else if (sweep && dth < 0) dth += 2 * Math.PI;
+        p.arcTo(new RectF((float) (cx - rx), (float) (cy - ry), (float) (cx + rx), (float) (cy + ry)), (float) Math.toDegrees(th1), (float) Math.toDegrees(dth), false);
+    }
+    static PendingIntent act(Context c, int req, String a) {
+        Intent i = new Intent(c, MainActivity.class).setAction("it.viaticum.app.ACT_" + a).putExtra("via_act", a);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        return PendingIntent.getActivity(c, req, i, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+    static String safe(String s) { return s == null ? "" : s.replace("%", ""); }
+    static RemoteViews r2(Context c, int id, String title, String sub, Bitmap img) {
+        RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.vw_r2);
+        v.setTextViewText(R.id.title, title);
+        v.setTextViewText(R.id.sub, sub == null ? "" : sub);
+        v.setViewVisibility(R.id.sub, sub == null || sub.isEmpty() ? View.GONE : View.VISIBLE);
+        v.setViewVisibility(R.id.chrono, View.GONE);
+        if (img != null) { v.setImageViewBitmap(R.id.img, img); v.setViewVisibility(R.id.img, View.VISIBLE); } else v.setViewVisibility(R.id.img, View.GONE);
+        v.setOnClickPendingIntent(R.id.root, openApp(c, id));
+        return v;
+    }
+    static RemoteViews r4(Context c, int id, String title, String[] rows, Bitmap img) {
+        RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.vw_r4);
+        v.setTextViewText(R.id.title, title);
+        v.removeAllViews(R.id.flip);
+        if (rows != null) for (String r : rows) if (r != null && !r.isEmpty()) v.addView(R.id.flip, row(c, r));
+        v.setViewVisibility(R.id.chrono, View.GONE);
+        v.setViewVisibility(R.id.go, View.GONE);
+        if (img != null) { v.setImageViewBitmap(R.id.img, img); v.setViewVisibility(R.id.img, View.VISIBLE); } else v.setViewVisibility(R.id.img, View.GONE);
+        v.setOnClickPendingIntent(R.id.root, openApp(c, id));
+        return v;
+    }
+    /* conto alla rovescia (o tempo trascorso, se up) sotto il titolo, solo entro 3 ore */
+    static void rCh(RemoteViews v, long target, String fmt, boolean up, boolean hideSub) {
+        long now = System.currentTimeMillis();
+        if (!up && (target <= now || target - now >= 3 * 3600000L)) return;
+        long base = SystemClock.elapsedRealtime() + (target - now);
+        v.setChronometer(R.id.chrono, base, safe(fmt).replace("{s}", "%s"), true);
+        if (Build.VERSION.SDK_INT >= 24) v.setChronometerCountDown(R.id.chrono, !up);
+        v.setViewVisibility(R.id.chrono, View.VISIBLE);
+        if (hideSub) v.setViewVisibility(R.id.sub, View.GONE);
+    }
+    static void goBtn(RemoteViews v, PendingIntent pi, String t) {
+        v.setTextViewText(R.id.go, t);
+        v.setTextColor(R.id.go, TA);
+        v.setViewVisibility(R.id.go, View.VISIBLE);
+        v.setOnClickPendingIntent(R.id.go, pi);
+    }
+    static String how(JSONObject s) {
+        int lm = s.optInt("lm");
+        if (lm <= 0) return "";
+        return "walk".equals(s.optString("mo")) ? lm + " min a piedi" : lm + " min con i mezzi";
+    }
+    static JSONObject nextFlight(JSONObject o, long now) {
+        JSONArray fl = o.optJSONArray("flights");
+        if (fl != null) for (int i = 0; i < fl.length(); i++) { JSONObject x = fl.optJSONObject(i); if (x != null && x.optLong("arr") > now) return x; }
+        return null;
+    }
+    /* le carte d'imbarco del volo, da aprire grandi */
+    static PendingIntent bpPi(Context c, JSONObject f, int req) {
+        JSONArray bp = f.optJSONArray("bp");
+        if (bp == null || bp.length() == 0) return null;
+        long imb = f.optLong("imb");
+        JSONArray l = new JSONArray();
+        for (int i = 0; i < bp.length(); i++) {
+            JSONObject x = bp.optJSONObject(i);
+            if (x == null) continue;
+            try {
+                JSONObject y = new JSONObject();
+                y.put("t", x.optString("t")); y.put("f", x.optString("f"));
+                y.put("n", "Carta d'imbarco · " + f.optString("from") + " → " + f.optString("to"));
+                String who = x.optString("p"), seat = x.optString("s");
+                y.put("s", who + (seat.isEmpty() ? "" : (who.isEmpty() ? "" : " · ") + "posto " + seat) + (imb > 0 ? " · imbarco " + hm(imb) : ""));
+                l.put(y);
+            } catch (Exception e) {}
+        }
+        if (l.length() == 0) return null;
+        Intent qi = new Intent(c, VwQrActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK).putExtra("list", l.toString());
+        return PendingIntent.getActivity(c, req, qi, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+    static float fracOf(JSONArray st, int i, long now) {
+        JSONObject s = st.optJSONObject(i);
+        long t = s.optLong("t"), e = t + s.optInt("d") * 60000L;
+        long prevEnd = i > 0 ? st.optJSONObject(i - 1).optLong("t") + st.optJSONObject(i - 1).optInt("d") * 60000L : now - 1800000L;
+        float f = now >= t ? (float) (now - t) / Math.max(1, e - t) : (float) (now - prevEnd) / Math.max(1, t - prevEnd);
+        return Math.max(.04f, Math.min(1f, f));
+    }
+    static long day0(String ymd) {
+        try { return new SimpleDateFormat("yyyy-MM-dd", Locale.ITALY).parse(ymd).getTime(); } catch (Exception e) { return 0; }
+    }
+    static int dDiff(long a, long b) { return (int) Math.round((b - a) / 86400000.0); }
+    static boolean rainy(int w) { return (w >= 51 && w <= 67) || (w >= 80 && w <= 82) || w >= 95; }
+    static String wxName(int w) {
+        if (w == 0) return "sereno";
+        if (w <= 2) return "poco nuvoloso";
+        if (w == 3) return "nuvoloso";
+        if (w <= 48) return "nebbia";
+        if (w <= 57) return "pioviggine";
+        if (w <= 67) return "pioggia";
+        if (w <= 77) return "neve";
+        if (w <= 82) return "rovesci";
+        return "temporale";
+    }
+    static String wxIco(int w) { return rainy(w) ? "rain" : w <= 2 ? "sun" : "cloud"; }
+    /* la linea della giornata: tappe come puntini, la parte fatta piena, «sei qui» dorato */
+    static Bitmap lineBmp(Context c, int wpx, int n, float pos, int done) {
+        float d = dens(c);
+        int h = Math.round(22 * d), w = Math.max(Math.round(120 * d), wpx);
+        Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas k = new Canvas(b);
+        Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+        float r = 6 * d, x0 = r + 3 * d, x1 = w - r - 3 * d, cy = h / 2f;
+        p.setStrokeCap(Paint.Cap.ROUND);
+        p.setStrokeWidth(3.5f * d);
+        p.setColor(0x55FFFFFF);
+        k.drawLine(x0, cy, x1, cy, p);
+        float px = x0 + (x1 - x0) * Math.max(0f, Math.min(1f, pos));
+        p.setColor(W1);
+        k.drawLine(x0, cy, px, cy, p);
+        for (int i = 0; i < n; i++) {
+            float x = n == 1 ? (x0 + x1) / 2f : x0 + (x1 - x0) * i / (float) (n - 1);
+            boolean full = i < done || x <= px + 0.5f;
+            p.setStyle(Paint.Style.FILL);
+            p.setColor(full ? W1 : TB);
+            k.drawCircle(x, cy, r, p);
+            if (!full) { p.setStyle(Paint.Style.STROKE); p.setStrokeWidth(2.2f * d); p.setColor(0xB3FFFFFF); k.drawCircle(x, cy, r - 1.1f * d, p); p.setStrokeWidth(3.5f * d); }
+        }
+        p.setStyle(Paint.Style.FILL);
+        p.setColor(TB);
+        k.drawCircle(px, cy, 9.5f * d, p);
+        p.setColor(0xFFFFE08A);
+        k.drawCircle(px, cy, 7.5f * d, p);
+        return b;
+    }
+
+    static RemoteViews rowW(Context c, AppWidgetManager m, JSONObject o, int id, String k) {
+        long now = System.currentTimeMillis();
+        JSONArray st = o.optJSONArray("stops");
+        boolean none = noTrip(o);
+        String city = o.optString("city");
+        switch (k) {
+            case "next_r": {
+                if (none) return r2(c, id, "Nessun viaggio", "Tocca per pianificarne uno", ico(c, "pin", 32, CHIP));
+                int i = curIdx(st, now, false);
+                if (i < 0) return r2(c, id, "Viaggio concluso", "Bentornato da " + city, ico(c, "pin", 32, CHIP));
+                JSONObject s = st.optJSONObject(i);
+                long t = s.optLong("t"), e = t + s.optInt("d") * 60000L;
+                boolean on = now >= t;
+                long mins = Math.max(1, (t - now) / 60000);
+                RemoteViews v = r2(c, id, s.optString("n"), on ? "adesso · fino alle " + hm(e) : hm(t) + " · " + inTxt(t - now), ring(c, fracOf(st, i, now), on ? "ORA" : mins > 99 ? "" : mins + "′", s));
+                rCh(v, on ? e : t, on ? "finisce tra {s}" : hm(t) + " · tra {s}", false, true);
+                if (s.optInt("ret") != 1 && s.optJSONArray("ll") != null) v.setOnClickPendingIntent(R.id.root, maps(c, 8000 + id, s));
+                return v;
+            }
+            case "leave": {
+                if (none) return r2(c, id, "Esci adesso", "Nessun viaggio in programma", ico(c, "walk", 32, CHIP));
+                JSONObject s = null;
+                for (int i = 0; i < st.length(); i++) { JSONObject x = st.optJSONObject(i); if (x != null && x.optLong("t") > now) { s = x; break; } }
+                if (s == null) return r2(c, id, "Viaggio concluso", "Bentornato da " + city, ico(c, "walk", 32, CHIP));
+                long t = s.optLong("t"), lv = t - s.optInt("lm") * 60000L, dl = lv - now;
+                String dest = safe(s.optString("n")), hw = how(s);
+                RemoteViews v;
+                if (dl > 15 * 60000L) {
+                    v = r2(c, id, "Esci alle " + hm(lv), "per " + dest + (hw.isEmpty() ? "" : " · " + hw), ico(c, "walk", 32, CHIP));
+                    rCh(v, lv, "tra {s}", false, true);
+                } else if (dl > 0) {
+                    TA = 0xFFC2410C; TB = 0xFF7C2D12;
+                    v = r2(c, id, "Esci adesso", "per " + dest + (hw.isEmpty() ? "" : " · " + hw), ico(c, "walk", 32, CHIP));
+                    rCh(v, lv, "tra {s}", false, true);
+                } else {
+                    TA = 0xFFB3261E; TB = 0xFF6B1111;
+                    v = r2(c, id, "Sei in ritardo", "tocca per ripianificare", ico(c, "clock", 32, CHIP));
+                    rCh(v, lv, "da {s} · tocca", true, true);
+                    v.setOnClickPendingIntent(R.id.root, act(c, 8100 + id, "late"));
+                    return v;
+                }
+                if (s.optInt("ret") != 1 && s.optJSONArray("ll") != null) v.setOnClickPendingIntent(R.id.root, maps(c, 8100 + id, s));
+                return v;
+            }
+            case "fx_r": {
+                if (none) return r2(c, id, "Cambio veloce", "Nessun viaggio in programma", ico(c, "swap", 32, CHIP));
+                JSONObject cu = o.optJSONObject("cur");
+                if (cu == null) return r2(c, id, "Si paga in euro", "A " + city + " niente da cambiare", ico(c, "swap", 32, CHIP));
+                double e = cu.optDouble("e", 1);
+                String s = cu.optString("s");
+                SharedPreferences pr = c.getSharedPreferences(PREFS, 0);
+                double amt = pr.getFloat("fx_amt", 20f);
+                boolean toEur = pr.getBoolean("fx_dir", false);
+                RemoteViews v = r2(c, id, toEur ? num(amt) + " " + s + " = " + num(amt * e) + " €" : num(amt) + " € = " + num(amt / e) + " " + s, "1 € = " + num(1 / e) + " " + s, ico(c, "swap", 32, CHIP));
+                Intent in = new Intent(c, VwFxActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                v.setOnClickPendingIntent(R.id.root, PendingIntent.getActivity(c, 8200 + id, in, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT));
+                return v;
+            }
+            case "today": {
+                JSONObject sp = o.optJSONObject("spend");
+                if (none || sp == null) return r2(c, id, "Speso oggi", "Pianifica un viaggio", ico(c, "wallet", 32, CHIP));
+                double dv = sp.optDouble("day", 0), db = sp.optDouble("dayB", 0);
+                String sub;
+                if (db > 0) sub = dv <= db ? "restano " + eur(Math.round(db - dv)) : "oltre di " + eur(Math.round(dv - db));
+                else sub = "in tutto " + eur(sp.optDouble("tot"));
+                if (db > 0 && dv > db) { TA = 0xFFB3261E; TB = 0xFF6B1111; }
+                Bitmap rg = db > 0 ? ring(c, Math.max(.04f, (float) Math.min(1, dv / db)), Math.round(100 * dv / db) + "%", sp) : ico(c, "wallet", 32, CHIP);
+                RemoteViews v = r2(c, id, eur(dv) + " oggi", sub, rg);
+                v.setOnClickPendingIntent(R.id.root, act(c, 8300 + id, "spend"));
+                return v;
+            }
+            case "count": {
+                if (none) return r2(c, id, "Nessun viaggio", "Tocca per pianificarne uno", ico(c, "cal", 32, CHIP));
+                long f = day0(o.optString("from")), to = day0(o.optString("to")), td = day0(new SimpleDateFormat("yyyy-MM-dd", Locale.ITALY).format(new Date(now)));
+                if (f == 0) return r2(c, id, city, "Apri l'app per aggiornare", ico(c, "cal", 32, CHIP));
+                if (to < f) to = f;
+                int dTo = dDiff(td, f), dEnd = dDiff(td, to), N = dDiff(f, to) + 1;
+                SimpleDateFormat dM = new SimpleDateFormat("d MMMM", Locale.ITALY), dd = new SimpleDateFormat("d", Locale.ITALY), dMs = new SimpleDateFormat("d MMM", Locale.ITALY);
+                String range = N == 1 ? dMs.format(new Date(f)) : new SimpleDateFormat("MM", Locale.ITALY).format(new Date(f)).equals(new SimpleDateFormat("MM", Locale.ITALY).format(new Date(to))) ? dd.format(new Date(f)) + "–" + dMs.format(new Date(to)) : dMs.format(new Date(f)) + " – " + dMs.format(new Date(to));
+                if (dTo > 0) return r2(c, id, dTo == 1 ? "Si parte domani" : "Tra " + dTo + " giorni", city + " · " + range, ring(c, Math.max(.04f, 1f - Math.min(1f, dTo / 30f)), String.valueOf(dTo), null));
+                if (dEnd >= 0) {
+                    int g = 1 - dTo;
+                    return r2(c, id, N == 1 ? "Oggi a " + city : "Giorno " + g + " di " + N, city + " · " + (dEnd == 0 ? (N == 1 ? "buona giornata" : "ultimo giorno") : "ancora " + dEnd + (dEnd == 1 ? " giorno" : " giorni")), ring(c, g / (float) N, g + "/" + N, null));
+                }
+                return r2(c, id, "Bentornato", "Il viaggio a " + city + " è finito", ico(c, "cal", 32, CHIP));
+            }
+            case "late": {
+                if (none) return r2(c, id, "In ritardo?", "Serve durante il viaggio", ico(c, "clock", 32, CHIP));
+                JSONObject s = null;
+                for (int i = 0; i < st.length(); i++) { JSONObject x = st.optJSONObject(i); if (x != null && x.optInt("ret") != 1 && x.optLong("t") > now && sameDay(x.optLong("t"), now)) { s = x; break; } }
+                if (s == null) return r2(c, id, "In ritardo?", "Oggi niente da spostare", ico(c, "clock", 32, CHIP));
+                RemoteViews v = r2(c, id, "In ritardo?", "Tocca e sposto le tappe", ico(c, "clock", 32, CHIP));
+                v.setOnClickPendingIntent(R.id.root, act(c, 8400 + id, "late"));
+                return v;
+            }
+            case "line": {
+                RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.vw_line);
+                v.setOnClickPendingIntent(R.id.root, openApp(c, id));
+                int i = none ? -1 : curIdx(st, now, true);
+                if (i < 0) {
+                    v.setTextViewText(R.id.title, none ? "Nessun viaggio in programma" : "Viaggio concluso");
+                    v.setTextViewText(R.id.count, none ? "tocca per pianificarne uno" : "bentornato da " + city);
+                    v.setImageViewBitmap(R.id.line, lineBmp(c, Math.round(220 * dens(c)), 5, none ? 0f : 1f, none ? 0 : 5));
+                    return v;
+                }
+                int day = st.optJSONObject(i).optInt("day");
+                List<JSONObject> L = new ArrayList<>();
+                for (int j = 0; j < st.length(); j++) { JSONObject x = st.optJSONObject(j); if (x != null && x.optInt("day") == day && x.optInt("meal") != 1 && x.optInt("ret") != 1) L.add(x); }
+                int n = L.size(), done = 0, cur = 0;
+                float pos = 0f;
+                for (int j = 0; j < n; j++) {
+                    long t = L.get(j).optLong("t"), e = t + L.get(j).optInt("d") * 60000L;
+                    if (e <= now) done++;
+                }
+                float step = n > 1 ? 1f / (n - 1) : 0f;
+                if (n == 1) pos = now >= L.get(0).optLong("t") ? .5f : 0f;
+                else for (int j = 0; j < n; j++) {
+                    long t = L.get(j).optLong("t"), e = t + L.get(j).optInt("d") * 60000L;
+                    if (now < t) { if (j == 0) pos = 0f; else { long pe = L.get(j - 1).optLong("t") + L.get(j - 1).optInt("d") * 60000L; pos = step * (j - 1) + step * Math.max(0f, Math.min(1f, (float) (now - pe) / Math.max(1, t - pe))); } cur = j; break; }
+                    if (now < e) { pos = step * j; cur = j; break; }
+                    pos = 1f; cur = j;
+                }
+                JSONObject s = L.isEmpty() ? st.optJSONObject(i) : L.get(Math.min(cur, n - 1));
+                long t = s.optLong("t"), e = t + s.optInt("d") * 60000L;
+                boolean on = now >= t && now < e;
+                v.setTextViewText(R.id.title, (on ? "Adesso: " + s.optString("n") + " · fino alle " + hm(e) : "Prossima: " + s.optString("n") + " · " + hm(t)));
+                String when = sameDay(t, now) ? "" : sameDay(t, now + 86400000L) ? "domani · " : new SimpleDateFormat("EEEE", Locale.ITALY).format(new Date(t)) + " · ";
+                v.setTextViewText(R.id.count, when + done + " di " + n + " tappe");
+                Bundle op = m.getAppWidgetOptions(id);
+                int wdp = op != null ? op.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 250) : 250;
+                if (wdp <= 0) wdp = 250;
+                v.setImageViewBitmap(R.id.line, lineBmp(c, Math.round((wdp - 32) * dens(c)), Math.max(1, n), pos, done));
+                return v;
+            }
+            case "go": {
+                if (none) return r4(c, id, "Nessun viaggio in programma", new String[]{"Tocca per pianificarne uno"}, ico(c, "pin", 40, CHIP));
+                int i = curIdx(st, now, false);
+                if (i < 0) return r4(c, id, "Viaggio concluso", new String[]{"Bentornato da " + city}, ico(c, "pin", 40, CHIP));
+                JSONObject s = st.optJSONObject(i);
+                long t = s.optLong("t"), e = t + s.optInt("d") * 60000L;
+                boolean on = now >= t;
+                long mins = Math.max(1, (t - now) / 60000);
+                List<String> rows = new ArrayList<>();
+                String hw = how(s);
+                if (!hw.isEmpty()) rows.add(hw);
+                JSONArray ln = s.optJSONArray("ln");
+                if (ln != null && ln.length() > 0) { JSONObject l = ln.optJSONObject(0); rows.add(l.optString("n") + " · " + l.optString("a") + " → " + l.optString("b")); }
+                if (s.optDouble("tk") > 0) rows.add("Biglietto " + eur(s.optDouble("tk")) + " a testa");
+                if (rows.isEmpty()) rows.add(s.optInt("d") + " min di visita");
+                RemoteViews v = r4(c, id, s.optString("n") + " · " + (on ? "fino alle " + hm(e) : hm(t)), rows.toArray(new String[0]), ring(c, fracOf(st, i, now), on ? "ORA" : mins > 99 ? "" : mins + "′", s));
+                rCh(v, on ? e : t, on ? "finisce tra {s}" : "tra {s}", false, false);
+                if (s.optInt("ret") != 1 && s.optJSONArray("ll") != null) goBtn(v, maps(c, 8500 + id, s), "Vai");
+                return v;
+            }
+            case "fly": {
+                JSONObject f = none ? null : nextFlight(o, now);
+                if (f == null) return r4(c, id, none ? "Nessun viaggio in programma" : "Nessun volo in arrivo", new String[]{none ? "Tocca per pianificarne uno" : "Inserisci i voli nel viaggio"}, ico(c, "plane", 40, CHIP));
+                long dep = f.optLong("dep"), arr = f.optLong("arr"), imb = f.optLong("imb");
+                String a = f.optString("from").isEmpty() ? f.optString("fromN") : f.optString("from"), b = f.optString("to").isEmpty() ? f.optString("toN") : f.optString("to");
+                String dt = sameDay(dep, now) ? "oggi" : sameDay(dep, now + 86400000L) ? "domani" : new SimpleDateFormat("d MMM", Locale.ITALY).format(new Date(dep));
+                List<String> rows = new ArrayList<>();
+                rows.add((f.optString("num").isEmpty() ? "" : f.optString("num") + " · ") + dt + (imb > 0 && now < imb ? " · imbarco " + hm(imb) : ""));
+                JSONArray bp = f.optJSONArray("bp");
+                if (bp != null && bp.length() > 0) { JSONObject x = bp.optJSONObject(0); String seat = x.optString("s"), who = x.optString("p"); if (!seat.isEmpty() || !who.isEmpty()) rows.add((seat.isEmpty() ? "" : "Posto " + seat) + (who.isEmpty() ? "" : (seat.isEmpty() ? "" : " · ") + who) + (bp.length() > 1 ? " · +" + (bp.length() - 1) : "")); }
+                rows.add("Arrivo " + hm(arr) + ("r".equals(f.optString("k")) ? " · volo di ritorno" : ""));
+                RemoteViews v = r4(c, id, a + " → " + b + " · " + hm(dep), rows.toArray(new String[0]), ico(c, "plane", 40, CHIP));
+                if (now < imb) rCh(v, imb, "imbarco tra {s}", false, false);
+                else if (now < dep) rCh(v, dep, "decollo tra {s}", false, false);
+                else rCh(v, arr, "atterri tra {s}", false, false);
+                PendingIntent pi = bpPi(c, f, 8600 + id);
+                if (pi != null) goBtn(v, pi, "Carta");
+                return v;
+            }
+            case "acts": {
+                RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.vw_acts);
+                int[] ai = {R.id.a1, R.id.a2, R.id.a3, R.id.a4}, li = {R.id.l1, R.id.l2, R.id.l3, R.id.l4}, ci = {R.id.c1, R.id.c2, R.id.c3, R.id.c4};
+                String[] ic = {"plus", "map", "ticket", "clock"}, lb = {"Spesa", "Mappa", "Biglietti", "In ritardo"}, ak = {"spend", "map", "tix", "late"};
+                for (int i = 0; i < 4; i++) {
+                    v.setImageViewBitmap(ai[i], ico(c, ic[i], 34, CHIP));
+                    v.setTextViewText(li[i], lb[i]);
+                    v.setOnClickPendingIntent(ci[i], act(c, 8700 + id * 4 + i, ak[i]));
+                }
+                v.setOnClickPendingIntent(R.id.root, openApp(c, id));
+                /* biglietti: apro subito il codice del prossimo ingresso o la carta d'imbarco, se ci sono */
+                PendingIntent tp = null;
+                if (!none) {
+                    for (int i = 0; i < st.length() && tp == null; i++) {
+                        JSONObject x = st.optJSONObject(i);
+                        JSONObject qr = x != null ? x.optJSONObject("qr") : null;
+                        if (qr != null && x.optLong("t") + x.optInt("d") * 60000L > now) {
+                            Intent qi = new Intent(c, VwQrActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK).putExtra("t", qr.optString("t")).putExtra("f", qr.optString("f")).putExtra("n", x.optString("n"));
+                            tp = PendingIntent.getActivity(c, 8690 + id, qi, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                        }
+                    }
+                    JSONObject f = nextFlight(o, now);
+                    if (f != null && f.optLong("dep") - now < 24 * 3600000L) { PendingIntent bpi = bpPi(c, f, 8680 + id); if (bpi != null) tp = bpi; }
+                }
+                if (tp != null) v.setOnClickPendingIntent(R.id.c3, tp);
+                return v;
+            }
+            case "wx": {
+                if (none) return r4(c, id, "Meteo e piano B", new String[]{"Pianifica un viaggio"}, ico(c, "sun", 40, CHIP));
+                JSONArray wx = o.optJSONArray("wx");
+                JSONObject cur = null;
+                if (wx != null) {
+                    JSONArray r0 = null;
+                    for (int i = 0; i < wx.length(); i++) { JSONArray r = wx.optJSONArray(i); if (r != null && r.optLong(0) + 3600000L > now) { r0 = r; break; } }
+                    if (r0 != null) { try { cur = new JSONObject().put("t", r0.optLong(0)).put("w", r0.optInt(1)).put("tp", r0.optInt(2)); } catch (Exception ignored) {} }
+                }
+                if (cur == null) return r4(c, id, "Meteo a " + city, new String[]{"Le previsioni ora per ora arrivano a viaggio vicino", "Apri l'app con internet per aggiornarle"}, ico(c, "cloud", 40, CHIP));
+                int w0 = cur.optInt("w"), tp0 = cur.optInt("tp");
+                long rs = 0, re = 0;
+                int mx = tp0;
+                for (int i = 0; i < wx.length(); i++) {
+                    JSONArray r = wx.optJSONArray(i);
+                    if (r == null) continue;
+                    long t = r.optLong(0);
+                    if (t + 3600000L <= now || t > now + 12 * 3600000L) continue;
+                    mx = Math.max(mx, r.optInt(2));
+                    boolean wet = rainy(r.optInt(1)) || (!r.isNull(3) && r.optInt(3) >= 60);
+                    if (wet && rs == 0) rs = t;
+                    if (!wet && rs > 0 && re == 0) re = t;
+                }
+                String rm = o.optString("rainM");
+                RemoteViews v;
+                if (rs > 0) {
+                    boolean nowWet = rs <= now;
+                    String t1 = nowWet ? "Piove · " + tp0 + "°" : "Pioggia dalle " + hm(rs);
+                    v = r4(c, id, t1, new String[]{rm.isEmpty() ? "Piano B: scegli una tappa al coperto" : "Piano B · " + rm, nowWet ? (re > 0 ? "Smette verso le " + hm(re) : "Pioggia per qualche ora") : "Ora " + tp0 + "° · " + wxName(w0), "Porta l'ombrello"}, ico(c, "rain", 40, CHIP));
+                    goBtn(v, openApp(c, 8800 + id), "Piano B");
+                } else {
+                    v = r4(c, id, tp0 + "° · " + wxName(w0), new String[]{"Niente pioggia nelle prossime 12 ore", "Massima " + mx + "° · " + city}, ico(c, wxIco(w0), 40, CHIP));
+                }
+                return v;
+            }
+            case "meal": {
+                JSONArray ml = o.optJSONArray("meals");
+                JSONObject mm = null;
+                if (!none && ml != null) for (int i = 0; i < ml.length(); i++) { JSONObject x = ml.optJSONObject(i); if (x != null && x.optLong("t") + x.optInt("d") * 60000L > now && !x.optString("vn").isEmpty()) { mm = x; break; } }
+                if (mm == null) return r4(c, id, none ? "Nessun viaggio in programma" : "Pasti finiti", new String[]{none ? "Tocca per pianificarne uno" : "Buon rientro da " + city}, ico(c, "fork", 40, CHIP));
+                long t = mm.optLong("t");
+                RemoteViews v = r4(c, id, mm.optString("n") + " · " + (now >= t ? "adesso" : hm(t)) + " · " + mm.optString("vn"), new String[]{mm.optString("va"), mm.optString("vp"), mm.optString("vd")}, ico(c, "fork", 40, CHIP));
+                rCh(v, t, "tra {s}", false, false);
+                if (mm.optJSONArray("ll") != null || !mm.optString("q").isEmpty()) {
+                    JSONObject q = new JSONObject();
+                    try { q.put("q", mm.optString("q")); q.put("ll", mm.optJSONArray("ll")); q.put("mo", "walk"); q.put("lm", 5); } catch (Exception ignored) {}
+                    goBtn(v, maps(c, 8900 + id, q), "Vai");
+                }
+                return v;
+            }
+        }
+        return r2(c, id, "Viaticum", "Tocca per aprire", null);
     }
 }

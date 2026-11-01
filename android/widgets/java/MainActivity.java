@@ -12,6 +12,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(WidgetBridge.class);
         super.onCreate(savedInstanceState);
         take(getIntent());
+        act(getIntent());
     }
 
     @Override
@@ -20,6 +21,19 @@ public class MainActivity extends BridgeActivity {
         if (take(intent)) {
             try { getBridge().triggerWindowJSEvent("viashare"); } catch (Exception e) {}
         }
+        if (act(intent)) {
+            try { getBridge().triggerWindowJSEvent("viaact"); } catch (Exception e) {}
+        }
+    }
+
+    /* v287 i pulsanti dei widget (spesa, mappa, biglietti, ritardo): la pagina li legge con ViaWidget.act() */
+    private boolean act(Intent in) {
+        if (in == null) return false;
+        String a = in.getStringExtra("via_act");
+        if (a == null || a.isEmpty()) return false;
+        WidgetBridge.ACT = a;
+        in.removeExtra("via_act");
+        return true;
     }
 
     /* «Condividi con Viaticum»: copio i file ricevuti nella cartella dell'app, la pagina li legge con ViaWidget.shared() */
