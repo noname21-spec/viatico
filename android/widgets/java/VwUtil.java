@@ -756,8 +756,8 @@ public final class VwUtil {
         v.setTextViewText(R.id.num, f.optString("num").isEmpty() ? new SimpleDateFormat("d MMM", Locale.ITALY).format(new Date(dep)) : f.optString("num") + " · " + new SimpleDateFormat("d MMM", Locale.ITALY).format(new Date(dep)));
         v.setTextViewText(R.id.from, f.optString("from").isEmpty() ? "—" : f.optString("from"));
         v.setTextViewText(R.id.to, f.optString("to").isEmpty() ? "—" : f.optString("to"));
-        v.setTextViewText(R.id.fromN, f.optString("fromN") + " · " + hm(dep));
-        v.setTextViewText(R.id.toN, f.optString("toN") + " · " + hm(arr));
+        v.setTextViewText(R.id.fromN, f.optString("fromN").isEmpty() ? hm(dep) : f.optString("fromN") + " · " + hm(dep));
+        v.setTextViewText(R.id.toN, f.optString("toN").isEmpty() ? hm(arr) : f.optString("toN") + " · " + hm(arr));
         float frac = now < dep ? 0f : now > arr ? 1f : (float) (now - dep) / Math.max(1, arr - dep);
         v.setImageViewBitmap(R.id.arc, arc(c, frac));
         String st;
@@ -1066,7 +1066,7 @@ public final class VwUtil {
                 if (fl != null) for (int i = 0; i < fl.length(); i++) { JSONObject x = fl.optJSONObject(i); if (x.optLong("arr") > now) { f = x; break; } }
                 if (f == null) return sm(c, id, "Voli", "Nessun volo", "Inserisci i voli nel viaggio", null);
                 long imb = f.optLong("imb"), dep = f.optLong("dep");
-                RemoteViews v = sm(c, id, f.optString("num").isEmpty() ? "Volo" : f.optString("num"), f.optString("from") + " → " + f.optString("to"), now < imb ? "Imbarco " + hm(imb) + " · " + inTxt(imb - now) : "Decollo " + hm(dep), null);
+                RemoteViews v = sm(c, id, f.optString("num").isEmpty() ? "Volo" : f.optString("num"), f.optString("from").isEmpty() ? "Volo per " + f.optString("to") : f.optString("to").isEmpty() ? "Ritorno da " + f.optString("from") : f.optString("from") + " → " + f.optString("to"), now < imb ? "Imbarco " + hm(imb) + " · " + inTxt(imb - now) : "Decollo " + hm(dep), null);
                 smChrono(v, now < imb ? imb : dep, now < imb ? "imbarco tra %s" : "decollo tra %s");
                 return v;
             }
@@ -1534,7 +1534,8 @@ public final class VwUtil {
                 JSONArray bp = f.optJSONArray("bp");
                 if (bp != null && bp.length() > 0) { JSONObject x = bp.optJSONObject(0); String seat = x.optString("s"), who = x.optString("p"); if (!seat.isEmpty() || !who.isEmpty()) rows.add((seat.isEmpty() ? "" : "Posto " + seat) + (who.isEmpty() ? "" : (seat.isEmpty() ? "" : " · ") + who) + (bp.length() > 1 ? " · +" + (bp.length() - 1) : "")); }
                 rows.add("Arrivo " + hm(arr) + ("r".equals(f.optString("k")) ? " · volo di ritorno" : ""));
-                RemoteViews v = r4(c, id, a + " → " + b + " · " + hm(dep), rows.toArray(new String[0]), ico(c, "plane", 40, CHIP));
+                String ttl = a.isEmpty() ? "Volo per " + b : b.isEmpty() ? "Ritorno da " + a : a + " → " + b;
+                RemoteViews v = r4(c, id, ttl + " · " + hm(dep), rows.toArray(new String[0]), ico(c, "plane", 40, CHIP));
                 if (now < imb) rCh(v, imb, "imbarco tra {s}", false, false);
                 else if (now < dep) rCh(v, dep, "decollo tra {s}", false, false);
                 else rCh(v, arr, "atterri tra {s}", false, false);

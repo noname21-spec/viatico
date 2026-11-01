@@ -999,7 +999,7 @@ var PREADY=false;
 function renderVcost(){var box=$("#vcost");if(!box||!CFG)return;var c=CFG,N=c.ppl,o=COPT.vl||{},F=fromInfo(c),multi=N>1,m=o.m==="tot"&&multi?"tot":"pp";
 var fld=function(k,t,sub){return '<label class="vcf"><span>'+t+(sub?'<small>'+sub+'</small>':'')+'</span><span class="vcin"><input type="number" inputmode="decimal" min="0" step="1" data-k="'+k+'" value="'+(+o[k]>0?o[k]:"")+'" placeholder="0" aria-label="'+esc(t)+'"><i>€</i></span></label>'};
 box.innerHTML='<div class="vh2"><b>💶 Costo dei voli</b></div>'+(multi?'<div class="vcm" role="radiogroup" aria-label="Come hai inserito i prezzi"><button type="button" role="radio" data-m="pp" class="'+(m==="pp"?"on":"")+'" aria-checked="'+(m==="pp")+'">A persona</button><button type="button" role="radio" data-m="tot" class="'+(m==="tot"?"on":"")+'" aria-checked="'+(m==="tot")+'">Totale per '+N+'</button></div>':'')
-+fld("a","Andata",(F.code||"")+" → "+esc(c.to))+fld("r","Ritorno",esc(c.rt||c.to)+" → "+(F.code||""))+fld("x","Extra","Bagagli, posti, imbarco prioritario")
++fld("a","Andata",F.code?F.code+" → "+esc(c.to):"Verso "+esc(c.to))+fld("r","Ritorno",F.code?esc(c.rt||c.to)+" → "+F.code:"Da "+esc(c.rt||c.to))+fld("x","Extra","Bagagli, posti, imbarco prioritario")
 +'<div class="vct"><span>Totale voli</span><span id="vctt"></span></div><p class="vcn">Le voci compaiono nella tabella dei Costi e nel PDF. Le trovi spuntabili anche lì.</p>';
 function upd(){var R=flightRows(),pp=R.reduce(function(s,r){return s+r[2]},0);$("#vctt").textContent=pp?eur(pp*N)+(multi?" ("+eur(pp)+" a persona)":""):"—"}
 function save(){COPT.vl=COPT.vl||{};ls("via-copt",JSON.stringify(COPT));upd();if(PREADY||true){renderCosti(false);renderSpese()}}
@@ -1185,7 +1185,7 @@ var opts=[{k:"single",n:"biglietti singoli",v:air+city,rows:airRow.concat(cityRo
 opts.sort(function(a,b){return a.v-b.v});opts.slice(1).forEach(function(o){alt.push(o.n+" "+eur(o.v))});
 return{T:opts[0].rows,alt:alt,best:opts[0].k,bn:opts[0].note}}
 function flightRows(){var c=CFG,N=c.ppl,o=COPT.vl||{},d=o.m==="tot"&&N>1?N:1,F=fromInfo(c),R=[],pp=function(v){return(+v||0)/d};
-if(+o.a>0)R.push(["fa","Volo di andata ("+(F.code||"partenza")+"-"+c.to+")",pp(o.a),1]);
+if(+o.a>0)R.push(["fa","Volo di andata ("+(F.code?F.code+"-"+c.to:"verso "+c.to)+")",pp(o.a),1]);
 if(+o.r>0)R.push(["fr","Volo di ritorno ("+(c.rt||c.to)+"-"+(F.code||"partenza")+")",pp(o.r),1]);
 if(+o.x>0)R.push(["fx","Bagagli, posti e altri extra dei voli",pp(o.x),1]);
 return R}
@@ -1670,7 +1670,7 @@ function tixImport(src,hint,done){if(!CFG||!TRIP){toast("Prima crea un viaggio, 
  files.forEach(function(f){p=p.then(function(){return tixScan(f,hint)}).then(function(a){acc=acc.concat(a)}).catch(function(e){console.warn(e);acc.push({kind:"err",n:f.name||"file"})})});
  if(txt)p=p.then(function(){acc=acc.concat(tixText(txt))});
  p.then(function(){tixSheet(acc.filter(function(x){return x.kind!=="err"}),acc.filter(function(x){return x.kind==="err"}).length,done)})}
-function legTxt(k){var F=fromInfo(CFG)||{};return k==="a"?"Andata · "+(F.code||F.name||"")+" → "+(CFG.to||PD.n):"Ritorno · "+(CFG.to||PD.n)+" → "+(F.code||F.name||"")}
+function legTxt(k){var F=fromInfo(CFG)||{};return k==="a"?"Andata · "+(F.code?F.code+" → ":"verso ")+(CFG.to||PD.n):"Ritorno · "+(F.code?(CFG.to||PD.n)+" → "+F.code:"da "+(CFG.to||PD.n))}
 function tixSheet(L,errs,done){var old=$("#tim");if(old)old.remove();
  var el=document.createElement("div");el.id="tim";el.className="tim";el.setAttribute("role","dialog");el.setAttribute("aria-modal","true");el.setAttribute("aria-label","Biglietti trovati");
  var acts=[];TRIP.days.forEach(function(D,di){(D.acts||[]).forEach(function(id){if(S[id]&&acts.indexOf(id)<0)acts.push(id)})});
@@ -1740,8 +1740,8 @@ if(!CFG||!TRIP){o.none=1}else{var tz=PD.TZ,N=CFG.ppl||1;o.city=PD.n;o.cc=PD.cn||
   else if(it.k==="ret"){st.push({n:"Ritorno all'aeroporto",t:t0,d:it.d||0,day:di,ll:null,ret:1,q:"",lm:0,mo:"",tk:0,tkn:"",ln:[]})}})});
  o.stops=st;o.trans=tr;
  /* voli: andata e ritorno */
- try{var F=fromInfo(CFG),fl=[],rt=CFG.date_r||CFG.date;if(CFG.a_dep||CFG.a_arr){var ad=CFG.a_dep?wgEpoch(CFG.date,toMin(CFG.a_dep),"Europe/Rome"):0,aa=CFG.a_arr?wgEpoch(CFG.date,toMin(CFG.a_arr),tz):0;fl.push({k:"a",num:CFG.a_num||"",from:F.code||"",fromN:F.name||"",to:CFG.to||"",toN:PD.n,dep:ad||(aa-90*60000),arr:aa||(ad+120*60000),imb:ad?ad-45*60000:0})}
-  if(CFG.r_dep){var rd=wgEpoch(rt,toMin(CFG.r_dep),tz);fl.push({k:"r",num:CFG.r_num||"",from:CFG.to||"",fromN:PD.n,to:F.code||"",toN:F.name||"",dep:rd,arr:rd+120*60000,imb:CFG.r_imb?wgEpoch(rt,toMin(CFG.r_imb),tz):rd-45*60000})}fl.forEach(function(f){var l=bpGet(f.k);if(l.length)f.bp=l.map(function(x){return{t:x.t,f:x.f||"qr_code",p:x.p||"",s:x.s||""}})});o.flights=fl}catch(e){}
+ try{var F=fromInfo(CFG),fl=[],rt=CFG.date_r||CFG.date;if(CFG.a_dep||CFG.a_arr){var ad=CFG.a_dep?wgEpoch(CFG.date,toMin(CFG.a_dep),"Europe/Rome"):0,aa=CFG.a_arr?wgEpoch(CFG.date,toMin(CFG.a_arr),tz):0;fl.push({k:"a",num:CFG.a_num||"",from:F.code||"",fromN:F.code?F.name:"",to:CFG.to||"",toN:PD.n,dep:ad||(aa-90*60000),arr:aa||(ad+120*60000),imb:ad?ad-45*60000:0})}
+  if(CFG.r_dep){var rd=wgEpoch(rt,toMin(CFG.r_dep),tz);fl.push({k:"r",num:CFG.r_num||"",from:CFG.to||"",fromN:PD.n,to:F.code||"",toN:F.code?F.name:"",dep:rd,arr:rd+120*60000,imb:CFG.r_imb?wgEpoch(rt,toMin(CFG.r_imb),tz):rd-45*60000})}fl.forEach(function(f){var l=bpGet(f.k);if(l.length)f.bp=l.map(function(x){return{t:x.t,f:x.f||"qr_code",p:x.p||"",s:x.s||""}})});o.flights=fl}catch(e){}
  /* pasti con il locale scelto dall'itinerario */
  try{var ml=[];TRIP.days.forEach(function(D){D.items.forEach(function(it){if(it.k!=="meal")return;var ids=null;try{ids=mealIds(it.m,it.z,it.np)}catch(e){}var v=ids&&ids.length&&PD.V&&PD.V[ids[0]];var t0=wgEpoch(D.date,it.t,tz);
   ml.push({m:it.m,t:t0,d:it.d,n:it.m==="col"?"Colazione":it.m==="pra"?"Pranzo":it.m==="cen"?"Cena":"Spuntino",vn:v?v.n:"",va:v?String(v.a||""):"",vd:v?(String(v.d||"").split(/\.\s/)[0]+".").slice(0,140):"",vp:v?String(v.pr||"").replace(/\s*\(listino[^)]*\)/,"").slice(0,90):"",ll:v&&v.pos?v.pos:(it.np||null),q:v?v.n+", "+(v.a||"")+", "+PD.n:""})})});o.meals=ml;o.food=(PD.FOOD&&PD.FOOD.co)?String(PD.FOOD.co[1]||""):""}catch(e){}
@@ -1798,7 +1798,7 @@ document.getElementById("t-costi").addEventListener("change",function(){if(!(thi
 
 /* ===== schermata «Il tuo viaggio» ===== */
 var setup=$("#setup"),form=$("#sform"),serr=$("#serr"),stayF=$("#stayf");
-$("#aplist").innerHTML=PD.FROM.map(function(f){return '<option value="'+esc(f[1]+" ("+f[0]+")")+'">'}).join("");
+
 form.sz.innerHTML=PD.HZ.map(function(z){return '<option value="'+z[0]+'">'+esc(z[1])+'</option>'}).join("");
 form.stype.innerHTML=PD.TAX.map(function(t){return '<option value="'+t[0]+'">'+esc(t[1])+'</option>'}).join("");
 var APK=Object.keys(PD.PAR);var aptH=function(nm){return APK.map(function(k,i){var A=PD.PAR[k];return '<label class="apt"><input type="radio" name="'+nm+'" value="'+k+'"'+(i?'':' checked')+'><b>'+k+'</b><span>'+esc(A.sd)+'</span></label>'}).join("")};
@@ -1816,7 +1816,7 @@ form.date.addEventListener("change",function(){form.date_r.min=form.date.value;i
 form.date_r.addEventListener("change",dnote);$$('input[type=date],input[type=time]',form).forEach(function(i){i.addEventListener("click",function(){try{if(i.showPicker)i.showPicker()}catch(e){}})});form.date.addEventListener("input",dnote);form.date_r.addEventListener("input",dnote);
 function setPM(on,init){var yd=new Date(dateObj(paris().d).getTime()-864e5).toISOString().slice(0,10),sp=$("#spast");form.dataset.past=on?"1":"";form.date.min=on?"2000-01-01":paris().d;form.date.max=on?yd:"";form.date_r.min=form.date.value||(on?"2000-01-01":paris().d);form.date_r.max=on?yd:"";if(!on&&form.date.value&&form.date.value<paris().d){form.date.value="";form.date_r.value=""}
 if(sp){$(".spast",sp).hidden=!on;$(".spon",sp).hidden=on||!!CFG}try{if(on)sessionStorage.setItem("via-pastmode","1");else sessionStorage.removeItem("via-pastmode")}catch(x){}if(!init){try{paintSteps();paintReq()}catch(x){}}}
-function openSetup(first,stp){var c=CFG||{},s=c.stay||{},PM=(first&&pastMode())||!!c.past,yd=new Date(dateObj(paris().d).getTime()-864e5).toISOString().slice(0,10);form.dataset.past=PM?"1":"";var spn=$("#spast");if(!spn){spn=document.createElement("div");spn.id="spast";spn.innerHTML='<p class="spast">Viaggio già fatto: scegli le date. Dopo potrai segnare le tappe che hai fatto davvero. <button type="button" class="spx">Annulla</button></p><button type="button" class="spon">Hai già fatto questo viaggio? <u>Aggiungilo</u></button>';var stp0=form.querySelector(".stop");form.insertBefore(spn,stp0?stp0.nextSibling:form.firstChild);$(".spon",spn).addEventListener("click",function(){setPM(true)});$(".spx",spn).addEventListener("click",function(){setPM(false)})}setPM(PM,1);form.date.value=c.date||"";form.date.min=PM?"2000-01-01":paris().d;form.date.max=PM?yd:"";form.date_r.value=c.date_r||c.date||"";form.date_r.min=c.date||(PM?"2000-01-01":paris().d);form.date_r.max=PM?yd:"";$("#ppl").textContent=c.ppl||2;form.from.value=c.from||"";
+function openSetup(first,stp){var c=CFG||{},s=c.stay||{},PM=(first&&pastMode())||!!c.past,yd=new Date(dateObj(paris().d).getTime()-864e5).toISOString().slice(0,10);form.dataset.past=PM?"1":"";var spn=$("#spast");if(!spn){spn=document.createElement("div");spn.id="spast";spn.innerHTML='<p class="spast">Viaggio già fatto: scegli le date. Dopo potrai segnare le tappe che hai fatto davvero. <button type="button" class="spx">Annulla</button></p><button type="button" class="spon">Hai già fatto questo viaggio? <u>Aggiungilo</u></button>';var stp0=form.querySelector(".stop");form.insertBefore(spn,stp0?stp0.nextSibling:form.firstChild);$(".spon",spn).addEventListener("click",function(){setPM(true)});$(".spx",spn).addEventListener("click",function(){setPM(false)})}setPM(PM,1);form.date.value=c.date||"";form.date.min=PM?"2000-01-01":paris().d;form.date.max=PM?yd:"";form.date_r.value=c.date_r||c.date||"";form.date_r.min=c.date||(PM?"2000-01-01":paris().d);form.date_r.max=PM?yd:"";$("#ppl").textContent=c.ppl||2;
 var to0=c.to&&PD.PAR[c.to]?c.to:APK[0],rt0=c.rt&&PD.PAR[c.rt]?c.rt:to0;$$('input[name=to]',form).forEach(function(r){r.checked=r.value===to0});$$('input[name=rto]',form).forEach(function(r){r.checked=r.value===rt0});if(rt0!==to0)form.dataset.rt="1";else delete form.dataset.rt;rtSync();["a_dep","a_arr","r_imb","r_dep"].forEach(function(k){form[k].value=c[k]||""});
 form.sz.value=s.zone||PD.HZ[0][0];form.saddr.value=s.addr||"";form.sin.value=s.cin||"15:00";form.sout.value=s.cout||"11:00";form.sprice.value=s.price||"";form.stype.value=s.type||PD.TAXDEF||PD.TAX[0][0];
 var sv=sty(c);$$("input[name=th]",form).forEach(function(r){r.checked=r.value===sv.th});$$("input[name=pc]",form).forEach(function(r){r.checked=r.value===sv.pc});
@@ -2231,7 +2231,7 @@ $$("input,select",form).forEach(function(x){x.classList.remove("bad")});
 var d0=form.date.value,d1=form.date_r.value||d0,multi=d1>d0;
 var to=($('input[name=to]:checked',form)||{}).value||APK[0],rt=($('input[name=rto]:checked',form)||{}).value||to,old=(CFG&&CFG.stay)||{};
 var PMs=form.dataset.past==="1";if(PMs){if(!form.a_arr.value)form.a_arr.value="09:00";if(!form.r_dep.value)form.r_dep.value=multi?"18:00":"20:00"}
-var c={dest:PD.id,date:d0,date_r:d1,ppl:+$("#ppl").textContent||2,from:form.from.value.trim(),fromCode:fromCode(form.from.value),to:to,rt:rt,a_num:(CFG&&CFG.a_num)||"",a_dep:form.a_dep.value,a_arr:form.a_arr.value,r_num:(CFG&&CFG.r_num)||"",r_imb:form.r_imb.value,r_dep:form.r_dep.value,th:styVals().th,pc:styVals().pc};
+var c={dest:PD.id,date:d0,date_r:d1,ppl:+$("#ppl").textContent||2,from:"",fromCode:"",to:to,rt:rt,a_num:(CFG&&CFG.a_num)||"",a_dep:form.a_dep.value,a_arr:form.a_arr.value,r_num:(CFG&&CFG.r_num)||"",r_imb:form.r_imb.value,r_dep:form.r_dep.value,th:styVals().th,pc:styVals().pc};
 if(multi){var addr=form.saddr.value.trim();c.stay={zone:form.sz.value,addr:addr,cin:form.sin.value||"15:00",cout:form.sout.value||"11:00",price:parseFloat(String(form.sprice.value).replace(",","."))||0,type:form.stype.value};
 if(addr&&addr===old.addr&&old.geo){c.stay.pos=old.pos;c.stay.geo=1}}
 if(PMs){c.past=1;try{sessionStorage.removeItem("via-pastmode")}catch(x){}}
