@@ -1,0 +1,52 @@
+/* v293 piano B per la pioggia: tappe al coperto (1) o miste, in parte al coperto (2); le altre sono all'aperto.
+   Per le attrazioni del catalogo (id «x_…») decide il nome: musei, chiese, palazzi, mercati coperti ecc. */
+window.INDOOR={
+amburgo:{elbphi:2,wunder:1,michel:1,nikolai:2,kunsthalle:1},
+amsterdam:{dam:2,annefrankins:1,rijks:1,vangogh:1,noord:2},
+atene:{museoac:1,museoarch:1},
+bcn:{rambla:2,gotic:2,born:2,sagradains:1,picasso:1,batllo:1,santpau:2,pedrera:1,mnac:2},
+berlino:{linden:2,museum:1,fernseh:2,potsdamer:2,kreuz:2},
+bruxelles:{galeries:1,manneken:2,cathedrale:1,bd:1,musees:1,atomium:2},
+bucarest:{parlament:1,carusel:1,tarani:1,cotroceni:1},
+budapest:{parlament:2,szechenyi:2,basilica:1,dohany:1,mercato:2},
+copenaghen:{christians:1,rosenb:1,rund:2,natmus:1,torve:1,glypt:1},
+cracovia:{sukiennice:1,sotterr:1,wawel:2,czart:1,schindler:2},
+dublino:{trinity:1,guinness:1,kilmainham:1,christ:1,patrick:1,archaeo:1,merrion:2,epic:1},
+edimburgo:{castle:2,royalmile:2,holyrood:1,nms:1,gallery:1},
+firenze:{duomo:2,cupola:1,signoria:2,uffizi:1,accademia:1,santacroce:1,smn:1,pitti:2,sanlorenzo:1},
+ginevra:{cattedrale:1,mah:1,patek:1,croce:1,onu:2,cern:1},
+helsinki:{uspenski:1,kauppatori:2,ateneum:1,temppeliaukio:1,oodi:1,kiasma:1},
+istanbul:{ayasofya:1,sultanahmet:2,topkapi:2,cisterna:1,archeo:1,bazar:1,suleymaniye:1,spezie:2,galata:2,bosforo:2},
+lisbona:{jeronimosins:1,gulbenkian:1},
+londra:{covent:2,trafalgar:2,southbank:2,borough:2,abbeyins:1,stpaulins:1,toweroflondon:2,british:1,museums:1,eastend:2,greenwich:2,eye:1},
+lubiana:{mercato:2,castello:2},
+madrid:{palacio:1,almudena:1,prado:1,reina:1,thyssen:1,sanmiguel:1},
+malaga:{catedral:1,picasso:1,pompidou:1,thyssen:1,atarazanas:1},
+milano:{duomo:2,galleria:1,scala:1,novecento:1,castello:2,cenacolo:1,pinacoteca:1,santambrogio:1},
+monaco:{frauen:1,residenz:2,nymph:2,pinak:1,asam:1,deutsches:1,olympia:2},
+napoli:{sansevero:1,santachiara:2,piomonte:1,duomo:1,mann:1,plebiscito:2,reale:1,castelnuovo:1,sanmartino:2,sotterranea:1},
+oslo:{opera:2,munch:1,radhuset:1,nasjonal:1,brygge:2,fram:1,holm:2,grun:2},
+paris:{notredame:2,saintechapelle:1,louvremus:1,orsay:1,latin:2,opera:1,versailles:1},
+porto:{saobento:2,lello:1,clerigos:2,bolsa:1,se:2,gaia:1,bolhao:2,serralves:2},
+praga:{hrad:2,josef:2,zizkov:2},
+reykjavik:{hallgrim:1,harpa:2,landnam:1,hafnarhus:1,thjod:1,perlan:1},
+riga:{peter:1,dom:1,market:1,artnm:1,occ:1,lnma:1},
+roma:{pantheon:1,sanpietro:1,vaticani:1,castel:2,borghese:1,testaccio:2},
+salisburgo:{festung:2,dom:1,geburtshaus:1,wohnhaus:1,museum:1},
+siviglia:{catedral:1,alcazar:2,archivo:1,pilatos:2,bellas:1},
+sofia:{nevsky:1,banya:2,archeo:1,sofiachurch:1,boyana:1,socialist:2},
+stoccolma:{slottet:1,nobel:1,stadshuset:1,vasa:1,abba:1,fotog:1,historiska:1,saluhall:2},
+tallinn:{toompea:2,oleviste:2,kiek:1,kadriorg:2,kumu:1,lennusadam:1},
+valencia:{mercado:1,lonja:1,seu:2,bellas:1,colon:2,ocean:2},
+valletta:{sjohn:1,palace:1,manoel:1,lascaris:1,elmo:2},
+varsavia:{zamek:1,pkin:2,powstanie:1,polin:1,wilanow:2},
+venezia:{sanmarco:2,palazzoducale:1,accademia:1,salute:2,peggy:1,frari:1},
+vienna:{stephan:2,hofburg:1,schonbrunn:2,belvedere:1,museums:1,karls:1},
+vilnius:{katedra:2,valdovu:1,univ:2,anne:1,hales:1,kgb:1},
+zagabria:{cathedral:1,broken:1,gric:1},
+zurigo:{grossmunster:1,fraumunster:1,landesmuseum:1,kunsthaus:1,lindt:1}
+};
+/* 1 al coperto, 2 in parte, 0 all'aperto */
+window.inDoor=function(city,id,name){var m=window.INDOOR[city]||{};if(m[id]!=null)return m[id];if(String(id).indexOf("x_")!==0)return 0;
+ var n=String(name||"");if(/\b(parco|giardin|giro|crociera|barca|battello|kayak|bici|tour a piedi|passeggiata|zoo|spiaggia|belvedere|terrazz|ruota|funivia|teleferica|tetto)/i.test(n))return 0;
+ return /\b(muse|musée|museum|galleri|gallery|pinacotec|palazz|palace|palais|castell|castle|chies|cattedral|basilic|cappell|abbazi|monaster|sinagog|moschea|acquario|aquarium|planetari|teatr|opera|bibliotec|mercato|market|terme|bagn|catacomb|sotterrane|cripta|cisterna|bunker|tunnel|mostra|esposizion|collezion|fondazion|casa|haus|centro|experience)/i.test(n)?1:0};

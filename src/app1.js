@@ -250,6 +250,23 @@ function repAsk(it){var o=S[it.id];if(!o)return;var used=allActs(),wd=P.wd,cand=
 cand.sort(function(a,b){return hav(S[a].pos,o.pos)-hav(S[b].pos,o.pos)});cand=cand.slice(0,5);
 if(!cand.length){toast("Non ci sono altre tappe da proporre");return}
 ask("Sostituisci «"+o.t+"»","Scegli un'alternativa vicina: sostituisce solo questa tappa e ricalcolo gli orari del giorno. Se non ci sta nel tempo, resta quella di prima.",cand.map(function(id){var q=S[id],tk=q.tk&&q.tk[0]?" · "+eur(q.tk[0]):"";return{t:q.t+" · "+fdur(q.id)+tk,fn:function(){repDo(P.i,it.id,id)}}}))}
+/* ===== v293 piano B per la pioggia: con pioggia prevista propongo di scambiare le tappe all'aperto con altre al coperto vicine ===== */
+function rainWet(w){return !!w&&((w.pp!=null&&w.pp>=60)||(w.c>=51&&w.c<=67)||(w.c>=80&&w.c<=82)||w.c>=95)}
+function rainPlan(){var old=$("#rainb");if(old)old.remove();if(!CFG||!TRIP||!P||!window.inDoor)return;
+ var f=lj("via-met-"+TRIP.days[0].date+"_"+TRIP.days[TRIP.n-1].date,null),w=f&&f[P.date];if(!rainWet(w))return;
+ var hid=lj("via-rainb",{});if(hid[CFG.date+"|"+P.date])return;
+ var nw=paris(),io=function(id){var q=S[id];return inDoor(PD.id,id,q&&q.t)},used=allActs(),taken=[];
+ var outs=P.items.filter(function(it){return it.k==="act"&&S[it.id]&&io(it.id)===0&&!(P.date===nw.d&&it.t+it.d<=nw.m)});
+ var rows=outs.map(function(it){var o=S[it.id];var c=Object.keys(S).filter(function(id){var q=S[id];return q&&q.t&&q.pos&&id!==it.id&&io(id)===1&&used.indexOf(id)<0&&taken.indexOf(id)<0&&!(q.cl&&q.cl.indexOf(P.wd)>=0)&&!(q.multi&&!TRIP.multi)}).sort(function(a,b){return hav(S[a].pos,o.pos)-hav(S[b].pos,o.pos)})[0];if(c)taken.push(c);return[it,c]}).filter(function(r){return r[1]&&hav(S[r[1]].pos,S[r[0].id].pos)<4});
+ var el=document.createElement("div");el.id="rainb";el.className="rainb";el.setAttribute("role","region");el.setAttribute("aria-label","Piano B per la pioggia");
+ var pp=w.pp!=null?" ("+w.pp+"%)":"",ico='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 15a4 4 0 1 1 .9-7.9A5 5 0 0 1 17.5 8 3.5 3.5 0 0 1 17 15zM9 18l-1 2.5M13 18l-1 2.5M17 18l-1 2.5"/></svg>';
+ el.innerHTML='<div class="rbh">'+ico+'<b>Pioggia prevista'+pp+'</b><button type="button" class="rbx" aria-label="Nascondi il piano B per questo giorno">×</button></div>'+
+  (rows.length?'<p>Piano B: tappe al coperto vicine al posto di quelle all\'aperto. Lo scambio vale solo per questo giorno.</p><ul>'+rows.map(function(r){var a=S[r[0].id],b=S[r[1]];return '<li><span><s>'+esc(a.t)+'</s><b>'+esc(b.t)+'</b><small>'+kmTxt(a.pos,b.pos)+' · '+fdur(b.id)+' · '+chCost(b)+'</small></span><button type="button" class="btn ghost rbs" data-o="'+r[0].id+'" data-n="'+r[1]+'">Scambia</button></li>'}).join("")+'</ul>'+(rows.length>1?'<button type="button" class="btn rba">Scambia tutte</button>':'')
+  :'<p>'+(outs.length?'Non trovo tappe al coperto abbastanza vicine: porta l\'ombrello. ':'Le tappe di oggi sono già quasi tutte al coperto. ')+esc(String((PD.T&&PD.T.rainM)||""))+'</p>');
+ var host=$("#itinerario .wbox")||$("#steps");if(!host||!host.parentNode)return;host.parentNode.insertBefore(el,host);
+ $(".rbx",el).addEventListener("click",function(){hid[CFG.date+"|"+P.date]=1;ls("via-rainb",JSON.stringify(hid));el.remove();toast("Piano B nascosto per questo giorno")});
+ $$(".rbs",el).forEach(function(b){b.addEventListener("click",function(){repDo(P.i,b.dataset.o,b.dataset.n)})});
+ var all=$(".rba",el);if(all)all.addEventListener("click",function(){var di=P.i;rows.forEach(function(r){repDo(di,r[0].id,r[1])});toast("Piano B applicato: "+rows.length+" tappe al coperto")})}
 function repDo(di,old,nw,mode){var ro=repGet(),sv=JSON.stringify(COPT),q=S[nw];ro.d[di]=ro.d[di]||{};var prev=ro.d[di];
 /* se la tappa da sostituire era già una sostituzione, risalgo all'originale */
 var orig=old;Object.keys(prev).forEach(function(k){if(prev[k]===old){orig=k;delete prev[k]}});prev[orig]=nw;
@@ -843,7 +860,7 @@ if(!p){var d=Math.min(q++,5)*70;e.classList.add("itnew");e.animate([{opacity:0,t
 if(vis&&p.y!=null){var dy=p.y-itY(e);if(Math.abs(dy)>3)e.animate([{transform:"translateY("+dy+"px)"},{transform:"none"}],{duration:480,easing:ez})}
 if(p.t!==o.t){var a=$(".a",e);if(a){a.classList.add("itt");setTimeout(function(){a.classList.remove("itt")},1300);a.animate([{transform:"translateY(-6px)",opacity:0},{transform:"none",opacity:1}],{duration:380,delay:140,easing:ez,fill:"backwards"})}}})
 if(gone&&!nw){var g=$("#itinerario .gds");if(g)g.animate([{transform:"scaleY(1.015)"},{transform:"none"}],{duration:300,easing:"ease-out"})}}
-function renderItin(){$("#ith").textContent=TRIP.multi?"Giorno "+(SEL+1)+" · "+DAYS[P.wd]+" "+dateObj(P.date).getUTCDate():"Itinerario";LPN=0;var _snap=null;try{_snap=itSnap()}catch(e){}$("#steps").innerHTML=P.items.map(stepHTML).join("");LPN=0;buildWheel();buildCru();dayShareBtn();try{v212Itin()}catch(e){console.error(e)}try{itAnim(_snap)}catch(e){}}
+function renderItin(){$("#ith").textContent=TRIP.multi?"Giorno "+(SEL+1)+" · "+DAYS[P.wd]+" "+dateObj(P.date).getUTCDate():"Itinerario";LPN=0;var _snap=null;try{_snap=itSnap()}catch(e){}$("#steps").innerHTML=P.items.map(stepHTML).join("");LPN=0;buildWheel();buildCru();dayShareBtn();try{v212Itin()}catch(e){console.error(e)}try{rainPlan()}catch(e){}try{itAnim(_snap)}catch(e){}}
 
 /* cruscotto: riquadri meteo e alloggio sopra le tappe */
 function buildCru(){var old=$("#cru");if(old)old.remove();var tg=$("#tgr"),b=$(".cst",tg);

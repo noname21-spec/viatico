@@ -33,7 +33,7 @@ for c in LAZY:
 STUBS='(function(S){for(var k in S)if(!CITIES[k]){S[k].lazy=1;CITIES[k]=S[k]}})('+json.dumps({c:_ST[c] for c in LAZY},ensure_ascii=False,separators=(',',':')).replace('</','<\\/')+');\n'
 LOADER='''(function(){var id=null;try{id=sessionStorage.getItem("via-pick")}catch(e){}if(!id||!CITIES[id]){id=null;try{var t=JSON.parse(localStorage.getItem("via-trip")||"null");if(t&&t.date)id=t.dest||"paris"}catch(e){}}
 if(id&&CITIES[id]&&CITIES[id].lazy){document.write('<scr'+'ipt src="c/'+id+'.js?v='''+_VER+'''"></scr'+'ipt>')}})();\n'''
-cities=r('cities/_it.js')+'\n'+r('cities/paris.js')+'\n'+STUBS+r('foodtags.js')+'\n'+''.join(r(f)+'\n' for f in sorted(os.listdir(d)) if re.match(r'(cat|mov)[a-z0-9]*\.js$',f))+'\n'+r('words.js')+'\n'+LOADER
+cities=r('cities/_it.js')+'\n'+r('cities/paris.js')+'\n'+STUBS+r('foodtags.js')+'\n'+''.join(r(f)+'\n' for f in sorted(os.listdir(d)) if re.match(r'(cat|mov)[a-z0-9]*\.js$',f))+'\n'+r('words.js')+'\n'+r('indoor.js')+'\n'+LOADER
 boot='window.CITY_ORDER='+json.dumps(have)+';window.REG='+json.dumps(RG)+';window.REGN='+json.dumps(REGN,ensure_ascii=False)+';window.SOON='+json.dumps(soon,ensure_ascii=False)+''';
 (function(){var id=null;try{id=sessionStorage.getItem("via-pick")}catch(e){}if(!id||!CITIES[id]){id=null;try{var t=JSON.parse(localStorage.getItem("via-trip")||"null");if(t&&t.date)id=t.dest||"paris"}catch(e){}}
 window.PD=CITIES[id]||CITIES[CITY_ORDER[0]];if(PD.lazy){try{console.warn("città non caricata: "+id)}catch(e){}PD=window.PD=CITIES.paris}Object.keys(CITIES).forEach(function(k){var C=CITIES[k];C.fx=C.fx||{};C.T=C.T||{}});

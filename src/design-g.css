@@ -3217,3 +3217,20 @@ html[data-tsz="xl"]{font-size:125%}
 
 /* v292 equivalente in euro sotto l'importo */
 .xeq{display:block;margin:-4px 2px 10px;font-size:.8rem;color:var(--mute);font-variant-numeric:tabular-nums}
+
+/* v293 piano B per la pioggia */
+.rainb{margin:0 0 14px;padding:14px 14px 12px;border-radius:var(--gr2,18px);background:color-mix(in srgb,#2f6fb3 10%,var(--surf));border:1px solid color-mix(in srgb,#2f6fb3 26%,transparent);color:var(--ink)}
+.rainb .rbh{display:flex;align-items:center;gap:8px}
+.rainb .rbh svg{width:22px;height:22px;flex:none;fill:none;stroke:#2f6fb3;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+html[data-theme="dark"] .rainb .rbh svg{stroke:#8cbcf0}
+.rainb .rbh b{flex:1;font:700 1rem Outfit,system-ui,sans-serif}
+.rainb .rbx{all:unset;cursor:pointer;width:32px;height:32px;display:grid;place-items:center;border-radius:50%;font-size:1.3rem;color:var(--mute)}
+.rainb p{margin:6px 0 8px;font-size:.86rem;line-height:1.45;color:var(--mute)}
+.rainb ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.rainb li{display:flex;align-items:center;gap:10px;padding:0!important;border:0!important}
+.rainb li span{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;font-size:.88rem}
+.rainb li s{color:var(--mute);text-decoration-thickness:1px}
+.rainb li b{font-weight:700}
+.rainb li small{color:var(--mute);font-size:.76rem}
+.rainb .rbs{flex:none;min-height:38px;padding:0 14px;font-size:.86rem}
+.rainb .rba{width:100%;margin-top:10px;min-height:44px;justify-content:center;text-align:center}
