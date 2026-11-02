@@ -77,7 +77,17 @@ for c in have:
         if not it: continue
         for a_,b_ in zip(it,v):
             if a_ and b_ and a_!=b_: dic[a_]=b_
-    open(os.path.join(_cd,c+'.en.js'),'w').write('window.__I18N_ADD&&__I18N_ADD('+json.dumps(dic,ensure_ascii=False).replace('</','<\\/')+');\n')
+    # v296 note pratiche, locali e catalogo: src/en2/<id>.json = {chiave: inglese}
+    lg=[]
+    p2=os.path.join(d,'en2',c+'.json')
+    if os.path.exists(p2):
+        X=_IT.get(c,{}).get('__x',{})
+        for k,v in json.load(open(p2)).items():
+            it=X.get(k)
+            if it and v and it!=v:
+                dic[it]=v
+                if len(it)>=40: lg.append(it)
+    open(os.path.join(_cd,c+'.en.js'),'w').write('window.__I18N_ADD&&__I18N_ADD('+json.dumps(dic,ensure_ascii=False).replace('</','<\\/')+','+json.dumps(lg,ensure_ascii=False).replace('</','<\\/')+');\n')
 head=head.replace('__VER__',_VER)
 mark='html.pick #splash{display:none!important}'
 assert head.count(mark)==1

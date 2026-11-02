@@ -10,13 +10,17 @@ function alt(o){return Object.keys(o).join("|")}
 var reM=new RegExp("(^|[^A-Za-zÀ-ÿ])("+alt(MON)+")(?![A-Za-zÀ-ÿ])","gi"),reD=new RegExp("(^|[^A-Za-zÀ-ÿ])("+alt(DAY)+")(?![A-Za-zÀ-ÿ])","gi"),reA=new RegExp("^("+alt(DAB)+")(\\.?\\s+\\d)");
 function cap(a,b){return /^[A-ZÀ-Ý]{2}/.test(a)?b.toUpperCase():/^[A-ZÀ-Ý]/.test(a)?b:b}
 var C=new Map(),ENV=new Set();
-function tr(s){if(!s||s.length>600)return null;var m=/^(\s*)([\s\S]*?)(\s*)$/.exec(s),t=m[2];if(!t||!/[A-Za-zÀ-ÿ]/.test(t))return null;if(typeof ENV!=="undefined"&&ENV.has(t))return null;
+/* v296 frasi lunghe delle guide (note pratiche, locali, catalogo): si traducono anche dentro un paragrafo più lungo */
+var LONG=[];
+var LRX=[[/Senza biglietto: lo vedi da fuori, circa (\d+) minuti per il giro intorno e le foto\./g,"No ticket: you see it from outside, about $1 minutes to walk around and take photos."],[/Senza biglietto: ti fermi fuori e nelle vie, circa (\d+) minuti\./g,"No ticket: you stay outside and in the surrounding streets, about $1 minutes."],[/Il sole tramonta alle (\d{1,2}:\d\d): sei qui al momento giusto per la luce del tramonto\./g,"The sun sets at $1: you're here at just the right time for the sunset light."],[/Il sole tramonta alle (\d{1,2}:\d\d): goditi l'ultima luce\./g,"The sun sets at $1: enjoy the last of the light."]];
+function trLong(t){if(!LONG.length||t.length<40)return null;var o=t,hit=false;for(var r=0;r<LRX.length;r++){var o2=o.replace(LRX[r][0],LRX[r][1]);if(o2!==o){o=o2;hit=true}}for(var i=0;i<LONG.length;i++){var k=LONG[i];if(o.indexOf(k)>=0){o=o.split(k).join(D[k]);hit=true}}return hit?o:null}
+function tr(s){if(!s)return null;if(s.length>600){var m0=/^(\s*)([\s\S]*?)(\s*)$/.exec(s),l0=trLong(m0[2]);return l0==null?null:m0[1]+l0+m0[3]}var m=/^(\s*)([\s\S]*?)(\s*)$/.exec(s),t=m[2];if(!t||!/[A-Za-zÀ-ÿ]/.test(t))return null;if(typeof ENV!=="undefined"&&ENV.has(t))return null;
 var r;if(C.has(t))r=C.get(t);else{r=D[t];if(r==null&&t.length<=120){var o=t;for(var i=0;i<F.length;i++)if(F[i][2])o=o.replace(F[i][0],F[i][1]);
 var g=o;for(i=0;i<F.length;i++)if(!F[i][2])g=g.replace(F[i][0],F[i][1]);
 g=g.replace(reA,function(a,b,c){return DAB[b]+c}).replace(reM,function(a,p,w){return p+cap(w,MON[w.toLowerCase()])}).replace(reD,function(a,p,w){return p+cap(w,DAY[w.toLowerCase()])});
 if(g!==o&&!IT.test(g))o=g;
 var mp=/^(.+) in (\d+) (days?)$/.exec(o);if(mp&&D[mp[1]])o=D[mp[1]]+" in "+mp[2]+" "+mp[3];
-if(o!==t)r=o}if(r==null)r=null;C.set(t,r)}
+if(o!==t)r=o}if(r==null)r=trLong(t);if(r==null)r=null;C.set(t,r)}
 return r==null?null:m[1]+r+m[3]}
 window.VTR=function(s){var r=tr(s);return r==null?s:r};
 var AT=["aria-label","title","placeholder","alt"];
@@ -28,7 +32,7 @@ function walk(root){if(root.nodeType===3){txt(root);return}if(root.nodeType!==1)
 var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT),n;while(n=w.nextNode()){if(n.nodeType===3)txt(n);else el(n)}}
 function all(){walk(document.body);var t=tr(document.title);if(t)document.title=t}
 /* v286 testi delle guide in inglese: un file per città (c/<id>.en.js), caricato quando serve */
-window.__I18N_ADD=function(o){if(!o||typeof o!=="object")return;Object.keys(o).forEach(function(k){if(typeof o[k]==="string"){D[k]=o[k];ENV.add(o[k])}});C.clear();if(document.body)all()};
+window.__I18N_ADD=function(o,lg){if(!o||typeof o!=="object")return;Object.keys(o).forEach(function(k){if(typeof o[k]==="string"){D[k]=o[k];ENV.add(o[k])}});if(Array.isArray(lg))lg.forEach(function(k){if(D[k]&&LONG.indexOf(k)<0)LONG.push(k)});LONG.sort(function(a,b){return b.length-a.length});C.clear();if(document.body)all()};
 function guide(){var id=R.getAttribute("data-city")||"";if(!/^[a-z0-9_]+$/.test(id)||document.getElementById("gen-"+id))return;var sc=document.createElement("script");sc.id="gen-"+id;sc.src="c/"+id+".en.js";document.head.appendChild(sc)}
 guide();try{new MutationObserver(guide).observe(R,{attributes:true,attributeFilter:["data-city"]})}catch(e){}
 if(document.body)all();else document.addEventListener("DOMContentLoaded",all);
