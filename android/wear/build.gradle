@@ -1,0 +1,26 @@
+// v295 app per orologi Wear OS (Galaxy Watch): stessa identità e stessa firma dell'app del telefono, che le manda i dati
+apply plugin: 'com.android.application'
+
+android {
+    namespace "it.viaticum.app"
+    compileSdk rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "it.viaticum.app"
+        minSdk 30
+        targetSdk rootProject.ext.targetSdkVersion
+        versionCode Integer.parseInt(System.getenv("GITHUB_RUN_NUMBER") ?: "1")
+        versionName "1.0." + (System.getenv("GITHUB_RUN_NUMBER") ?: "1")
+    }
+    buildTypes {
+        release { minifyEnabled false }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'com.google.android.gms:play-services-wearable:19.0.0'
+    implementation 'com.google.zxing:core:3.5.3'
+}

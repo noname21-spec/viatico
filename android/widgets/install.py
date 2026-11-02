@@ -63,7 +63,19 @@ print("widget ok:", len(glob.glob(os.path.join(jd, "Vw*.java"))), "classi")
 # ZXing per disegnare i codici dei biglietti nei widget
 g = "app/build.gradle"
 gs = open(g).read()
+if "play-services-wearable" not in gs:
+    gs = gs.replace("dependencies {", "dependencies {\n    implementation 'com.google.android.gms:play-services-wearable:19.0.0'", 1)
 if "com.google.zxing:core" not in gs:
     gs = gs.replace("dependencies {", "dependencies {\n    implementation 'com.google.zxing:core:3.5.3'", 1)
-    open(g, "w").write(gs)
+open(g, "w").write(gs)
 print("zxing ok")
+
+# v295 app per l'orologio (Wear OS): modulo «wear» accanto all'app
+wsrc = os.path.join(here, "..", "wear")
+if os.path.isdir(wsrc):
+    shutil.rmtree("wear", ignore_errors=True)
+    shutil.copytree(wsrc, "wear")
+    sg = open("settings.gradle").read()
+    if "':wear'" not in sg:
+        open("settings.gradle", "a").write("\ninclude ':wear'\n")
+    print("wear ok")

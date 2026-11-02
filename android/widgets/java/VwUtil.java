@@ -162,6 +162,7 @@ public final class VwUtil {
         }
         VwLive.update(c);
         VwShort.update(c);
+        VwWear.push(c);
         schedule(c);
     }
     static String kindOf(Class<?> k) {
