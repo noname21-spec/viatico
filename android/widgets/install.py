@@ -24,6 +24,11 @@ for c, k in (("Next", "next"), ("Spend", "spend"), ("Map", "map"), ("Pass", "pas
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/vw_{k}_info" />
         </receiver>"""
 rec += """
+        <service android:name=".VwTile" android:exported="true" android:label="In ritardo" android:icon="@drawable/ic_stat_viaticum" android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter><action android:name="android.service.quicksettings.action.QS_TILE" /></intent-filter>
+            <meta-data android:name="android.service.quicksettings.ACTIVE_TILE" android:value="false" />
+        </service>"""
+rec += """
         <activity android:name=".VwQrActivity" android:exported="false" android:excludeFromRecents="true" android:taskAffinity="it.viaticum.app.qr" android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar" android:screenOrientation="portrait" />"""
 rec += """
         <activity android:name=".VwFxActivity" android:exported="false" android:excludeFromRecents="true" android:taskAffinity="it.viaticum.app.fx" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:windowSoftInputMode="stateVisible|adjustResize" />"""

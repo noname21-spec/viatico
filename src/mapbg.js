@@ -57,7 +57,10 @@ function hourIn(tz,now){try{var h=0,m=0;new Intl.DateTimeFormat("en-GB",{hour:"2
 function calc(){var now=new Date(),pd=window.PD,tz=pd&&pd.TZ||"Europe/Rome",ll=pd&&pd.LL||[45,10],t=hourIn(tz,now),w=sun(ll[0],ll[1],tz,now)||[7,18],sr=w[0],st=w[1],u=(t-sr)/(st-sr),day=u>=0&&u<=1,e,v=0;
  if(day)e=Math.sin(Math.PI*u);else{var nl=24-(st-sr),tt=t>=st?t-st:t+24-st;v=tt/nl;e=-Math.sin(Math.PI*v)}
  var L=ss(-.14,.2,e);return{t:t,u:u,v:v,e:e,L:L,N:1-L,W:Math.exp(-(e*e)/.045),day:day}}
-function lightTheme(){try{var b=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim(),m=/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(b);if(!m)return true;var h=m[1].length===3?m[1].replace(/./g,"$&$&"):m[1];return(parseInt(h.substr(0,2),16)*.3+parseInt(h.substr(2,2),16)*.59+parseInt(h.substr(4,2),16)*.11)>128}catch(e){return true}}
+/* v292 il colore di fondo si legge una volta per tema (prima: ricalcolo degli stili a ogni disegno del cielo) */
+var LTK=null,LTV=true;try{new MutationObserver(function(){LTK=null}).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme","class","data-city","style"]});matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(){LTK=null})}catch(e){}
+function lightTheme(){if(LTK!==null)return LTV;LTK=1;LTV=lightTheme0();return LTV}
+function lightTheme0(){try{var b=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim(),m=/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(b);if(!m)return true;var h=m[1].length===3?m[1].replace(/./g,"$&$&"):m[1];return(parseInt(h.substr(0,2),16)*.3+parseInt(h.substr(2,2),16)*.59+parseInt(h.substr(4,2),16)*.11)>128}catch(e){return true}}
 function paintSky(I){var E=env,S=I.sky,st=I.n.style,lt=lightTheme(),u=Math.max(0,Math.min(1,E.u)),v=Math.max(0,Math.min(1,E.v));
  st.setProperty("--N",E.N.toFixed(3));st.setProperty("--L",E.L.toFixed(3));st.setProperty("--mw",(E.W*.5).toFixed(3));
  var top=rgbA(mixc("#050b22","#3f8fdc",E.L)),mid=rgbA(mixc("#1b2d66","#bfe3f7",E.L)),w=E.W*.85;

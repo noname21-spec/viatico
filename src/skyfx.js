@@ -77,6 +77,9 @@ function build(svg,sfx,sky,lite){
 function addNight(far,mons,sky,sunX,sunY,rnd,lite){
   var st=el("g",{"class":"stars"},far);
   for(var i=0;i<(lite?0:16);i++){var x=-20+rnd()*440,y=-2+rnd()*46;if(Math.abs(x-sunX)<34&&Math.abs(y-sunY)<30)continue;el("circle",{cx:x.toFixed(1),cy:y.toFixed(1),r:(.6+rnd()*.6).toFixed(2),style:"--d:"+(rnd()*1.6).toFixed(2)+"s"},st)}
+  /* v292 le finestre si calcolano una volta sola per skyline (prima: centinaia di prove punto per punto a ogni apertura) */
+  var wkey="via-skw:"+(lite?"l":"f")+":"+skH(sky),wc=null;try{wc=SKW[wkey]||JSON.parse(localStorage.getItem(wkey)||"null")}catch(e){wc=null}
+  if(wc&&wc.length!=null){SKW[wkey]=wc;var wg0=el("g",{"class":"wins"},mons);wc.forEach(function(q){el("rect",{"class":"wn","data-o":q[2],x:q[0],y:q[1],width:1.8,height:2.6,rx:.3},wg0)});return}
   var tmp=document.createElementNS(NS,"svg");tmp.setAttribute("width","0");tmp.setAttribute("height","0");tmp.style.cssText="position:absolute;visibility:hidden;pointer-events:none";document.body.appendChild(tmp);
   var wg=el("g",{"class":"wins"},mons),pts=[];
   try{var doc=new DOMParser().parseFromString('<svg xmlns="'+NS+'">'+sky+"</svg>","image/svg+xml").documentElement,main=doc.querySelector(".sk-main");
@@ -89,7 +92,11 @@ function addNight(far,mons,sky,sunX,sunY,rnd,lite){
         var ok=true;for(var k=0;k<pts.length;k++){if(Math.abs(pts[k][0]-x)<4&&Math.abs(pts[k][1]-y)<4){ok=false;break}}
         if(!ok)continue;pts.push([x,y]);got++}})})}catch(e){}
   tmp.parentNode.removeChild(tmp);
-  pts.forEach(function(q){el("rect",{"class":"wn","data-o":rnd().toFixed(3),x:q[0].toFixed(1),y:q[1].toFixed(1),width:1.8,height:2.6,rx:.3},wg)})}
+  var out=pts.map(function(q){return[q[0].toFixed(1),q[1].toFixed(1),rnd().toFixed(3)]});
+  out.forEach(function(q){el("rect",{"class":"wn","data-o":q[2],x:q[0],y:q[1],width:1.8,height:2.6,rx:.3},wg)});
+  if(pts.length||main){SKW[wkey]=out;try{var ks=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf("via-skw:")===0)ks.push(k)}if(ks.length>24)ks.slice(0,ks.length-20).forEach(function(k){localStorage.removeItem(k)});localStorage.setItem(wkey,JSON.stringify(out))}catch(e){}}}
+var SKW={};
+function skH(s){s=String(s||"");var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return (h>>>0).toString(36)+s.length}
 /* generatore ripetibile per città: stessa fila di palazzi a ogni apertura */
 function seedR(str){var h=7;for(var i=0;i<str.length;i+=7)h=(h*31+str.charCodeAt(i))%233280;var s=h||7;return function(){s=(s*9301+49297)%233280;return s/233280}}
 /* fila di palazzi qualsiasi dietro i monumenti, con le loro finestre */

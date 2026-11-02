@@ -3214,3 +3214,6 @@ html[data-tsz="xl"]{font-size:125%}
 #spast .spon u{margin-left:4px;color:var(--ga);text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px}
 #setup input[list]::-webkit-calendar-picker-indicator{display:none!important;opacity:0}
 .scard[data-st="1"] #spast .spon,.scard[data-st="2"] #spast .spon,.scard[data-st="3"] #spast .spon{display:none}
+
+/* v292 equivalente in euro sotto l'importo */
+.xeq{display:block;margin:-4px 2px 10px;font-size:.8rem;color:var(--mute);font-variant-numeric:tabular-nums}

@@ -1458,10 +1458,11 @@ if(QC&&CU){o.a=Math.round(v*(CU.e||1)*100)/100;o.o={v:v,c:CU.c,s:CU.s}}
 addQuick(o);i.value=""})})();
 function openExp(id){var N=CFG.ppl,x=id?(SP.x||[]).filter(function(z){return z.id===id})[0]:null,nm=names(),CU=PD.CUR,CT=cats();
 var hr=new Date().getHours(),dc=hr<11?"co":hr<16?"pr":"ce";if(!CT.some(function(c){return c[0]===dc}))dc="ex";
-var st={m:x?(x.m||"eq"):"eq",w:x&&x.w&&x.w.length?x.w.slice():allIdx(N),p:x?Math.min(N-1,x.p||0):Math.min(N-1,SP.lp||0),xv:x&&x.xv?x.xv.slice():[],cu:x&&x.o?x.o.c:"EUR",c:x?x.c:(SP.lc&&CT.some(function(c){return c[0]===SP.lc})?SP.lc:dc)};
+var td0=new Date().toISOString().slice(0,10),inTrip=CFG.date<=td0&&(CFG.date_r||CFG.date)>=td0;
+var st={m:x?(x.m||"eq"):"eq",w:x&&x.w&&x.w.length?x.w.slice():allIdx(N),p:x?Math.min(N-1,x.p||0):Math.min(N-1,SP.lp||0),xv:x&&x.xv?x.xv.slice():[],cu:x?(x.o?x.o.c:"EUR"):(CU&&(SP.lcu===CU.c||(SP.lcu==null&&inTrip))?CU.c:"EUR"),c:x?x.c:(SP.lc&&CT.some(function(c){return c[0]===SP.lc})?SP.lc:dc)};
 var av=x?(x.o?x.o.v:x.a):"";
 var h='<h3>'+(x?"Modifica spesa":"Nuova spesa")+'</h3><div class="xf">'+
-'<label>Importo<span class="xamt"><input id="xa" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0,00" value="'+esc(av)+'">'+(CU?'<select id="xcu" aria-label="Valuta"><option value="EUR">€</option><option value="'+esc(CU.c)+'"'+(st.cu===CU.c?" selected":"")+'>'+esc(CU.s)+'</option></select>':'<span class="xeu">€</span>')+'</span></label>'+
+'<label>Importo<span class="xamt"><input id="xa" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0,00" value="'+esc(av)+'">'+(CU?'<select id="xcu" aria-label="Valuta"><option value="EUR">€</option><option value="'+esc(CU.c)+'"'+(st.cu===CU.c?" selected":"")+'>'+esc(CU.s)+'</option></select>':'<span class="xeu">€</span>')+'</span></label>'+(CU?'<small class="xeq" id="xeq" aria-live="polite"></small>':'')+
 '<label>Descrizione<input id="xd" type="text" maxlength="40" placeholder="Es. cena in birreria" value="'+esc(x?x.d:"")+'"></label>'+
 '<label>Categoria<select id="xc">'+CT.map(function(c){return '<option value="'+c[0]+'"'+(c[0]===st.c?" selected":"")+'>'+(CI[c[0]]||"")+" "+c[1]+'</option>'}).join("")+'</select></label>'+
 (N>1?'<label>Pagato da<select id="xp">'+nm.map(function(n,i){return '<option value="'+i+'"'+(i===st.p?" selected":"")+'>'+esc(n)+'</option>'}).join("")+'</select></label><div class="xw"><span>Diviso tra</span><div class="xmodes" role="tablist"><button type="button" data-m="eq">Uguale</button><button type="button" data-m="ex">Importi</button><button type="button" data-m="pc">%</button></div><div id="xpl"></div><div id="xchk" class="xchk" aria-live="polite"></div></div>':'')+
@@ -1472,6 +1473,9 @@ function cur(){var s=$("#xcu");return s?s.value:"EUR"}
 function flTot(){var pp=flightRows().reduce(function(q,r){return q+r[2]},0);return Math.round(pp*N*100)/100}
 $("#xc").addEventListener("change",function(){if(this.value!=="vo")return;var t=flTot(),a=$("#xa"),d=$("#xd");if(t>0&&!(parseFloat(String(a.value).replace(",","."))>0)){a.value=t;if(!d.value.trim())d.value="Voli";a.dispatchEvent(new Event("input"));toast("Importo preso dai costi dei voli")}})
 function rate(){return cur()==="EUR"?1:(CU&&CU.e)||1}
+/* v292 l'equivalente in euro mentre scrivi, con il cambio del giorno */
+function eqPaint(){var e=$("#xeq");if(!e)return;if(cur()==="EUR"){e.textContent=CU?"Puoi scrivere anche in "+CU.s+": tocca € per cambiare valuta":"";return}var v=val();e.textContent=(v>0?"≈ "+money(v*rate())+" € · ":"")+"1 € = "+money(1/rate())+" "+CU.s+(CU.d?" · cambio BCE del "+CU.d.slice(5).split("-").reverse().join("/"):" · cambio indicativo")}
+setTimeout(function(){var a=$("#xa"),c=$("#xcu");if(a)a.addEventListener("input",eqPaint);if(c)c.addEventListener("change",function(){SP.lcu=c.value;eqPaint()});eqPaint()},0);
 function sym(){return cur()==="EUR"?"€":(CU&&CU.s)||"€"}
 function tcents(){return Math.round(val()*rate()*100)}
 function money(v){return (Math.round(v*100)/100).toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2})}
@@ -1773,6 +1777,9 @@ function wgSky(pl,o){try{var th=o&&o.theme,id=null;Object.keys(CITIES).forEach(f
  var xml=new XMLSerializer().serializeToString(z),im=new Image();im.onload=function(){try{var cv=document.createElement("canvas");cv.width=vb[2]*3;cv.height=vb[3]*3;cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);var png=cv.toDataURL("image/png").split(",")[1];if(pl.skyline)pl.skyline({png:png}).then(function(){WGSK=key}).catch(function(){})}catch(e){}};im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(xml)}catch(e){}}
 var WGT=0;function wgSoon(){clearTimeout(WGT);WGT=setTimeout(wgPush,700)}
 /* v287 meteo ora per ora per il widget «Meteo e piano B»: solo a viaggio vicino o in corso, al massimo una volta l'ora */
+/* v292 cambio del giorno per la valuta del posto (dati BCE tramite frankfurter.dev), conservato per l'uso offline */
+function fxLive(){try{var C=PD&&PD.CUR;if(!C||!C.c||C.c==="EUR")return;var q=lj("via-fx",{}),r=q[C.c];if(r&&r.v>0){C.e=1/r.v;C.d=r.d}if(r&&Date.now()-r.at<12*36e5)return;
+ fetch("https://api.frankfurter.dev/v1/latest?base=EUR&symbols="+encodeURIComponent(C.c)).then(function(x){if(!x.ok)throw 0;return x.json()}).then(function(j){var v=j&&j.rates&&j.rates[C.c];if(!(v>0))return;var q2=lj("via-fx",{});q2[C.c]={v:v,d:j.date||"",at:Date.now()};ls("via-fx",JSON.stringify(q2));C.e=1/v;C.d=j.date||"";wgSoon()}).catch(function(){})}catch(e){}}
 function wgWx(){try{if(!CFG||!PD||!PD.LL)return;var td=new Date().toISOString().slice(0,10),to=CFG.date_r||CFG.date,lim=new Date(Date.now()+2*864e5).toISOString().slice(0,10);if(to<td||CFG.date>lim)return;var wh=lj("via-wxh",null);if(wh&&wh.id===PD.id&&Date.now()-wh.at<36e5)return;
  fetch("https://api.open-meteo.com/v1/forecast?latitude="+PD.LL[0]+"&longitude="+PD.LL[1]+"&hourly=weathercode,temperature_2m,precipitation_probability&timeformat=unixtime&forecast_days=3").then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){var H=j&&j.hourly;if(!H||!H.time)return;var h=H.time.map(function(t,i){return[t*1000,H.weathercode[i],Math.round(H.temperature_2m[i]),H.precipitation_probability?H.precipitation_probability[i]:null]}).filter(function(r){return r[1]!=null&&r[0]>Date.now()-36e5}).slice(0,48);ls("via-wxh",JSON.stringify({id:PD.id,at:Date.now(),h:h}));wgSoon()}).catch(function(){})}catch(e){}}
 /* v287 i pulsanti dei widget (spesa, mappa, biglietti, ritardo) aprono l'app nel punto giusto */
@@ -1794,7 +1801,7 @@ var BOOT=true;
 function renderAll(){if(!CFG)return;if(PAR.flush)PAR.flush();TRIP=buildTrip(CFG);try{lateApply(TRIP)}catch(e){}var ti=todayIdx();SEL=ti>=0?ti:Math.min(SEL,TRIP.n-1);if(SEL<0)SEL=0;P=TRIP.days[SEL];WD=P.wd;lastNow=-2;
 renderHero();renderDays();renderBar();renderStay();renderShort();renderItin();renderAvv();liveTick();
 var _wgRA=renderAll;renderAll=function(){var r=_wgRA.apply(this,arguments);wgSoon();return r};
-function rest(){PREADY=false;meteo();PREADY=true;renderVoli();renderPasti();renderCosti(false);renderSpese();renderConsigli();try{preHero()}catch(e){}}
+function rest(){PREADY=false;try{fxLive()}catch(e){}meteo();PREADY=true;renderVoli();renderPasti();renderCosti(false);renderSpese();renderConsigli();try{preHero()}catch(e){}}
 /* all'avvio le schede non visibili si preparano dopo la prima schermata, quando l'intro è finita; al primo tocco subito */
 if(BOOT){BOOT=false;var bt=setTimeout(function(){PAR.flush&&PAR.flush()},3900);PAR.flush=function(){clearTimeout(bt);PAR.flush=null;rest();PAR.emit()}}else rest();
 PAR.emit()}
