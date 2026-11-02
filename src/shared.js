@@ -1,5 +1,5 @@
 /* ===== viaggio condiviso: lo stesso viaggio su più telefoni, con un codice =====
-   Si condividono date, voli, alloggio, ritmo, tappe saltate e biglietti scelti.
+   Si condividono date, voli, alloggio, ritmo, tappe saltate e sostituite, biglietti, orari prenotati, spese, rimborsi, nomi e ritardi.
    Ogni telefono controlla ogni pochi secondi: se qualcuno cambia qualcosa, l'altro lo vede da solo.
    Se due persone cambiano cose diverse insieme, le modifiche si uniscono; sulla stessa cosa vince l'ultima. */
 (function(){
@@ -23,13 +23,31 @@ function one(r){return Array.isArray(r)?r[0]:r}
 function stGet(code){try{return JSON.parse(g("via-sh:"+code)||"null")||{rev:0,base:null}}catch(e){return{rev:0,base:null}}}
 function stSet(code,o){p("via-sh:"+code,JSON.stringify(o))}
 /* il documento si appiattisce in coppie chiave/valore per unire campo per campo */
+/* v294 nel documento anche orari prenotati (b), spese (x), rimborsi (q), nomi (n) e ritardi del giorno (l): si uniscono voce per voce */
 function flat(d){var f={};if(!d)return f;var c=d.cfg||{};Object.keys(c).forEach(function(k){f["c."+k]=JSON.stringify(c[k])});
  var s=d.skip||{};Object.keys(s).forEach(function(k){if(s[k]&&s[k].length)f["s."+k]=JSON.stringify(s[k])});
  var t=d.tk||{};Object.keys(t).forEach(function(k){f["t."+k]=JSON.stringify(t[k])});
-var r=d.rep||{};Object.keys(r).forEach(function(k){if(r[k]&&Object.keys(r[k]).length)f["r."+k]=JSON.stringify(r[k])});return f}
-function unflat(f){var d={v:1,cfg:{},skip:{},tk:{},rep:{}};Object.keys(f).sort().forEach(function(k){var v=JSON.parse(f[k]),n=k.slice(2);if(k[0]==="c")d.cfg[n]=v;else if(k[0]==="s")d.skip[n]=v;else if(k[0]==="r")d.rep[n]=v;else d.tk[n]=v});return d}
-function merge(base,mine,theirs){var b=flat(base),m=flat(mine),t=flat(theirs),out={},keys={};[b,m,t].forEach(function(o){Object.keys(o).forEach(function(k){keys[k]=1})});
- Object.keys(keys).forEach(function(k){var v=m[k]!==b[k]?m[k]:t[k];if(v!==undefined)out[k]=v});return unflat(out)}
+ var r=d.rep||{};Object.keys(r).forEach(function(k){if(r[k]&&Object.keys(r[k]).length)f["r."+k]=JSON.stringify(r[k])});
+ var b=d.bk||{};Object.keys(b.d||{}).forEach(function(k){if(b.d[k]&&Object.keys(b.d[k]).length)f["b.d"+k]=JSON.stringify(b.d[k])});if(b.m&&Object.keys(b.m).length)f["b.m"]=JSON.stringify(b.m);
+ (d.x||[]).forEach(function(e){if(e&&e.id)f["x."+e.id]=JSON.stringify(e)});
+ (d.q||[]).forEach(function(e){if(e&&e.id)f["q."+e.id]=JSON.stringify(e)});
+ if(d.n&&d.n.length)f["n.all"]=JSON.stringify(d.n);
+ if(d.l&&d.l.s&&d.l.s.length)f["l.day"]=JSON.stringify(d.l);
+ return f}
+function unflat(f,ext){var d={v:ext?2:1,cfg:{},skip:{},tk:{},rep:{},bk:{d:{},m:{}}};if(ext){d.x=[];d.q=[];d.n=[];d.l=null}
+ Object.keys(f).sort().forEach(function(k){var v=JSON.parse(f[k]),g=k.slice(0,1),n=k.slice(2);
+  if(g==="c")d.cfg[n]=v;else if(g==="s")d.skip[n]=v;else if(g==="r")d.rep[n]=v;else if(g==="t")d.tk[n]=v;
+  else if(g==="b"){if(n==="m")d.bk.m=v;else d.bk.d[n.slice(1)]=v}
+  else if(!ext)return;else if(g==="x")d.x.push(v);else if(g==="q")d.q.push(v);else if(g==="n")d.n=v;else if(g==="l")d.l=v});
+ if(ext){var byT=function(a,b){return(a.t||0)-(b.t||0)};d.x.sort(byT);d.q.sort(byT)}return d}
+/* un telefono con una versione vecchia non manda spese e ritardi: per quelle parti tengo le mie, non le cancello */
+function hasExt(d){return !!d&&d.x!==undefined}
+function merge(base,mine,theirs){var ext=hasExt(mine)||hasExt(theirs),b=flat(base),m=flat(mine),t=flat(theirs),out={},keys={};
+ if(!hasExt(theirs)){Object.keys(m).forEach(function(k){if(/^[xqnl]\./.test(k))t[k]=m[k]});Object.keys(b).forEach(function(k){if(/^[xqnl]\./.test(k)&&t[k]===undefined)b[k]=undefined})}
+ /* primo giro dopo l'aggiornamento (la base non ha spese): tengo le mie e quelle degli altri */
+ if(!hasExt(base)){Object.keys(m).forEach(function(k){if(/^[xqnl]\./.test(k)&&t[k]!==undefined)b[k]=t[k];else if(/^[xqnl]\./.test(k))b[k]=undefined})}
+ [b,m,t].forEach(function(o){Object.keys(o).forEach(function(k){keys[k]=1})});
+ Object.keys(keys).forEach(function(k){var v=m[k]!==b[k]?m[k]:t[k];if(v!==undefined)out[k]=v});return unflat(out,ext)}
 function same(a,b){return JSON.stringify(flat(a))===JSON.stringify(flat(b))}
 function sortedStr(d){var f=flat(d),o={};Object.keys(f).sort().forEach(function(k){o[k]=f[k]});return JSON.stringify(o)}
 function busyUI(){var s=$("#setup");return !!(s&&s.classList.contains("on"))}
@@ -76,7 +94,7 @@ function paint(){var m=$("#shm");if(!m||!m.classList.contains("on"))return;var b
   var inp=$("#shmin");inp.addEventListener("input",function(){inp.value=inp.value.toUpperCase().replace(/[^A-Z0-9]/g,"")});
   $("#shmgo").onclick=function(){var c=inp.value.trim().toUpperCase();if(c.length!==6){say("Il codice ha 6 caratteri");return}join(c)};
   var mk=$("#shmmk");if(mk)mk.onclick=function(){m.dataset.mode="make";paint()};return}
- if(!code){b.innerHTML='<p class="qrp">Chi entra con il codice vede il tuo viaggio e lo modifica con te: voli, alloggio e tappe si aggiornano da soli su tutti i telefoni. Chiunque abbia il codice può modificarlo, quindi daglielo solo a chi viaggia con te.</p><div class="qrb"><button type="button" class="btn" id="shmnew">Crea il codice</button><button type="button" class="btn ghost" id="shmj">Ho già un codice</button></div><p class="qrp" id="shmst"></p>';
+ if(!code){b.innerHTML='<p class="qrp">Chi entra con il codice vede il tuo viaggio e lo modifica con te: tappe, voli, alloggio, orari prenotati, spese e ritardi si aggiornano da soli su tutti i telefoni, in pochi secondi. Chiunque abbia il codice può modificarlo, quindi daglielo solo a chi viaggia con te.</p><div class="qrb"><button type="button" class="btn" id="shmnew">Crea il codice</button><button type="button" class="btn ghost" id="shmj">Ho già un codice</button></div><p class="qrp" id="shmst"></p>';
   $("#shmnew").onclick=function(){create()};$("#shmj").onclick=function(){m.dataset.mode="join";paint()};return}
  var ago=lastOk?Math.max(0,Math.round((Date.now()-lastOk)/1000)):-1;
  b.innerHTML='<p class="qrp">Codice del viaggio</p><div class="shcode" id="shcode">'+esc(code)+'</div><p class="qrp">Fai inserire il codice dal menu «Entra con un codice», oppure manda il link: si apre il viaggio da solo.</p><div class="qrb"><button type="button" class="btn" id="shmsend">Invia il codice</button><button type="button" class="btn ghost" id="shmcp">Copia il codice</button><button type="button" class="btn ghost" id="shmstop">Smetti di condividere</button></div><p class="qrp" id="shmst">'+esc(note||(ago<0?"Controllo gli aggiornamenti…":(ago<20?"Aggiornato ✓":"Ultimo controllo "+Math.round(ago/60)+" min fa")))+'</p>';
