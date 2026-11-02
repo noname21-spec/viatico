@@ -26,9 +26,10 @@ public final class VwLive {
     static boolean enabled(Context c) { return c.getSharedPreferences(VwUtil.PREFS, 0).getBoolean("live_on", true); }
 
     static void channel(Context c, NotificationManager nm) {
-        if (Build.VERSION.SDK_INT < 26 || nm.getNotificationChannel(CH) != null) return;
+        if (Build.VERSION.SDK_INT < 26) return;
+        /* v298 ricreato ogni volta: aggiorna nome e descrizione sui telefoni che l'avevano già (l'importanza resta quella scelta dall'utente) */
         NotificationChannel ch = new NotificationChannel(CH, "Viaggio in corso", NotificationManager.IMPORTANCE_LOW);
-        ch.setDescription("La prossima tappa e il volo del giorno, sempre in vista (anche nella Now Bar dei Samsung)");
+        ch.setDescription("La prossima tappa e il volo del giorno, sempre in vista tra le notifiche e sulla schermata di blocco");
         ch.setShowBadge(false);
         nm.createNotificationChannel(ch);
     }
