@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
    Solo in due momenti: la giornata di viaggio in corso e il giorno del volo, dall'imbarco all'atterraggio. */
 public final class VwLive {
     static final String CH = "via_live", DISMISS = "it.viaticum.app.LIVE_DISMISS";
-    static final int NID = 4242;
+    static final int NID = 4242, NID_DEMO = 4243;
     private VwLive() {}
 
     static boolean enabled(Context c) { return c.getSharedPreferences(VwUtil.PREFS, 0).getBoolean("live_on", true); }
@@ -107,7 +107,8 @@ public final class VwLive {
         chip(nb, "prova");
         nb.setProgress(4, 1, false);
         if (Build.VERSION.SDK_INT >= 26) nb.setTimeoutAfter(10 * 60000L);
-        nm.notify(NID, nb.build());
+        /* v297 un id tutto suo: gli aggiornamenti della notifica vera (che senza viaggio fanno cancel) non la toccano */
+        nm.notify(NID_DEMO, nb.build());
     }
 
     /* il giorno del volo: da un'ora prima dell'imbarco all'atterraggio */
