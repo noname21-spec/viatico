@@ -160,6 +160,7 @@ public final class VwUtil {
             String kind = kindOf(k);
             for (int id : ids) render(c, m, id, kind);
         }
+        VwLive.update(c);
         schedule(c);
     }
     static String kindOf(Class<?> k) {

@@ -46,6 +46,8 @@ if "android.intent.action.SEND" not in s:
     j = s.index("android.intent.category.LAUNCHER")
     j = s.index("</intent-filter>", j) + len("</intent-filter>")
     s = s[:j] + share + s[j:]
+if "POST_PROMOTED_NOTIFICATIONS" not in s:
+    s = s.replace("</manifest>", '    <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />\n</manifest>')
 if "POST_NOTIFICATIONS" not in s:
     s = s.replace("</manifest>", '    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n</manifest>')
 i = s.rindex("</application>")

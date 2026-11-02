@@ -25,6 +25,7 @@ public abstract class VwBase extends AppWidgetProvider {
     public void onReceive(Context c, Intent i) {
         super.onReceive(c, i);
         String a = i.getAction();
+        if (VwLive.DISMISS.equals(a)) { VwLive.dismissed(c, i); return; }
         if (VwUtil.TICK.equals(a) || Intent.ACTION_TIME_CHANGED.equals(a) || Intent.ACTION_TIMEZONE_CHANGED.equals(a)) VwUtil.updateAll(c);
     }
 }

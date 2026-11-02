@@ -1781,6 +1781,12 @@ function wgAct(a){if(!a)return;var n=0;function tab(k){var r=$("#t-"+k);if(r){r.
  function run(){try{if(a==="late"){tab("itinerario");setTimeout(function(){lateAsk(false)},350)}else if(a==="spend"){tab("costi");setTimeout(function(){openExp(null)},450)}else if(a==="map")tab("mappa");else if(a==="tix"&&window.__tixImport)window.__tixImport()}catch(e){}}
  if(ready()){run();return}if(window.__openNext)window.__openNext();var iv=setInterval(function(){if(ready()&&++n>1){clearInterval(iv);run()}else if(++n>40)clearInterval(iv)},300)}
 function wgActPoll(){try{var C=window.Capacitor;if(!C||!(C.isNativePlatform&&C.isNativePlatform()))return;var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));if(!pl||!pl.act)return;pl.act().then(function(r){if(r&&r.a)wgAct(r.a)}).catch(function(){})}catch(e){}}
+/* v291 interruttore della notifica «in corso» (Now Bar dei Samsung), solo nell'app Android */
+function liveUi(){try{var C=window.Capacitor;if(!C||!(C.isNativePlatform&&C.isNativePlatform()))return;var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));var lb=$("#livet"),cb=$("#livec"),sm=$("#lives");if(!pl||!pl.liveGet||!lb||!cb||cb.__w)return;cb.__w=1;
+ var base=sm?sm.textContent:"";function show(r){cb.checked=!!r.on;if(sm)sm.textContent=r.on&&r.perm===false?"Le notifiche di Viaticum sono spente nelle impostazioni del telefono: attivale per vederla.":base}
+ pl.liveGet().then(function(r){lb.hidden=false;show(r)}).catch(function(){});
+ cb.addEventListener("change",function(){pl.liveSet({on:cb.checked}).then(function(r){show(r);toast(r.on?"Viaggio in corso: attivo":"Viaggio in corso: spento")}).catch(function(){})})}catch(e){}}
+setTimeout(liveUi,1600);
 window.addEventListener("viaact",wgActPoll);setTimeout(wgActPoll,1500);window.__wgAct=wgAct;
 function wgPush(){try{var C=window.Capacitor;if(!C||!(C.isNativePlatform&&C.isNativePlatform()))return;wgWx();var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));if(!pl||!pl.save)return;var sn=wgSnap();pl.save({json:JSON.stringify(sn)}).catch(function(){});wgSky(pl,sn)}catch(e){}}
 document.addEventListener("visibilitychange",function(){if(document.hidden)wgPush()});setInterval(function(){if(!document.hidden)wgPush()},5*60*1000);

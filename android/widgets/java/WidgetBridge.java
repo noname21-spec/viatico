@@ -39,6 +39,42 @@ import org.json.JSONObject;
 public class WidgetBridge extends Plugin {
     static volatile String ACT = null;
 
+    /* v291 notifica «in corso» per la Now Bar: interruttore nelle impostazioni */
+    @PluginMethod
+    public void liveGet(PluginCall call) {
+        JSObject r = new JSObject();
+        r.put("on", VwLive.enabled(getContext()));
+        r.put("perm", notifOk());
+        r.put("promo", promoOk());
+        call.resolve(r);
+    }
+
+    @PluginMethod
+    public void liveSet(PluginCall call) {
+        boolean on = Boolean.TRUE.equals(call.getBoolean("on", true));
+        getContext().getSharedPreferences(VwUtil.PREFS, 0).edit().putBoolean("live_on", on).remove("live_skip").apply();
+        if (on && !notifOk() && android.os.Build.VERSION.SDK_INT >= 33) {
+            try { androidx.core.app.ActivityCompat.requestPermissions(getActivity(), new String[]{"android.permission.POST_NOTIFICATIONS"}, 7701); } catch (Throwable ignored) {}
+        }
+        VwUtil.updateAll(getContext());
+        JSObject r = new JSObject();
+        r.put("on", on);
+        r.put("perm", notifOk());
+        r.put("promo", promoOk());
+        call.resolve(r);
+    }
+
+    private boolean notifOk() {
+        try { return androidx.core.app.NotificationManagerCompat.from(getContext()).areNotificationsEnabled(); } catch (Throwable e) { return true; }
+    }
+    private boolean promoOk() {
+        try {
+            android.app.NotificationManager nm = (android.app.NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            java.lang.reflect.Method m = nm.getClass().getMethod("canPostPromotedNotifications");
+            return Boolean.TRUE.equals(m.invoke(nm));
+        } catch (Throwable e) { return false; }
+    }
+
     /* v287 l'azione scelta dal widget, una volta sola */
     @PluginMethod
     public void act(PluginCall call) {
