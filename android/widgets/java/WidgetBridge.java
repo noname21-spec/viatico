@@ -46,6 +46,7 @@ public class WidgetBridge extends Plugin {
         r.put("on", VwLive.enabled(getContext()));
         r.put("perm", notifOk());
         r.put("promo", promoOk());
+        r.put("known", promoKnown());
         call.resolve(r);
     }
 
@@ -61,7 +62,44 @@ public class WidgetBridge extends Plugin {
         r.put("on", on);
         r.put("perm", notifOk());
         r.put("promo", promoOk());
+        r.put("known", promoKnown());
         call.resolve(r);
+    }
+
+    /* v296 prova della notifica e scorciatoia alle impostazioni delle notifiche live */
+    @PluginMethod
+    public void liveTest(PluginCall call) {
+        if (!notifOk() && android.os.Build.VERSION.SDK_INT >= 33) {
+            try { androidx.core.app.ActivityCompat.requestPermissions(getActivity(), new String[]{"android.permission.POST_NOTIFICATIONS"}, 7701); } catch (Throwable ignored) {}
+        }
+        try { VwLive.demo(getContext()); } catch (Throwable ignored) {}
+        JSObject r = new JSObject();
+        r.put("perm", notifOk());
+        r.put("promo", promoOk());
+        call.resolve(r);
+    }
+
+    @PluginMethod
+    public void liveSettings(PluginCall call) {
+        String pkg = getContext().getPackageName();
+        String[] acts = {"android.settings.APP_NOTIFICATION_PROMOTION_SETTINGS", android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS};
+        boolean ok = false;
+        for (String a : acts) {
+            try {
+                android.content.Intent i = new android.content.Intent(a).putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, pkg).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                if (i.resolveActivity(getContext().getPackageManager()) == null) continue;
+                getContext().startActivity(i);
+                ok = true;
+                break;
+            } catch (Throwable ignored) {}
+        }
+        JSObject r = new JSObject();
+        r.put("ok", ok);
+        call.resolve(r);
+    }
+
+    private boolean promoKnown() {
+        try { android.app.NotificationManager.class.getMethod("canPostPromotedNotifications"); return true; } catch (Throwable e) { return false; }
     }
 
     private boolean notifOk() {

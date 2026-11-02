@@ -3234,3 +3234,6 @@ html[data-theme="dark"] .rainb .rbh svg{stroke:#8cbcf0}
 .rainb li small{color:var(--mute);font-size:.76rem}
 .rainb .rbs{flex:none;min-height:38px;padding:0 14px;font-size:.86rem}
 .rainb .rba{width:100%;margin-top:10px;min-height:44px;justify-content:center;text-align:center}
+
+/* v296 prova e impostazioni della notifica live */
+.livb{display:flex;flex-wrap:wrap;gap:8px;padding:2px 14px 12px}.livb[hidden]{display:none}.livb .btn{flex:1 1 140px;min-height:44px;font-size:.86rem;padding:8px 12px}

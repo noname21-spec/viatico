@@ -93,6 +93,23 @@ public final class VwLive {
         return m < 60 ? m + " min" : (m / 60) + " h" + (m % 60 > 0 ? " " + (m % 60) : "");
     }
 
+    /* v296 prova: una notifica di esempio subito, per vedere com'è e far comparire Viaticum tra le app con notifiche live.
+       Sparisce da sola dopo 10 minuti */
+    public static void demo(Context c) {
+        NotificationManager nm = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (nm == null) return;
+        channel(c, nm);
+        long now = System.currentTimeMillis(), t = now + 10 * 60000L;
+        Notification.Builder nb = base(c, "demo");
+        String text = "Prova di Viaticum: così vedrai la prossima tappa durante il viaggio";
+        nb.setContentTitle("Galleria Borghese alle " + VwUtil.hm(t)).setContentText(text).setStyle(new Notification.BigTextStyle().bigText(text));
+        countdown(nb, t);
+        chip(nb, "prova");
+        nb.setProgress(4, 1, false);
+        if (Build.VERSION.SDK_INT >= 26) nb.setTimeoutAfter(10 * 60000L);
+        nm.notify(NID, nb.build());
+    }
+
     /* il giorno del volo: da un'ora prima dell'imbarco all'atterraggio */
     static Notification flight(Context c, JSONObject o, long now) {
         if (VwUtil.noTrip(o)) return null;

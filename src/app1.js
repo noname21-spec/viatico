@@ -1807,7 +1807,11 @@ function wgAct(a){if(!a)return;var n=0;function tab(k){var r=$("#t-"+k);if(r){r.
 function wgActPoll(){try{var C=window.Capacitor;if(!C||!(C.isNativePlatform&&C.isNativePlatform()))return;var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));if(!pl||!pl.act)return;pl.act().then(function(r){if(r&&r.a)wgAct(r.a)}).catch(function(){})}catch(e){}}
 /* v291 interruttore della notifica «in corso» (Now Bar dei Samsung), solo nell'app Android */
 function liveUi(){try{var C=window.Capacitor;if(!C||!(C.isNativePlatform&&C.isNativePlatform()))return;var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));var lb=$("#livet"),cb=$("#livec"),sm=$("#lives");if(!pl||!pl.liveGet||!lb||!cb||cb.__w)return;cb.__w=1;
- var base=sm?sm.textContent:"";function show(r){cb.checked=!!r.on;if(sm)sm.textContent=r.on&&r.perm===false?"Le notifiche di Viaticum sono spente nelle impostazioni del telefono: attivale per vederla.":base}
+ var base=sm?sm.textContent:"",bx=$("#liveb");function show(r){if("on" in r)cb.checked=!!r.on;if(sm)sm.textContent=cb.checked&&r.perm===false?"Le notifiche di Viaticum sono spente nelle impostazioni del telefono: attivale per vederla.":cb.checked&&r.known&&r.promo===false?"Le notifiche live di Viaticum sono spente nel telefono: tocca «Impostazioni notifiche live» e attivale.":base;if(bx)bx.hidden=!cb.checked}
+ /* v296 prova subito e scorciatoia alle impostazioni */
+ var bt=$("#livetry"),bs=$("#liveset");if(bt&&pl.liveTest)bt.addEventListener("click",function(){pl.liveTest().then(function(r){show(r);toast(r.perm===false?"Attiva le notifiche di Viaticum e riprova":"Notifica di prova inviata: guarda in alto e nella Now Bar")}).catch(function(){toast("Installa l'ultima versione dell'app per la prova")})});
+ if(bs&&pl.liveSettings)bs.addEventListener("click",function(){pl.liveSettings().then(function(r){if(!r.ok)toast("Apri Impostazioni › Notifiche › Viaticum")}).catch(function(){toast("Apri Impostazioni › Notifiche › Viaticum")})});
+ document.addEventListener("visibilitychange",function(){if(!document.hidden)pl.liveGet().then(show).catch(function(){})});
  pl.liveGet().then(function(r){lb.hidden=false;show(r)}).catch(function(){});
  cb.addEventListener("change",function(){pl.liveSet({on:cb.checked}).then(function(r){show(r);toast(r.on?"Viaggio in corso: attivo":"Viaggio in corso: spento")}).catch(function(){})})}catch(e){}}
 setTimeout(liveUi,1600);
