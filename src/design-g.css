@@ -3711,3 +3711,32 @@ html.sa body .blk{bottom:auto;height:calc(var(--apph) - var(--abh) - 4px - env(s
 #hero .hcx{position:relative;z-index:2;display:inline-flex;align-items:center;gap:8px;min-height:40px;margin:0 0 10px;padding:0 14px 0 10px;border:0;border-radius:20px;background:rgba(255,255,255,.18);color:#fff;font:600 14px Figtree,system-ui,sans-serif;cursor:pointer}
 #hero .hcx svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round}
 #hero .hcx:active{transform:scale(.97)}
+/* v307 · home: niente nuvole a forma di pillola, meteo solo sulla scheda del tuo viaggio, menu sempre chiaro */
+.skd .skc{display:none!important}
+#dest #dhc:not([data-mode=trip]) .dgw{display:none!important}
+html body #dest .dmenu,html.lite body #dest .dmenu{background:rgba(255,255,255,.2)!important;color:#fff!important;box-shadow:none!important}
+html body #dest .dmenu i{background:#fff!important}
+/* v307 · finestra spesa più compatta */
+#exp .qrc.xcard{width:min(380px,100%)!important;max-height:calc(100dvh - 24px)}
+#exp .qrc.xcard h3{padding:14px 18px 46px!important;font-size:18px!important}
+#exp .xf{gap:12px!important;padding:0 14px;margin-bottom:12px!important}
+#exp .xlb{font-size:11px;margin-bottom:5px}
+#exp .xbig{margin-top:-38px;padding:10px 12px 8px;border-radius:16px}
+#exp .xamt input{height:44px!important;font-size:32px!important}
+#exp .xamt select,#exp .xamt .xeu{height:38px!important;min-width:54px;font-size:16px!important;border-radius:19px!important}
+#exp .xeq{font-size:12px;margin-top:2px}
+#exp .xf input[type=text]{height:42px!important;font-size:15px!important;border-radius:12px!important}
+#exp .xcats{display:flex!important;flex-wrap:nowrap;overflow-x:auto;gap:6px;margin:0 -14px;padding:0 14px 2px;scrollbar-width:none;scroll-snap-type:x proximity}
+#exp .xcats::-webkit-scrollbar{display:none}
+#exp .xcats button{flex:none;flex-direction:row!important;min-height:40px!important;padding:0 12px 0 10px!important;border-radius:20px!important;gap:6px!important;font-size:13px!important;scroll-snap-align:start}
+#exp .xcats button i{font-size:16px!important}
+#exp .xcats button i img,#exp .xcats button i svg{width:18px!important;height:18px!important}
+#exp .xwho{gap:6px}
+#exp .xwho button{min-height:38px!important;padding:0 14px!important;font-size:13px!important;border-radius:19px!important}
+#exp .xmodes{gap:6px!important;margin-bottom:8px!important}
+#exp .xmodes button{min-height:36px!important;padding:4px 6px!important;font-size:12.5px!important}
+#exp .xch{min-height:40px!important;padding:6px 10px!important;margin-bottom:5px!important;font-size:14px!important}
+#exp .qrb{padding:0 14px;gap:4px}
+#exp #xsave{height:48px!important;font-size:16px!important}
+#exp #xcancel{min-height:40px}
+#exp .xf{grid-template-columns:minmax(0,1fr)!important}#exp .xfl,#exp .xw{min-width:0}
