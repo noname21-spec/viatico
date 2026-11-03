@@ -3271,3 +3271,90 @@ html[data-theme="dark"] .rainb .rbh svg{stroke:#8cbcf0}
 .tour .ts2:last-child~* .tn,.tour .tn:only-child{background:#E1AD21;color:#14224F}
 .tour{background:radial-gradient(70% 40% at 50% 26%,rgba(35,64,160,.14),transparent 72%),#F4F5F8!important;color:#14224F}
 .tour .ts2 p{color:#4A5470}
+/* v301 · home del viaggio come nelle anteprime: fascia di cielo, pannello della tappa */
+:root{--k1:#1C3FAE;--k2:#3A6BDB;--k3:#78A8F0}
+:root[data-sky=alba]{--k1:#23338C;--k2:#6E5FA8;--k3:#EE9C78}
+:root[data-sky=mattina]{--k1:#22409F;--k2:#4A76DA;--k3:#8FB6F2}
+:root[data-sky=pomeriggio]{--k1:#1F3699;--k2:#4C5FB5;--k3:#E9A86A}
+:root[data-sky=tramonto]{--k1:#1B2C78;--k2:#6A3C8C;--k3:#E7883C}
+:root[data-sky=sera]{--k1:#121D5E;--k2:#3B2E86;--k3:#B4567A}
+:root[data-sky=notte]{--k1:#070D2B;--k2:#13206A;--k3:#1F3392}
+body.k-t-itinerario .mapbg.mb-main{opacity:0!important}
+body.k-t-itinerario{background:var(--bg)!important}
+:root:root body.k-t-itinerario .appbar.appbar::before{background:var(--k1)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;bottom:-8px!important;border-radius:0!important}
+body.k-t-itinerario .appbar .apn,body.k-t-itinerario .appbar .apd,body.k-t-itinerario .appbar .aps,body.k-t-itinerario .appbar .ahome{color:#fff!important}
+body.k-t-itinerario .appbar .apd{color:#D9E1F7!important}
+body.k-t-itinerario .appbar .apv{border-color:#fff!important;color:#fff!important}
+body.k-t-itinerario .appbar .ahome{background:rgba(255,255,255,.16)!important;border-color:transparent!important;box-shadow:none!important}
+body.k-t-itinerario .appbar .wx{background:rgba(255,255,255,.18)!important;color:#fff!important;border-color:transparent!important;box-shadow:none!important}
+body.k-t-itinerario .appbar .wx *{color:#fff!important}
+body.k-t-itinerario #gear{background:rgba(255,255,255,.18)!important;color:#fff!important;border-color:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+body.k-t-itinerario #gear svg{stroke:#fff!important;color:#fff!important}
+html body #itinerario{padding-top:0!important}
+html body #hero.hero{margin:0 -18px 16px!important;border-radius:0 0 26px 26px!important;padding:6px 20px 20px!important;background:linear-gradient(180deg,var(--k1) 0%,var(--k2) 62%,var(--k3) 100%)!important;box-shadow:0 14px 30px -18px rgba(20,34,79,.55)!important;border:0!important}
+html body #hero.hero::before,html body #hero.hero::after{display:none!important}
+#hero .hkk{display:block;position:relative;font:700 12px/1.2 Figtree,system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#FFE7A3}
+html body #hero.hero>h1{font:600 30px/1.1 Outfit,system-ui,sans-serif!important;letter-spacing:-.01em;color:#fff!important;margin:2px 0 14px!important;position:relative}
+html body #hero .wdet{margin-top:0!important}
+html body #hero .wdet .wc{background:rgba(20,34,79,.38)!important;background-image:none!important;color:#fff!important;border:0!important;border-radius:18px!important;box-shadow:none!important;padding:14px!important;position:relative}
+html body #hero .wdet .wc::before{display:none!important}
+html body #hero .wdet .wc *{font-family:Figtree,system-ui,sans-serif}
+html body #hero .wdet .wc .wrg{position:absolute;left:14px;top:14px;width:56px;height:56px}
+html body #hero .wdet .wc .wrg svg{width:56px;height:56px;display:block}
+html body #hero .wdet .wc .wrg .rb{fill:none;stroke:rgba(255,255,255,.2);stroke-width:5}
+html body #hero .wdet .wc .wrg .rf{fill:none;stroke:#E1AD21;stroke-width:5;stroke-linecap:round;stroke-dasharray:0 100;transition:stroke-dasharray .8s cubic-bezier(.4,0,.2,1)}
+html body #hero .wdet .wc .wrg text{font-family:Outfit,system-ui,sans-serif;font-weight:600;fill:#fff}
+html body #hero .wdet .wc .wch,html body #hero .wdet .wc .wct,html body #hero .wdet .wc .wcb>h2{margin-left:70px!important}
+html body #hero .wdet .wc .wch{min-height:16px}
+html body #hero .wdet .wc .wch,html body #hero .wdet .wc .wch span{color:#FFE7A3!important;font-size:12px!important;font-weight:700!important;letter-spacing:.08em!important;text-transform:uppercase}
+html body #hero .wdet .wc .wcp{background:#E1AD21!important;color:#14224F!important}
+html body #hero .wdet .wc .wcp.dn{background:rgba(255,255,255,.2)!important;color:#fff!important}
+html body #hero .wdet .wc .wct{color:#fff!important;font:600 20px/1.1 Outfit,system-ui,sans-serif!important;margin-top:2px!important}
+html body #hero .wdet .wc .wcb h2{color:#fff!important;font:600 21px/1.2 Outfit,system-ui,sans-serif!important;margin-top:2px!important;min-height:28px}
+html body #hero .wdet .wc .wcb p,html body #hero .wdet .wc .wcb li,html body #hero .wdet .wc .wcb small,html body #hero .wdet .wc .wcb span,html body #hero .wdet .wc .wcb a:not(.go){color:#E3E9FA!important}
+html body #hero .wdet .wc .wcb .leg,html body #hero .wdet .wc .wcb .leg *{color:#E3E9FA!important;background:transparent!important}
+html body #hero .wdet .wc .wcb .leg{font:500 14px/1.45 Figtree,system-ui,sans-serif!important;margin-top:10px!important;padding:10px 0 0!important;border-top:1px solid rgba(255,255,255,.14)!important}
+html body #hero .wdet .wc .wcb .leg svg{stroke:#FFE7A3!important}
+html body #hero .wdet .wc .legp{background:rgba(255,255,255,.12)!important;color:#fff!important}
+html body #hero .wdet .wc .legp *{color:#fff!important}
+html body #hero .wdet .wc .bkm{color:#FFE7A3!important}
+html body #hero .wdet .wc .bkb{background:rgba(255,255,255,.1)!important;color:#fff!important}
+html body #hero .wdet .wc .bkb b,html body #hero .wdet .wc .bkb .bkr2 b{color:#fff!important}
+html body #hero .wdet .wc .bkb small,html body #hero .wdet .wc .bkx span,html body #hero .wdet .wc .bkb .bkr2 span{color:#E3E9FA!important}
+html body #hero .wdet .wc .wca .go{background:#E1AD21!important;color:#14224F!important;border:0!important;box-shadow:none!important;font-weight:700!important}
+html body #hero .wdet .wc .wca .go *{color:#14224F!important;stroke:#14224F}
+html body #hero .wdet .wc .wca>*:not(.go),html body #hero .wdet .wc .wca .btn,html body #hero .wdet .wc .wca button:not(.wcd){background:rgba(255,255,255,.14)!important;color:#fff!important;border:1px solid rgba(255,255,255,.18)!important}
+html body #hero .wdet .wc .wca .wcd{background:rgba(255,255,255,.14)!important;border:1px solid rgba(255,255,255,.18)!important}
+html body #hero .wdet .wc .wca .wcd::after{border-color:#fff!important}
+html body #hero .wdet .wc .wca .wcx.hot{background:#fff!important;color:#14224F!important;border-color:#fff!important}
+html body #hero .wdet .wc .wca .wtk.on{background:rgba(255,255,255,.9)!important;color:#1E6B45!important}
+html body #hero .wdet .wc .wcst{border-color:#E1AD21!important;color:#E1AD21!important;background:rgba(20,34,79,.6)!important}
+html body #hero .hlate{background:rgba(255,255,255,.16)!important;color:#fff!important;border-color:transparent!important;box-shadow:none!important}
+html body #hero .hlate *{color:#fff!important;stroke:#fff}
+:root[data-theme="dark"] html body #hero .wdet .wc,:root[data-theme="dark"] body #hero .wdet .wc{background-color:rgba(7,13,43,.45)!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body #hero .wdet .wc{background-color:rgba(7,13,43,.45)!important}}
+.htl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 12px}
+.htl[hidden]{display:none}
+.htl .htt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:14px;border-radius:14px;background:var(--paper,#fff);border:1px solid var(--line,#E2E5EE);color:var(--ink,#14224F);font:inherit;text-align:left;cursor:pointer;min-height:44px}
+.htl div.htt{cursor:default}
+.htl small{font:700 12px/1.2 Figtree,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--mute,#56607A)}
+.htl b{font:600 22px/1.15 Outfit,system-ui,sans-serif;color:var(--ink,#14224F)}
+.gds .gleg{display:flex;align-items:center;gap:8px;margin:-2px 0 -2px 44px;padding:4px 10px;min-height:28px;color:var(--mute,#56607A);font:600 12.5px/1.3 Figtree,system-ui,sans-serif;cursor:pointer;grid-column:1/-1}
+.gds .gleg i{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:8px;background:color-mix(in srgb,var(--rb,#2340A0) 10%,transparent);flex:none}
+.gds{grid-template-columns:minmax(0,1fr)}
+.gds .gleg i{color:var(--rb,#2340A0)}
+.gds .gleg svg{width:14px;height:14px}
+.gds .gleg span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+:root[data-theme="dark"] .gds .gleg i{color:#A9B4D6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .gds .gleg i{color:#A9B4D6}}
+.gds .gleg i img,.gds .gleg i svg{width:15px!important;height:15px!important}
+.hmap{display:block;width:100%;margin:0 0 12px;padding:0;border:0;border-radius:16px;background:#1B3384;overflow:hidden;cursor:pointer;color:#EEF2FD;font:inherit;text-align:left}
+.hmap svg{display:block;width:100%;height:auto;aspect-ratio:350/124}
+.hmap .hg{stroke:#253F96;stroke-width:6;fill:none}
+.hmap .hr{stroke:#2C4CA8;stroke-width:10;fill:none}
+.hmap .hl{stroke:#E1AD21;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.hmap circle{fill:#fff;stroke:#14224F;stroke-width:2}
+.hmap circle.dn{fill:#8FA3DD}
+.hmap circle.on{fill:#E1AD21;r:8}
+.hmc{display:flex;justify-content:space-between;gap:10px;padding:8px 14px 10px;font:500 13px/1.3 Figtree,system-ui,sans-serif}
+.hmc span:last-child{color:#E1AD21;font-weight:700;white-space:nowrap}
