@@ -3744,3 +3744,8 @@ html body #dest .dmenu i{background:#fff!important}
 html body #sheet,html body #sheet.on,html body #exp,html body #exp.on,html body #ask,html body #acct,html body #shm,html body #help,html body #qrbox{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 html body #sheet.on,html body #exp.on,html body #ask.on,html body #acct.on,html body #shm.on,html body #help.on{background:rgba(7,13,43,.42)!important}
 html body:has(#sheet.on) main,html body:has(#exp.on) main{filter:none!important}
+/* v311 · la mappa cambia sempre tra chiaro e scuro: il filtro sta sulle singole tessere, senza transizione */
+html body #lmap .leaflet-tile-pane,html body #lmap:not(.dk) .leaflet-tile-pane,html body #lmap.dk .leaflet-tile-pane{filter:none!important;transition:none!important}
+html body #lmap:not(.dk) .leaflet-tile{filter:saturate(.75) contrast(.96)}
+html body #lmap.dk .leaflet-tile{filter:invert(1) hue-rotate(180deg) brightness(.85) contrast(.88) saturate(.55)}
+html body #lmap.dk{background:#0D1533}
