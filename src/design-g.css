@@ -2530,7 +2530,7 @@ html.covin #zin{display:none!important}
 /* v226 Android: la Home entra con una sola dissolvenza, senza decine di animazioni separate */
 html.lite #dest.on .dcard>*,html.lite #dest .dcard *{animation:none!important}
 html.lite #dest .dhero .dhfx{display:none}
-html.lite .dgrid{content-visibility:auto;contain-intrinsic-size:auto 600px}
+/* v299 tolto content-visibility dalla griglia delle città: ritagliava le ombre delle schede e lasciava un riquadro più chiaro */
 /* cambio di colori della città: niente transizioni dei colori elemento per elemento (ricalcolo a ogni fotogramma) */
 html.recolor *,html.recolor *::before,html.recolor *::after{transition:none!important}
 /* indicatore del giorno e linea della timeline: animazioni che non ricalcolano la pagina */
@@ -3237,3 +3237,6 @@ html[data-theme="dark"] .rainb .rbh svg{stroke:#8cbcf0}
 
 /* v296 prova e impostazioni della notifica live */
 .livb{display:flex;flex-wrap:wrap;gap:8px;padding:2px 14px 12px}.livb[hidden]{display:none}.livb .btn{flex:1 1 140px;min-height:44px;font-size:.86rem;padding:8px 12px}
+
+/* v299 il nome della città non passa sotto il cuore */
+.dcity b{display:block;padding-right:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
