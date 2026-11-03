@@ -8,9 +8,9 @@ function set(k){var c=SKY[k];R.style.setProperty("--hk1",c[0]);R.style.setProper
 function tick(){set(demo||now())}
 tick();setInterval(tick,60000);
 /* decorazioni: sole con raggi, luna, stelle e nuvole */
-var DECO='<i class="skc c1"></i><i class="skc c2"></i><i class="sks s1"></i><i class="sks s2"></i><i class="sks s3"></i><i class="sks s4"></i><i class="sks s5"></i><button type="button" class="skb" aria-label="Fai scorrere il cielo nel corso della giornata"><svg class="skr" viewBox="0 0 200 200" aria-hidden="true"><g stroke-width="6" stroke-linecap="round"><path d="M100 10v30M100 160v30M10 100h30M160 100h30M36 36l21 21M143 143l21 21M36 164l21-21M143 57l21-21"/></g></svg><i class="skn"></i></button>';
+var DECO='<i class="skc c1"></i><i class="skc c2"></i><i class="sks s1"></i><i class="sks s2"></i><i class="sks s3"></i><i class="sks s4"></i><i class="sks s5"></i><div class="skb" role="button" tabindex="0" aria-label="Fai scorrere il cielo nel corso della giornata"><svg class="skr" viewBox="0 0 200 200" aria-hidden="true"><g stroke-width="6" stroke-linecap="round"><path d="M100 10v30M100 160v30M10 100h30M160 100h30M36 36l21 21M143 143l21 21M36 164l21-21M143 57l21-21"/></g></svg><i class="skn"></i></div>';
 function deco(host){if(!host||host.querySelector(".skd"))return;var d=document.createElement("div");d.className="skd";d.innerHTML=DECO;host.insertBefore(d,host.firstChild);
-d.querySelector(".skb").addEventListener("click",function(e){e.stopPropagation();var i=ORD.indexOf(demo||now()),n=0;clearInterval(dt);
+var sb=d.querySelector(".skb");sb.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();sb.click()}});sb.addEventListener("click",function(e){e.stopPropagation();var i=ORD.indexOf(demo||now()),n=0;clearInterval(dt);
 dt=setInterval(function(){n++;demo=ORD[(i+n)%ORD.length];tick();if(n>=ORD.length){clearInterval(dt);demo=null;tick()}},red?0:650)})}
 function init(){deco(document.getElementById("dhero"));deco(document.querySelector("#dpick .dpband"));
 /* la home reagisce allo scorrimento: il cielo si allontana mentre sale il foglio */
