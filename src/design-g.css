@@ -3740,3 +3740,7 @@ html body #dest .dmenu i{background:#fff!important}
 #exp #xsave{height:48px!important;font-size:16px!important}
 #exp #xcancel{min-height:40px}
 #exp .xf{grid-template-columns:minmax(0,1fr)!important}#exp .xfl,#exp .xw{min-width:0}
+/* v309 · niente sfocatura dietro Impostazioni, spesa e finestre: solo un velo blu notte */
+html body #sheet,html body #sheet.on,html body #exp,html body #exp.on,html body #ask,html body #acct,html body #shm,html body #help,html body #qrbox{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html body #sheet.on,html body #exp.on,html body #ask.on,html body #acct.on,html body #shm.on,html body #help.on{background:rgba(7,13,43,.42)!important}
+html body:has(#sheet.on) main,html body:has(#exp.on) main{filter:none!important}
