@@ -3814,3 +3814,5 @@ html body .tmnew,html body #dnew.tnew{box-sizing:border-box!important;margin:4px
 html body #drow .drs .drc2{height:auto!important;min-height:58px!important;aspect-ratio:auto!important}html body #drow .drs .drc2 em{align-self:center!important;margin:0!important;transform:none!important}
 html body #drow .drs .drc2{flex:none!important;filter:none!important;opacity:1!important}
 .tmx2 .tmh{padding-right:48px!important}.tmx2 .tmm{top:4px!important;right:4px!important}
+/* v313 · home: tolte le idee del mese, la parola del giorno e Sorprendimi */
+html body #dest #didea,html body #dest .dtg{display:none!important}

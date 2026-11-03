@@ -10,7 +10,6 @@ home:function(){var tr=($("#dhc")||{}).dataset&&$("#dhc").dataset.mode==="trip";
  ["#dhc",tr?"Il tuo prossimo viaggio":"Le città del momento",tr?"Toccalo per aprirlo. Tienilo premuto: compaiono Apri ed Elimina, scorri il dito su una voce e rilascia per sceglierla.":"Scorri le mete del momento e tocca una città per aprire la sua guida."],
  ["#dopen","Apri o pianifica","Da qui apri il viaggio in programma o ne crei uno nuovo: scegli la città e le date, al resto penso io."],
  ["#dmy","I miei viaggi","L'elenco di tutti i tuoi viaggi, quelli in programma e quelli già fatti."],
- ["#dsb","Sorprendimi","Non sai dove andare? Ti propongo una meta nuova."],
  ["#dmenu","Altre opzioni","Qui trovi Condividi, Assistenza e le Impostazioni: notifiche, tema, lingua e questa guida, che puoi rivedere quando vuoi."]]},
 trip:function(){return[
  ["#appt","Il tuo viaggio","Qui vedi la città e le date del viaggio. Tocca il nome della città per cambiare viaggio o tornare a tutti i viaggi."],
