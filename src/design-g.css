@@ -3704,3 +3704,10 @@ html body .ccp{color:var(--mute,#56607A)!important;font-size:14px!important}
 html body .ccd i.on{background:#E1AD21!important}
 html body .ccn{background:#2340A0!important;color:#fff!important;font-weight:700!important;min-height:40px}
 html body .ccx{color:var(--mute,#56607A)!important}
+/* v307 · la pagina sfuma più in alto e lascia più spazio sopra la barra */
+html body .blk{bottom:calc(env(safe-area-inset-bottom,0px)*.3 + var(--tb) - 4px);padding-bottom:36px;scroll-padding-bottom:36px}
+html.sa body .blk{bottom:auto;height:calc(var(--apph) - var(--abh) - 4px - env(safe-area-inset-top,0px) - var(--tb) - 24px + 18px - env(safe-area-inset-bottom,0px)*.45)}
+/* chiudi la prima tappa e torna al conto alla rovescia */
+#hero .hcx{position:relative;z-index:2;display:inline-flex;align-items:center;gap:8px;min-height:40px;margin:0 0 10px;padding:0 14px 0 10px;border:0;border-radius:20px;background:rgba(255,255,255,.18);color:#fff;font:600 14px Figtree,system-ui,sans-serif;cursor:pointer}
+#hero .hcx svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round}
+#hero .hcx:active{transform:scale(.97)}
