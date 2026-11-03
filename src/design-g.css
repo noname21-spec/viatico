@@ -3361,7 +3361,7 @@ html body #hero .hlate *{color:#fff!important;stroke:#fff}
 /* v301 · Dove vai? come nell'anteprima */
 #dest.pick .mapbg.mb-main{opacity:0!important}
 body.k-dest:has(#dest.pick){background:var(--bg)!important}
-#dpick .dpband{position:relative;margin:-38px -18px 14px;padding:calc(env(safe-area-inset-top,0px) + 42px) 20px 18px;border-radius:0 0 26px 26px;background:linear-gradient(180deg,var(--sk1) 0%,var(--sk2) 70%,var(--sk3) 100%);color:#fff;display:flex;flex-direction:column;gap:12px;overflow:hidden;box-shadow:0 14px 30px -18px rgba(20,34,79,.55)}
+#dpick .dpband{position:relative;margin:-38px -18px 14px;padding:calc(env(safe-area-inset-top,0px) + 42px) 20px 18px;border-radius:0 0 26px 26px;background:linear-gradient(180deg,var(--hk1,#1C3FAE) 0%,var(--hk2,#3A6BDB) 70%,var(--hk3,#78A8F0) 100%);color:#fff;display:flex;flex-direction:column;gap:12px;overflow:hidden;box-shadow:0 14px 30px -18px rgba(20,34,79,.55)}
 #dpick .dpband .dback{color:#E7EDFC!important;background:transparent!important;border:0!important;box-shadow:none!important;align-self:flex-start;padding:0!important;min-height:32px;font:500 15px Figtree,system-ui,sans-serif!important}
 #dpick .dpband .dqrow{margin:0!important}
 #dpick .dpband .dq{color:#fff!important;font:600 30px/1.1 Outfit,system-ui,sans-serif!important;margin:0!important}
@@ -3513,3 +3513,96 @@ html body .tour .tskip{position:absolute!important;margin:0!important;height:aut
 .tour .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .tour .wpi{position:relative;display:inline-block}
 .tour .wpi svg{position:absolute;left:50%;transform:translateX(-50%);top:-5px;width:14px;height:19px}
+/* v304 · decorazioni del cielo (home e scelta della città) */
+.skd{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.skd .skb{pointer-events:auto;position:absolute;right:-34px;top:calc(env(safe-area-inset-top,0px) + 74px);width:150px;height:150px;border:0;padding:0;background:none;cursor:pointer;transform:translate(calc(var(--px,0)*-10px),calc(var(--py,0)*-8px + var(--hp,0)*60px));transition:transform .4s ease-out}
+.skd .skr{position:absolute;inset:0;width:100%;height:100%;stroke:rgba(255,230,150,.38);animation:skspin 30s linear infinite}
+.skd .skn{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:#FFD66E;box-shadow:0 0 40px rgba(255,214,110,.75);transition:background .6s,box-shadow .6s,transform .6s}
+.skd .skc{position:absolute;border-radius:12px;background:rgba(255,255,255,.22);animation:skdrift 10s ease-in-out infinite alternate;transform:translateX(calc(var(--px,0)*14px))}
+.skd .c1{left:18px;top:calc(env(safe-area-inset-top,0px) + 132px);width:110px;height:20px}
+.skd .c2{left:170px;top:calc(env(safe-area-inset-top,0px) + 190px);width:70px;height:14px;background:rgba(255,255,255,.16);animation-delay:-4s}
+.skd .sks{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;opacity:0;transition:opacity .8s}
+.skd .s1{left:12%;top:12%}.skd .s2{left:34%;top:20%}.skd .s3{left:58%;top:9%}.skd .s4{left:22%;top:34%}.skd .s5{left:72%;top:30%}
+:root[data-hsky=notte] .skd .sks,:root[data-hsky=sera] .skd .sks{opacity:1;animation:sktw 2.4s ease-in-out infinite}
+:root[data-hsky=notte] .skd .s2,:root[data-hsky=sera] .skd .s4{animation-delay:.8s}:root[data-hsky=notte] .skd .s3{animation-delay:1.4s}
+:root[data-hsky=notte] .skd .skn,:root[data-hsky=sera] .skd .skn{background:#F3E6B5;box-shadow:0 0 34px rgba(243,230,181,.45);transform:scale(.85)}
+:root[data-hsky=notte] .skd .skr,:root[data-hsky=sera] .skd .skr,:root[data-hsky=notte] .skd .skc{opacity:0}
+:root[data-hsky=alba] .skd .skn,:root[data-hsky=tramonto] .skd .skn{background:#FFC46B;transform:translateY(30px)}
+@keyframes skspin{to{transform:rotate(360deg)}}
+@keyframes skdrift{0%{margin-left:-20px}100%{margin-left:36px}}
+@keyframes sktw{0%,100%{opacity:.25}50%{opacity:1}}
+/* home */
+#dest:not(.pick) .mapbg.mb-main{opacity:0!important}
+#dest:not(.pick){background:var(--bg)!important}
+html body #dest:not(.pick) #dhero{background:linear-gradient(180deg,var(--hk1,#1C3FAE) 0%,var(--hk2,#3A6BDB) 62%,var(--hk3,#78A8F0) 100%)!important;transition:background .8s}
+html body #dest #dhero .dsk svg{filter:brightness(0);opacity:.22}
+html body #dest #dhero .dsk{transform:translateY(calc(var(--hp,0)*24px))}
+html body #dest #dhc{transform:translateY(calc(var(--hp,0)*-46px));opacity:calc(1 - var(--hp,0)*.85);z-index:1}
+#dest #dhc #dhl{color:#FFE7A3!important;letter-spacing:.1em!important;font-weight:700!important}
+#dest #dhc #dhn{font-family:Outfit,system-ui,sans-serif!important;font-weight:600!important;letter-spacing:-.02em}
+html body #dest #dhk .dhcta{background:#E1AD21!important;color:#14224F!important;border:0!important;box-shadow:0 10px 24px -10px rgba(225,173,33,.8)!important;font-weight:700!important;animation:uglow 2.6s ease-out infinite}
+html body #dest #dhk .dhcta *{color:#14224F!important;stroke:#14224F}
+html body #dest #dhx span{background:rgba(255,255,255,.18)!important;color:#fff!important;border:0!important}
+html body #dest #dhx span.ok,html body #dest #dhx span.ok *{color:#14224F!important}
+html body #dest #dhx span.ok{background:#fff!important}
+html body #dest #dhd button.on::before{background:#E1AD21!important}
+html body #dest #dsheet{background:var(--bg)!important;border-radius:26px 26px 0 0!important;box-shadow:0 -12px 30px -18px rgba(20,34,79,.45)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html body #dest #dsheet::before{background:#C9CFE0!important}
+html body #dest .dnx{background:var(--paper,#fff)!important;border:1px solid var(--line,#E2E5EE)!important;box-shadow:0 10px 24px -16px rgba(20,34,79,.35)!important;border-radius:16px!important}
+html body #dest .dnx .dnr{background:#2340A0!important;color:#fff!important}
+html body #dest .dnx .dnr *{color:#fff!important;stroke:#fff}
+html body #dest .dnx small{color:#8A6400!important;letter-spacing:.08em}
+html body #dest .dnx .dna{background:#E1AD21!important;color:#14224F!important}
+html body #dest #dex{background:var(--paper,#fff)!important;border:1px solid var(--line,#E2E5EE)!important;color:var(--ink,#14224F)!important;box-shadow:none!important;border-radius:14px!important}
+html body #dest .dih{color:var(--mute,#56607A)!important;font:700 13px Figtree,system-ui,sans-serif!important;letter-spacing:.06em!important;text-transform:uppercase}
+html body #dest .dic{border:0!important;box-shadow:0 12px 26px -16px rgba(20,34,79,.45)!important;border-radius:18px!important;background:#14224F!important;color:#fff!important}
+html body #dest .dic b{color:#fff!important;font-family:Outfit,system-ui,sans-serif!important;font-weight:600!important}
+html body #dest .dic span:not(.ie){color:#C6CEE6!important}
+html body #dest .dic .ie{background:rgba(255,255,255,.14)!important}
+html body #dest .dic:nth-child(3n+2){background:#E1AD21!important}
+html body #dest .dic:nth-child(3n+2) b{color:#14224F!important}html body #dest .dic:nth-child(3n+2) span:not(.ie){color:#4A3700!important}
+html body #dest .dic:nth-child(3n+2) .ie{background:rgba(20,34,79,.12)!important}
+html body #dest .dic:nth-child(3n){background:var(--paper,#fff)!important;color:var(--ink,#14224F)!important;border:1px solid var(--line,#E2E5EE)!important}
+html body #dest .dic:nth-child(3n) b{color:var(--ink,#14224F)!important}html body #dest .dic:nth-child(3n) span:not(.ie){color:var(--mute,#56607A)!important}
+html body #dest .dic:nth-child(3n) .ie{background:#EEF1FA!important}
+html body #dest .dtg button,html body #dest #dword,html body #dest #dsb{background:var(--paper,#fff)!important;border:1px solid var(--line,#E2E5EE)!important;box-shadow:none!important;border-radius:18px!important}
+html body #dest #dnext,html body #dest #dopen{background:#E1AD21!important;color:#14224F!important;border:0!important;box-shadow:0 14px 30px -14px rgba(225,173,33,.9)!important;font-weight:800!important}
+html body #dest #dnext *,html body #dest #dopen *{color:#14224F!important;stroke:#14224F}
+#dest .dic,#dest .dnx,#dest #dex,#dest .dtg button,#dest .dcity,#dpick .dpc{transition:transform .18s ease}
+#dest .dic:active,#dest .dnx:active,#dest #dex:active,#dest .dtg button:active,#dest .dcity:active,#dpick .dpc:active{transform:scale(.97)}
+#dest #dsheet>*{animation:uup .6s cubic-bezier(.2,.7,.2,1) both}
+#dest #dsheet>*:nth-child(2){animation-delay:.06s}#dest #dsheet>*:nth-child(3){animation-delay:.12s}#dest #dsheet>*:nth-child(4){animation-delay:.18s}#dest #dsheet>*:nth-child(5){animation-delay:.24s}#dest #dsheet>*:nth-child(6){animation-delay:.3s}#dest #dsheet>*:nth-child(n+7){animation-delay:.36s}
+/* scelta della città: parte grafica più alta */
+html body #dpick .dpband{padding-top:calc(env(safe-area-inset-top,0px) + 54px)!important;padding-bottom:22px!important;gap:14px!important;min-height:min(430px,52vh);box-sizing:border-box}
+#dpick .dpband>*:not(.skd){position:relative;z-index:1}
+#dpick .dpband .dq{font-size:36px!important;margin-top:46px!important}
+#dpick .dpband .skb{top:calc(env(safe-area-inset-top,0px) + 40px)}
+#dpick .dpband .dsearch{min-height:50px}
+#dpick .dpc{width:230px;height:128px;animation:uup .6s cubic-bezier(.2,.7,.2,1) both}
+#dpick .dpc:nth-child(2){animation-delay:.08s}#dpick .dpc:nth-child(3){animation-delay:.16s}#dpick .dpc:nth-child(4){animation-delay:.24s}
+#dpick .dgrid .dcity{animation:uup .5s cubic-bezier(.2,.7,.2,1) both}
+/* intestazioni di Mappa, Pasti e Consigli */
+:root:root body:is(.k-t-mappa,.k-t-mangiare,.k-t-consigli):not(.k-dest) .appbar.appbar::before{background:var(--sk1)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;bottom:-8px!important;border-radius:0!important}
+body:is(.k-t-mappa,.k-t-mangiare,.k-t-consigli):not(.k-dest) .mapbg.mb-main{opacity:0!important}
+body:is(.k-t-mappa,.k-t-mangiare,.k-t-consigli):not(.k-dest){background:var(--bg)!important}
+body:is(.k-t-mappa,.k-t-mangiare,.k-t-consigli) .appbar :is(.apn,.aps,.ahome){color:#fff!important}
+body:is(.k-t-mappa,.k-t-mangiare,.k-t-consigli) .appbar .apd{color:#D9E1F7!important}
+body:is(.k-t-mappa,.k-t-mangiare,.k-t-consigli) .appbar .apv{border-color:#fff!important;color:#fff!important}
+body:is(.k-t-mappa,.k-t-mangiare,.k-t-consigli) .appbar :is(.ahome,.wx){background:rgba(255,255,255,.16)!important;border-color:transparent!important;box-shadow:none!important;color:#fff!important}
+body:is(.k-t-mappa,.k-t-mangiare,.k-t-consigli) .appbar .wx *{color:#fff!important}
+body:is(.k-t-mappa,.k-t-mangiare,.k-t-consigli) #gear{background:rgba(255,255,255,.18)!important;color:#fff!important;border-color:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+body:is(.k-t-mappa,.k-t-mangiare,.k-t-consigli) #gear svg{stroke:#fff!important;color:#fff!important}
+html body :is(#mappa,#mangiare,#consigli){padding-top:0!important}
+html body :is(#mappa,#mangiare,#consigli)>h2.sec{margin:0 -18px 14px!important;padding:8px 20px 24px!important;min-height:0!important;border-radius:0 0 26px 26px!important;background:linear-gradient(180deg,var(--sk1) 0%,var(--sk2) 70%,var(--sk3) 100%)!important;color:#fff!important;font:600 30px/1.1 Outfit,system-ui,sans-serif!important;letter-spacing:-.01em!important;text-transform:none!important;box-shadow:0 14px 30px -18px rgba(20,34,79,.55)!important;display:flex!important;flex-wrap:wrap;align-items:flex-end!important;justify-content:space-between;gap:6px 10px;position:relative;overflow:hidden;opacity:1!important}
+html body :is(#mappa,#mangiare,#consigli)>h2.sec::before{content:attr(data-k);flex:1 0 100%;display:block!important;position:static!important;width:auto!important;height:auto!important;background:none!important;font:700 12px/1.2 Figtree,system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#FFE7A3;margin:0 0 2px}
+html body :is(#mappa,#mangiare,#consigli)>h2.sec::after{content:"";position:absolute;right:-40px;top:-40px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(255,214,110,.55) 0 22%,rgba(255,214,110,.14) 23%,transparent 66%);pointer-events:none}
+:root[data-sky=notte] :is(#mappa,#mangiare,#consigli)>h2.sec::after,:root[data-sky=sera] :is(#mappa,#mangiare,#consigli)>h2.sec::after{background:radial-gradient(circle,rgba(243,230,181,.5) 0 18%,transparent 60%)}
+html body :is(#mappa,#mangiare,#consigli)>h2.sec>*{position:relative;z-index:1}
+html body :is(#mappa,#mangiare,#consigli)>h2.sec :is(button,a){background:rgba(255,255,255,.18)!important;color:#fff!important;border:0!important;box-shadow:none!important;font-size:14px!important}
+html body :is(#mappa,#mangiare,#consigli)>h2.sec :is(button,a) *{color:#fff!important;stroke:#fff}
+html.lite .nbrow.nbrow,html.lite body .nbrow{background:#14224F!important}
+#dhero .skd .skb{top:calc(env(safe-area-inset-top,0px) + 150px);right:-44px}
+#dhero .skd .c1{left:56%;top:calc(env(safe-area-inset-top,0px) + 118px)}
+#dhero .skd .c2{left:66%;top:calc(env(safe-area-inset-top,0px) + 300px)}
+#dpick .skd .c1{left:40%;top:calc(env(safe-area-inset-top,0px) + 58px);width:90px}
+#dpick .skd .c2{left:64%;top:calc(env(safe-area-inset-top,0px) + 112px)}

@@ -1,0 +1,24 @@
+/* v304 · cielo «Notte blu» sulla home, nella scelta della città e nelle intestazioni delle sezioni */
+(function(){
+var R=document.documentElement,red=false;try{red=matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){}
+var SKY={alba:["#23338C","#6E5FA8","#EE9C78"],mattina:["#22409F","#4A76DA","#8FB6F2"],giorno:["#1C3FAE","#3A6BDB","#78A8F0"],pomeriggio:["#1F3699","#4C5FB5","#E9A86A"],tramonto:["#1B2C78","#6A3C8C","#E7883C"],sera:["#121D5E","#3B2E86","#B4567A"],notte:["#070D2B","#13206A","#1F3392"]};
+var ORD=["alba","mattina","giorno","pomeriggio","tramonto","sera","notte"],demo=null,dt=0;
+function now(){var d=new Date(),m=d.getHours()*60+d.getMinutes();return m<5*60||m>=21*60+30?"notte":m<7*60+30?"alba":m<11*60?"mattina":m<15*60?"giorno":m<17*60+30?"pomeriggio":m<19*60?"tramonto":"sera"}
+function set(k){var c=SKY[k];R.style.setProperty("--hk1",c[0]);R.style.setProperty("--hk2",c[1]);R.style.setProperty("--hk3",c[2]);R.setAttribute("data-hsky",k)}
+function tick(){set(demo||now())}
+tick();setInterval(tick,60000);
+/* decorazioni: sole con raggi, luna, stelle e nuvole */
+var DECO='<i class="skc c1"></i><i class="skc c2"></i><i class="sks s1"></i><i class="sks s2"></i><i class="sks s3"></i><i class="sks s4"></i><i class="sks s5"></i><button type="button" class="skb" aria-label="Fai scorrere il cielo nel corso della giornata"><svg class="skr" viewBox="0 0 200 200" aria-hidden="true"><g stroke-width="6" stroke-linecap="round"><path d="M100 10v30M100 160v30M10 100h30M160 100h30M36 36l21 21M143 143l21 21M36 164l21-21M143 57l21-21"/></g></svg><i class="skn"></i></button>';
+function deco(host){if(!host||host.querySelector(".skd"))return;var d=document.createElement("div");d.className="skd";d.innerHTML=DECO;host.insertBefore(d,host.firstChild);
+d.querySelector(".skb").addEventListener("click",function(e){e.stopPropagation();var i=ORD.indexOf(demo||now()),n=0;clearInterval(dt);
+dt=setInterval(function(){n++;demo=ORD[(i+n)%ORD.length];tick();if(n>=ORD.length){clearInterval(dt);demo=null;tick()}},red?0:650)})}
+function init(){deco(document.getElementById("dhero"));deco(document.querySelector("#dpick .dpband"));
+/* la home reagisce allo scorrimento: il cielo si allontana mentre sale il foglio */
+var ds=document.getElementById("dest");if(ds&&!ds.__hk){ds.__hk=1;var tk=0;ds.addEventListener("scroll",function(){if(tk)return;tk=requestAnimationFrame(function(){tk=0;var p=Math.max(0,Math.min(1,ds.scrollTop/320));ds.style.setProperty("--hp",p.toFixed(3))})},{passive:true})}
+/* e al dito o al mouse: le decorazioni si spostano appena */
+var h=document.getElementById("dhero");if(h&&!h.__px&&!red){h.__px=1;h.addEventListener("pointermove",function(e){var r=h.getBoundingClientRect();h.style.setProperty("--px",((e.clientX-r.left)/r.width*2-1).toFixed(2));h.style.setProperty("--py",((e.clientY-r.top)/r.height*2-1).toFixed(2))},{passive:true});h.addEventListener("pointerleave",function(){h.style.setProperty("--px",0);h.style.setProperty("--py",0)})}
+/* intestazioni delle sezioni del viaggio: piccola riga con la città */
+var n=window.PD&&PD.n;[].forEach.call(document.querySelectorAll("#mappa>h2.sec,#mangiare>h2.sec,#consigli>h2.sec"),function(x){if(n)x.setAttribute("data-k",n)})}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+new MutationObserver(function(){init()}).observe(document.body,{attributes:true,attributeFilter:["class"]});
+})();
