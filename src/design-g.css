@@ -3417,3 +3417,99 @@ html body #cdonut .chero .ch-t em{color:#EAF0FD!important;font-style:normal!impo
 html body #cdonut .chero .ch-pdf{position:absolute!important;right:14px!important;top:auto!important;bottom:16px!important;min-height:34px!important;height:34px!important;padding:0 10px!important;background:rgba(255,255,255,.16)!important;color:#fff!important;border:0!important;box-shadow:none!important}
 html body #cdonut .chero .ch-pdf svg{stroke:#fff!important}
 html body #cdonut .cbrk{background:var(--paper,#fff)!important;border:1px solid var(--line,#E2E5EE)!important;border-radius:16px!important;box-shadow:none!important}
+/* v303 · intro come nell'anteprima: fascia di cielo grande, disegni animati */
+.tour .tt{flex:1;min-height:0}
+.tour .ts2{justify-content:flex-start!important;padding:0!important;gap:0!important}
+html body .tour .ta{position:relative!important;width:100%!important;max-width:none!important;height:min(470px,56vh)!important;padding:0!important;margin:0 0 4px!important;border-radius:0 0 32px 32px!important;overflow:hidden!important;box-shadow:none!important;flex:none}
+.tour .ts2:nth-child(1) .ta{background:linear-gradient(180deg,#23338C 0%,#6E5FA8 58%,#EE9C78 100%)!important}
+.tour .ts2:nth-child(8) .ta{background:linear-gradient(180deg,#1F3699 0%,#4C5FB5 55%,#E9A86A 100%)!important}
+.tour .ts2:nth-child(7) .ta{background:linear-gradient(180deg,#121D5E 0%,#3B2E86 55%,#B4567A 100%)!important}
+.tour .tai{position:absolute;left:50%;bottom:0;width:390px;height:470px;margin-left:-195px;transform:scale(var(--tk,1));transform-origin:50% 100%}
+.tour .tai.tsv{display:flex;align-items:center;justify-content:center;padding-top:60px;box-sizing:border-box}
+.tour .tai.tsv svg{width:320px;height:auto}
+.tour .ts2 h2{font:800 32px/1.15 Outfit,system-ui,sans-serif!important;letter-spacing:-.02em;color:#14224F!important;margin:28px 28px 12px!important;text-align:center}
+.tour .ts2 p{font:400 16px/1.5 Figtree,system-ui,sans-serif!important;color:#4A5470!important;margin:0 28px!important;text-align:center;max-width:520px;align-self:center}
+.tour .tskip{background:rgba(255,255,255,.18)!important;color:#fff!important;border:0!important;box-shadow:none!important;border-radius:16px!important;font:600 14px Figtree,system-ui,sans-serif!important;z-index:3;top:calc(env(safe-area-inset-top,0px) + 46px)!important;right:18px!important;padding:8px 14px!important;min-height:36px}
+.tour .tf{padding:0 24px calc(env(safe-area-inset-bottom,0px) + 30px)!important;gap:22px!important}
+.tour .td3{width:6px!important;height:6px!important;border-radius:3px!important;background:#C9CFE0!important;transition:width .3s}
+.tour .td3.on{width:22px!important;background:#E1AD21!important}
+.tour .tn,.tour .tp{height:56px!important;border-radius:16px!important;font:700 17px Figtree,system-ui,sans-serif!important}
+.tour .tn{background:#2340A0!important;color:#fff!important;flex:1}
+.tour .tp{background:#fff!important;color:#14224F!important;border:1px solid #E2E5EE!important}
+.tour .tn.tgo{background:#E1AD21!important;color:#14224F!important;font-weight:800!important;animation:uglow 2.2s ease-out infinite}
+.tour .usn,.tour .usun{position:absolute;border-radius:50%}
+.tour .usn{background:radial-gradient(circle,#FFD66E 0 38%,rgba(225,173,33,.4) 39%,transparent 70%);animation:usun 6s ease-out infinite alternate both}
+.tour .usun{width:44px;height:44px;background:#FFD66E;box-shadow:0 0 34px rgba(255,214,110,.8)}
+.tour .ucl{position:absolute;border-radius:10px;background:rgba(255,255,255,.25);animation:udrift 8s ease-in-out infinite alternate}
+.tour .urt{stroke-dasharray:6 10;animation:uroute 6s ease-in-out infinite both}
+.tour .upn{animation:upin 6s cubic-bezier(.3,.9,.4,1) infinite both}
+.tour .urg{transform-box:fill-box;transform-origin:center;animation:uring 6s ease-out infinite both}
+.tour .uc1{padding:14px;border-radius:16px;background:#fff;color:#14224F;box-shadow:0 10px 24px rgba(20,34,79,.18);animation:ucard 7s cubic-bezier(.2,.7,.2,1) infinite both;border:3px solid transparent}
+.tour .uc1 small{display:block;font:700 11px Figtree,system-ui,sans-serif}
+.tour .uc1 b{display:block;font:600 20px/1.2 Outfit,system-ui,sans-serif}
+.tour .ufd{animation:ucard 7s cubic-bezier(.2,.7,.2,1) infinite both,ufade 7s ease infinite both}
+.tour .upk{animation:ucard 7s cubic-bezier(.2,.7,.2,1) infinite both,upick 7s cubic-bezier(.3,1.4,.5,1) infinite both}
+.tour .uch{padding:8px 12px;border-radius:14px;animation:uchip 7s cubic-bezier(.2,.7,.2,1) infinite both}
+.tour .ury{animation:uspin 30s linear infinite}
+.tour .uchp{padding:7px 12px;border-radius:14px}
+.tour .us1{animation:usel1 7s ease infinite both}.tour .us2{animation:usel2 7s ease infinite both}
+.tour .ufl{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:#E1AD21;animation:ufill 7s cubic-bezier(.5,0,.3,1) infinite both}
+.tour .ukn{position:absolute;top:-7px;margin-left:-10px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);animation:uknob 7s cubic-bezier(.5,0,.3,1) infinite both}
+.tour .uit{margin-top:4px;border-radius:18px;background:#fff;color:#14224F;padding:6px 14px;box-shadow:0 14px 30px rgba(20,34,79,.25)}
+.tour .urw{display:flex;gap:12px;padding:10px 0;animation:urow 7s cubic-bezier(.2,.7,.2,1) infinite both;font:400 15px Figtree,system-ui,sans-serif}
+.tour .urw b{width:44px;font:600 15px Outfit,system-ui,sans-serif}
+.tour .urw span{flex:1;font-weight:600}
+.tour .urw small{color:#56607A;font-size:13px}
+.tour .umap{position:absolute;left:24px;right:24px;top:108px;height:320px;border-radius:24px;overflow:hidden;background:#EEF1F8;box-shadow:0 16px 40px rgba(20,34,79,.3)}
+.tour .urt2{stroke-dasharray:520;animation:uroute2 7s cubic-bezier(.4,0,.2,1) infinite both}
+.tour .ume{position:absolute;left:0;top:0;width:18px;height:18px;offset-path:path("M60 250 C90 200 130 230 170 190 S240 120 280 140 S320 90 330 60");animation:uwalk 7s cubic-bezier(.4,0,.4,1) infinite both}
+.tour .upg{position:absolute;inset:0;border-radius:50%;background:rgba(35,64,160,.35);animation:uping 1.6s ease-out infinite}
+.tour .umd{position:absolute;inset:2px;border-radius:50%;background:#2340A0;border:3px solid #fff;box-sizing:border-box}
+.tour .umt{position:absolute;left:12px;bottom:12px;display:flex;gap:8px;align-items:center;padding:8px 12px;border-radius:14px;background:#14224F;color:#fff;font:600 13px Figtree,system-ui,sans-serif}
+.tour .und{transform-origin:24px 24px;animation:uneedle 4s ease-in-out infinite}
+.tour .ust{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;animation:utw 2.4s ease-in-out infinite}
+.tour .umn{position:absolute;left:36px;top:96px;width:46px;height:46px;border-radius:50%;background:#F3E6B5;box-shadow:0 0 34px rgba(243,230,181,.45);animation:umoon 6s ease-in-out infinite}
+.tour .uph{position:absolute;left:50%;margin-left:-96px;top:150px;width:192px;height:300px;border-radius:30px;background:#F4F5F8;border:6px solid #14224F;box-sizing:border-box;padding:18px 14px;display:flex;flex-direction:column;gap:10px;color:#14224F}
+.tour .urow{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:#fff;font:600 13px Figtree,system-ui,sans-serif}
+.tour .uwf{animation:uwifi 7s ease infinite both}
+.tour .usl{stroke-dasharray:40;animation:uslash 7s ease infinite both}
+.tour .uok{animation:uok 7s cubic-bezier(.2,.7,.2,1) infinite both}
+.tour .uck{stroke-dasharray:20;animation:uchk 7s ease infinite both}
+.tour .ts2 h2,.tour .ts2 p{animation:uup .6s ease both}
+@keyframes uroute{0%,8%{stroke-dashoffset:360}60%,100%{stroke-dashoffset:0}}
+@keyframes upin{0%,55%{transform:translateY(-60px);opacity:0}65%{transform:translateY(4px);opacity:1}70%{transform:translateY(-3px)}75%,100%{transform:none;opacity:1}}
+@keyframes uring{0%,62%{transform:scale(.2);opacity:0}70%{opacity:.8}100%{transform:scale(1.8);opacity:0}}
+@keyframes usun{0%{transform:translateY(30px)}100%{transform:translateY(0)}}
+@keyframes uup{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:none}}
+@keyframes ucard{0%{opacity:0;transform:translateY(40px) rotate(-4deg)}12%,100%{opacity:1;transform:none}}
+@keyframes upick{0%,40%{border-color:transparent;transform:none}48%,100%{border-color:#E1AD21;transform:scale(1.05)}}
+@keyframes ufade{0%,40%{opacity:1}48%,100%{opacity:.45}}
+@keyframes uchip{0%,55%{opacity:0;transform:translateY(10px)}65%,100%{opacity:1;transform:none}}
+@keyframes udrift{0%{transform:translateX(-20px)}100%{transform:translateX(30px)}}
+@keyframes urow{0%{opacity:0;transform:translateX(-30px)}10%,100%{opacity:1;transform:none}}
+@keyframes usel1{0%,30%{background:#E1AD21;color:#14224F}36%,62%{background:rgba(255,255,255,.18);color:#fff}68%,100%{background:#E1AD21;color:#14224F}}
+@keyframes usel2{0%,30%{background:rgba(255,255,255,.18);color:#fff}36%,62%{background:#E1AD21;color:#14224F}68%,100%{background:rgba(255,255,255,.18);color:#fff}}
+@keyframes uknob{0%,20%{left:20%}45%,70%{left:72%}90%,100%{left:20%}}
+@keyframes ufill{0%,20%{width:20%}45%,70%{width:72%}90%,100%{width:20%}}
+@keyframes uspin{to{transform:rotate(360deg)}}
+@keyframes uroute2{0%,5%{stroke-dashoffset:520}55%,100%{stroke-dashoffset:0}}
+@keyframes uwalk{0%,10%{offset-distance:0%}90%,100%{offset-distance:100%}}
+@keyframes uping{0%{transform:scale(.6);opacity:.8}100%{transform:scale(2.4);opacity:0}}
+@keyframes uneedle{0%,100%{transform:rotate(-30deg)}50%{transform:rotate(20deg)}}
+@keyframes utw{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes uwifi{0%,20%{opacity:1}30%,100%{opacity:.25}}
+@keyframes uslash{0%,22%{stroke-dashoffset:40}34%,100%{stroke-dashoffset:0}}
+@keyframes uok{0%,36%{opacity:0;transform:translateY(8px)}46%,100%{opacity:1;transform:none}}
+@keyframes uchk{0%,40%{stroke-dashoffset:20}52%,100%{stroke-dashoffset:0}}
+@keyframes umoon{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes uglow{0%,100%{box-shadow:0 0 0 0 rgba(225,173,33,.5)}50%{box-shadow:0 0 0 10px rgba(225,173,33,0)}}
+@media (prefers-reduced-motion:reduce){.tour *,#splash *{animation:none!important}.tour .ume{offset-distance:100%}}
+html body .tour{padding-top:0!important}
+html body .tour .tskip{position:absolute!important;margin:0!important;height:auto!important}
+.tour .tai:not(.tsv) svg{width:auto;height:auto;display:inline-block;overflow:visible}
+.tour .tai:not(.tsv) svg[width]{flex:none}
+.tour .tai{text-align:left}
+.tour .ta .tai *{box-sizing:border-box}
+.tour .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tour .wpi{position:relative;display:inline-block}
+.tour .wpi svg{position:absolute;left:50%;transform:translateX(-50%);top:-5px;width:14px;height:19px}
