@@ -44,7 +44,7 @@ public final class VwUtil {
     static final Class<?>[] ALL = {VwNext.class, VwSpend.class, VwMap.class, VwPass.class, VwTicket.class, VwTransit.class, VwBoard.class, VwDay.class, VwFood.class, VwDebts.class, VwFx.class, VwNextS.class, VwSpendS.class, VwFxS.class, VwBoardS.class, VwNextR.class, VwLeave.class, VwFxR.class, VwToday.class, VwCount.class, VwLate.class, VwLine.class, VwGo.class, VwFly.class, VwActs.class, VwWx.class, VwMeal.class};
     private VwUtil() {}
     /* colori del viaggio in programma più vicino */
-    static int TA = 0xFF0A6F95, TB = 0xFF0E3B52;
+    static int TA = 0xFF2340A0, TB = 0xFF14224F;
     static Bitmap SKY = null;
     static long SKYT = 0;
     static Bitmap sky(Context c) {
@@ -65,7 +65,7 @@ public final class VwUtil {
         return Typeface.create("sans-serif", Typeface.BOLD);
     }
     static void theme(JSONObject o) {
-        TA = 0xFF0A6F95; TB = 0xFF0E3B52;
+        TA = 0xFF2340A0; TB = 0xFF14224F;
         JSONObject t = o.optJSONObject("theme");
         if (t == null) return;
         try { TA = Color.parseColor(t.optString("a")); } catch (Exception ignored) {}

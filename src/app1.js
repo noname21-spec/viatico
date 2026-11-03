@@ -394,7 +394,7 @@ var sp=0;(SP.x||[]).forEach(function(x){if(x.t&&tzDay(x.t)===n.d)sp+=c100(x.a)})
 function eveCard(){var o=$("#drc");if(o)o.remove();if(todayIdx()!==SEL||paris().m<19*60+30)return;var d=eveData(),w=$("#itinerario .wbox");if(!w)return;
 var c=document.createElement("section");c.id="drc";c.className="drc";c.innerHTML='<small>La tua giornata</small><div class="drn"><span><b>'+d.done.length+'/'+d.acts.length+'</b>tappe timbrate</span><span><b>'+(d.steps?"~"+d.steps.toLocaleString("it-IT"):"–")+'</b>passi stimati</span><span><b>'+(d.sp?ec(d.sp):"0 €")+'</b>spesi oggi</span></div><button type="button" class="drb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4M5 12v7h14v-7"/></svg>Condividi come immagine</button>';
 $(".drb",c).addEventListener("click",function(){dayImg(d)});w.parentNode.insertBefore(c,w)}
-function dayImg(d){var T=function(z){return window.VTR?VTR(z):z},dd=dOf(PD.id),col=dd.col||["#0a6f95","#1cc0d6"],W=1080,H=1350,cv=document.createElement("canvas");cv.width=W;cv.height=H;var x=cv.getContext("2d"),F="Outfit,system-ui,-apple-system,sans-serif";
+function dayImg(d){var T=function(z){return window.VTR?VTR(z):z},dd=dOf(PD.id),col=dd.col||["#2340a0","#5b7fe0"],W=1080,H=1350,cv=document.createElement("canvas");cv.width=W;cv.height=H;var x=cv.getContext("2d"),F="Outfit,system-ui,-apple-system,sans-serif";
 function draw(){var g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,col[0]);g.addColorStop(1,col[1]);x.fillStyle=g;x.fillRect(0,0,W,H);x.fillStyle="rgba(255,255,255,.10)";x.beginPath();x.arc(W-140,240,340,0,7);x.fill();
 x.fillStyle="rgba(255,255,255,.85)";x.font="600 40px "+F;x.fillText(T((TRIP.multi?"Giorno "+(SEL+1)+" · ":"")+(DAYS[P.wd]||"")).toUpperCase(),90,150);
 x.fillStyle="#fff";var nm=T("La mia giornata a "+PD.n),fs=96;x.font="800 "+fs+"px "+F;while(x.measureText(nm).width>W-180&&fs>50){fs-=6;x.font="800 "+fs+"px "+F}x.fillText(nm,90,280);
@@ -1325,7 +1325,7 @@ var st=settle(L.net);
 sp.innerHTML=st.length?'<div class="sbh">Per saldare</div>'+st.map(function(s,k){return '<div class="stl"><span>'+esc(nm[s.f])+' deve <b>'+ec(s.a)+'</b> a '+esc(nm[s.t])+'</span><button type="button" class="payb" data-k="'+k+'">Pagato</button></div>'}).join(""):'<div class="stl ok">Siete pari 🤝</div>';
 $$("#split .payb").forEach(function(b){b.addEventListener("click",function(){var s=st[+b.dataset.k];SP.q.push({id:uid(),f:s.f,to:s.t,a:s.a/100,t:Date.now()});saveSP();renderSpeseBody();toast("Rimborso segnato")})})}
 /* riepilogo del viaggio come immagine da condividere */
-window.__recap=function(){if(!TRIP||!CFG||!window.PD)return;var d=dOf(PD.id),col=d.col||["#0a6f95","#1cc0d6","#ffb800"],N=CFG.ppl,L=ledger(N),stops=0;TRIP.days.forEach(function(T){T.items.forEach(function(it){if(it.k==="act")stops++})});
+window.__recap=function(){if(!TRIP||!CFG||!window.PD)return;var d=dOf(PD.id),col=d.col||["#2340a0","#5b7fe0","#D99E12"],N=CFG.ppl,L=ledger(N),stops=0;TRIP.days.forEach(function(T){T.items.forEach(function(it){if(it.k==="act")stops++})});
 var W=1080,H=1350,cv=document.createElement("canvas");cv.width=W;cv.height=H;var x=cv.getContext("2d");
 function draw(){var g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,col[0]);g.addColorStop(1,col[1]);x.fillStyle=g;x.fillRect(0,0,W,H);
 x.fillStyle="rgba(255,255,255,.10)";x.beginPath();x.arc(W-120,260,360,0,7);x.fill();x.beginPath();x.arc(100,H-200,300,0,7);x.fill();
@@ -1780,7 +1780,7 @@ if(!CFG||!TRIP){o.none=1}else{var tz=PD.TZ,N=CFG.ppl||1;o.city=PD.n;o.cc=PD.cn||
  /* colori dei widget: il viaggio in programma più vicino (o quello in corso) */
  try{var td=new Date().toISOString().slice(0,10),cands=[];if(SAVED&&SAVED.date&&CITIES[SAVED.dest])cands.push(SAVED);trips().forEach(function(t){cands.push(t.cfg)});
   cands=cands.filter(function(c){return c&&CITIES[c.dest]&&(c.date_r||c.date)>=td&&!c.past}).sort(function(a,b){return a.date<b.date?-1:1});
-  var tc=cands[0]||(CFG&&CITIES[CFG.dest]?CFG:null);if(tc){var cl=CITIES[tc.dest].col||["#0a6f95","#1cc0d6"];o.theme={a:tmLum(cl[0])>.32?tmMix(cl[0],"#1a0f14",.35):cl[0],b:tmKb(cl),c:cl[1]||cl[0],city:CITIES[tc.dest].n}}}catch(e){}
+  var tc=cands[0]||(CFG&&CITIES[CFG.dest]?CFG:null);if(tc){var cl=CITIES[tc.dest].col||["#2340a0","#5b7fe0"];o.theme={a:tmLum(cl[0])>.32?tmMix(cl[0],"#1a0f14",.35):cl[0],b:tmKb(cl),c:cl[1]||cl[0],city:CITIES[tc.dest].n}}}catch(e){}
  /* passaporto: viaggi fatti e quello in corso */
  var all=[];try{if(SAVED&&SAVED.date&&CITIES[SAVED.dest])all.push(SAVED);trips().forEach(function(t){all.push(t.cfg)})}catch(e){}
  var today=new Date().toISOString().slice(0,10);o.pass=all.filter(function(c){return c&&CITIES[c.dest]}).map(function(c){var C=CITIES[c.dest],d=c.date;return{n:C.n,q:C.QN||C.n,cn:C.cn||"",col:(C.col&&C.col[0])||"#8e1f26",m:+d.slice(5,7),y:+d.slice(0,4),done:(c.date_r||c.date)<today?1:0}}).sort(function(a,b){return (b.y*13+b.m)-(a.y*13+a.m)}).slice(0,24);
@@ -2084,7 +2084,7 @@ function tmDel(t,w){var d=dOf(t.cfg.dest),snap={};try{for(var q=0;q<localStorage
  function go(){if(t.cur)dropCur();else{var a=trips();a.splice(t.i,1);putTrips(a)}renderDest();
   window.__undoToast("Viaggio a "+d.n+" eliminato","Annulla",function(){try{Object.keys(snap).forEach(function(kk){localStorage.setItem(kk,snap[kk])})}catch(x){}if(wasCur){location.reload();return}renderDest();toast("Viaggio ripristinato")})}
  if(w&&w.animate&&!matchMedia("(prefers-reduced-motion: reduce)").matches){var h=w.offsetHeight;var an=w.animate([{opacity:1,height:h+"px",transform:"none"},{opacity:0,height:"0px",marginTop:"-10px",transform:"translateX(-30%)"}],{duration:380,easing:"ease-in",fill:"forwards"});an.onfinish=go}else go()}
-function homeV213(all,up){destEl.classList.toggle("lst",!!DOPEN&&all.length>0);var de=destEl,n0=up[0],d0=n0?dOf(n0.cfg.dest):null,col=d0&&d0.col?d0.col:["#0a6f95","#1cc0d6","#ffb800"];
+function homeV213(all,up){destEl.classList.toggle("lst",!!DOPEN&&all.length>0);var de=destEl,n0=up[0],d0=n0?dOf(n0.cfg.dest):null,col=d0&&d0.col?d0.col:["#2340a0","#5b7fe0","#D99E12"];
 de.style.setProperty("--hca",col[0]);de.style.setProperty("--hcb",col[1]);de.style.setProperty("--hcc",col[2]||col[1]);
 var h=new Date().getHours(),g=h<5?"Buonanotte":h<13?"Buongiorno":h<18?"Buon pomeriggio":"Buonasera",dh=$("#dhero"),gr=$("#dgr");
 var hc=$("#dhc");if(hc&&!gr){gr=document.createElement("span");gr.id="dgr";gr.className="dgr";gr.innerHTML='<span class="dgt"></span><span class="dgw" id="dgw" hidden></span>';hc.insertBefore(gr,hc.firstChild)}

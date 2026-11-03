@@ -147,7 +147,7 @@ function enc(s){var o="";for(var i=0;i<s.length;i++){var ch=s.charAt(i),c=ch.cha
 function wrap(s,size,bold,w){var words=s.split(" "),lines=[],cur="";
  words.forEach(function(wd){if(!wd)return;var t=cur?cur+" "+wd:wd;if(tw(t,size,bold)<=w||!cur)cur=t;else{lines.push(cur);cur=wd}});
  if(cur)lines.push(cur);return lines}
-function hex(c){c=(c||"#0388b0").replace("#","");if(c.length===3)c=c.replace(/./g,"$&$&");return[parseInt(c.substr(0,2),16)/255,parseInt(c.substr(2,2),16)/255,parseInt(c.substr(4,2),16)/255]}
+function hex(c){c=(c||"#2340a0").replace("#","");if(c.length===3)c=c.replace(/./g,"$&$&");return[parseInt(c.substr(0,2),16)/255,parseInt(c.substr(2,2),16)/255,parseInt(c.substr(4,2),16)/255]}
 function mixc(a,b,t){return[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t]}
 function lum(c){return .2126*c[0]+.7152*c[1]+.0722*c[2]}
 function f(n){return(Math.round(n*100)/100).toString()}
@@ -155,7 +155,7 @@ function rg(c){return f(c[0])+" "+f(c[1])+" "+f(c[2])}
 
 function makePdf(D){
  var W=595.28,H=841.89,M=44,CW=W-M*2,TOP=M,BOT=H-M-14;
- var CS=window.CITIES&&CITIES[document.documentElement.getAttribute("data-city")],cols=(CS&&CS.col&&CS.col[0]&&CS.col[0].charAt&&CS.col[0].charAt(0)==="#")?CS.col:["#0388b0","#16b6cf","#ffd23f"];
+ var CS=window.CITIES&&CITIES[document.documentElement.getAttribute("data-city")],cols=(CS&&CS.col&&CS.col[0]&&CS.col[0].charAt&&CS.col[0].charAt(0)==="#")?CS.col:["#2340a0","#4a6fd6","#ffd23f"];
  var A=hex(cols[0]),B=hex(cols[1]),INK=[.1,.13,.17],MUTE=[.38,.42,.47],WHITE=[1,1,1],TINT=mixc(A,WHITE,.9),LINE=mixc(A,WHITE,.78);
  if(lum(A)>.62)A=mixc(A,[0,0,0],.45);
  var pages=[],cur,y;

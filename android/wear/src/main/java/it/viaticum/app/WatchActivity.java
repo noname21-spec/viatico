@@ -44,7 +44,7 @@ import java.util.Map;
    I dati arrivano dall'app del telefono (Wearable Data Layer) ogni volta che si aggiornano i widget. */
 public class WatchActivity extends Activity implements DataClient.OnDataChangedListener {
     static final String PATH = "/viaticum/snap";
-    static final int GOLD = 0xFFFFE08A, MUTE = 0xB3FFFFFF, ACC = 0xFF8E1F26;
+    static final int GOLD = 0xFFF2C64E, MUTE = 0xB3FFFFFF, ACC = 0xFF2340A0;
     JSONObject snap = null;
     LinearLayout root;
     ScrollView sv;

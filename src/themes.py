@@ -64,15 +64,19 @@ CITY_PAL={
 'malaga':dict(pri='#c8501e',sec='#1f6f8b',gold='#e8b21c',cream='#fbf2e0',flag=['#c8102e', '#f1bf00', '#1f6f8b'])}
 for _k,_v in CITY_PAL.items():T[_k]=mk(**_v)
 
+# v300 marchio unico «Notte blu»: blu reale, blu notte e senape per tutte le città (restano la bandiera e lo skyline della città)
+BRAND=mk('#2340A0','#2340A0','#E1AD21','#F4F5F8')
+BRAND['L']=dict(BRAND['L'],ink='#14224F',mute='#56607A',bg='#F4F5F8',paper='#FFFFFF',surf2='#EEF1F8',line='#E2E5EE',land='#E9EDF6',c3='#14224F',pin='#14224F')
+BRAND['D']=dict(BRAND['D'],bg='#0D1533',paper='#141F48',surf='#18244F',surf2='#1F2D5E',line='#263566',land='#121C44',ink='#EEF1FA',mute='#A9B4D6')
 def css_for(cid):
-    t=T[cid];L=t['L'];D=t['D'];S=':root[data-city="%s"]'%cid
+    t=dict(BRAND,flag=T[cid].get('flag',BRAND['flag']) if cid in T else ['#1d3a6e','#ffffff','#c8102e']);L=t['L'];D=t['D'];S=':root[data-city="%s"]'%cid
     def calm(V,dark):
         V=dict(V);c1=V['c1'];bg=V['bg'];ink=V['ink']
         V['c2']=c1 if dark else mix(c1,ink,.18)
         V['c4']=mix(c1,bg,.30 if not dark else .45)
         V['c5']=mix(c1,bg,.55 if not dark else .62)
-        V['gold']=mix(c1,bg,.62 if not dark else .55)
-        V['sand']=mix(c1,bg,.84 if not dark else .8)
+        V['gold']='#E1AD21'
+        V['sand']=mix('#E1AD21',bg,.8 if not dark else .75)
         V['food']=V['c2']
         return V
     def base(V,dark):
