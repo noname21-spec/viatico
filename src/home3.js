@@ -12,7 +12,9 @@ var DECO='<i class="skc c1"></i><i class="skc c2"></i><i class="sks s1"></i><i c
 function deco(host){if(!host||host.querySelector(".skd"))return;var d=document.createElement("div");d.className="skd";d.innerHTML=DECO;host.insertBefore(d,host.firstChild);
 var sb=d.querySelector(".skb");sb.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();sb.click()}});sb.addEventListener("click",function(e){e.stopPropagation();var i=ORD.indexOf(demo||now()),n=0;clearInterval(dt);
 dt=setInterval(function(){n++;demo=ORD[(i+n)%ORD.length];tick();if(n>=ORD.length){clearInterval(dt);demo=null;tick()}},red?0:650)})}
-function init(){deco(document.getElementById("dhero"));deco(document.querySelector("#dpick .dpband"));
+function band(){var b=document.querySelector("#dpick .dpband"),ds=document.getElementById("dest");if(!b||!b.offsetParent)return;b.style.marginTop="0px";var t=b.getBoundingClientRect().top+(ds?ds.scrollTop:0);if(t>0)b.style.marginTop=(-Math.round(t))+"px"}
+window.addEventListener("resize",function(){setTimeout(band,60)});
+function init(){setTimeout(band,30);setTimeout(band,400);deco(document.getElementById("dhero"));deco(document.querySelector("#dpick .dpband"));
 /* la home reagisce allo scorrimento: il cielo si allontana mentre sale il foglio */
 var ds=document.getElementById("dest");if(ds&&!ds.__hk){ds.__hk=1;var tk=0;ds.addEventListener("scroll",function(){if(tk)return;tk=requestAnimationFrame(function(){tk=0;var p=Math.max(0,Math.min(1,ds.scrollTop/320));ds.style.setProperty("--hp",p.toFixed(3))})},{passive:true})}
 /* e al dito o al mouse: le decorazioni si spostano appena */

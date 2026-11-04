@@ -3864,3 +3864,6 @@ html body #dmap .dmc{display:none!important}
 :root[data-theme="dark"] #dmap .stp:nth-child(4n+1),:root[data-theme="dark"] #dmap .stp:nth-child(4n+1) *{--sc:#9FB3F0}
 :root[data-theme="dark"] #dmap .dmd li.on span{background:#1F2D5E;color:#C6CEE6;border-color:#9FB3F0}:root[data-theme="dark"] #dmap .dmn{color:#9FB3F0}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #dmap .stp:nth-child(4n+1){--sc:#9FB3F0}:root:not([data-theme="light"]) #dmap .dmd li.on span{background:#1F2D5E;color:#C6CEE6;border-color:#9FB3F0}:root:not([data-theme="light"]) #dmap .dmn{color:#9FB3F0}}
+/* v315 · scelta città: la fascia parte dal bordo dello schermo (anche su iPhone) e finisce sotto le schede */
+html body #dpick .dpband{padding-top:calc(env(safe-area-inset-top,0px) + 12px)!important;padding-bottom:14px!important;gap:10px!important}
+html body #dpick .dpband .dback{min-height:36px}
