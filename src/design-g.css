@@ -3867,3 +3867,9 @@ html body #dmap .dmc{display:none!important}
 /* v315 · scelta città: la fascia parte dal bordo dello schermo (anche su iPhone) e finisce sotto le schede */
 html body #dpick .dpband{padding-top:calc(env(safe-area-inset-top,0px) + 12px)!important;padding-bottom:14px!important;gap:10px!important}
 html body #dpick .dpband .dback{min-height:36px}
+/* v315 · scelta città: la fascia blu resta in alto e l'elenco ci scorre sotto; scorrendo le idee si chiudono */
+html body #dpick .dpband{position:sticky!important;top:0;z-index:6}
+#dpick .dpband .dpk,#dpick .dpband .dpcr{transition:max-height .3s ease,opacity .2s ease,margin .3s ease;max-height:170px;overflow:hidden}
+#dpick.dsc .dpband .dpk,#dpick.dsc .dpband .dpcr{max-height:0;opacity:0;margin-top:-10px}
+#dpick .dpband .dpcr{overflow-x:auto}
+#dpick.dsc .dpband .dpcr{overflow:hidden}
