@@ -3921,3 +3921,21 @@ html body #hero.hero{padding-bottom:112px!important}
 #hero>*:not(svg.sky){position:relative;z-index:1}
 /* v318 · home senza il logo in alto e senza la sua animazione di stagione */
 html body #dest .dlw,html body #dest .seac{display:none!important}
+/* v319 · carta d'imbarco: via i cerchi ai lati della linea tratteggiata */
+.tmx2 .tpt::before,.tmx2 .tpt::after{display:none!important}
+.tmx2 .tpt{margin:0 16px!important}
+/* v319 · account in alto a sinistra nella home + scheda profilo in cima alle impostazioni */
+html body #dest .dacc{all:unset;box-sizing:border-box;position:absolute;left:16px;top:calc(env(safe-area-inset-top,0px) + 14px);z-index:5;width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
+#dest .dacc .dai{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);color:#fff;display:flex;align-items:center;justify-content:center;font:700 17px Outfit,system-ui,sans-serif;border:2px solid rgba(255,255,255,.55);box-sizing:border-box}
+#dest .dacc .dai svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round}
+#dest .dacc:active{transform:scale(.94)}
+#dest .dacc:focus-visible{outline:3px solid #E1AD21;outline-offset:2px}
+html body #sheet .shprof{display:flex;align-items:center;gap:14px;width:100%;box-sizing:border-box;margin:4px 0 14px;padding:14px 16px;border:0;border-radius:18px;background:linear-gradient(160deg,#2340A0,#14224F);color:#fff;text-align:left;cursor:pointer;font:inherit;box-shadow:0 14px 28px -18px rgba(13,21,51,.7)}
+#sheet .shprof[hidden]{display:none}
+#sheet .shprof .spa{flex:none;width:48px;height:48px;border-radius:50%;background:#E1AD21;color:#14224F;display:flex;align-items:center;justify-content:center;font:700 20px Outfit,system-ui,sans-serif}
+#sheet .shprof .spa svg{width:24px;height:24px;fill:none;stroke:#14224F;stroke-width:2;stroke-linecap:round}
+#sheet .shprof .spt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+#sheet .shprof .spt b{font:600 17px Outfit,system-ui,sans-serif;color:#fff}
+#sheet .shprof .spt small{font:400 13px Figtree,system-ui,sans-serif;color:#C6CEE6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#sheet .shprof .spc{font-size:22px;color:#E1AD21}
+#sheet #shacct{display:none!important}

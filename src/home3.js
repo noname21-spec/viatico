@@ -21,6 +21,14 @@ var ds=document.getElementById("dest");if(ds&&!ds.__hk){ds.__hk=1;var tk=0;ds.ad
 var h=document.getElementById("dhero");if(h&&!h.__px&&!red){h.__px=1;h.addEventListener("pointermove",function(e){var r=h.getBoundingClientRect();h.style.setProperty("--px",((e.clientX-r.left)/r.width*2-1).toFixed(2));h.style.setProperty("--py",((e.clientY-r.top)/r.height*2-1).toFixed(2))},{passive:true});h.addEventListener("pointerleave",function(){h.style.setProperty("--px",0);h.style.setProperty("--py",0)})}
 /* intestazioni delle sezioni del viaggio: piccola riga con la città */
 var n=window.PD&&PD.n;[].forEach.call(document.querySelectorAll("#mappa>h2.sec,#mangiare>h2.sec,#consigli>h2.sec"),function(x){if(n)x.setAttribute("data-k",n)})}
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+/* account in alto a sinistra nella home: apre le impostazioni con la scheda del profilo in cima */
+var PI='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>';
+function acc(){var A=window.__acct||{},on=!!A.on,ml=A.mail||"",ini=on&&ml?ml.charAt(0).toUpperCase():"";
+var br=document.getElementById("dbrand");if(br&&!document.getElementById("dacc")){var b=document.createElement("button");b.type="button";b.id="dacc";b.className="dacc";br.insertBefore(b,br.firstChild);b.addEventListener("click",function(e){e.stopPropagation();var g=document.getElementById("dgear");if(g)g.click();setTimeout(function(){var t=document.querySelector('#sheet .stabs [data-t="acc"]');if(t)t.click()},60)})}
+var b2=document.getElementById("dacc");if(b2){b2.innerHTML=ini?'<span class="dai">'+ini+'</span>':'<span class="dai">'+PI+'</span>';b2.setAttribute("aria-label",on?"Il tuo account e le impostazioni":"Accedi e impostazioni")}
+var sh=document.querySelector('#sheet .spage[data-p="acc"]');if(sh&&!document.getElementById("shprof")){var pf=document.createElement("button");pf.type="button";pf.id="shprof";pf.className="shprof";sh.insertBefore(pf,sh.firstChild);pf.addEventListener("click",function(){var a=document.getElementById("shacct");if(a)a.click()})}
+var pf2=document.getElementById("shprof");if(pf2){pf2.hidden=A.ok===false;pf2.innerHTML='<span class="spa">'+(ini||PI)+'</span><span class="spt"><b>'+(on?"Il tuo account":"Accedi o registrati")+'</b><small>'+(on?ml.replace(/[<>&]/g,""):"Ritrova viaggi, spese e liste su ogni dispositivo")+'</small></span><span class="spc" aria-hidden="true">›</span>'}}
+document.addEventListener("via-acct",acc);
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){init();acc()});else{init();acc()}
 new MutationObserver(function(){init()}).observe(document.body,{attributes:true,attributeFilter:["class"]});try{var dpw=false;new MutationObserver(function(){var d=document.getElementById("dest"),pk=d&&d.classList.contains("pick");if(pk&&!dpw){setTimeout(band,30);setTimeout(band,450)}dpw=pk}).observe(document.getElementById("dest"),{attributes:true,attributeFilter:["class"]})}catch(e){}
 })();
