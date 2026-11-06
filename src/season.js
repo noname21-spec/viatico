@@ -4,7 +4,7 @@ var dest=document.getElementById("dest"),box=document.getElementById("dlw")||doc
 var rm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
 var m=new Date().getMonth(),S=m===11||m<2?"winter":m<5?"spring":m<8?"summer":"autumn";
 dest.dataset.sea=S;try{window.__homeSky&&window.__homeSky()}catch(e){}
-if(rm)return;
+return;
 var cv=document.createElement("canvas");cv.className="seac";cv.setAttribute("aria-hidden","true");box.appendChild(cv);
 var cx=cv.getContext("2d"),W=0,H=0,dpr=Math.min(window.devicePixelRatio||1,window.LITE?1:1.75),P=[],raf=0,last=0,t0=0,N=window.LITE?5:S==="winter"?16:S==="summer"?8:9,K=.5;
 function size(){W=120;H=112;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}

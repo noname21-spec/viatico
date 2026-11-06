@@ -3919,3 +3919,5 @@ html body #dest #dhero .dsk svg{filter:none!important;opacity:1!important}
 html body #hero.hero{padding-bottom:112px!important}
 #hero svg.sky{z-index:0!important}
 #hero>*:not(svg.sky){position:relative;z-index:1}
+/* v318 · home senza il logo in alto e senza la sua animazione di stagione */
+html body #dest .dlw,html body #dest .seac{display:none!important}
