@@ -3873,3 +3873,49 @@ html body #dpick .dpband{position:sticky!important;top:0;z-index:6}
 #dpick.dsc .dpband .dpk,#dpick.dsc .dpband .dpcr{max-height:0;opacity:0;margin-top:-10px}
 #dpick .dpband .dpcr{overflow-x:auto}
 #dpick.dsc .dpband .dpcr{overflow:hidden}
+/* v317 · skyline «carta, poster e stagioni»: sole senape con raggi fino in cima, due file di palazzi di carta, monumenti blu notte, stagione del viaggio */
+svg.sky .rays,svg.sky .ms,svg.sky .msh,svg.sky .bk0,svg.sky .snc,svg.sky .prt{display:none}
+:is(#hero,#dsk) svg.sky{overflow:visible!important}
+:is(#hero,#dsk) svg.sky .rays,:is(#hero,#dsk) svg.sky .ms,:is(#hero,#dsk) svg.sky .msh,:is(#hero,#dsk) svg.sky .bk0,:is(#hero,#dsk) svg.sky .prt{display:inline}
+:is(#hero,#dsk) svg.sky .sunG,:is(#hero,#dsk) svg.sky .halo,:is(#hero,#dsk) svg.sky .sun{display:none!important}
+:is(#hero,#dsk) svg.sky .rays{fill:rgba(255,226,140,.16);transform-origin:var(--msx,200px) var(--msy,58px);animation:skRays 90s linear infinite}
+:is(#hero,#dsk) svg.sky .ms{fill:#E1AD21;transition:fill .8s}
+:is(#hero,#dsk) svg.sky .msh{fill:rgba(225,173,33,.22)}
+@keyframes skRays{to{transform:rotate(360deg)}}
+:is(#hero,#dsk) svg.sky{--skc:#14224F!important;--c1:#7E9BE0;--c2:#3D5BB8}
+:is(#hero,#dsk) svg.sky[data-season=primavera]{--c1:#9DBEF2;--c2:#5A80DA}
+:is(#hero,#dsk) svg.sky[data-season=estate]{--c1:#6E92E6;--c2:#2E4CB0}
+:is(#hero,#dsk) svg.sky[data-season=autunno]{--c1:#D39468;--c2:#8A4A6A}
+:is(#hero,#dsk) svg.sky .bk0 path{fill:var(--c1)}
+:is(#hero,#dsk) svg.sky .bk>rect:not(.wn),:is(#hero,#dsk) svg.sky .bk path{fill:var(--c2)!important}
+:is(#hero,#dsk) svg.sky .face,:is(#hero,#dsk) svg.sky .face *{fill:#14224F!important}
+:is(#hero,#dsk) svg.sky .gnd{fill:#14224F!important}
+:is(#hero,#dsk) svg.sky .ln,:is(#hero,#dsk) svg.sky .ln path{stroke:rgba(126,155,224,.35)!important}
+:is(#hero,#dsk) svg.sky .bk0{animation:skUp .9s .05s cubic-bezier(.2,.7,.2,1) both}
+:is(#hero,#dsk) svg.sky .bk{animation:skUp .9s .2s cubic-bezier(.2,.7,.2,1) both!important}
+@keyframes skUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+/* neve sui tetti: sale insieme al suo monumento */
+:is(#hero,#dsk) svg.sky[data-season=inverno] .snc{display:inline;fill:none!important;stroke:#FFFFFF;stroke-width:1.5;stroke-linejoin:round;clip-path:inset(0 0 72% 0)}
+:is(#hero,#dsk) svg.sky[data-season=inverno] .snc *{fill:none!important;stroke:#FFFFFF}
+/* particelle della stagione */
+:is(#hero,#dsk) svg.sky .prt ellipse{animation:skFall 8s linear infinite;fill:#FFFFFF;opacity:.9}
+:is(#hero,#dsk) svg.sky[data-season=primavera] .prt ellipse{fill:#F6B7C8;animation-name:skPetal}
+:is(#hero,#dsk) svg.sky[data-season=autunno] .prt ellipse{fill:#E1AD21;animation-name:skLeaf}
+:is(#hero,#dsk) svg.sky[data-season=autunno] .prt ellipse:nth-child(3n){fill:#C9652E}
+:is(#hero,#dsk) svg.sky[data-season=estate] .prt{display:none}
+@keyframes skFall{from{transform:translateY(0)}to{transform:translateY(520px)}}
+@keyframes skPetal{from{transform:translate(0,0) rotate(0)}to{transform:translate(50px,520px) rotate(320deg)}}
+@keyframes skLeaf{0%{transform:translate(0,0)}50%{transform:translate(-24px,260px)}100%{transform:translate(20px,520px)}}
+/* notte: niente raggi, il sole diventa luna */
+:is(#hero[data-tod=night],#hero.tod-night) svg.sky .rays,:root[data-hsky=notte] #dsk svg.sky .rays{opacity:0}
+:is(#hero[data-tod=night],#hero.tod-night) svg.sky .ms,:root[data-hsky=notte] #dsk svg.sky .ms{fill:#F3E6B5}
+:is(#hero[data-tod=night],#hero.tod-night) svg.sky .msh,:root[data-hsky=notte] #dsk svg.sky .msh{fill:rgba(243,230,181,.18)}
+html.lite :is(#hero,#dsk) svg.sky .prt,html.lite :is(#hero,#dsk) svg.sky .rays{animation:none!important}
+html.lite :is(#hero,#dsk) svg.sky .prt{display:none}
+@media (prefers-reduced-motion:reduce){:is(#hero,#dsk) svg.sky .prt{display:none}:is(#hero,#dsk) svg.sky .rays{animation:none}}
+/* home: lo skyline torna a colori, il sole della decorazione lascia il posto a quello dello skyline */
+html body #dest #dhero .dsk svg{filter:none!important;opacity:1!important}
+#dhero .skd .skb{display:none!important}
+html body #hero.hero{padding-bottom:112px!important}
+#hero svg.sky{z-index:0!important}
+#hero>*:not(svg.sky){position:relative;z-index:1}
