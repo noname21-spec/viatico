@@ -3964,3 +3964,9 @@ html body #dest #dyear .dlp{margin:18px 0 20px!important}
 .tmx2 .tpas{margin-bottom:14px!important}
 html body #dest .dacc.gone{opacity:0;pointer-events:none;transform:scale(.8)}html body #dest .dacc{transition:opacity .2s ease,transform .2s ease}
 #dest .dacc .dai{width:39px!important;height:39px!important;font-size:18px!important}#dest .dacc .dai svg{width:21px!important;height:21px!important}
+/* v323 · dal tasto account: solo le voci dell'account, foglio alto quanto serve, senza scorrere */
+html body #sheet.acconly .shc{height:auto!important;max-height:calc(100% - 8px)!important;overflow-y:auto!important}
+html body #sheet.acconly .spage:not([data-p="acc"]){display:none!important}
+html body #sheet.acconly .spage[data-p="acc"]{display:block!important;position:static!important;transform:none!important;opacity:1!important;visibility:visible!important;height:auto!important;overflow:visible!important}
+html body #sheet.acconly .stabs{display:none!important}
+html body #sheet.acconly .shfoot{justify-content:flex-end!important}
