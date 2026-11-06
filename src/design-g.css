@@ -3943,3 +3943,23 @@ html body #sheet .shprof{display:flex;align-items:center;gap:14px;width:100%;box
 html body #dest .dacc{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.2);box-shadow:none;left:var(--dax,14px);top:var(--day,34px);transition:transform .15s ease}
 #dest .dacc .dai{width:34px;height:34px;border:0;background:linear-gradient(150deg,#F2C64E,#D99E12);color:#14224F;font:700 16px/1 Outfit,system-ui,sans-serif;box-shadow:inset 0 -2px 0 rgba(20,34,79,.18),0 2px 6px rgba(13,21,51,.25)}
 #dest .dacc .dai svg{width:18px;height:18px;stroke:#14224F;stroke-width:2.2}
+/* v321 · home più ariosa: più spazio tra sezioni, schede e titoli */
+html body #dest #dsheet{padding:20px 16px 0!important}
+html body #dest #dsheet>.dnx{margin-bottom:16px!important}
+html body #dest #dsheet>#dex{margin-top:0!important;margin-bottom:8px!important}
+html body #dest #drow{margin-top:24px!important;margin-bottom:12px!important}
+html body #dest #drow .drh{margin:0 2px 14px!important}
+html body #dest #drow .tmls{gap:18px!important}
+html body #dest #drow .tmnew{margin:22px 0 30px!important}
+html body #dest #drow .drs{gap:12px!important}
+html body #dest #drow .drs .drc2{min-height:66px!important;padding:14px 16px 14px 14px!important}
+html body #dest #dsheet>#dyear{margin-top:28px!important}
+html body #dest #dsheet>#dmap{margin-top:20px!important}
+html body #dest #dmap .stps{margin-top:18px!important;gap:18px!important}
+html body #dest #dmap .dmm{margin-top:22px!important}
+html body #dest #dsheet>#dcta{margin-top:24px!important}
+html body #dest #dyear .dlp{margin:18px 0 20px!important}
+/* il sole della scheda viaggio non spunta più sotto la carta d'imbarco */
+.tmx2 .tms2 .sun{bottom:-120px!important}
+.tmx2 .tpas{margin-bottom:14px!important}
+html body #dest .dacc.gone{opacity:0;pointer-events:none;transform:scale(.8)}html body #dest .dacc{transition:opacity .2s ease,transform .2s ease}
