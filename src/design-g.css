@@ -4038,3 +4038,36 @@ html body #dmine .tadd,html body #dmine .tpast,html body #dmine #dpastb{border:2
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body #dmine #dpastb{color:#9FB3F0!important;border-color:#33447A!important}}
 html body #dmine .tpcs .tk.dn:nth-of-type(3n+2){background:linear-gradient(180deg,#1B2C78 0%,#6A3C8C 55%,#E7883C 100%)!important}
 html body #dmine .tpcs .tk.dn:nth-of-type(3n){background:linear-gradient(180deg,#070D2B 0%,#13206A 60%,#2340A0 100%)!important}
+/* v331 · skyline nuovo anche nelle schede dei viaggi (carta a strati, sole senape, stagione) */
+html body .pcmi svg.sky .bk0{display:inline!important}
+html body .pcmi svg.sky .ms,html body .pcmi svg.sky .msh{display:inline!important}
+html body .pcmi svg.sky .ms{fill:#E1AD21}html body .pcmi svg.sky .msh{fill:rgba(225,173,33,.22)}
+html body .pcmi svg.sky .far{display:inline!important}
+html body .pcmi svg.sky .sunG,html body .pcmi svg.sky .halo,html body .pcmi svg.sky .sun,html body .pcmi svg.sky .cloud,html body .pcmi svg.sky .stars,html body .pcmi svg.sky .rays,html body .pcmi svg.sky .prt{display:none!important}
+html body .pcmi svg.sky{--c1:#7E9BE0;--c2:#3D5BB8}
+html body .pcmi svg.sky[data-season=primavera]{--c1:#9DBEF2;--c2:#5A80DA}
+html body .pcmi svg.sky[data-season=estate]{--c1:#6E92E6;--c2:#2E4CB0}
+html body .pcmi svg.sky[data-season=autunno]{--c1:#D39468;--c2:#8A4A6A}
+html body .pcmi svg.sky .bk0 path{fill:var(--c1)!important}
+html body .pcmi svg.sky .bk>rect:not(.wn),html body .pcmi svg.sky .bk path{fill:var(--c2)!important}
+html body .pcmi svg.sky .face,html body .pcmi svg.sky .face *{fill:#14224F!important}
+html body .pcmi svg.sky .gnd{fill:#14224F!important}
+html body .pcmi svg.sky .ln,html body .pcmi svg.sky .ln path{stroke:rgba(126,155,224,.35)!important}
+html body .pcmi svg.sky[data-season=inverno] .snc{display:inline!important;fill:none!important;stroke:#fff;stroke-width:1.5;stroke-linejoin:round;clip-path:inset(0 0 72% 0)}
+html body .pcmi svg.sky[data-season=inverno] .snc *{fill:none!important;stroke:#fff}
+html body .pcmi svg.sky .wn{fill:#FFD66E!important}
+
+/* v331b · schede: skyline più grande, cielo della stagione del viaggio, raggi */
+html body #dmine .tpcs .tk.dn .pcmi{height:74px!important;margin-top:2px!important}
+html body #dmine .tpcs .tk.dn .pcmi svg.sky{top:0!important;bottom:0!important;height:100%!important}
+html body .pcmi svg.sky .rays{display:inline!important}
+html body .pcmi svg.sky .rays path{fill:rgba(255,226,140,.13)!important}
+html body #dmine .tpcs .tk.dn[data-season=inverno]{background:linear-gradient(180deg,#1C3592 0%,#3F66CF 62%,#B9CBF0 100%)!important}
+html body #dmine .tpcs .tk.dn[data-season=primavera]{background:linear-gradient(180deg,#22409F 0%,#4A76DA 58%,#F2C9D6 100%)!important}
+html body #dmine .tpcs .tk.dn[data-season=estate]{background:linear-gradient(180deg,#1C3FAE 0%,#3A6BDB 62%,#F2D08A 100%)!important}
+html body #dmine .tpcs .tk.dn[data-season=autunno]{background:linear-gradient(180deg,#1F3699 0%,#6A3C8C 58%,#E9A86A 100%)!important}
+html body #dmine .tpcs .tk.dn[data-season]::before{background:linear-gradient(180deg,rgba(10,16,48,.25),transparent 55%)}
+html body .pcmi svg.sky[data-season=inverno] .snc{stroke-width:2.2}
+html body #dmine .tpcs .tk.dn .pcmi{margin-left:-12px!important;margin-right:-12px!important;width:calc(100% + 24px)!important;max-width:none!important;overflow:visible!important}
+html body #dmine .tpcs .tk.dn .pcmi svg.sky{overflow:visible!important}
+html body #dmine .tpcs .tk.dn .tm{position:relative;z-index:2}

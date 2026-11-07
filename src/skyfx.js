@@ -102,7 +102,7 @@ function addNight(far,mons,sky,sunX,sunY,rnd,lite){
   out.forEach(function(q){el("rect",{"class":"wn","data-o":q[2],x:q[0],y:q[1],width:1.8,height:2.6,rx:.3},wg)});
   if(pts.length||main){SKW[wkey]=out;try{var ks=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf("via-skw:")===0)ks.push(k)}if(ks.length>24)ks.slice(0,ks.length-20).forEach(function(k){localStorage.removeItem(k)});localStorage.setItem(wkey,JSON.stringify(out))}catch(e){}}}
 var SKW={};
-function skySeason(svg){var d=null;try{var t=JSON.parse(localStorage.getItem("via-trip")||"null");if(t&&t.date&&svg&&!svg.classList.contains("zsk")&&window.PD&&t.dest===PD.id)d=t.date}catch(e){}var m=d?+String(d).slice(5,7)-1:new Date().getMonth();return m===11||m<2?"inverno":m<5?"primavera":m<8?"estate":"autunno"}
+function skySeason(svg){var d=null;try{if(svg&&svg.getAttribute("data-tdate"))d=svg.getAttribute("data-tdate");else{var t=JSON.parse(localStorage.getItem("via-trip")||"null");if(t&&t.date&&svg&&!svg.classList.contains("zsk")&&window.PD&&t.dest===PD.id)d=t.date}}catch(e){}var m=d?+String(d).slice(5,7)-1:new Date().getMonth();return m===11||m<2?"inverno":m<5?"primavera":m<8?"estate":"autunno"}
 function skH(s){s=String(s||"");var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return (h>>>0).toString(36)+s.length}
 /* generatore ripetibile per città: stessa fila di palazzi a ogni apertura */
 function seedR(str){var h=7;for(var i=0;i<str.length;i+=7)h=(h*31+str.charCodeAt(i))%233280;var s=h||7;return function(){s=(s*9301+49297)%233280;return s/233280}}
