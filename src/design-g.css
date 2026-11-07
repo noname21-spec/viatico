@@ -4071,3 +4071,25 @@ html body .pcmi svg.sky[data-season=inverno] .snc{stroke-width:2.2}
 html body #dmine .tpcs .tk.dn .pcmi{margin-left:-12px!important;margin-right:-12px!important;width:calc(100% + 24px)!important;max-width:none!important;overflow:visible!important}
 html body #dmine .tpcs .tk.dn .pcmi svg.sky{overflow:visible!important}
 html body #dmine .tpcs .tk.dn .tm{position:relative;z-index:2}
+
+/* v333 · comparsa dello skyline: niente skyline «fantasma» prima che sia pronto, parte quando lo splash se ne va, prima sole e raggi, poi i palazzi di carta, poi i monumenti */
+:is(#hero,#dsk) svg.sky:not([data-season]){visibility:hidden}
+html.skwait :is(#hero,#dsk) svg.sky,html.skwait :is(#hero,#dsk) svg.sky *{animation-play-state:paused!important}
+:is(#hero,#dsk) svg.sky .ms,:is(#hero,#dsk) svg.sky .msh{transform-box:fill-box;transform-origin:50% 50%;animation:skSun .9s cubic-bezier(.2,.8,.2,1) both}
+:is(#hero,#dsk) svg.sky .msh{animation-delay:.08s}
+@keyframes skSun{from{transform:translateY(26px) scale(.55);opacity:0}}
+:is(#hero,#dsk) svg.sky .rays{animation:skRays 90s linear infinite,skRayIn 1.4s .25s ease-out both}
+@keyframes skRayIn{from{opacity:0}}
+:is(#hero,#dsk) svg.sky .bk0{animation:skUp .9s .3s cubic-bezier(.2,.7,.2,1) both!important}
+:is(#hero,#dsk) svg.sky .bk{animation:skUp .9s .45s cubic-bezier(.2,.7,.2,1) both!important}
+:is(#hero,#dsk) svg.sky .mon{animation-delay:calc(var(--k)*110ms + 600ms)!important}
+html.lite :is(#hero,#dsk) svg.sky .ms,html.lite :is(#hero,#dsk) svg.sky .msh{animation:none}
+@media (prefers-reduced-motion:reduce){:is(#hero,#dsk) svg.sky .ms,:is(#hero,#dsk) svg.sky .msh,:is(#hero,#dsk) svg.sky .bk0,:is(#hero,#dsk) svg.sky .bk{animation:none!important}}
+html body #dsk svg.sky .mon{animation:skRise .95s cubic-bezier(.22,1.45,.4,1) both!important;animation-delay:calc(var(--k)*110ms + 600ms)!important}
+html body #dsk svg.sky .bk{animation:skUp .9s .45s cubic-bezier(.2,.7,.2,1) both!important}
+html body #dsk svg.sky .bk0{animation:skUp .9s .3s cubic-bezier(.2,.7,.2,1) both!important}
+html.skwait body #dsk svg.sky *{animation-play-state:paused!important}
+@media (prefers-reduced-motion:reduce){html body #dsk svg.sky .mon,html body #dsk svg.sky .bk,html body #dsk svg.sky .bk0{animation:none!important}}
+/* v333 · suggerimento «scorri per eliminare» sulla scheda del viaggio: si vede solo il tasto rosso, niente striscia verde a metà */
+html body .tmw.hint:not(.open):not(.drag) .tma button:not(.tmd){opacity:0!important;visibility:hidden}
+html body .tmw.hint:not(.open):not(.drag) .tma button.tmd{animation:none}

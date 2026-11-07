@@ -1,4 +1,4 @@
-<div id="splash" aria-hidden="true"><style>
+<script>/* v333 lo skyline aspetta che lo splash se ne vada, poi sale */(function(){var H=document.documentElement,n=0;H.classList.add("skwait");var iv=setInterval(function(){var s=document.getElementById("splash"),c=s&&getComputedStyle(s);if(++n>60||!s||s.style.display==="none"||c.display==="none"||c.visibility==="hidden"||+c.opacity<.7){H.classList.remove("skwait");clearInterval(iv)}},100)})()</script><div id="splash" aria-hidden="true"><style>
 #splash{background:linear-gradient(180deg,#070D2B 0%,#13206A 60%,#2340A0 100%)!important;animation:spOut .5s 3.4s ease forwards!important}
 #splash .s1dw{position:absolute;inset:0;background:linear-gradient(180deg,#14224F 0%,#2340A0 45%,#6E5FA8 72%,#EE9C78 100%);opacity:0;animation:s1dw 2.6s .5s ease-in-out forwards}
 #splash .s1st{position:absolute;inset:0;animation:s1st 2.4s .7s ease-in-out forwards}

@@ -286,8 +286,8 @@ var lw=Date.now();function loadW(){lw=Date.now();load()}load();setInterval(funct
 var tk=0;function upd(){tk=0;var a=document.querySelector(".tabr:checked"),b=a&&document.getElementById(a.id.slice(2));body.classList.toggle("scrolled",!!(b&&b.scrollTop>40))}
 blks.forEach(function(b){b.addEventListener("scroll",function(){if(!tk)tk=requestAnimationFrame(upd)},{passive:true})});
 /* splash a ogni apertura */
-var sp=document.getElementById("splash"),hid=0,tm;function hide(){if(!sp)return;var s=sp,sh=s.querySelector(".spshr"),tg=document.getElementById("dlw"),de=document.getElementById("dest");
-if(s.animate&&s.style.display!=="none"){s.style.pointerEvents="none";s.animate([{opacity:1},{opacity:0}],{duration:380,easing:"ease-out",fill:"forwards"}).onfinish=function(){s.style.display="none";try{s.getAnimations().forEach(function(x){x.cancel()})}catch(e){}if(window.heroLapse)setTimeout(window.heroLapse,60)};return}
+var sp=document.getElementById("splash"),hid=0,tm;function hide(){if(!sp)return;document.documentElement.classList.remove("skwait");var s=sp,sh=s.querySelector(".spshr"),tg=document.getElementById("dlw"),de=document.getElementById("dest");
+if(s.animate&&s.style.display!=="none"){s.style.pointerEvents="none";s.animate([{opacity:getComputedStyle(s).opacity},{opacity:0}],{duration:380,easing:"ease-out",fill:"forwards"}).onfinish=function(){s.style.display="none";try{s.getAnimations().forEach(function(x){x.cancel()})}catch(e){}if(window.heroLapse)setTimeout(window.heroLapse,60)};return}
 s.style.display="none";if(window.heroLapse)setTimeout(window.heroLapse,60)}tm=setTimeout(hide,3500);
 document.addEventListener("visibilitychange",function(){if(document.hidden){hid=Date.now();return}if(!sp||!hid||Date.now()-hid<120000||matchMedia("(prefers-reduced-motion: reduce)").matches)return;if(window.heroLapse&&heroLapse.arm)heroLapse.arm();var n=sp.cloneNode(true);n.style.display="";sp.parentNode.replaceChild(n,sp);sp=n;clearTimeout(tm);tm=setTimeout(hide,3500)});
 /* service worker per l'uso offline */
