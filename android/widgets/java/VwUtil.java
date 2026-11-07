@@ -45,11 +45,15 @@ public final class VwUtil {
     private VwUtil() {}
     /* colori del viaggio in programma più vicino */
     static int TA = 0xFF2340A0, TB = 0xFF14224F;
+    static final int NIGHT = 0xFF14224F;
     static Bitmap SKY = null;
     static long SKYT = 0;
     static Bitmap sky(Context c) {
         java.io.File f = new java.io.File(c.getFilesDir(), "vw_sky.png");
         if (!f.exists()) return null;
+        SharedPreferences sp = c.getSharedPreferences(PREFS, 0);
+        SX = sp.getFloat("sky_sx", .5f); SY = sp.getFloat("sky_sy", .45f);
+        if (SEASON.isEmpty()) SEASON = sp.getString("sky_s", "");
         if (SKY == null || f.lastModified() != SKYT) { try { SKY = android.graphics.BitmapFactory.decodeFile(f.getAbsolutePath()); SKYT = f.lastModified(); } catch (Exception e) { SKY = null; } }
         return SKY;
     }
@@ -65,46 +69,99 @@ public final class VwUtil {
         return Typeface.create("sans-serif", Typeface.BOLD);
     }
     static void theme(JSONObject o) {
+        /* v332 colori dell'app (blu reale e blu notte) per tutti i viaggi; la stagione decide il cielo */
         TA = 0xFF2340A0; TB = 0xFF14224F;
         JSONObject t = o.optJSONObject("theme");
         if (t == null) return;
-        try { TA = Color.parseColor(t.optString("a")); } catch (Exception ignored) {}
-        try { TB = Color.parseColor(t.optString("b")); } catch (Exception ignored) { TB = mix(TA, 0xFF000000, .35f); }
+        String ss = t.optString("s", "");
+        if (!ss.isEmpty()) SEASON = ss;
     }
     static int mix(int a, int b, float f) {
         return Color.rgb(Math.round(Color.red(a) * (1 - f) + Color.red(b) * f), Math.round(Color.green(a) * (1 - f) + Color.green(b) * f), Math.round(Color.blue(a) * (1 - f) + Color.blue(b) * f));
     }
-    /* sfondo: sfumatura nei colori della città, un velo scuro a sinistra per il testo e un cerchio chiaro in alto a destra */
+    /* v332 cielo della stagione del viaggio, come nell'app: blu in alto, chiaro all'orizzonte */
+    static int[] skyCols(String s) {
+        if ("primavera".equals(s)) return new int[]{0xFF22409F, 0xFF4A76DA, 0xFFE9B3C6};
+        if ("estate".equals(s)) return new int[]{0xFF1C3FAE, 0xFF3A6BDB, 0xFFEFC778};
+        if ("autunno".equals(s)) return new int[]{0xFF1F3699, 0xFF6A3C8C, 0xFFE09A5E};
+        return new int[]{0xFF1C3592, 0xFF3F66CF, 0xFFA9BFEC};
+    }
+    static boolean warn() { return TA == 0xFFC2410C || TA == 0xFFB3261E; }
+    static float SX = .5f, SY = .45f;
+    static String SEASON = "";
+    /* sfondo: cielo della stagione con il sole senape e i raggi, sotto lo skyline della città come nell'app */
     static Bitmap bg(Context c, int w, int h, float dark) {
         Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         Canvas k = new Canvas(b);
         float r = Build.VERSION.SDK_INT >= 31 ? 0 : 22 * dens(c) * Math.min(1f, 520f / Math.max(w / dens(c) * dens(c), h));
-        int a = mix(TA, 0xFF000000, dark), bb = mix(TB, 0xFF000000, dark);
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
-        p.setShader(new LinearGradient(0, 0, w, h * .6f, a, bb, Shader.TileMode.CLAMP));
         RectF rr = new RectF(0, 0, w, h);
-        k.drawRoundRect(rr, r, r, p);
-        p.setShader(new LinearGradient(0, 0, w * .7f, 0, 0x2E000000, 0x00000000, Shader.TileMode.CLAMP));
-        k.drawRoundRect(rr, r, r, p);
-        p.setShader(null);
-        p.setColor(0x14FFFFFF);
         k.save();
         Path clip = new Path();
         clip.addRoundRect(rr, r, r, Path.Direction.CW);
         k.clipPath(clip);
-        float cr = Math.min(w, h) * .75f;
-        k.drawCircle(w - cr * .25f, -cr * .3f, cr, p);
-        p.setColor(0x0DFFFFFF);
-        k.drawCircle(w * .1f, h * 1.15f, cr * .6f, p);
+        if (warn()) {
+            /* in ritardo o oltre il budget: arancio o rosso, senza skyline */
+            p.setShader(new LinearGradient(0, 0, w, h * .6f, mix(TA, 0xFF000000, dark), mix(TB, 0xFF000000, dark), Shader.TileMode.CLAMP));
+            k.drawRect(rr, p);
+            p.setShader(null);
+            p.setColor(0x14FFFFFF);
+            float cr = Math.min(w, h) * .75f;
+            k.drawCircle(w - cr * .25f, -cr * .3f, cr, p);
+            k.restore();
+            return b;
+        }
         Bitmap sk = SKYC;
+        boolean wide = w > h * 2.4f;
+        float sw = 0, sh = 0, x0 = 0;
         if (sk != null) {
-            float sw = Math.max(w, h * 1.6f), sh = sw * sk.getHeight() / (float) sk.getWidth();
-            if (sh > h * .5f) { sh = h * .5f; sw = sh * sk.getWidth() / (float) sk.getHeight(); }
+            sw = Math.max(w, h * 1.6f); sh = sw * sk.getHeight() / (float) sk.getWidth();
+            float cap = wide ? h * .62f : h > w * .8f ? h * .34f : h * .46f;
+            if (sh > cap) { sh = cap; sw = sh * sk.getWidth() / (float) sk.getHeight(); }
+            if (sw < w) { sw = w; sh = sw * sk.getHeight() / (float) sk.getWidth(); }
+            x0 = wide ? w - sw : (w - sw) / 2f;
+        }
+        int[] sc = skyCols(SEASON);
+        /* l'orizzonte chiaro solo dietro lo skyline: dove c'è il testo il cielo resta blu */
+        float hz = sk != null ? h - sh * .55f : h;
+        p.setShader(new LinearGradient(0, 0, 0, h, new int[]{mix(sc[0], 0xFF000000, dark), mix(sc[1], 0xFF000000, dark), mix(mix(sc[2], sc[1], .25f), 0xFF000000, dark)}, new float[]{0f, Math.max(.3f, hz / h * .85f), 1f}, Shader.TileMode.CLAMP));
+        k.drawRect(rr, p);
+        p.setShader(null);
+        float d = dens(c) * Math.min(1f, 520f / Math.max(w, h));
+        if (!wide) {
+            /* il sole a destra, dietro i monumenti, così non copre i testi; nei widget bassi niente sole */
+            float mx = w * .8f, my = sk != null ? h - sh * .62f : h * .7f, sr = sk != null ? Math.max(7 * d, Math.min(sh * .15f, 15 * d)) : 12 * d;
+            /* raggi del sole fino al bordo in alto */
+            float L = (w + h) * 1.5f;
+            p.setColor(0x1FFFE28C);
+            for (int q = 0; q < 14; q++) {
+                double a0 = q / 14.0 * 2 * Math.PI, a1 = (q + .5) / 14.0 * 2 * Math.PI;
+                Path ray = new Path();
+                ray.moveTo(mx, my);
+                ray.lineTo(mx + (float) (L * Math.cos(a0)), my + (float) (L * Math.sin(a0)));
+                ray.lineTo(mx + (float) (L * Math.cos(a1)), my + (float) (L * Math.sin(a1)));
+                ray.close();
+                k.drawPath(ray, p);
+            }
+            p.setColor(0x38E1AD21);
+            k.drawCircle(mx, my, sr * 1.45f, p);
+            p.setColor(0xFFE1AD21);
+            k.drawCircle(mx, my, sr, p);
+        }
+        if (sk != null) {
             Paint bp = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
-            float x0 = (w - sw) / 2f;
-            k.drawBitmap(sk, null, new RectF(x0, h - sh, x0 + sw, h), bp);
-            /* velo in basso per leggere il testo sopra lo skyline */
-            p.setShader(new LinearGradient(0, h - sh, 0, h, 0x00000000, 0x33000000, Shader.TileMode.CLAMP));
+            if (wide) {
+                /* widget bassi: lo skyline sfuma verso sinistra, dove ci sono i testi */
+                int lc = k.saveLayer(0, 0, w, h, null);
+                k.drawBitmap(sk, null, new RectF(x0, h - sh, x0 + sw, h), bp);
+                Paint m = new Paint();
+                m.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+                m.setShader(new LinearGradient(w * .3f, 0, w * .66f, 0, 0x00000000, 0xFF000000, Shader.TileMode.CLAMP));
+                k.drawRect(0, 0, w, h, m);
+                k.restoreToCount(lc);
+            } else k.drawBitmap(sk, null, new RectF(x0, h - sh, x0 + sw, h), bp);
+            /* velo blu notte in basso per leggere i testi sopra lo skyline */
+            p.setShader(new LinearGradient(0, h - sh * .9f, 0, h, 0x0014224F, 0x8C14224F, Shader.TileMode.CLAMP));
             k.drawRect(0, h - sh, w, h, p);
             p.setShader(null);
         }
@@ -358,7 +415,7 @@ public final class VwUtil {
         v.setOnClickPendingIntent(R.id.root, openApp(c, id));
         if (s.optInt("ret") == 1 || s.optJSONArray("ll") == null) v.setViewVisibility(R.id.go, View.GONE);
         else { v.setViewVisibility(R.id.go, View.VISIBLE); v.setOnClickPendingIntent(R.id.go, maps(c, 1000 + id, s)); }
-        v.setTextColor(R.id.go, TA);
+        v.setTextColor(R.id.go, NIGHT);
         return v;
     }
     static Bitmap ring(Context c, float frac, String mid, JSONObject s) {
@@ -372,7 +429,7 @@ public final class VwUtil {
         RectF r = new RectF(sw / 2 + 1, sw / 2 + 1, n - sw / 2 - 1, n - sw / 2 - 1);
         p.setColor(0x40FFFFFF);
         k.drawArc(r, 0, 360, false, p);
-        p.setColor(Color.WHITE);
+        p.setColor(0xFFE1AD21);
         p.setStrokeCap(Paint.Cap.ROUND);
         k.drawArc(r, -90, 360 * frac, false, p);
         Paint tp = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -411,7 +468,7 @@ public final class VwUtil {
         v.setOnClickPendingIntent(R.id.root, openApp(c, id));
         return v;
     }
-    static final int[] CAT = {0xFFFFFFFF, 0xFFFFE08A, 0xFF9EE6C4, 0xFFA9D4FF};
+    static final int[] CAT = {0xFFFFFFFF, 0xFFFFD66E, 0xFF9EE6C4, 0xFFA9D4FF};
     static Bitmap donut(Context c, double tot, double est, JSONArray cats) {
         int n = Math.round(80 * dens(c));
         Bitmap b = Bitmap.createBitmap(n, n, Bitmap.Config.ARGB_8888);
@@ -867,7 +924,7 @@ public final class VwUtil {
         v.setTextViewText(R.id.count, dayDone + " di " + dayN);
         v.setProgressBar(R.id.prog, Math.max(1, dayN), dayDone, false);
         v.removeAllViews(R.id.rows);
-        int ink = Color.WHITE, mute = 0xA6FFFFFF, acc = 0xFFFFE08A;
+        int ink = Color.WHITE, mute = 0xA6FFFFFF, acc = 0xFFFFD66E;
         int start = ci, shown = 0, lastDay = day;
         if (ci > 0 && st.optJSONObject(ci - 1).optInt("day") == day) start = ci - 1;
         for (int i = start; i < st.length() && shown < 9; i++) {
@@ -930,7 +987,7 @@ public final class VwUtil {
         v.setOnClickPendingIntent(R.id.root, openApp(c, id));
         if (m.optJSONArray("ll") == null && m.optString("q").isEmpty()) v.setViewVisibility(R.id.go, View.GONE);
         else { v.setViewVisibility(R.id.go, View.VISIBLE); JSONObject q = new JSONObject(); try { q.put("q", m.optString("q")); q.put("ll", m.optJSONArray("ll")); q.put("mo", "walk"); q.put("lm", 5); } catch (Exception ignored) {} v.setOnClickPendingIntent(R.id.go, maps(c, 3000 + id, q)); }
-        v.setTextColor(R.id.go, TA);
+        v.setTextColor(R.id.go, NIGHT);
         return v;
     }
 
@@ -983,7 +1040,7 @@ public final class VwUtil {
         t.setColor(TA);
         k.drawCircle(r + 1, h / 2f, r, p);
         k.drawText(a.isEmpty() ? "?" : a.substring(0, 1).toUpperCase(Locale.ITALY), r + 1, h / 2f - (t.descent() + t.ascent()) / 2, t);
-        p.setColor(0xFFFFE08A);
+        p.setColor(0xFFFFD66E);
         k.drawCircle(w - r - 1, h / 2f, r, p);
         k.drawText(b.isEmpty() ? "?" : b.substring(0, 1).toUpperCase(Locale.ITALY), w - r - 1, h / 2f - (t.descent() + t.ascent()) / 2, t);
         Paint e = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -1021,7 +1078,7 @@ public final class VwUtil {
         PendingIntent pi = PendingIntent.getActivity(c, 4000 + id, i, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         v.setOnClickPendingIntent(R.id.root, pi);
         v.setOnClickPendingIntent(R.id.go, pi);
-        v.setTextColor(R.id.go, TA);
+        v.setTextColor(R.id.go, NIGHT);
         return v;
     }
 
@@ -1281,7 +1338,7 @@ public final class VwUtil {
     }
     static void goBtn(RemoteViews v, PendingIntent pi, String t) {
         v.setTextViewText(R.id.go, t);
-        v.setTextColor(R.id.go, TA);
+        v.setTextColor(R.id.go, NIGHT);
         v.setViewVisibility(R.id.go, View.VISIBLE);
         v.setOnClickPendingIntent(R.id.go, pi);
     }
@@ -1367,7 +1424,7 @@ public final class VwUtil {
         p.setStyle(Paint.Style.FILL);
         p.setColor(TB);
         k.drawCircle(px, cy, 9.5f * d, p);
-        p.setColor(0xFFFFE08A);
+        p.setColor(0xFFFFD66E);
         k.drawCircle(px, cy, 7.5f * d, p);
         return b;
     }

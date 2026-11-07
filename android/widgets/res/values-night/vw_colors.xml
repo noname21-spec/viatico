@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="vw_bg">#2A1B20</color>
-    <color name="vw_w2">#3B2830</color>
-    <color name="vw_ink">#F8ECE6</color>
-    <color name="vw_mute">#BBA5A2</color>
-    <color name="vw_acc">#FF8A80</color>
-    <color name="vw_acc2">#FFCF5A</color>
-    <color name="vw_onacc">#2A1416</color>
-    <color name="vw_land">#2B2328</color>
-    <color name="vw_street">#3D3238</color>
-    <color name="vw_park">#2F3D2C</color>
-    <color name="vw_board">#0E0D12</color>
-    <color name="vw_board_ink">#F6E7A8</color>
-    <color name="vw_board_mute">#8F8A78</color>
+    <color name="vw_bg">#18244F</color>
+    <color name="vw_w2">#24336A</color>
+    <color name="vw_ink">#F4F5F8</color>
+    <color name="vw_mute">#A9B2CC</color>
+    <color name="vw_acc">#8FA8F0</color>
+    <color name="vw_acc2">#E1AD21</color>
+    <color name="vw_onacc">#14224F</color>
+    <color name="vw_land">#1A2652</color>
+    <color name="vw_street">#2A3A72</color>
+    <color name="vw_park">#20403F</color>
+    <color name="vw_board">#0D1533</color>
+    <color name="vw_board_ink">#FFD66E</color>
+    <color name="vw_board_mute">#7F89B5</color>
     <color name="vw_on">#FFFFFFFF</color>
     <color name="vw_on2">#D9FFFFFF</color>
-    <color name="vw_gold">#FFE08A</color>
-    <color name="vw_ink_d">#2A1416</color>
+    <color name="vw_gold">#FFD66E</color>
+    <color name="vw_ink_d">#14224F</color>
 </resources>

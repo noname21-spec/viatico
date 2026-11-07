@@ -154,6 +154,9 @@ public class WidgetBridge extends Plugin {
             java.io.FileOutputStream f = new java.io.FileOutputStream(new java.io.File(getContext().getFilesDir(), "vw_sky.png"));
             f.write(b);
             f.close();
+            /* v332 dove sta il sole nello skyline e la stagione del viaggio */
+            Double sx = call.getDouble("sx"), sy = call.getDouble("sy");
+            getContext().getSharedPreferences(VwUtil.PREFS, 0).edit().putFloat("sky_sx", sx == null ? .5f : sx.floatValue()).putFloat("sky_sy", sy == null ? .45f : sy.floatValue()).putString("sky_s", call.getString("s", "")).apply();
             VwUtil.SKY = null;
             VwUtil.updateAll(getContext());
             call.resolve();

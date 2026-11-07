@@ -1804,18 +1804,25 @@ if(!CFG||!TRIP){o.none=1}else{var tz=PD.TZ,N=CFG.ppl||1;o.city=PD.n;o.cc=PD.cn||
  /* colori dei widget: il viaggio in programma più vicino (o quello in corso) */
  try{var td=new Date().toISOString().slice(0,10),cands=[];if(SAVED&&SAVED.date&&CITIES[SAVED.dest])cands.push(SAVED);trips().forEach(function(t){cands.push(t.cfg)});
   cands=cands.filter(function(c){return c&&CITIES[c.dest]&&(c.date_r||c.date)>=td&&!c.past}).sort(function(a,b){return a.date<b.date?-1:1});
-  var tc=cands[0]||(CFG&&CITIES[CFG.dest]?CFG:null);if(tc){var cl=CITIES[tc.dest].col||["#2340a0","#5b7fe0"];o.theme={a:tmLum(cl[0])>.32?tmMix(cl[0],"#1a0f14",.35):cl[0],b:tmKb(cl),c:cl[1]||cl[0],city:CITIES[tc.dest].n}}}catch(e){}
+  var tc=cands[0]||(CFG&&CITIES[CFG.dest]?CFG:null);if(tc){var cl=CITIES[tc.dest].col||["#2340a0","#5b7fe0"];o.theme={a:tmLum(cl[0])>.32?tmMix(cl[0],"#1a0f14",.35):cl[0],b:tmKb(cl),c:cl[1]||cl[0],city:CITIES[tc.dest].n};try{var smo=+String(tc.date||"").slice(5,7)-1;if(smo>=0)o.theme.s=smo===11||smo<2?"inverno":smo<5?"primavera":smo<8?"estate":"autunno";o.theme.d=tc.date}catch(x){}}}catch(e){}
  /* passaporto: viaggi fatti e quello in corso */
  var all=[];try{if(SAVED&&SAVED.date&&CITIES[SAVED.dest])all.push(SAVED);trips().forEach(function(t){all.push(t.cfg)})}catch(e){}
  var today=new Date().toISOString().slice(0,10);o.pass=all.filter(function(c){return c&&CITIES[c.dest]}).map(function(c){var C=CITIES[c.dest],d=c.date;return{n:C.n,q:C.QN||C.n,cn:C.cn||"",col:(C.col&&C.col[0])||"#8e1f26",m:+d.slice(5,7),y:+d.slice(0,4),done:(c.date_r||c.date)<today?1:0}}).sort(function(a,b){return (b.y*13+b.m)-(a.y*13+a.m)}).slice(0,24);
  return o}
 window.__wgSnap=wgSnap;/* lo skyline della città per i widget: lo disegno qui (è lo stesso dell'app) e lo passo all'app Android come immagine */
 var WGSK="";
-function wgSky(pl,o){try{var th=o&&o.theme,id=null;Object.keys(CITIES).forEach(function(k){if(CITIES[k].n===(th&&th.city))id=k});if(!id||!window.zSky)return;
- var z=zSky(id,"wg");if(!z)return;if(window.skyLit)skyLit(z);var lit=[].filter.call(z.querySelectorAll(".wn"),function(w){return w.classList.contains("on")}).length,key=id+":"+lit;if(key===WGSK)return;
- var st=document.createElementNS("http://www.w3.org/2000/svg","style");st.textContent="*{stroke:none!important}svg *{fill:rgba(14,8,26,.34)}.far *,.far{fill:rgba(14,8,26,.18)}.wn{fill:#ffd98a!important;display:none}.wn.on{display:inline}.sun,.sunG,.halo,.stars,.cloud,.mooncut,.flock,.bird,.spk,.gl,.sea,.ln{display:none}";z.insertBefore(st,z.firstChild);
+function wgSkyPng(id,ss,cb){try{if(!window.zSky)return cb(null);var z=zSky(id,"wg");if(!z)return cb(null);if(window.skyLit)skyLit(z);
+ ss=ss||z.getAttribute("data-season")||"autunno";var LC={inverno:["#7E9BE0","#3D5BB8"],primavera:["#9DBEF2","#5A80DA"],estate:["#6E92E6","#2E4CB0"],autunno:["#D39468","#8A4A6A"]}[ss]||["#7E9BE0","#3D5BB8"];
+ var mx=parseFloat(z.style.getPropertyValue("--msx"))||200,my=parseFloat(z.style.getPropertyValue("--msy"))||58;
+ var st=document.createElementNS("http://www.w3.org/2000/svg","style");
+ /* v332 stesso skyline dell'app: due file di palazzi di carta nei colori della stagione, monumenti blu notte, finestre accese; sole e raggi li disegna il widget */
+ st.textContent="*{stroke:none}.far,.sunG,.halo,.sun,.stars,.cloud,.mooncut,.flock,.bird,.spk,.gl,.sea,.ln,.prt,.rays,.ms,.msh,.hills{display:none}.bk0 path{fill:"+LC[0]+"}.bk rect,.bk path{fill:"+LC[1]+"}.face,.face *{fill:#14224F}.gnd{fill:#14224F}.snc{display:none}.wn{fill:#FFD66E;display:none}.wn.on{display:inline}"+(ss==="inverno"?".snc{display:inline;fill:none;stroke:#fff;stroke-width:2;stroke-linejoin:round;clip-path:inset(0 0 72% 0)}.snc *{fill:none;stroke:#fff;stroke-width:2}":"");
+ z.insertBefore(st,z.firstChild);[].forEach.call(z.querySelectorAll("[style]"),function(e){if(e!==z&&/animation|transform/.test(e.getAttribute("style")))e.style.animation="none"});
  var vb=(z.getAttribute("viewBox")||"0 4 400 106").split(/\s+/).map(Number);z.setAttribute("width",String(vb[2]*3));z.setAttribute("height",String(vb[3]*3));z.setAttribute("xmlns","http://www.w3.org/2000/svg");
- var xml=new XMLSerializer().serializeToString(z),im=new Image();im.onload=function(){try{var cv=document.createElement("canvas");cv.width=vb[2]*3;cv.height=vb[3]*3;cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);var png=cv.toDataURL("image/png").split(",")[1];if(pl.skyline)pl.skyline({png:png}).then(function(){WGSK=key}).catch(function(){})}catch(e){}};im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(xml)}catch(e){}}
+ var xml=new XMLSerializer().serializeToString(z),im=new Image();im.onload=function(){try{var cv=document.createElement("canvas");cv.width=vb[2]*3;cv.height=vb[3]*3;cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);cb({png:cv.toDataURL("image/png").split(",")[1],sx:(mx-vb[0])/vb[2],sy:(my-vb[1])/vb[3],s:ss})}catch(e){cb(null)}};im.onerror=function(){cb(null)};im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(xml)}catch(e){cb(null)}}
+window.__wgSkyPng=wgSkyPng;
+function wgSky(pl,o){try{var th=o&&o.theme,id=null;Object.keys(CITIES).forEach(function(k){if(CITIES[k].n===(th&&th.city))id=k});if(!id)return;var key="v332:"+id+":"+(th.s||"")+":"+new Date().getHours();if(key===WGSK)return;
+ wgSkyPng(id,th.s,function(r){if(!r||!pl.skyline)return;pl.skyline(r).then(function(){WGSK=key}).catch(function(){})})}catch(e){}}
 var WGT=0;function wgSoon(){clearTimeout(WGT);WGT=setTimeout(wgPush,700)}
 /* v287 meteo ora per ora per il widget «Meteo e piano B»: solo a viaggio vicino o in corso, al massimo una volta l'ora */
 /* v292 cambio del giorno per la valuta del posto (dati BCE tramite frankfurter.dev), conservato per l'uso offline */
