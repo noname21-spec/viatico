@@ -3995,3 +3995,11 @@ html body #sheet .shgrab{cursor:grab;touch-action:none}
 html body #sheet.on,html body #exp.on,html body #ask.on,html body #acct.on,html body #shm.on,html body #help.on,html body #qrbox.on{background:rgba(7,13,43,.32)!important;-webkit-backdrop-filter:blur(10px) saturate(1.1)!important;backdrop-filter:blur(10px) saturate(1.1)!important}
 html body #sheet{transition:background-color .3s ease,backdrop-filter .3s ease,-webkit-backdrop-filter .3s ease,visibility 0s linear .35s!important}
 html body #sheet.on{transition:background-color .3s ease,backdrop-filter .3s ease,-webkit-backdrop-filter .3s ease,visibility 0s!important}
+/* v328 · impostazioni nella barra della home, accanto ai tre puntini */
+#dest .dset{all:unset;box-sizing:border-box;margin-left:auto;margin-top:var(--bt);width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(255,255,255,.2);color:#fff;transition:transform .15s ease,opacity .2s ease;-webkit-tap-highlight-color:transparent}
+#dest .dset svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+#dest .dset:active{transform:scale(.94)}
+#dest .dset:focus-visible{outline:3px solid #E1AD21;outline-offset:2px}
+#dest .dset~.dmenu{margin-left:0!important}
+#dest .dset+.dmenu{margin-left:2px!important}
+.dmpop [data-m="st"]{display:none!important}
