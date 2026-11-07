@@ -3984,3 +3984,14 @@ html body #sheet,html.sa body #sheet{padding:0!important;top:0!important;bottom:
 html body #sheet .shc{width:100%!important;max-width:560px!important;margin:0 auto!important;border-radius:28px 28px 0 0!important;border:0!important;outline:0!important;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))!important;box-shadow:0 -18px 40px -16px rgba(7,13,43,.55)!important}
 html body #sheet .shc .shfoot{padding-bottom:0!important}
 html body #sheet.acconly .shc{max-height:calc(100% - env(safe-area-inset-top,0px) - 16px)!important}
+/* v326 · Impostazioni come il foglio dell'account: alto quanto serve, sezioni in basso, X rossa, sfondo sfocato */
+html body #sheet .shc{height:auto!important;max-height:calc(100% - env(safe-area-inset-top,0px) - 16px)!important;overflow-y:auto!important;overscroll-behavior:contain;transition:transform .32s cubic-bezier(.2,.8,.2,1)!important;touch-action:pan-y}
+html body #sheet .shc.drag{transition:none!important}
+html body #sheet .shfoot{position:sticky;bottom:0;z-index:3;background:var(--bg,#F4F5F8);padding-top:10px!important;margin-top:6px}
+html body #sheet #shclose{background:#D64545!important;color:#fff!important;box-shadow:0 8px 18px -8px rgba(214,69,69,.8)!important}
+:root[data-theme="dark"] body #sheet #shclose{background:#D64545!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body #sheet #shclose{background:#D64545!important}}
+html body #sheet .shgrab{cursor:grab;touch-action:none}
+html body #sheet.on,html body #exp.on,html body #ask.on,html body #acct.on,html body #shm.on,html body #help.on,html body #qrbox.on{background:rgba(7,13,43,.32)!important;-webkit-backdrop-filter:blur(10px) saturate(1.1)!important;backdrop-filter:blur(10px) saturate(1.1)!important}
+html body #sheet{transition:background-color .3s ease,backdrop-filter .3s ease,-webkit-backdrop-filter .3s ease,visibility 0s linear .35s!important}
+html body #sheet.on{transition:background-color .3s ease,backdrop-filter .3s ease,-webkit-backdrop-filter .3s ease,visibility 0s!important}
