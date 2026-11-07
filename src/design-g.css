@@ -4093,3 +4093,34 @@ html.skwait body #dsk svg.sky *{animation-play-state:paused!important}
 /* v333 · suggerimento «scorri per eliminare» sulla scheda del viaggio: si vede solo il tasto rosso, niente striscia verde a metà */
 html body .tmw.hint:not(.open):not(.drag) .tma button:not(.tmd){opacity:0!important;visibility:hidden}
 html body .tmw.hint:not(.open):not(.drag) .tma button.tmd{animation:none}
+/* v334 · «Nuovo viaggio» in fondo ai ricordi: riquadro tratteggiato con il più senape, non una scheda a metà */
+html body #drow .drs .drc2.drn2{gap:6px!important;background:transparent!important;border:1.5px dashed var(--line,#E2E5EE)!important;box-shadow:none!important;min-height:54px!important}
+html body #drow .drs .drc2.drn2::before{display:none!important}
+html body #drow .drs .drc2.drn2 .dre{display:inline!important;font:800 18px/1 Figtree,system-ui,sans-serif;color:#E1AD21}
+html body #drow .drs .drc2.drn2 b,html body #drow .drs .drc2.drn2 small{flex:none!important;font:700 15px/1.2 Figtree,system-ui,sans-serif!important;color:var(--ink,#14224F)!important}
+:root[data-theme="dark"] body #drow .drs .drc2.drn2{border-color:rgba(255,255,255,.18)!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body #drow .drs .drc2.drn2{border-color:rgba(255,255,255,.18)!important}}
+/* v334 · la barra in alto della home compare prima che la scheda ci passi sotto, così i testi non si sovrappongono */
+#dest .dbrand::after{transition:opacity .12s ease!important}
+/* v334 · «Dove vai?» col tema scuro: campo di ricerca scuro invece che grigio chiaro */
+:root[data-theme="dark"] #dpick .dpband .dsearch{background:rgba(255,255,255,.16)!important;color:#C6CEE6}
+:root[data-theme="dark"] #dpick .dpband .dsearch input{color:#fff!important}
+:root[data-theme="dark"] #dpick .dpband .dsearch input::placeholder{color:rgba(255,255,255,.65)}
+:root[data-theme="dark"] #dpick .dpband .dsearch svg{color:#FFD66E!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #dpick .dpband .dsearch{background:rgba(255,255,255,.16)!important;color:#C6CEE6}
+:root:not([data-theme="light"]) #dpick .dpband .dsearch input{color:#fff!important}
+:root:not([data-theme="light"]) #dpick .dpband .dsearch input::placeholder{color:rgba(255,255,255,.65)}
+:root:not([data-theme="light"]) #dpick .dpband .dsearch svg{color:#FFD66E!important}}
+/* v334 · scelta città: sulla pagina nuova l'animazione continua da dove era arrivata, non riparte da capo */
+html body #zin .zcol::before{animation:none!important}
+html body #zin .zcol::after{animation:zbarC .9s linear both!important}
+@keyframes zbarC{from{background-position:45% 0}to{background-position:0 0}}
+html body #zin .zbg{background:radial-gradient(90% 40% at 50% 108%,rgba(255,214,110,.75) 0%,rgba(225,173,33,.25) 40%,transparent 70%),linear-gradient(180deg,var(--zk1,var(--hk1,#1C3FAE)) 0%,var(--zk2,var(--hk2,#3A6BDB)) 62%,var(--zk3,var(--hk3,#78A8F0)) 100%)!important}
+/* v334 · avvio: la scritta dello splash sparisce prima dello sfondo, così non si sovrappone alla home */
+#splash.spgo>*{transition:opacity .16s ease-out;opacity:0!important}
+/* v334 · da fissata, la barra in alto sta sopra la scheda (che le passa sotto) */
+html body #dest.pin #dhero{z-index:3!important;clip-path:inset(0 0 calc(100% - 96px - env(safe-area-inset-top,0px)) 0)}
+/* v334 · passaggio home ↔ «Dove vai?»: si passa dal cielo, non dal nero */
+html body #dest.pksw{background:linear-gradient(180deg,var(--hk1,#1C3FAE) 0,var(--hk2,#3A6BDB) 38%,var(--bg) 62%)!important}
+/* v334 · barra in alto fissata: blu del cielo, così «Budapest» bianco si legge anche col tema chiaro */
+html body #dest .dbrand::after{background:linear-gradient(180deg,var(--hk1,#1C3FAE) 0%,color-mix(in srgb,var(--hk1,#1C3FAE) 60%,#14224F) 100%)!important;box-shadow:0 6px 18px rgba(13,21,51,.18)!important}
