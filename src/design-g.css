@@ -4003,3 +4003,13 @@ html body #sheet.on{transition:background-color .3s ease,backdrop-filter .3s eas
 #dest .dset~.dmenu{margin-left:0!important}
 #dest .dset+.dmenu{margin-left:2px!important}
 .dmpop [data-m="st"]{display:none!important}
+/* v329 · home senza doppioni: il viaggio del cielo in alto qui è solo carta d'imbarco + preparazione */
+html body .tmx.tmx2.tmx3{background:transparent!important;box-shadow:none!important;overflow:visible}
+.tmx3 .tms2,.tmx3 .tmh,.tmx3 .tmm{display:none!important}
+.tmx3 .tpas{margin:0!important;box-shadow:0 14px 30px -18px rgba(13,21,51,.45)!important;border:1px solid var(--line,#E2E5EE)}
+.tmx3 .tpr{padding:16px 18px 14px}
+.tmx3 .tpk{padding:14px 18px 16px}
+.tmx3 .tpkl{position:relative;z-index:5;display:inline-flex;align-items:center;min-height:36px;margin-top:6px;cursor:pointer;color:#2340A0}
+html body #dest #drow .tml1{margin-top:4px}
+html body #dest #drow .tml1+.drh{margin-top:26px!important}
+html body #dest #dnx[hidden]{display:none!important}
