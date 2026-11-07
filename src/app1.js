@@ -809,7 +809,7 @@ ch.push(one?A.n+" "+fmt(toMin(c.a_arr))+" → "+fmt(toMin(c.r_dep)):"arrivo "+fm
 ch.push(n>1?"alloggio in "+home().where:PD.T.move);if(sx)ch.push(sx);
 $("#hsub").innerHTML='<span class="hch">'+ch.map(function(t){return '<span>'+esc(t)+'</span>'}).join("")+'</span>'})();
 $("#appt").innerHTML='<span class="apc" role="button" tabindex="0" aria-haspopup="menu" aria-expanded="false"><span class="apn">'+esc(PD.n)+'</span><i class="apv" aria-hidden="true"></i></span><span class="apd">'+esc(apdTxt())+'</span><span class="aps" hidden></span>';window.__apPaint&&__apPaint();
-$("#sps").textContent=PD.n+" · "+rangeTxt();
+$("#sps").textContent=(CFG&&(CFG.date_r||CFG.date)>=todayStr())?PD.n+" · "+rangeTxt():"Il necessario per il viaggio";
 document.title="Viaticum · "+ttl}
 function renderBar(){var it=P.items,segs=[],end=P.kind==="single"||P.kind==="last"?P.dep:(P.end||P.leave);
 for(var i=0;i<it.length;i++){var a=it[i],b=it[i+1];segs.push(Math.max(10,(b?b.t:end)-a.t))}
