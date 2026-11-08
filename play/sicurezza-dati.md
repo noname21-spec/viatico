@@ -1,6 +1,6 @@
 # Sezione «Sicurezza dei dati» · risposte per Play Console
 
-Aggiornata l'8 novembre 2026 sulla versione 1.0.70. Le risposte corrispondono a ciò che l'app fa davvero e alla pagina privacy.html: se cambia qualcosa nell'app, vanno aggiornate tutte e due.
+Aggiornata l'8 novembre 2026 sulla versione 1.0.71. Le risposte corrispondono a ciò che l'app fa davvero e alla pagina privacy.html: se cambia qualcosa nell'app, vanno aggiornate tutte e due.
 
 ## Domande generali
 - L'app raccoglie o condivide dati degli utenti? **Sì**

@@ -1,6 +1,6 @@
 # Scheda Google Play · Viaticum (italiano)
 
-Aggiornata l'8 novembre 2026 per la versione 1.0.70 (stile «Notte blu»).
+Aggiornata l'8 novembre 2026 per la versione 1.0.71 (stile «Notte blu»).
 
 ## Nome dell'app (max 30 caratteri)
 Viaticum: itinerari di viaggio

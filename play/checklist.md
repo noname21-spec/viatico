@@ -4,7 +4,7 @@ Aggiornata l'8 novembre 2026.
 
 ## Già fatto
 - [x] Chiave di caricamento e secret su GitHub: a ogni build l'AAB viene firmato da solo (viaticum.aab in Releases → android-latest)
-- [x] AAB verificato: versione 1.0.70 (codice 70), firmato con la chiave di caricamento, target SDK 36
+- [x] AAB verificato: versione 1.0.71 (codice 71), firmato con la chiave di caricamento, target SDK 36
 - [x] Testi della scheda (scheda-it.md), risposte sulla sicurezza dei dati (sicurezza-dati.md), immagini (cartella img)
 - [x] Pagina privacy aggiornata: https://noname21-spec.github.io/viatico/privacy.html
 

@@ -37,7 +37,7 @@ Nessuna pubblicità, nessuna vendita dei dati, nessun account obbligatorio: i vi
 - Lingua: italiano (interfaccia anche in inglese)
 - Prezzo: gratuita
 - Contenuti: 44 città con guida completa
-- Versione: 1.0.70 (novembre 2026)
+- Versione: 1.0.71 (novembre 2026)
 - Privacy: dati sul dispositivo, accesso facoltativo. Informativa: https://noname21-spec.github.io/viatico/privacy.html
 - Sito / web app: https://noname21-spec.github.io/viatico/
 - Google Play: [link da inserire quando l'app è pubblicata]
