@@ -4124,3 +4124,5 @@ html body #dest.pin #dhero{z-index:3!important;clip-path:inset(0 0 calc(100% - 9
 html body #dest.pksw{background:linear-gradient(180deg,var(--hk1,#1C3FAE) 0,var(--hk2,#3A6BDB) 38%,var(--bg) 62%)!important}
 /* v334 · barra in alto fissata: blu del cielo, così «Budapest» bianco si legge anche col tema chiaro */
 html body #dest .dbrand::after{background:linear-gradient(180deg,var(--hk1,#1C3FAE) 0%,color-mix(in srgb,var(--hk1,#1C3FAE) 60%,#14224F) 100%)!important;box-shadow:0 6px 18px rgba(13,21,51,.18)!important}
+/* v335 · isola in basso della home piena: i contenuti che le scorrono sotto non si leggono più attraverso */
+html body #dest .dctp{background:var(--surf,#fff)!important}

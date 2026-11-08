@@ -1,21 +1,26 @@
 # Checklist di pubblicazione · Viaticum
 
-## A cura tua
-- [ ] Aprire l'account sviluppatore Google Play (25 €, personale) e completare la verifica dell'identità
-- [ ] Aggiungere i secret su GitHub (vedi sotto) per ottenere il file .aab firmato
-- [ ] Raccogliere 14–15 tester con account Google (serve che almeno 12 restino per 14 giorni di fila)
-- [ ] Creare l'app in Play Console: nome «Viaticum: guida di viaggio», lingua italiana, app gratuita
-- [ ] Compilare: scheda (testi in play/scheda-it.md), sicurezza dei dati (play/sicurezza-dati.md), classificazione dei contenuti, pubblico target (adulti), dichiarazione sugli annunci (nessuno)
-- [ ] Caricare l'AAB nel test chiuso, invitare i tester, attendere 14 giorni
-- [ ] Richiedere l'accesso alla produzione
+Aggiornata l'8 novembre 2026.
 
-## Secret da aggiungere su GitHub
-Repository → Settings → Secrets and variables → Actions → New repository secret
-- UPLOAD_KEYSTORE_B64 = contenuto del file upload-keystore.b64
-- UPLOAD_KEYSTORE_PASSWORD = la password nel file upload-password.txt
-Poi: Actions → «Android APK» → Run workflow. L'AAB firmato compare in Releases (android-latest) come viaticum.aab.
+## Già fatto
+- [x] Chiave di caricamento e secret su GitHub: a ogni build l'AAB viene firmato da solo (viaticum.aab in Releases → android-latest)
+- [x] AAB verificato: versione 1.0.70 (codice 70), firmato con la chiave di caricamento, target SDK 36
+- [x] Testi della scheda (scheda-it.md), risposte sulla sicurezza dei dati (sicurezza-dati.md), immagini (cartella img)
+- [x] Pagina privacy aggiornata: https://noname21-spec.github.io/viatico/privacy.html
 
-## Rischi da controllare
-- Mappa offline: tolto il download anticipato delle tessere di OpenStreetMap (vietato dalla loro politica). Resta la mappa online. Più avanti: tessere proprie (PMTiles) o un fornitore che la consente.
-- La chiave di caricamento va custodita: con «Play App Signing» Google firma l'app, e se la perdi si può reimpostare dall'assistenza Google.
-- Le dichiarazioni di Play (dati, privacy) devono restare coerenti con la pagina privacy.html.
+## A cura tua in Play Console
+1. Crea l'account sviluppatore personale (25 $, una volta) e completa la verifica dell'identità e del telefono.
+2. «Crea app»: nome «Viaticum: itinerari di viaggio», lingua predefinita Italiano, App, Gratuita; accetta le dichiarazioni.
+3. «Configura l'app»: privacy (link sopra), accesso all'app (tutto disponibile senza accesso), annunci (no), classificazione dei contenuti, pubblico di destinazione (18+), sicurezza dei dati (copia da sicurezza-dati.md), categoria Viaggi e informazioni locali, contatti.
+4. «Scheda dello Store principale»: testi da scheda-it.md, icona, grafica in primo piano e screenshot da img/.
+5. «Test chiuso»: crea un canale, carica viaticum.aab, accetta «Firma dell'app di Google Play», aggiungi almeno 12 tester (email Google) e manda loro il link di adesione.
+6. Aspetta che almeno 12 tester restino iscritti per 14 giorni di fila, poi «Richiedi l'accesso alla produzione» e rispondi alle domande sul test.
+7. Pubblica in produzione (revisione di solito da qualche ora a qualche giorno).
+
+## Per gli aggiornamenti successivi
+Ogni build crea un nuovo viaticum.aab con codice versione più alto: caricalo in un nuovo rilascio dello stesso canale.
+
+## Da ricordare
+- Custodisci la chiave di caricamento (upload-keystore): se la perdi si reimposta dall'assistenza Google, ma serve tempo.
+- L'app per l'orologio (viaticum-orologio.apk) non è nell'AAB: per pubblicarla su Wear OS serve un canale «Wear OS» a parte, da fare dopo.
+- Dichiarazioni di Play e privacy.html devono restare coerenti: se aggiungi un servizio esterno, aggiorna entrambe.

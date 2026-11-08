@@ -1,7 +1,6 @@
 # Viaticum · Kit stampa
 
-> Da completare prima dell'uso: solo il link a Google Play, quando l'app è pubblicata.
-> I campi da riempire sono tra parentesi quadre.
+> Aggiornato l'8 novembre 2026 (stile «Notte blu»). Da completare solo il link a Google Play, quando l'app è pubblicata.
 
 ## In una riga
 Viaticum è l'app che organizza il tuo viaggio tappa dopo tappa, anche senza rete.
@@ -10,34 +9,35 @@ Viaticum è l'app che organizza il tuo viaggio tappa dopo tappa, anche senza ret
 Il tuo viaggio, tappa dopo tappa. Anche senza rete.
 
 ## Descrizione breve (circa 50 parole)
-Viaticum prepara un itinerario giorno per giorno con tappe, orari, spostamenti, pasti e spese divise tra amici. Durante il viaggio ti dice dove sei nella giornata e cosa viene dopo. Funziona anche senza connessione, non ha pubblicità e non richiede un account. Gratis su Android e come app web per iPhone e computer.
+Viaticum prepara un itinerario giorno per giorno con tappe, orari, spostamenti, pasti e spese divise tra amici. Durante il viaggio ti dice cosa stai facendo adesso e cosa viene dopo. Funziona anche senza connessione, non ha pubblicità e non richiede un account. Gratis su Android e come app web per iPhone e computer.
 
-## Descrizione lunga (circa 170 parole)
-Viaticum nasce da un'esigenza semplice: avere tutto il viaggio in un posto solo, che funzioni anche quando il telefono non prende. Scegli la città, le date e gli orari dei voli, e l'app costruisce un itinerario giorno per giorno con tappe, tempi di spostamento, consigli su cosa vedere e dove mangiare. Ci sono 44 guide di città, e se ne possono creare di nuove per ogni viaggio.
+## Descrizione lunga (circa 180 parole)
+Viaticum nasce da un'esigenza semplice: avere tutto il viaggio in un posto solo, che funzioni anche quando il telefono non prende. Scegli la città, le date e gli orari dei voli, e l'app costruisce un itinerario giorno per giorno con tappe, tempi di spostamento, cosa vedere e dove mangiare. Le guide complete sono 44, dalle capitali europee alle gite in giornata.
 
-Durante il viaggio una scheda "Adesso" mostra la tappa in corso, quanto manca alla prossima e un tasto "Portami lì" verso la tua app di mappe. Le spese si registrano in pochi secondi, anche in valuta diversa, si dividono tra amici e si confrontano con il budget previsto. A fine viaggio l'app prepara un riepilogo da condividere.
+Durante il viaggio la scheda "Adesso" mostra la tappa in corso, quanto manca alla prossima e il tasto "Portami lì" verso l'app di mappe. Se sei in anticipo, in ritardo o hai un orario prenotato, la giornata si ricalcola. Le spese si registrano in pochi secondi, anche in valuta diversa, si dividono tra amici e si confrontano con il previsto.
 
-Cinque sezioni sempre a portata di pollice: Tappe, Mappa, Pasti, Costi, Consigli. Il tasto in basso a destra cambia con la pagina; tenendolo premuto si cerca nel viaggio o si torna ai viaggi.
+La home mette sempre in primo piano il prossimo viaggio, con lo skyline della città che cambia con l'ora e con la stagione. Ogni viaggio fatto diventa un timbro sul passaporto. Su Android ci sono anche i widget per la schermata Home.
 
 Nessuna pubblicità, nessuna vendita dei dati, nessun account obbligatorio: i viaggi restano sul telefono.
 
 ## Punti di forza
-- Itinerario giornaliero con orari, percorsi e "Portami lì" verso l'app di mappe.
+- Itinerario giornaliero che si adatta: orari, percorsi e "Portami lì" verso l'app di mappe.
 - Scheda "Adesso": la tappa in corso, quanto resta e cosa viene dopo.
-- Funziona senza rete: l'itinerario, i costi, le spese e le liste restano disponibili.
-- Spese divise tra amici, con il conto che si fa da solo, confrontate con il previsto.
-- Riepilogo del viaggio da condividere come immagine.
-- 44 guide di città, gite in giornata incluse, e viaggi nuovi in tre tocchi.
+- Funziona senza rete: itinerario, costi, spese e liste restano disponibili.
+- Spese divise tra amici, con il cambio del giorno e il riepilogo in PDF.
+- Pasti: locali economici e ben recensiti vicino alle tappe, con filtri.
+- Passaporto dei viaggi con timbri, livelli e il tuo anno in viaggio.
+- Widget Android, tema chiaro e scuro, interfaccia in italiano e inglese.
 - Gratuita, senza pubblicità, senza account obbligatorio.
-- Android (Google Play) e web app per iPhone e computer.
 
 ## Scheda tecnica
 - Nome: Viaticum
 - Categoria: Viaggi e informazioni locali
 - Piattaforme: Android, web (PWA: iPhone, iPad, computer)
-- Lingua: italiano
+- Lingua: italiano (interfaccia anche in inglese)
 - Prezzo: gratuita
-- Contenuti: 44 città
+- Contenuti: 44 città con guida completa
+- Versione: 1.0.70 (novembre 2026)
 - Privacy: dati sul dispositivo, accesso facoltativo. Informativa: https://noname21-spec.github.io/viatico/privacy.html
 - Sito / web app: https://noname21-spec.github.io/viatico/
 - Google Play: [link da inserire quando l'app è pubblicata]
@@ -66,9 +66,16 @@ Viaggio in 3 tocchi. Itinerario, spese divise e tutto anche senza rete. Gratis, 
 6. Prima e dopo: un viaggio organizzato con note sparse contro lo stesso viaggio con Viaticum.
 
 ## Immagini
-La cartella `immagini/` contiene il logo (512×512), la copertina (1024×500) e sei schermate: itinerario, elenco tappe, pasti, spese, consigli (1080×1920) e mappa (1080×2190, una gita a Barcellona).
-Le prime cinque schermate mostrano una gita a Roma di esempio. Usa le immagini così come sono; non cambiare i colori del logo.
+La cartella `immagini/` contiene:
+- `logo-viaticum-512.png`: l'icona dell'app (512×512).
+- `copertina-1024x500.png`: la copertina con il nome e lo skyline di Roma.
+- `chiaro/` e `scuro/`: otto schermate 1080×1920 senza titoli (home, giornata, tappe, pasti, spese, I miei viaggi, scelta della città, consigli), una con il tema chiaro e una con quello scuro.
+- `con-titolo/`: le stesse schermate inserite in una cornice con un titolo, pronte per i social.
+
+Le schermate mostrano un viaggio di esempio a Roma dal 20 al 22 novembre. Usa le immagini così come sono; non cambiare i colori del logo (blu reale #2340A0, blu notte #14224F, senape #E1AD21).
 
 ## Cosa non dire
 - Non promettere orari o prezzi esatti: sono indicativi.
-- Non parlare di mappa offline: la funzione non c'è.
+- Non parlare di mappa offline: la mappa ha bisogno di rete (il resto no).
+- Non promettere la Now Bar dei Samsung: c'è una normale notifica con la tappa in corso.
+- L'app per l'orologio non è ancora sul Play Store.
