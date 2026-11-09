@@ -44,3 +44,6 @@ document.addEventListener("via-acct",acc);setTimeout(gearBtn,200);setTimeout(gea
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){init();acc()});else{init();acc()}
 new MutationObserver(function(){init()}).observe(document.body,{attributes:true,attributeFilter:["class"]});try{var dpw=false;new MutationObserver(function(){var d=document.getElementById("dest"),pk=d&&d.classList.contains("pick");if(pk&&!dpw){setTimeout(band,30);setTimeout(band,450)}dpw=pk}).observe(document.getElementById("dest"),{attributes:true,attributeFilter:["class"]})}catch(e){}
 })();
+
+/* v336 · pieghevoli: quando lo schermo cambia (si apre o si chiude il telefono, si ruota) la mappa torna alla vista iniziale e la fascia della scelta città si riallinea */
+(function(){var t=0,w0=innerWidth,h0=innerHeight;addEventListener("resize",function(){clearTimeout(t);t=setTimeout(function(){if(Math.abs(innerWidth-w0)<40&&Math.abs(innerHeight-h0)<120)return;w0=innerWidth;h0=innerHeight;try{var mp=document.getElementById("mappa"),zr=document.getElementById("zr");if(mp&&zr&&mp.offsetParent!==null)zr.click()}catch(e){}try{window.__band&&__band()}catch(e){}try{var d=document.getElementById("dest");if(d)d.dispatchEvent(new Event("scroll"))}catch(e){}},250)})})();

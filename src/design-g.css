@@ -4126,3 +4126,46 @@ html body #dest.pksw{background:linear-gradient(180deg,var(--hk1,#1C3FAE) 0,var(
 html body #dest .dbrand::after{background:linear-gradient(180deg,var(--hk1,#1C3FAE) 0%,color-mix(in srgb,var(--hk1,#1C3FAE) 60%,#14224F) 100%)!important;box-shadow:0 6px 18px rgba(13,21,51,.18)!important}
 /* v335 · isola in basso della home piena: i contenuti che le scorrono sotto non si leggono più attraverso */
 html body #dest .dctp{background:var(--surf,#fff)!important}
+/* v336 · telefoni pieghevoli e schermi larghi (Galaxy Z Fold aperto, iPhone Duo aperto, tablet in orizzontale):
+   due colonne. A sinistra il riepilogo e i comandi, a destra l'elenco che scorre. */
+@media (min-width:720px) and (min-aspect-ratio:1/1){
+  html{--lw:clamp(340px,42%,470px)}
+  html body .blk{padding-left:max(24px,calc((100% - 1120px)/2));padding-right:max(24px,calc((100% - 1120px)/2))}
+  html body .blk::after,html body #consigli #cshub::after{content:"";display:block;clear:both}
+  /* colonna sinistra */
+  html body #itinerario>#hero,html body #itinerario>#htl,html body #itinerario>.dsel,html body #itinerario>#tgr,
+  html body #mappa>.dsel,html body #mappa>#shots,html body #mappa>#route,
+  html body #mangiare>#mlead,html body #mangiare>.dsel,html body #mangiare>#hbt,html body #mangiare>#fpq,html body #mangiare>#mcrit,
+  html body #costi>#cdonut,html body #costi>#cnote,
+  html body #consigli #ckbox,html body #consigli #sosbox{float:left;clear:left;width:var(--lw)!important;max-width:none!important;box-sizing:border-box;margin-right:24px!important}
+  /* colonna destra */
+  html body #itinerario>.ithw,html body #itinerario>.wbox,html body #mappa>#mapbox,html body #mangiare>#mgrid,
+  html body #costi>#vcost,html body #costi>.spese{margin-left:calc(var(--lw) + 24px)!important;width:auto!important}
+  html body #consigli #cshub{display:grid!important;grid-template-columns:var(--lw) minmax(0,1fr);grid-template-rows:auto auto 1fr;column-gap:24px;align-items:start}
+  html body #consigli #ckbox,html body #consigli #sosbox{float:none;margin-right:0!important}
+  html body #consigli #ckbox{grid-column:1;grid-row:1}html body #consigli #sosbox{grid-column:1;grid-row:2}
+  html body #consigli #zones{grid-column:2;grid-row:1/span 3;margin:0!important;width:auto!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  html body #itinerario>.ithw{margin-top:0!important}
+  /* le testate diventano schede nella colonna sinistra */
+  html body #itinerario>#hero{margin-left:0!important;border-radius:24px;overflow:hidden;margin-bottom:12px}
+  html body #costi>#cdonut .chero{margin-left:0!important;margin-right:0!important;border-radius:24px}
+  html body #costi>#cdonut .cbrk{margin-top:12px}
+  html body #consigli #sosbox{margin-top:12px}
+  /* mappa più alta, riempie la colonna */
+  html body #mappa>#mapbox .stage{height:calc(100dvh - 300px)!important;min-height:340px}
+  /* home: cielo e città a sinistra, il viaggio a destra */
+  html body #dest .dcard{max-width:1180px!important;width:100%!important;display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}
+  html body #dest #dbrand{grid-column:1/-1;grid-row:1}
+  html body #dest #dhero{grid-column:1;grid-row:2;position:sticky!important;top:0;height:100dvh!important;border-radius:0}
+  html body #dest #dsheet{grid-column:2;grid-row:2;margin-top:0!important;min-height:100dvh;border-radius:0!important;padding-top:calc(80px + env(safe-area-inset-top,0px))!important}
+  html body #dest #dsheet::before{display:none!important}
+  html body #dest #dset,html body #dest #dmore,html body #dest #dmenu{background:var(--surf2,#EEF1FA)!important;color:var(--ink,#14224F)!important;box-shadow:none!important}
+  html body #dest.pin #dhero{clip-path:none!important}
+  html body #dest .dbrand::after{display:none!important}
+  html body #dest #dmenu i{background:var(--ink,#14224F)!important}
+  html body #dest #dset svg,html body #dest #dmore svg,html body #dest #dmenu svg{color:var(--ink,#14224F)!important;stroke:currentColor}
+}
+/* v336 · schermi esterni dei pieghevoli (più larghi e bassi): il sole scende dietro i monumenti, così non copre il conto alla rovescia */
+@media (max-width:719px) and (min-aspect-ratio:10/17){
+  html body #dsk svg.sky .ms,html body #dsk svg.sky .msh{translate:0 24px}
+}
