@@ -4169,3 +4169,64 @@ html body #dest .dctp{background:var(--surf,#fff)!important}
 @media (max-width:719px) and (min-aspect-ratio:10/17){
   html body #dsk svg.sky .ms,html body #dsk svg.sky .msh{translate:0 24px}
 }
+
+/* ===== v337 barra con incavo: «Adesso» in una pillola sopra, sotto le sezioni in una barra blu notte con l'incavo che segue la sezione aperta ===== */
+@property --nx{syntax:"<length>";inherits:true;initial-value:-200px}
+@property --cx{syntax:"<length>";inherits:true;initial-value:-200px}
+html body nav.nbar .nbrow{height:134px;padding:0!important;gap:0;background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;pointer-events:none}
+html body nav.nbar .ntl{pointer-events:auto;height:52px;padding:0 6px 0 16px!important;border-radius:22px;background:#14224F!important;box-shadow:0 10px 24px rgba(13,21,51,.32)!important;border:0!important}
+html body nav.nbar .ntl .nfab{height:40px;min-height:40px}
+/* la barra delle sezioni: lo sfondo è un livello a parte, con l'incavo ritagliato dalla maschera */
+html body nav.nbar .ntr{pointer-events:auto;flex:none;height:58px;margin-top:24px;padding:0 10px!important;gap:0;position:relative;isolation:isolate;filter:drop-shadow(0 10px 14px rgba(13,21,51,.3))}
+html body nav.nbar .ntr::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:22px;background:#14224F;
+ -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -2 112 37'%3E%3Cpath d='M0-2V0h4c10 0 15 3 19 10 6 13 17 23 33 23s27-10 33-23c4-7 9-10 19-10h4v-2z'/%3E%3C/svg%3E") calc(var(--nx) - 56px) -2px/112px 37px no-repeat,linear-gradient(#000 0 0);
+ -webkit-mask-composite:xor;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -2 112 37'%3E%3Cpath d='M0-2V0h4c10 0 15 3 19 10 6 13 17 23 33 23s27-10 33-23c4-7 9-10 19-10h4v-2z'/%3E%3C/svg%3E") calc(var(--nx) - 56px) -2px/112px 37px no-repeat,linear-gradient(#000 0 0);mask-composite:exclude}
+html body nav.nbar .ntr{transition:--nx .46s cubic-bezier(.45,1.25,.5,1),--cx .62s cubic-bezier(.3,1.55,.45,1)}
+/* il cerchio senape che sta nell'incavo */
+html body nav.nbar .nind{display:block!important;position:absolute;z-index:0;left:0;top:-19px;width:46px!important;height:46px;margin:0;transform:translateX(calc(var(--cx) - 23px))!important;transition:none;pointer-events:none}
+html body nav.nbar .nind::before{content:"";display:block;position:absolute;inset:0;border-radius:50%;background:#E1AD21;box-shadow:0 6px 14px rgba(225,173,33,.42),inset 0 -3px 0 rgba(138,100,0,.22)}
+html body nav.nbar .nind::after{content:"";display:block;position:absolute;inset:0;width:auto;height:auto;margin:0;border-radius:50%;border:2px solid #E1AD21;background:none;opacity:0}
+html body nav.nbar .nind.hop::before{animation:nbhop .62s cubic-bezier(.3,1.2,.5,1)}
+html body nav.nbar .nind.hop::after{animation:nbring .7s ease-out .4s}
+@keyframes nbhop{0%{transform:none}30%{transform:translateY(-7px) scale(.9,1.1)}62%{transform:translateY(2px) scale(1.14,.86)}82%{transform:translateY(-1px) scale(.97,1.03)}100%{transform:none}}
+@keyframes nbring{0%{opacity:.8;transform:scale(1)}100%{opacity:0;transform:scale(1.6)}}
+/* sezioni: icona ed etichetta; la sezione aperta sale nel cerchio */
+html body nav.nbar .ntr .nt,html body nav.nbar .ntr .nt[aria-current=page],html body nav.nbar .ntr .nhm{flex:1 1 0;width:auto;height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:2px 0 0;border-radius:18px;background:none!important;box-shadow:none!important;color:#C6CEE6!important;font:700 11px/1.1 Figtree,system-ui,sans-serif}
+html body nav.nbar .ntr .nt span,html body nav.nbar .ntr .nhm span{display:block;max-width:100%;opacity:1;margin:0;font:700 11px/1.1 Figtree,system-ui,sans-serif;transition:color .25s,transform .35s cubic-bezier(.3,1.4,.5,1)}
+html body nav.nbar .ntr .nt svg,html body nav.nbar .ntr .nhm svg{width:22px;height:22px;stroke-width:1.9;transition:transform .3s cubic-bezier(.4,0,.3,1),color .2s}
+html body nav.nbar .ntr .nt[aria-current=page]{color:#E1AD21!important}
+html body nav.nbar .ntr .nt[aria-current=page] svg{color:#14224F;stroke-width:2.2;transform:translateY(-19px);transition:transform .5s cubic-bezier(.3,1.6,.45,1) .12s,color .2s .15s}
+html body nav.nbar .ntr .nt[aria-current=page] span{transform:translateY(4px)}
+html body nav.nbar .ntr .nt:active svg,html body nav.nbar .ntr .nhm:active svg{scale:.86}
+/* un gesto diverso per ogni sezione, quando la si apre */
+html body nav.nbar .ntr .nt.go svg path{transform-box:fill-box;transform-origin:50% 50%}
+html body nav.nbar .ntr .nt.go[data-i="0"] svg path{animation:nbclk .75s cubic-bezier(.3,1.1,.4,1) .3s both}
+html body nav.nbar .ntr .nt.go[data-i="1"] svg path{animation:nbmap .6s cubic-bezier(.3,1.5,.5,1) .3s both}
+html body nav.nbar .ntr .nt.go[data-i="2"] svg path{transform-origin:30% 90%;animation:nbcup .7s ease-in-out .3s both}
+html body nav.nbar .ntr .nt.go[data-i="3"] svg path{animation:nbcoin .7s cubic-bezier(.3,1.2,.5,1) .3s both}
+html body nav.nbar .ntr .nt.go[data-i="4"] svg path{animation:nbbulb .8s ease-out .3s both}
+html body nav.nbar .ntr .nhm.go svg{animation:nbhome .55s cubic-bezier(.3,1.5,.5,1)}
+@keyframes nbclk{0%{transform:rotate(-200deg)}100%{transform:none}}
+@keyframes nbmap{0%{transform:scaleX(.25)}60%{transform:scaleX(1.12)}100%{transform:none}}
+@keyframes nbcup{0%,100%{transform:none}25%{transform:rotate(-16deg)}50%{transform:rotate(10deg)}75%{transform:rotate(-5deg)}}
+@keyframes nbcoin{0%{transform:perspective(60px) rotateY(0)}100%{transform:perspective(60px) rotateY(360deg)}}
+@keyframes nbbulb{0%{transform:scale(.7);filter:none}45%{transform:scale(1.18);filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 7px #fff)}100%{transform:none;filter:none}}
+@keyframes nbhome{0%{transform:none}35%{transform:translateY(-8px) scale(1.12)}70%{transform:translateY(1px) scale(.95)}100%{transform:none}}
+/* alla prima apertura il cerchio è già al suo posto, senza corsa */
+html body nav.nbar.nbi .ntr{transition:none}
+html body nav.nbar.nbi .ntr .nt svg,html body nav.nbar.nbi .ntr .nt span{transition:none}
+html body nav.nbar .nmenu{bottom:146px}
+html.hc body nav.nbar .ntr .nt:not([aria-current=page]),html.hc body nav.nbar .ntr .nhm{color:#FFFFFF!important}
+@media (prefers-reduced-motion:reduce){html body nav.nbar .ntr{transition:none}html body nav.nbar .nind::before,html body nav.nbar .nind::after,html body nav.nbar .ntr .nt svg,html body nav.nbar .ntr .nt svg path,html body nav.nbar .ntr .nhm svg{animation:none!important;transition:none!important}}
+html.lite body nav.nbar .nind::before,html.lite body nav.nbar .nind::after,html.lite body nav.nbar .ntr .nt.go svg path{animation:none!important}
+/* v337 · l'azione rapida non resta sempre aperta: esce dal cerchio quando si sceglie una sezione e rientra quando si scorre */
+html body nav.nbar .ntl{transform-origin:var(--ox,50%) 150%;opacity:0;visibility:hidden;pointer-events:none!important;transform:translateY(46px) scale(.16,.5);border-radius:26px;transition:transform .32s cubic-bezier(.5,0,.75,0),opacity .2s ease .08s,visibility 0s linear .34s}
+html body nav.nbar .ntl>*{opacity:0;transition:opacity .12s}
+html body nav.nbar.qa .ntl{opacity:1;visibility:visible;pointer-events:auto!important;transform:none;transition:transform .55s cubic-bezier(.3,1.35,.45,1) .12s,opacity .14s ease .12s,visibility 0s}
+html body nav.nbar.qa .ntl>*{opacity:1;transition:opacity .25s ease .36s}
+html body nav.nbar.qa .ntl .nfab{animation:nbfab .5s cubic-bezier(.3,1.6,.5,1) .4s both}
+@keyframes nbfab{0%{transform:scale(.6)}100%{transform:none}}
+@media (prefers-reduced-motion:reduce){html body nav.nbar .ntl,html body nav.nbar.qa .ntl{transform:none;transition:opacity .2s,visibility 0s linear .2s}html body nav.nbar.qa .ntl .nfab{animation:none}}
+/* lo spazio delle sezioni arriva fino alla barra: l'azione rapida, quando c'è, galleggia sopra il contenuto */
+:root{--tb:96px}
+html body nav.nbar.qa .ntl .ntx.ntchg{animation-delay:.34s;animation-fill-mode:both}

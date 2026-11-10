@@ -18,7 +18,7 @@ var AT='<svg viewBox="0 0 240 170" aria-hidden="true"><g class="tl"><path d="M24
 var W=function(x){return '<div class="tai tsv">'+x+'</div>'};ART.splice(2,0,W(AH));ART.splice(4,0,W(AB));ART.splice(5,0,W(AS));ART.splice(6,0,W(AT));
 S[1][1]="Tocca una delle città europee e, con il cuoricino, tieni le preferite in cima. Poi inserisci le date: «Crea subito» ti basta per iniziare, voli e alloggio si aggiungono dopo.";
 S.splice(2,0,["La pagina principale","In alto c'è la città del mese: scorri di lato per vederne altre e tocca il sole per far scorrere il cielo. I tre puntini portano a Condividi, Impostazioni e Assistenza. Sotto trovi la ricerca delle città e i tuoi viaggi."]);
-S.splice(4,0,["La barra in basso","In alto vedi cosa viene dopo, e il pulsante senape fa l'azione giusta per la sezione. Tienilo premuto per cercare, aggiungere biglietti o tornare ai viaggi. Sotto ci sono Home e le cinque sezioni; puoi anche scorrere di lato."]);
+S.splice(4,0,["La barra in basso","Ci sono Home e le cinque sezioni; puoi anche scorrere di lato. Quando ne scegli una, sopra compare l'azione rapida: cosa viene dopo e il pulsante senape. Tienilo premuto per cercare, aggiungere biglietti o tornare ai viaggi."]);
 S.splice(5,0,["Le cinque sezioni","Tappe: orari, luoghi e voli. Mappa: percorso e posizione. Pasti: dove mangiare. Costi: stime e spese da dividere. Consigli: frasi e trucchi utili."]);
 S.splice(6,0,["Meteo e impostazioni","In alto trovi il meteo della città e l'ingranaggio per tema, lingua, dimensione del testo e assistenza. Per cercare tappe, locali e consigli tieni premuto il pulsante senape nella barra in basso."]);
 var el=null,idx=0,done=null,last=null;
