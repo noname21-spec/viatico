@@ -265,7 +265,7 @@ document.addEventListener("touchmove",function(e){if(e.touches&&e.touches.length
 /* tema chiaro/scuro stile iPhone */
 var cb=document.getElementById("dm"),root=document.documentElement,mq=matchMedia("(prefers-color-scheme: dark)"),meta=document.querySelector('meta[name="theme-color"]');
 function curD(){var t=root.getAttribute("data-theme");return t?t==="dark":mq.matches}
-function sync(){cb.checked=curD();if(meta)setTimeout(function(){var v=getComputedStyle(root).getPropertyValue("--tc").trim();meta.setAttribute("content",v||(cb.checked?"#04121a":"#2340a0"))},30)}
+function sync(){cb.checked=curD();if(meta)setTimeout(function(){var v=getComputedStyle(root).getPropertyValue("--tc").trim();meta.setAttribute("content",v||(cb.checked?"#000000":"#2340a0"))},30)}
 window.addEventListener("citycolor",sync);
 function themeNow(){return root.getAttribute("data-theme")||"auto"}
 /* v286 dimensione del testo */

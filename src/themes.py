@@ -67,7 +67,8 @@ for _k,_v in CITY_PAL.items():T[_k]=mk(**_v)
 # v300 marchio unico «Notte blu»: blu reale, blu notte e senape per tutte le città (restano la bandiera e lo skyline della città)
 BRAND=mk('#2340A0','#2340A0','#E1AD21','#F4F5F8')
 BRAND['L']=dict(BRAND['L'],ink='#14224F',mute='#56607A',bg='#F4F5F8',paper='#FFFFFF',surf2='#EEF1F8',line='#E2E5EE',land='#E9EDF6',c3='#14224F',pin='#14224F')
-BRAND['D']=dict(BRAND['D'],bg='#0D1533',paper='#141F48',surf='#18244F',surf2='#1F2D5E',line='#263566',land='#121C44',ink='#EEF1FA',mute='#A9B4D6')
+# v338 tema scuro in nero assoluto: sfondo nero, schede grafite, accenti blu e senape invariati
+BRAND['D']=dict(BRAND['D'],bg='#000000',paper='#0C0C0E',surf='#131316',surf2='#1D1D22',line='#2A2A30',land='#0E0E11',ink='#F2F3F7',mute='#A3A6B2')
 def css_for(cid):
     t=dict(BRAND,flag=T[cid].get('flag',BRAND['flag']) if cid in T else ['#1d3a6e','#ffffff','#c8102e']);L=t['L'];D=t['D'];S=':root[data-city="%s"]'%cid
     def calm(V,dark):
@@ -96,7 +97,7 @@ def css_for(cid):
         return out
     c1l=t['L']['c1'];c1d=t['D']['c1']
     lb='radial-gradient(60%% 42%% at 8%% 0%%,color-mix(in srgb,%s 20%%,transparent),transparent 72%%),radial-gradient(52%% 38%% at 100%% 100%%,color-mix(in srgb,%s 12%%,transparent),transparent 72%%)'%(c1l,c1l)
-    db='radial-gradient(60%% 42%% at 8%% 0%%,color-mix(in srgb,%s 26%%,transparent),transparent 72%%),radial-gradient(52%% 38%% at 100%% 100%%,color-mix(in srgb,%s 12%%,transparent),transparent 72%%)'%(t['D']['c1'],t['D']['c1'])
+    db='none'
     tabs=['itinerario','mappa','mangiare','costi','consigli'];tb=[t['L']['c3']]*7
     css=S+'{'+base(L,0)+'}\n'
     css+='@media (prefers-color-scheme:dark){'+S+':not([data-theme="light"]){'+base(D,1)+'}}\n'

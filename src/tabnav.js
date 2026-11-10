@@ -24,7 +24,7 @@ function tab(i){return '<button type="button" class="nt" data-i="'+i+'" aria-lab
 bar.innerHTML='<div class="nbrow"><div class="ntl"><i class="ndot" aria-hidden="true"></i><div class="ntx" aria-live="polite"><small class="ntn"></small><b class="ntw"></b></div></div><div class="ntr"><button type="button" class="nhm" aria-label="Tutti i viaggi">'+svg("M3.5 11 12 4l8.5 7M5.5 9.5V20h13V9.5M10 20v-5.5h4V20",22)+'<span>Home</span></button><i class="nind" aria-hidden="true"></i>'+tab(0)+tab(1)+tab(2)+tab(3)+tab(4)+'</div></div><button type="button" class="nfab"><span class="nfi"></span><span class="nfc"></span></button><div class="nmenu" hidden role="menu"><button type="button" role="menuitem" data-m="s">'+svg(AI["🔎"],20)+'Cerca nel viaggio</button><button type="button" role="menuitem" data-m="t">'+svg("M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4zM14 5v12",20)+'Aggiungi biglietti o carte d\'imbarco</button><button type="button" role="menuitem" data-m="h">'+svg("M3.5 11 12 4l8.5 7M5.5 9.5V20h13V9.5M10 20v-5.5h4V20",20)+'Tutti i viaggi</button></div>';
 document.body.appendChild(bar);
 var row=$(".nbrow",bar),ind=$(".nind",bar),tabs=[].slice.call(bar.querySelectorAll(".nt")),fab=$(".nfab",bar),fi=$(".nfi",bar),fc=$(".nfc",bar),menu=$(".nmenu",bar),lastI=-1,lastE="";
-$(".ntl",bar).appendChild(fab);$(".nhm",bar).addEventListener("click",function(){var h=this;h.classList.remove("go");void h.offsetWidth;h.classList.add("go");setTimeout(function(){h.classList.remove("go")},600);clk("#shdest")||clk("#ahome")});
+$(".ntl",bar).appendChild(fab);$(".nhm",bar).addEventListener("click",function(){var h=this;h.classList.remove("nbgo");void h.offsetWidth;h.classList.add("nbgo");setTimeout(function(){h.classList.remove("nbgo")},600);clk("#shdest")||clk("#ahome")});
 var ntr=$(".ntr",bar),placed=0;
 function place(){var c=curI(),b=tabs[c];if(!b||!b.offsetWidth)return;var x=b.offsetLeft+b.offsetWidth/2+"px";
  if(!placed){placed=1;bar.classList.add("nbi");requestAnimationFrame(function(){requestAnimationFrame(function(){bar.classList.remove("nbi")})})}
@@ -34,8 +34,8 @@ var qy=0,qb=null;function blkOf(i){return document.getElementById(FULL[i]==="Iti
 function qa(on){bar.classList.toggle("qa",!!on);if(on){qb=blkOf(curI());qy=qb?qb.scrollTop:0}else if(!menu.hidden)mOpen(false)}
 document.addEventListener("scroll",function(e){if(!bar.classList.contains("qa")||e.target!==qb)return;if(qb.scrollTop-qy>36)qa(false);else if(qb.scrollTop<qy)qy=qb.scrollTop},true);
 /* tocco su una sezione: il cerchio salta nel nuovo incavo e l'icona fa il suo gesto */
-function hop(c){if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;ind.classList.remove("hop");tabs.forEach(function(b){b.classList.remove("go")});void ind.offsetWidth;ind.classList.add("hop");tabs[c].classList.add("go");
- clearTimeout(hop.t);hop.t=setTimeout(function(){ind.classList.remove("hop");tabs[c].classList.remove("go")},1200)}
+function hop(c){if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;ind.classList.remove("hop");tabs.forEach(function(b){b.classList.remove("nbgo")});void ind.offsetWidth;ind.classList.add("hop");tabs[c].classList.add("nbgo");
+ clearTimeout(hop.t);hop.t=setTimeout(function(){ind.classList.remove("hop");tabs[c].classList.remove("nbgo")},1700)}
 function render(){var c=curI(),a=act(c);tabs.forEach(function(b,i){if(i===c)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});place();
  if(lastE!==a.e+a.t){lastE=a.e+a.t;fi.innerHTML=svg(AI[a.e]||AI["🔎"],22);fc.textContent=a.t;fab.setAttribute("aria-label",a.t);if(lastI!==-1&&lastI!==c){fab.classList.remove("pop");void fab.offsetWidth;fab.classList.add("pop")}}
  lastI=c;bar.setAttribute("data-sec",FULL[c]);nowTxt()}
