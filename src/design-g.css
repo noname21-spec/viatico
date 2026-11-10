@@ -4257,3 +4257,28 @@ html.sa .nbar.nbar{top:calc(var(--apph) - 148px - env(safe-area-inset-bottom,0px
 :root[data-theme="dark"] body nav.nbar .nbrow .ntl .ntn,:root:has(#dm:checked) body nav.nbar .nbrow .ntl .ntn{color:#A3A6B2!important}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body nav.nbar .ndot{background:#E1AD21}}
 :root[data-theme="dark"] body nav.nbar .ndot,:root:has(#dm:checked) body nav.nbar .ndot{background:#E1AD21}
+
+/* ===== v339 effetto vetro (Glass UI), da Impostazioni › Grafica: sfondo con macchie di colore, schede traslucide, barre e finestre sfocate. Spento con alto contrasto e in modalità leggera ===== */
+html.glass:not(.hc):not(.lite){--surfo:var(--surf);--surf2o:var(--surf2);--papero:var(--paper);--glbg:radial-gradient(70% 38% at 0% 2%,rgba(35,64,160,.42),transparent 70%),radial-gradient(60% 34% at 100% 34%,rgba(225,173,33,.34),transparent 70%),radial-gradient(75% 40% at 10% 78%,rgba(110,95,168,.32),transparent 72%),radial-gradient(60% 30% at 95% 100%,rgba(58,107,219,.3),transparent 70%);background:var(--glbg),var(--bg)!important;background-attachment:fixed!important}
+html.glass:not(.hc):not(.lite) body{background:transparent!important;--surf:color-mix(in srgb,var(--surfo) 56%,transparent);--surf2:color-mix(in srgb,var(--surf2o) 52%,transparent);--paper:color-mix(in srgb,var(--papero) 58%,transparent);--edge:rgba(255,255,255,.55)}
+/* barra delle sezioni e azione rapida: vetro blu notte */
+html.glass:not(.hc):not(.lite) body nav.nbar .ntl{background:rgba(20,34,79,.72)!important;-webkit-backdrop-filter:blur(22px) saturate(1.7)!important;backdrop-filter:blur(22px) saturate(1.7)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),inset 0 1px 0 rgba(255,255,255,.22),0 10px 24px rgba(13,21,51,.25)!important}
+html.glass:not(.hc):not(.lite) body nav.nbar .ntr{filter:none}
+html.glass:not(.hc):not(.lite) body nav.nbar .ntr::before{background:rgba(20,34,79,.72);-webkit-backdrop-filter:blur(22px) saturate(1.7);backdrop-filter:blur(22px) saturate(1.7)}
+html.glass:not(.hc):not(.lite) body nav.nbar .nind::before{background:linear-gradient(180deg,#F2C64E,#E1AD21);box-shadow:0 6px 16px rgba(225,173,33,.45),inset 0 1px 0 rgba(255,255,255,.55),inset 0 -3px 0 rgba(138,100,0,.2)}
+/* finestre e menu che passano sopra il contenuto */
+html.glass:not(.hc):not(.lite) body :is(#sheet .shc,.nmenu,#dest #dsheet,.utoast,.tbcap){-webkit-backdrop-filter:blur(26px) saturate(1.6)!important;backdrop-filter:blur(26px) saturate(1.6)!important}
+html.glass:not(.hc):not(.lite) body #dest #dsheet{background:color-mix(in srgb,var(--bg) 62%,transparent)!important}
+/* bordo di luce sulle schede; la mappa resta piena sotto le tessere */
+html.glass:not(.hc):not(.lite){--sh1:inset 0 0 0 1px rgba(255,255,255,.75),inset 0 1px 0 rgba(255,255,255,.9),0 10px 26px -14px rgba(20,34,79,.3)!important}
+html.glass:not(.hc):not(.lite) body #lmap{background-color:var(--land)!important}
+@media (prefers-color-scheme:dark){html:not([data-theme="light"]).glass:not(.hc):not(.lite){--glbg:radial-gradient(70% 38% at 0% 2%,rgba(35,64,160,.5),transparent 70%),radial-gradient(60% 34% at 100% 34%,rgba(225,173,33,.2),transparent 70%),radial-gradient(75% 40% at 10% 78%,rgba(110,95,168,.32),transparent 72%),radial-gradient(60% 30% at 95% 100%,rgba(58,107,219,.28),transparent 70%)}}
+html[data-theme="dark"].glass:not(.hc):not(.lite),html:has(#dm:checked).glass:not(.hc):not(.lite){--glbg:radial-gradient(70% 38% at 0% 2%,rgba(35,64,160,.5),transparent 70%),radial-gradient(60% 34% at 100% 34%,rgba(225,173,33,.2),transparent 70%),radial-gradient(75% 40% at 10% 78%,rgba(110,95,168,.32),transparent 72%),radial-gradient(60% 30% at 95% 100%,rgba(58,107,219,.28),transparent 70%)}
+@media (prefers-color-scheme:dark){html:not([data-theme="light"]).glass:not(.hc):not(.lite) body{--surf:color-mix(in srgb,var(--surfo) 50%,transparent);--surf2:color-mix(in srgb,var(--surf2o) 50%,transparent);--edge:rgba(255,255,255,.12)}}
+html[data-theme="dark"].glass:not(.hc):not(.lite) body,html:has(#dm:checked).glass:not(.hc):not(.lite) body{--surf:color-mix(in srgb,var(--surfo) 50%,transparent);--surf2:color-mix(in srgb,var(--surf2o) 50%,transparent);--edge:rgba(255,255,255,.12)}
+@media (prefers-color-scheme:dark){html:not([data-theme="light"]).glass:not(.hc):not(.lite) body nav.nbar .ntl{background:rgba(28,28,34,.55)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1),inset 0 1px 0 rgba(255,255,255,.14),0 10px 24px rgba(0,0,0,.5)!important}}
+html[data-theme="dark"].glass:not(.hc):not(.lite) body nav.nbar .ntl,html:has(#dm:checked).glass:not(.hc):not(.lite) body nav.nbar .ntl{background:rgba(28,28,34,.55)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1),inset 0 1px 0 rgba(255,255,255,.14),0 10px 24px rgba(0,0,0,.5)!important}
+@media (prefers-color-scheme:dark){html:not([data-theme="light"]).glass:not(.hc):not(.lite) body nav.nbar .ntr::before{background:rgba(28,28,34,.55)}}
+html[data-theme="dark"].glass:not(.hc):not(.lite) body nav.nbar .ntr::before,html:has(#dm:checked).glass:not(.hc):not(.lite) body nav.nbar .ntr::before{background:rgba(28,28,34,.55)}
+@media (prefers-color-scheme:dark){html:not([data-theme="light"]).glass:not(.hc):not(.lite){--sh1:inset 0 0 0 1px rgba(255,255,255,.1),inset 0 1px 0 rgba(255,255,255,.12),0 10px 24px -14px rgba(0,0,0,.6)!important}}
+html[data-theme="dark"].glass:not(.hc):not(.lite),html.glass:not(.hc):not(.lite):has(#dm:checked){--sh1:inset 0 0 0 1px rgba(255,255,255,.1),inset 0 1px 0 rgba(255,255,255,.12),0 10px 24px -14px rgba(0,0,0,.6)!important}

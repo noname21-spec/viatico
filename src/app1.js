@@ -959,6 +959,9 @@ $(".fpy",d).addEventListener("click",function(){done();var b=$("#fbtn");if(b)b.c
 /* alto contrasto */
 (function(){var on=false;try{on=localStorage.getItem("via-hc")==="1"}catch(e){}document.documentElement.classList.toggle("hc",on);var c=$("#hcon");if(!c)return;c.checked=on;c.addEventListener("change",function(){document.documentElement.classList.toggle("hc",c.checked);try{localStorage.setItem("via-hc",c.checked?"1":"0")}catch(e){}})})();
 
+/* effetto vetro (Glass UI) */
+(function(){var on=false;try{on=localStorage.getItem("via-glass")==="1"}catch(e){}document.documentElement.classList.toggle("glass",on);var c=$("#glon");if(!c)return;c.checked=on;c.addEventListener("change",function(){document.documentElement.classList.toggle("glass",c.checked);try{localStorage.setItem("via-glass",c.checked?"1":"0")}catch(e){}})})();
+
 /* banner dal vivo */
 var lastNow=-2,LB=null;
 function todayIdx(){if(!TRIP)return -1;var d=paris().d;for(var i=0;i<TRIP.days.length;i++)if(TRIP.days[i].date===d)return i;return -1}

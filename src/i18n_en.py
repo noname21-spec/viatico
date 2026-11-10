@@ -45,6 +45,7 @@ D = {
 'Italiano o inglese: menu, pulsanti e avvisi': 'Italian or English: menus, buttons and messages',
 'Alto contrasto': 'High contrast',
 'Testi più scuri e bordi netti, utile con il sole forte': 'Darker text and sharper edges, handy in bright sunlight',
+'Effetto vetro': 'Glass effect', 'Schede e barre trasparenti e sfocate, come vetro smerigliato': 'See-through, blurred cards and bars, like frosted glass',
 'Modalità chiara/scura': 'Light/dark mode', 'Modalità scura': 'Dark mode',
 'Impostazioni': 'Settings', 'Impostazioni, lingua e assistenza': 'Settings, language and support',
 'Sezioni delle impostazioni': 'Settings sections', 'Torna alle impostazioni': 'Back to settings',
