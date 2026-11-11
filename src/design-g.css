@@ -4282,3 +4282,71 @@ html[data-theme="dark"].glass:not(.hc):not(.lite) body nav.nbar .ntl,html:has(#d
 html[data-theme="dark"].glass:not(.hc):not(.lite) body nav.nbar .ntr::before,html:has(#dm:checked).glass:not(.hc):not(.lite) body nav.nbar .ntr::before{background:rgba(28,28,34,.55)}
 @media (prefers-color-scheme:dark){html:not([data-theme="light"]).glass:not(.hc):not(.lite){--sh1:inset 0 0 0 1px rgba(255,255,255,.1),inset 0 1px 0 rgba(255,255,255,.12),0 10px 24px -14px rgba(0,0,0,.6)!important}}
 html[data-theme="dark"].glass:not(.hc):not(.lite),html.glass:not(.hc):not(.lite):has(#dm:checked){--sh1:inset 0 0 0 1px rgba(255,255,255,.1),inset 0 1px 0 rgba(255,255,255,.12),0 10px 24px -14px rgba(0,0,0,.6)!important}
+
+/* (.ios ripetuto: deve prevalere sulle regole del tema scuro e del vetro) */
+/* ===== v340 modalità iPhone (html.ios, automatica su iPhone e iPad): carattere di sistema, barra iOS 26 in vetro con accessorio «Adesso», barra di navigazione con titolo in linea, controlli di iOS ===== */
+html.ios{--imat:rgba(250,250,252,.74);--ihl:rgba(255,255,255,.85);--ilab:rgba(60,60,67,.82);--itint:#2340A0;--ilz:rgba(118,118,128,.15);--isep:rgba(60,60,67,.18);--iseg:rgba(118,118,128,.13);--ithumb:#fff;--iink:#000;--inav:rgba(248,248,250,.8)}
+html.ios *{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro","Helvetica Neue",system-ui,sans-serif!important;letter-spacing:normal}
+html.ios .blk h2.sec{font-weight:700!important;letter-spacing:.01em!important}
+/* contenuto che scorre sotto barra e accessorio, come nelle app di sistema */
+html.ios body main>.blk{bottom:0!important;padding-bottom:178px!important;-webkit-mask-image:none!important;mask-image:none!important}
+html.ios body.scrolled main>.blk.on{top:0!important;padding-top:68px!important}
+html.ios body main>.blk{transition:none!important}
+/* barra delle sezioni: capsula di vetro sospesa */
+html.ios.ios.ios.ios body nav.nbar{padding:0 14px 6px}
+html.ios.ios.ios.ios body nav.nbar .nbrow{display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;position:relative}
+html.ios.ios.ios.ios body nav.nbar .ntr{width:100%;height:62px;margin:0;padding:0 4px!important;border-radius:31px;filter:none;transition:width .55s cubic-bezier(.3,1.2,.45,1),--cx .5s cubic-bezier(.3,1.25,.4,1)}
+html.ios.ios.ios.ios body nav.nbar .ntr::before{-webkit-mask:none;mask:none;border-radius:31px;background:var(--imat);-webkit-backdrop-filter:blur(26px) saturate(1.9)!important;backdrop-filter:blur(26px) saturate(1.9)!important;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.07),inset 0 1px 0 var(--ihl),0 10px 30px rgba(0,0,0,.13)}
+html.ios.ios.ios.ios body nav.nbar .ntr .nt,html.ios.ios.ios.ios body nav.nbar .ntr .nt[aria-current=page],html.ios.ios.ios.ios body nav.nbar .ntr .nhm{height:62px;gap:2px;padding:0;color:var(--ilab)!important;overflow:hidden;transition:flex-basis .45s cubic-bezier(.3,1.1,.45,1),opacity .25s}
+html.ios.ios.ios.ios body nav.nbar .ntr .nt[aria-current=page]{color:var(--itint)!important}
+html.ios.ios.ios.ios body nav.nbar .ntr .nt svg,html.ios.ios.ios.ios body nav.nbar .ntr .nhm svg{width:25px;height:25px;stroke-width:1.8}
+html.ios.ios.ios.ios body nav.nbar .ntr .nt[aria-current=page] svg{transform:none;color:inherit;stroke-width:2.2}
+html.ios.ios.ios.ios body nav.nbar .ntr .nt span,html.ios.ios.ios.ios body nav.nbar .ntr .nhm span,html.ios.ios.ios.ios body nav.nbar .ntr .nt[aria-current=page] span{transform:none;font-size:10px!important;font-weight:600!important;transition:opacity .2s}
+/* la selezione è una «goccia» di vetro che scivola e si allunga mentre si sposta */
+html.ios.ios.ios.ios body nav.nbar .nind{top:4px;height:54px;width:calc((100% - 8px)/6)!important;transform:translateX(calc(var(--cx) - 50%))!important;transition:opacity .2s}
+html.ios.ios.ios.ios body nav.nbar .nind::before{border-radius:27px;background:var(--ilz);box-shadow:none}
+html.ios.ios.ios.ios body nav.nbar .nind::after{display:none}
+html.ios.ios.ios.ios body nav.nbar .nind.hop::before{animation:ioslz .5s cubic-bezier(.3,1,.5,1)}
+@keyframes ioslz{0%{transform:none}35%{transform:scale(1.3,.86)}70%{transform:scale(.96,1.04)}100%{transform:none}}
+html.ios.ios.ios.ios body nav.nbar .ntr .nt.nbgo svg path{animation-delay:.05s!important}
+/* accessorio «Adesso»: sempre presente sopra la barra */
+html.ios.ios.ios.ios body nav.nbar .ntl,html.ios.ios.ios.ios body nav.nbar.qa .ntl{position:absolute;left:0;right:0;bottom:70px;height:50px;padding:0 6px 0 16px!important;border-radius:25px;opacity:1;visibility:visible;pointer-events:auto!important;transform:none;background:var(--imat)!important;-webkit-backdrop-filter:blur(26px) saturate(1.9)!important;backdrop-filter:blur(26px) saturate(1.9)!important;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.07),inset 0 1px 0 var(--ihl),0 8px 26px rgba(0,0,0,.11)!important;transition:left .55s cubic-bezier(.3,1.2,.45,1),bottom .55s cubic-bezier(.3,1.2,.45,1),height .45s cubic-bezier(.3,1.2,.45,1),border-radius .45s}
+html.ios.ios.ios.ios body nav.nbar .ntl>*{opacity:1}
+html.ios.ios.ios.ios body nav.nbar .nbrow .ntl .ntn{color:rgba(60,60,67,.6)!important}
+html.ios.ios.ios.ios body nav.nbar .nbrow .ntl .ntw{color:var(--iink)!important}
+html.ios.ios.ios.ios body nav.nbar .ntl .nfab{height:36px;min-height:36px;border-radius:18px}
+html.ios.ios.ios.ios body nav.nbar .ndot{background:var(--itint)}
+/* scorrendo in giù: la barra si riduce alla sola sezione aperta e l'accessorio si mette accanto */
+html.ios.ios.ios.ios.tbmin body nav.nbar .ntr{width:62px}
+html.ios.ios.ios.ios.tbmin body nav.nbar .ntr .nt:not([aria-current=page]),html.ios.ios.ios.ios.tbmin body nav.nbar .ntr .nhm{flex:0 0 0;opacity:0;pointer-events:none}
+html.ios.ios.ios.ios.tbmin body nav.nbar .ntr .nt span{opacity:0}
+html.ios.ios.ios.ios.tbmin body nav.nbar .nind{opacity:0}
+html.ios.ios.ios.ios.tbmin body nav.nbar .ntl{left:70px;bottom:0;height:62px;border-radius:31px}
+html.ios.ios.ios.ios body nav.nbar .nmenu{bottom:130px}
+/* barra di navigazione: scorrendo diventa vetro chiaro con il nome della sezione al centro */
+html.ios .appbar .iost{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) translateY(6px);font-size:17px!important;font-weight:600;color:var(--iink);opacity:0;pointer-events:none;transition:opacity .2s,transform .3s;z-index:2;white-space:nowrap}
+html.ios body.scrolled .appbar .iost{opacity:1;transform:translate(-50%,-50%)}
+:root:root.ios body.scrolled .appbar.appbar::before{background:var(--inav)!important;-webkit-backdrop-filter:blur(22px) saturate(1.8)!important;backdrop-filter:blur(22px) saturate(1.8)!important;box-shadow:0 .5px 0 var(--isep)!important}
+:root:root.ios body.scrolled .appbar .appt,:root:root.ios body.scrolled .appbar .appt *{color:var(--itint)!important;font-size:17px!important;font-weight:400!important}
+:root:root.ios body.scrolled #gear{color:var(--itint)!important;background:transparent!important;box-shadow:none!important}
+/* controlli: interruttori, selettori a segmenti e giorni come in iOS */
+html.ios .nsw{width:51px;height:31px;border-radius:16px;background:rgba(120,120,128,.16)!important}
+html.ios .nsw::after{top:2px;left:2px;width:27px;height:27px;box-shadow:0 3px 8px rgba(0,0,0,.15),0 3px 1px rgba(0,0,0,.06)}
+html.ios .nsw:checked{background:#34C759!important}
+html.ios .nsw:checked::after{transform:translateX(20px)}
+html.ios :is(.vcm,.seg3){background:var(--iseg)!important;padding:2px!important;gap:0!important}
+html.ios :is(.vcm,.seg3) button{color:var(--iink)!important;font-size:13px!important;font-weight:500!important;height:32px;min-height:0;padding:0 10px}
+html.ios :is(.vcm,.seg3) button.on{background:var(--ithumb)!important;color:var(--iink)!important;font-weight:600!important;box-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04)!important}
+html.ios body .dsel{background:var(--iseg)!important;box-shadow:none!important;padding:3px!important}
+html.ios body .dsel::before{top:3px;bottom:3px;background:var(--ithumb);box-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04)}
+html.ios body .dsel .dp,html.ios body .dsel .dp *{color:var(--iink)!important}
+html.ios body .dsel .dp small{color:rgba(60,60,67,.6)!important}
+@media (prefers-color-scheme:dark){html.ios:not([data-theme="light"]){--imat:rgba(30,30,32,.66);--ihl:rgba(255,255,255,.12);--ilab:rgba(235,235,245,.7);--itint:#FFD66E;--ilz:rgba(255,255,255,.13);--isep:rgba(84,84,88,.6);--iseg:rgba(118,118,128,.24);--ithumb:#636366;--iink:#fff;--inav:rgba(22,22,24,.78)}}
+html.ios[data-theme="dark"],html.ios:has(#dm:checked){--imat:rgba(30,30,32,.66);--ihl:rgba(255,255,255,.12);--ilab:rgba(235,235,245,.7);--itint:#FFD66E;--ilz:rgba(255,255,255,.13);--isep:rgba(84,84,88,.6);--iseg:rgba(118,118,128,.24);--ithumb:#636366;--iink:#fff;--inav:rgba(22,22,24,.78)}
+@media (prefers-color-scheme:dark){html.ios.ios.ios.ios:not([data-theme="light"]) body nav.nbar .nbrow .ntl .ntn,html.ios:not([data-theme="light"]) body .dsel .dp small{color:rgba(235,235,245,.6)!important}}
+html.ios.ios.ios.ios[data-theme="dark"] body nav.nbar .nbrow .ntl .ntn,html.ios[data-theme="dark"] body .dsel .dp small{color:rgba(235,235,245,.6)!important}
+:root:root.ios body.scrolled #gear svg{stroke:var(--itint)!important;color:var(--itint)!important}
+html.ios.ios #sheet :is(.vcm,.seg3),html.ios.ios #sheet .seg3{background:var(--iseg)!important}
+html.ios.ios #sheet :is(.vcm,.seg3) button{color:var(--iink)!important;font-weight:500!important}
+html.ios.ios #sheet :is(.vcm,.seg3) button.on{background:var(--ithumb)!important;color:var(--iink)!important;font-weight:600!important;box-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04)!important}
+html.ios.ios #sheet .shtsz .seg3 button.on,html.ios.ios #sheet #tszg button.on{background:var(--ithumb)!important;color:var(--iink)!important;font-weight:600!important;box-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04)!important}
