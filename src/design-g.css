@@ -4317,14 +4317,27 @@ html.ios.ios.ios.ios body nav.nbar .nbrow .ntl .ntw{color:var(--iink)!important}
 html.ios.ios.ios.ios body nav.nbar .ntl .nfab{height:36px;min-height:36px;border-radius:18px}
 html.ios.ios.ios.ios body nav.nbar .ndot{background:var(--itint)}
 /* scorrendo in giù: la barra si riduce alla sola sezione aperta e l'accessorio si mette accanto */
-html.ios.ios.ios.ios.tbmin body nav.nbar .ntr{width:62px}
-html.ios.ios.ios.ios.tbmin body nav.nbar .ntr .nt:not([aria-current=page]),html.ios.ios.ios.ios.tbmin body nav.nbar .ntr .nhm{flex:0 0 0;opacity:0;pointer-events:none}
-html.ios.ios.ios.ios.tbmin body nav.nbar .ntr .nt span{opacity:0}
-html.ios.ios.ios.ios.tbmin body nav.nbar .nind{opacity:0}
-html.ios.ios.ios.ios.tbmin body nav.nbar .ntl{left:70px;bottom:0;height:62px;border-radius:31px}
 html.ios.ios.ios.ios body nav.nbar .nmenu{bottom:130px}
+/* v341 scorrendo in giù: la barra sfuma, al suo posto compare un cerchio con la sezione aperta e l'accessorio scende accanto (solo opacità e spostamenti, fluidi anche su Safari) */
+html.ios.ios.ios.ios body nav.nbar .ntr{transition:opacity .28s ease .04s,transform .5s cubic-bezier(.3,1.25,.45,1),--cx .5s cubic-bezier(.3,1.25,.4,1)}
+html.ios.ios.ios.ios.tbmin body nav.nbar .ntr{opacity:0;transform:translateY(10px) scale(.94);pointer-events:none;transition:opacity .14s ease,transform .3s ease}
+html.ios.ios.ios.ios body nav.nbar .ntl{z-index:2;transition:left .5s cubic-bezier(.3,1.2,.45,1),transform .5s cubic-bezier(.3,1.2,.45,1)}
+html.ios.ios.ios.ios body nav.nbar .nmini{z-index:3}
+html.ios.ios.ios.ios.tbmin body nav.nbar .ntl{transition:left .5s cubic-bezier(.3,1.2,.45,1) .06s,transform .5s cubic-bezier(.3,1.2,.45,1) .06s}
+html.ios.ios.ios.ios.tbmin body nav.nbar .ntl{left:58px;transform:translateY(64px)}
+nav.nbar .nmini{display:none}
+html.ios.ios.ios.ios body nav.nbar .nmini{display:flex;align-items:center;justify-content:center;position:absolute;left:0;bottom:6px;width:50px;height:50px;padding:0;border:0;border-radius:25px;color:var(--itint);background:var(--imat);-webkit-backdrop-filter:blur(26px) saturate(1.9);backdrop-filter:blur(26px) saturate(1.9);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.07),inset 0 1px 0 var(--ihl),0 8px 26px rgba(0,0,0,.11);opacity:0;transform:scale(.55);pointer-events:none;transition:opacity .18s ease,transform .3s ease;-webkit-tap-highlight-color:transparent}
+html.ios.ios.ios.ios body nav.nbar .nmini svg{width:25px;height:25px;stroke-width:2.2}
+html.ios.ios.ios.ios.tbmin body nav.nbar .nmini{opacity:1;transform:none;pointer-events:auto;transition:opacity .25s ease .08s,transform .5s cubic-bezier(.3,1.5,.45,1) .06s}
+/* titolo in linea allineato al nome della città (la posizione verticale la mette il codice); meteo nascosto mentre si scorre */
+:root:root.ios body .appbar .wx{transition:opacity .2s}
+:root:root.ios body.scrolled .appbar .wx{opacity:0;pointer-events:none}
+/* app aggiunta alla schermata Home: le sezioni arrivano fino in fondo e lo spazio finale tiene conto della barra e del bordo dello schermo */
+html.ios.ios.sa body main>.blk,html.ios.ios.sa body .blk{bottom:0!important;height:auto!important}
+html.ios.ios body main>.blk{padding-bottom:calc(140px + env(safe-area-inset-bottom,0px)*.45)!important}
+html.ios.ios body.scrolled main>.blk.on{padding-top:calc(var(--abh) + 4px + env(safe-area-inset-top,0px))!important;transition:padding-top .25s ease!important}
 /* barra di navigazione: scorrendo diventa vetro chiaro con il nome della sezione al centro */
-html.ios .appbar .iost{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) translateY(6px);font-size:17px!important;font-weight:600;color:var(--iink);opacity:0;pointer-events:none;transition:opacity .2s,transform .3s;z-index:2;white-space:nowrap}
+html.ios .appbar .iost{position:absolute;left:50%;top:var(--iosty,50%);transform:translate(-50%,-50%) translateY(6px);font-size:17px!important;font-weight:600;color:var(--iink);opacity:0;pointer-events:none;transition:opacity .2s,transform .3s;z-index:2;white-space:nowrap}
 html.ios body.scrolled .appbar .iost{opacity:1;transform:translate(-50%,-50%)}
 :root:root.ios body.scrolled .appbar.appbar::before{background:var(--inav)!important;-webkit-backdrop-filter:blur(22px) saturate(1.8)!important;backdrop-filter:blur(22px) saturate(1.8)!important;box-shadow:0 .5px 0 var(--isep)!important}
 :root:root.ios body.scrolled .appbar .appt,:root:root.ios body.scrolled .appbar .appt *{color:var(--itint)!important;font-size:17px!important;font-weight:400!important}
