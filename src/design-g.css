@@ -4363,3 +4363,89 @@ html.ios.ios #sheet :is(.vcm,.seg3),html.ios.ios #sheet .seg3{background:var(--i
 html.ios.ios #sheet :is(.vcm,.seg3) button{color:var(--iink)!important;font-weight:500!important}
 html.ios.ios #sheet :is(.vcm,.seg3) button.on{background:var(--ithumb)!important;color:var(--iink)!important;font-weight:600!important;box-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04)!important}
 html.ios.ios #sheet .shtsz .seg3 button.on,html.ios.ios #sheet #tszg button.on{background:var(--ithumb)!important;color:var(--iink)!important;font-weight:600!important;box-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04)!important}
+
+/* ===== v342 «Dove vai?» in stile Airbnb: ricerca a pillola sul cielo, categorie con icone 3D, copertine con lo skyline che diventano la testata del modulo ===== */
+/* testata: cielo solo in alto, la pillola a cavallo, le categorie su fondo pagina; resta in alto scorrendo */
+html body #dpick .dpband{background:var(--bg)!important;border-radius:0!important;padding-bottom:0!important;gap:10px!important;box-shadow:none!important;--pkb:118px}
+html body #dpick .dpband::before{content:"";position:absolute;left:0;right:0;top:0;bottom:var(--pkb);z-index:0;border-radius:0 0 28px 28px;background:linear-gradient(180deg,var(--hk1,#1C3FAE) 0%,var(--hk2,#3A6BDB) 70%,var(--hk3,#78A8F0) 100%)}
+html body #dpick .dpband .skd{bottom:var(--pkb)!important;height:auto!important;overflow:hidden;border-radius:0 0 28px 28px}
+html body #dpick .dpband .dqrow{max-height:64px;transition:max-height .3s ease,opacity .2s ease,margin .3s ease;overflow:hidden}
+html body #dpick:is(.dsc,.dpf) .dpband .dqrow{max-height:0;opacity:0;margin-top:-10px}
+html body #dpick:is(.dsc,.dpf) .dpband .skd{opacity:0;transition:opacity .2s}
+/* la pillola */
+:root body #dpick .dpband .dsearch.dsearch.dsearch{display:flex;align-items:center;gap:12px;height:62px;min-height:62px;margin:4px 0 0!important;padding:0 20px 0 14px!important;border-radius:999px!important;background:var(--surf)!important;border:0!important;box-shadow:0 10px 26px rgba(13,21,51,.2),0 0 0 1px rgba(20,34,79,.05)!important;color:var(--ink);transition:box-shadow .25s,transform .25s}
+:root body #dpick .dpband .dsearch.dsearch.dsearch:focus-within{box-shadow:0 12px 30px rgba(13,21,51,.26),0 0 0 2px var(--ink)!important}
+#dpick .dsearch .dsi{flex:none;width:32px;height:32px;background:url(lib/i3/search.webp) center/contain no-repeat}
+#dpick .dsearch .dsw2{display:flex;flex-direction:column;justify-content:center;min-width:0;flex:1}
+:root body #dpick .dpband .dsearch input{height:22px;min-height:0;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;font:700 16px/22px Figtree,system-ui,sans-serif!important;color:var(--ink)!important;outline:none}
+:root body #dpick .dpband .dsearch input::placeholder{color:var(--ink)!important;opacity:1}
+#dpick .dsearch .dsh{font:500 12.5px/16px Figtree,system-ui,sans-serif;color:var(--mute);transition:opacity .2s,max-height .2s;max-height:16px}
+#dpick .dsearch:focus-within .dsh,#dpick .dsearch:has(input:not(:placeholder-shown)) .dsh{opacity:0;max-height:0}
+/* categorie con icone 3D e linea che scivola */
+:root body #dpick .dpband #dreg.dreg{position:relative;display:flex;flex-wrap:nowrap;gap:0;overflow-x:auto;scrollbar-width:none;margin:2px -20px 0!important;padding:8px 12px 0!important;background:var(--bg);box-shadow:inset 0 -1px 0 var(--line);border:0}
+#dpick #dreg::-webkit-scrollbar{display:none}
+:root body #dpick #dreg .pkc{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:64px;height:auto;padding:0 9px 12px!important;margin:0;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;color:var(--mute)!important;font:600 12px/1.1 Figtree,system-ui,sans-serif!important;opacity:.78;transition:color .25s,opacity .25s}
+:root body #dpick #dreg .pkc.on{color:var(--ink)!important;opacity:1}
+#dpick #dreg .pkc[hidden]{display:none}
+#dpick #dreg .i3{display:block;width:32px;height:32px;background-position:center;background-size:contain;background-repeat:no-repeat;filter:saturate(.85)}
+#dpick #dreg .pkc.on .i3{filter:none}
+#dpick #dreg .pkul{position:absolute;left:0;bottom:0;height:2.5px;width:0;border-radius:2px;background:var(--ink);transition:transform .45s cubic-bezier(.3,1.2,.45,1),width .45s cubic-bezier(.3,1.2,.45,1)}
+#dpick.dsc #dreg{box-shadow:inset 0 -1px 0 var(--line),0 10px 16px -12px rgba(13,21,51,.3)!important}
+.i3-compass{background-image:url(lib/i3/compass.webp)}.i3-sun{background-image:url(lib/i3/sun.webp)}.i3-beach{background-image:url(lib/i3/beach.webp)}.i3-snow{background-image:url(lib/i3/snow.webp)}.i3-mountain{background-image:url(lib/i3/mountain.webp)}.i3-statue{background-image:url(lib/i3/statue.webp)}.i3-castle{background-image:url(lib/i3/castle.webp)}.i3-torii{background-image:url(lib/i3/torii.webp)}.i3-city{background-image:url(lib/i3/city.webp)}.i3-palm{background-image:url(lib/i3/palm.webp)}.i3-boat{background-image:url(lib/i3/boat.webp)}
+#dpick .dfil{display:none!important}
+#dpick.pkf #dpk,#dpick.pkf #dpcr,#dpick.dpf #dpk,#dpick.dpf #dpcr{display:none!important}
+/* copertine: cielo dell'ora locale e skyline della città */
+.dcv{position:relative;display:block;overflow:hidden;border-radius:18px;aspect-ratio:1/1;width:100%;background:var(--g);isolation:isolate}
+.dcv svg{position:absolute;display:block;left:-40%;width:180%;height:auto;aspect-ratio:400/106;bottom:-3%;max-width:none}
+.dcv svg,.dcv svg *{animation:none!important;transition:none!important}
+.dcv svg .far *{fill:var(--f0)!important;opacity:.55}.dcv svg .bk0 *{fill:var(--f1)!important;opacity:.85}.dcv svg .bk *{fill:var(--f2)!important}.dcv svg .mons *{fill:var(--f3)!important}.dcv svg .gnd{fill:var(--f4)!important}
+.dcv svg .gl,.dcv svg .spk,.dcv svg .prt{display:none}
+.dcv svg .wn{fill:#FFD66E!important;opacity:var(--wn,0)!important}
+.dcv.ne{display:grid;place-items:center}
+.dcv .dce{color:#fff;opacity:.9;transform:scale(2.2)}
+.dcv .dce svg{position:static;width:24px;height:24px;aspect-ratio:auto}
+.t-day{--g:linear-gradient(180deg,#2f5ad3 0%,#5d8ae6 45%,#a9c6f3 78%,#f1e2c8 100%);--f0:#9db6ee;--f1:#6f8fd8;--f2:#3d58a8;--f3:#24387f;--f4:#1d2f6e;--wn:0}
+.t-dawn{--g:linear-gradient(180deg,#34428f 0%,#7e78bd 40%,#eba2a0 72%,#f9d9a8 100%);--f0:#c9a6c4;--f1:#a184b4;--f2:#6a5a96;--f3:#3f3b78;--f4:#2f2d63;--wn:.15}
+.t-dusk{--g:linear-gradient(180deg,#2b2d74 0%,#83407f 40%,#e2725a 70%,#f7c27a 100%);--f0:#d7867a;--f1:#b05f74;--f2:#6e3a66;--f3:#3d2453;--f4:#2d1b44;--wn:.3}
+.t-blue{--g:linear-gradient(180deg,#0d1747 0%,#243a8d 52%,#5a74c4 82%,#93a5dc 100%);--f0:#6e86cf;--f1:#4a63ad;--f2:#2a3d80;--f3:#18275d;--f4:#111d4a;--wn:.6}
+.t-night{--g:linear-gradient(180deg,#040820 0%,#0c1844 58%,#1f3170 100%);--f0:#24356e;--f1:#1a2858;--f2:#121d44;--f3:#0b1434;--f4:#081029;--wn:1}
+/* schede della griglia: copertina, etichetta e cuore sopra, nome e paese sotto */
+:root body #dpick #dgrid.dgrid{gap:20px 12px!important;padding-top:4px}
+:root body #dpick #dgrid .dcity{position:relative;display:flex!important;flex-direction:column;align-items:stretch;justify-content:flex-start;text-align:left;gap:0;height:auto!important;min-height:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;border-radius:18px!important;color:var(--ink);overflow:visible}
+:root body #dpick #dgrid .dcity .dsw,:root body #dpick #dgrid .dcity .dem{display:none!important}
+:root body #dpick #dgrid .dcity .dcv{order:0;margin-bottom:9px;box-shadow:0 6px 16px -10px rgba(13,21,51,.45)}
+:root body #dpick #dgrid .dcity b{order:1;font:700 15.5px/1.2 Figtree,system-ui,sans-serif!important;color:var(--ink)!important;margin:0!important}
+:root body #dpick #dgrid .dcity small{order:2;font:500 13.5px/1.3 Figtree,system-ui,sans-serif!important;color:var(--mute)!important;margin:1px 0 0!important}
+:root body #dpick #dgrid .dcity em{position:absolute;top:10px;left:10px;z-index:2;font:700 11.5px/1 Figtree,system-ui,sans-serif!important;letter-spacing:0!important;text-transform:none!important;font-style:normal;padding:6px 10px!important;border-radius:999px!important;background:rgba(255,255,255,.94)!important;color:#14224F!important;box-shadow:0 2px 8px rgba(0,0,0,.16)!important;margin:0!important;opacity:1!important;width:auto!important;height:auto!important}
+:root body #dpick #dgrid .dcity:not(.ok) em{background:rgba(20,34,79,.72)!important;color:#fff!important}
+:root body #dpick #dgrid .dcity .dfv{position:absolute;top:8px;right:8px;z-index:2;width:34px;height:34px;padding:0;margin:0;border:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 20.5s-7.5-4.6-9.3-9.2C1.5 8 3.6 4.5 7.1 4.5c2 0 3.6 1.1 4.9 2.8 1.3-1.7 2.9-2.8 4.9-2.8 3.5 0 5.6 3.5 4.4 6.8-1.8 4.6-9.3 9.2-9.3 9.2z' fill='rgba(20,34,79,.35)' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E") center/26px no-repeat!important;font-size:0!important;color:transparent!important;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25));transition:transform .2s}
+:root body #dpick #dgrid .dcity .dfv.on{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 20.5s-7.5-4.6-9.3-9.2C1.5 8 3.6 4.5 7.1 4.5c2 0 3.6 1.1 4.9 2.8 1.3-1.7 2.9-2.8 4.9-2.8 3.5 0 5.6 3.5 4.4 6.8-1.8 4.6-9.3 9.2-9.3 9.2z' fill='%23E1AD21' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E")!important;animation:pkpop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pkpop{0%{transform:scale(1)}35%{transform:scale(.7)}70%{transform:scale(1.25)}100%{transform:none}}
+/* idee del mese: fila di copertine sotto le categorie */
+:root body #dpick #dpk.dpk{display:block;margin:20px 0 12px!important;font:600 20px/1.2 Outfit,system-ui,sans-serif!important;letter-spacing:-.01em!important;text-transform:none!important;color:var(--ink)!important}
+:root body #dpick #dpk.dpk[hidden],:root body #dpick #dpcr.dpcr[hidden]{display:none!important}
+:root body #dpick #dpcr.dpcr{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;margin:0 -18px 6px!important;padding:0 18px 6px!important;max-height:none;scroll-snap-type:x mandatory;scroll-padding-inline:18px}
+#dpick #dpcr::-webkit-scrollbar{display:none}
+:root body #dpick #dpcr .dpc{flex:0 0 150px;display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:0;padding:0!important;margin:0;height:auto!important;min-height:0!important;max-height:none!important;border:0!important;background:none!important;box-shadow:none!important;border-radius:18px!important;color:var(--ink)!important;scroll-snap-align:start}
+:root body #dpick #dpcr .dpc .dcv{order:0;margin-bottom:9px;box-shadow:0 6px 16px -10px rgba(13,21,51,.45)}
+:root body #dpick #dpcr .dpc span{order:1;display:block}
+:root body #dpick #dpcr .dpc span b{display:block;font:700 15px/1.2 Figtree,system-ui,sans-serif!important;color:var(--ink)!important}
+:root body #dpick #dpcr .dpc span em{display:none}
+:root body #dpick #dpcr .dpc small{order:2;display:block;font:500 12.5px/1.3 Figtree,system-ui,sans-serif!important;letter-spacing:0!important;text-transform:none!important;color:var(--mute)!important;margin-top:2px}
+/* volo della copertina verso il modulo e sua continuazione dopo il ricaricamento */
+#cvov,#cvin{position:fixed;inset:0;z-index:9000;pointer-events:none}
+#cvin{display:none;background:var(--bg)}
+#cvin.on,#cvin.out{display:block}
+#cvin.out{opacity:0;transition:opacity .4s ease}
+#cvov .cvbg{position:absolute;inset:0;background:var(--bg)}
+#cvov .cvc,#cvin .cvc{position:absolute!important;aspect-ratio:auto!important;border-radius:26px;margin:0;box-shadow:none}
+#cvov .cvt,#cvin .cvt{position:absolute;left:28px;right:28px;top:var(--cvy,250px);color:var(--ink);transition:opacity .2s}
+#cvov .cvt b,#cvin .cvt b{display:block;font:600 34px/1.1 Outfit,system-ui,sans-serif;letter-spacing:-.02em}
+#cvov .cvt small,#cvin .cvt small{display:block;margin-top:4px;font:500 15px Figtree,system-ui,sans-serif;color:var(--mute)}
+/* testata con la copertina nel modulo del viaggio */
+#sform.hascov{position:relative}
+#sform .scov{position:relative;height:212px;margin:0 0 14px;border-radius:26px;overflow:hidden}
+#sform .scov .dcv{position:absolute;inset:0;aspect-ratio:auto;border-radius:inherit}
+#sform .scov .dcv svg{left:-12%;width:124%}
+#sform.hascov .stop{position:absolute;top:14px;left:14px;right:14px;z-index:3;margin:0}
+#sform.hascov .shead .sem{display:none!important}
