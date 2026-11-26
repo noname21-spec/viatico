@@ -1,12 +1,14 @@
 # Checklist di pubblicazione · Viaticum
 
-Aggiornata l'8 novembre 2026.
+Aggiornata il 26 novembre 2026. La guida completa (Google Play e App Store, con testi da copiare) è nella pagina «Viaticum sugli store»; immagini e testi aggiornati nel pacchetto viaticum-store.zip.
 
 ## Già fatto
 - [x] Chiave di caricamento e secret su GitHub: a ogni build l'AAB viene firmato da solo (viaticum.aab in Releases → android-latest)
 - [x] AAB verificato: versione 1.0.71 (codice 71), firmato con la chiave di caricamento, target SDK 36
-- [x] Testi della scheda (scheda-it.md), risposte sulla sicurezza dei dati (sicurezza-dati.md), immagini (cartella img)
-- [x] Pagina privacy aggiornata: https://noname21-spec.github.io/viatico/privacy.html
+- [x] Testi della scheda (scheda-it.md), risposte sulla sicurezza dei dati (sicurezza-dati.md); immagini nel pacchetto per gli store
+- [x] Pagina privacy (IT/EN): https://noname21-spec.github.io/viatico/privacy.html
+- [x] Pagina supporto con eliminazione dell'account: https://noname21-spec.github.io/viatico/supporto.html#elimina
+- [x] «Elimina l'account» nell'app (v344)
 
 ## A cura tua in Play Console
 1. Crea l'account sviluppatore personale (25 $, una volta) e completa la verifica dell'identità e del telefono.

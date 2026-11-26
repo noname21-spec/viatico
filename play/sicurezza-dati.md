@@ -1,12 +1,12 @@
 # Sezione «Sicurezza dei dati» · risposte per Play Console
 
-Aggiornata l'8 novembre 2026 sulla versione 1.0.71. Le risposte corrispondono a ciò che l'app fa davvero e alla pagina privacy.html: se cambia qualcosa nell'app, vanno aggiornate tutte e due.
+Aggiornata il 26 novembre 2026 (v344, eliminazione dell'account e viaggio condiviso). Le risposte corrispondono a ciò che l'app fa davvero e alla pagina privacy.html: se cambia qualcosa nell'app, vanno aggiornate tutte e due.
 
 ## Domande generali
 - L'app raccoglie o condivide dati degli utenti? **Sì**
 - Tutti i dati sono crittografati in transito? **Sì** (tutte le richieste usano HTTPS)
-- Puoi richiedere la cancellazione dei dati? **Sì** (impostazioni dell'app, oppure email)
-- URL per la cancellazione dell'account: https://noname21-spec.github.io/viatico/privacy.html#cancellazione
+- Puoi richiedere la cancellazione dei dati? **Sì** (impostazioni › account › «Elimina l'account», oppure email)
+- URL per la cancellazione dell'account: https://noname21-spec.github.io/viatico/supporto.html#elimina
 - Metodi di accesso: Google, Apple (facoltativi; l'app funziona senza account)
 
 ## Dati raccolti
@@ -15,7 +15,7 @@ Aggiornata l'8 novembre 2026 sulla versione 1.0.71. Le risposte corrispondono a 
 |---|---|---|---|---|---|
 | Informazioni personali | Indirizzo email | Sì, solo se accedi | No | Sì | Gestione dell'account |
 | Informazioni personali | ID utente | Sì, solo se accedi | No | Sì | Gestione dell'account, funzionalità dell'app (sincronizzazione) |
-| Attività nell'app | Altri contenuti generati dall'utente (viaggi, spese, liste) | Sì, solo se accedi | No | Sì | Funzionalità dell'app (sincronizzazione) |
+| Attività nell'app | Altri contenuti generati dall'utente (viaggi, spese, liste, nomi dei compagni di viaggio) | Sì, con l'accesso o con il viaggio condiviso | No | Sì | Funzionalità dell'app (sincronizzazione, viaggio condiviso) |
 | Informazioni e prestazioni dell'app | Log degli arresti anomali | Sì | No | Sì (interruttore «Rapporti anonimi sugli errori») | Analisi |
 | Posizione | Posizione precisa | Vedi nota | Vedi nota | Sì | Funzionalità dell'app |
 
@@ -38,5 +38,5 @@ Dati NON raccolti: nome, telefono, indirizzo, dati finanziari, salute, messaggi,
 - Accesso all'app per la revisione: **tutte le funzioni sono disponibili senza accesso**
 - Pubblico di destinazione: 18 anni e oltre (non rivolta ai bambini)
 - App di notizie: No · App sanitaria: No · App governativa: No · Servizi finanziari: No
-- Classificazione dei contenuti (questionario IARC): categoria «Tutte le altre app»; nessuna violenza, sesso, linguaggio volgare, droghe, gioco d'azzardo; nessuna interazione tra utenti; nessuna condivisione della posizione con altri utenti. Risultato atteso: PEGI 3.
+- Classificazione dei contenuti (questionario IARC): categoria «Tutte le altre app»; nessuna violenza, sesso, linguaggio volgare, droghe, gioco d'azzardo; il viaggio condiviso permette di condividere un viaggio solo con chi ha il codice (rispondi Sì a «gli utenti possono condividere contenuti» se richiesto); nessuna condivisione della posizione con altri utenti. Risultato atteso: PEGI 3.
 - Autorizzazioni speciali: posizione (solo in uso, per la mappa), notifiche (tappa in corso), sveglie esatte (promemoria delle tappe; se Play lo chiede: «promemoria a orario scelto dall'utente»).

@@ -62,7 +62,5 @@ Norme sulla privacy: https://noname21-spec.github.io/viatico/privacy.html
 ## Note della versione (max 500 caratteri)
 Prima versione su Google Play: itinerari per 44 città, scheda «Adesso», pasti, spese divise tra amici con riepilogo in PDF, lista «Prima di partire», widget per la schermata Home e uso senza rete. Nuovo stile «Notte blu» con tema chiaro e scuro.
 
-## Immagini (cartella play/img)
-- Icona 512×512: icona-512.png
-- Grafica in primo piano 1024×500: copertina.png
-- Screenshot del telefono 1080×1920: schermata-1 … schermata-8 (con titolo); in alternativa le versioni senza titolo nel kit stampa
+## Immagini
+Nel pacchetto viaticum-store.zip (cartella google-play): icona 512, grafica in evidenza 1024×500, 8 screenshot 1080×1920 in italiano e in inglese.

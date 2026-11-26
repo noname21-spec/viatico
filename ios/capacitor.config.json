@@ -1,0 +1,15 @@
+{
+  "appId": "it.viaticum.app",
+  "appName": "Viaticum",
+  "webDir": "www",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#14224F",
+    "limitsNavigationsToAppBoundDomains": false
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "iconColor": "#2340A0"
+    }
+  }
+}
