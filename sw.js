@@ -12,6 +12,8 @@ if(/rapidapi\.com$|open-meteo\.com$|opendata\.paris\.fr$|opendatasoft\.com$/.tes
 if(/tile\.openstreetmap\.org|cdnjs\.cloudflare\.com|fonts\.(googleapis|gstatic)\.com/.test(u.hostname)){
 e.respondWith(caches.open(T).then(function(c){return c.match(e.request).then(function(m){var net=fetch(e.request).then(function(r){if(r&&(r.ok||r.type==="opaque")){c.put(e.request,r.clone());if(Math.random()<.04)trim(c,1500)}return r}).catch(function(){return m});return m||net})}));return}
 if(!same)return;
+/* kit stampa (immagini grandi e zip): sempre dalla rete, fuori dalla cache */
+if(/\/press\//.test(u.pathname))return;
 var req=new Request(e.request,{cache:"no-cache"});
 /* prima la rete (così l'app è sempre aggiornata), ma con poco segnale dopo 3,5 secondi si apre la copia salvata */
 e.respondWith(caches.match(e.request,{ignoreSearch:true}).then(function(m){

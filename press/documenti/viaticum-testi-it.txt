@@ -1,0 +1,30 @@
+Viaticum, l'app gratuita che organizza il viaggio tappa dopo tappa, anche senza rete
+
+Itinerario giorno per giorno per 44 città europee, la tappa in corso sempre a portata di mano, pasti economici vicino alle tappe e spese divise tra amici. Senza pubblicità e senza account obbligatori.
+
+Bologna, novembre 2026 – Un viaggio di tre giorni a Roma o una gita in giornata a Barcellona richiedono ore di ricerche: cosa vedere, in che ordine, quanto tempo ci vuole a piedi, dove mangiare senza spendere troppo, chi ha pagato cosa. Viaticum mette tutto questo in un'unica app che funziona anche quando il telefono non prende.
+Si sceglie la città, le date e gli orari dei voli, e Viaticum costruisce un itinerario giorno per giorno con tappe, orari, spostamenti, cosa vedere e dove mangiare. Le guide complete sono 44, dalle grandi capitali europee alle città da gita in giornata. Durante il viaggio la scheda «Adesso» mostra la tappa in corso, quanto manca alla prossima e il tasto «Portami lì» verso l'app di mappe. Se si è in anticipo, in ritardo o si ha un orario prenotato, la giornata si ricalcola da sola.
+Per i pasti l'app propone locali economici e con buone recensioni vicino alle tappe, con filtri per vegetariani, senza glutine e budget. Le spese si registrano in pochi secondi, anche in valuta diversa con il cambio del giorno, si dividono tra amici e si confrontano con il previsto. Con il viaggio condiviso chi viaggia insieme vede lo stesso programma e le stesse spese, aggiornati in pochi secondi.
+Prima di partire ci sono la lista delle cose da preparare e i consigli pratici per ogni città: trasporti dall'aeroporto, biglietti, numeri di emergenza. Dopo, ogni viaggio diventa un timbro sul passaporto dei ricordi. Su Android ci sono anche i widget per la schermata Home e una notifica con la tappa in corso.
+I viaggi restano sul telefono e i biglietti non lasciano mai il dispositivo. L'accesso con Google o Apple è facoltativo e serve solo per ritrovare i viaggi su un altro telefono. Nessuna pubblicità e nessuna vendita di dati. Viaticum è sviluppata a Bologna da Matteo De Vincenti.
+
+Viaticum è disponibile gratis come app web su https://noname21-spec.github.io/viatico/, installabile su iPhone e Android dalla schermata Home. Le versioni per Google Play e App Store sono in arrivo. Interfaccia in italiano e in inglese.
+
+Orari, prezzi e aperture sono indicativi: vanno sempre verificati sulle fonti ufficiali.
+Contatti stampa: support.viaticum@gmail.com · Kit stampa con immagini e logo: https://noname21-spec.github.io/viatico/press/
+
+---
+Descrizione breve (40 parole):
+Viaticum organizza il viaggio tappa dopo tappa per 44 città europee: itinerario con orari e spostamenti, la tappa in corso, pasti economici, spese divise tra amici. Funziona senza rete, senza pubblicità e senza account obbligatorio.
+
+Funzioni:
+• Itinerario giorno per giorno con orari, spostamenti e tempi a piedi
+• Scheda «Adesso»: la tappa in corso, quanto manca e «Portami lì»
+• Giornata che si ricalcola se sei in anticipo, in ritardo o hai un orario prenotato
+• Pasti: locali economici e ben recensiti vicino alle tappe, con filtri
+• Spese divise tra amici, in ogni valuta, con riepilogo in PDF
+• Viaggio condiviso con aggiornamenti in pochi secondi
+• Biglietti e carte d'imbarco salvati nell'app
+• Lista «Prima di partire» e consigli pratici per ogni città
+• Passaporto dei viaggi con timbri e il tuo anno in viaggio
+• Widget Android, tema chiaro e scuro, interfaccia anche in inglese

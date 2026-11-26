@@ -1,6 +1,6 @@
 # Viaticum · Kit stampa
 
-> Aggiornato l'8 novembre 2026 (stile «Notte blu»). Da completare solo il link a Google Play, quando l'app è pubblicata.
+> Aggiornato il 26 novembre 2026. Pagina del kit con immagini, PDF e zip: https://noname21-spec.github.io/viatico/press/ · Da completare solo i link a Google Play e App Store, quando l'app è pubblicata.
 
 ## In una riga
 Viaticum è l'app che organizza il tuo viaggio tappa dopo tappa, anche senza rete.
@@ -9,7 +9,7 @@ Viaticum è l'app che organizza il tuo viaggio tappa dopo tappa, anche senza ret
 Il tuo viaggio, tappa dopo tappa. Anche senza rete.
 
 ## Descrizione breve (circa 50 parole)
-Viaticum prepara un itinerario giorno per giorno con tappe, orari, spostamenti, pasti e spese divise tra amici. Durante il viaggio ti dice cosa stai facendo adesso e cosa viene dopo. Funziona anche senza connessione, non ha pubblicità e non richiede un account. Gratis su Android e come app web per iPhone e computer.
+Viaticum prepara un itinerario giorno per giorno con tappe, orari, spostamenti, pasti e spese divise tra amici. Durante il viaggio ti dice cosa stai facendo adesso e cosa viene dopo. Funziona anche senza connessione, non ha pubblicità e non richiede un account. Gratis come app web per iPhone, Android e computer; Google Play e App Store in arrivo.
 
 ## Descrizione lunga (circa 180 parole)
 Viaticum nasce da un'esigenza semplice: avere tutto il viaggio in un posto solo, che funzioni anche quando il telefono non prende. Scegli la città, le date e gli orari dei voli, e l'app costruisce un itinerario giorno per giorno con tappe, tempi di spostamento, cosa vedere e dove mangiare. Le guide complete sono 44, dalle capitali europee alle gite in giornata.
@@ -33,14 +33,14 @@ Nessuna pubblicità, nessuna vendita dei dati, nessun account obbligatorio: i vi
 ## Scheda tecnica
 - Nome: Viaticum
 - Categoria: Viaggi e informazioni locali
-- Piattaforme: Android, web (PWA: iPhone, iPad, computer)
+- Piattaforme: web (PWA: iPhone, Android, computer); Google Play e App Store in arrivo
 - Lingua: italiano (interfaccia anche in inglese)
 - Prezzo: gratuita
 - Contenuti: 44 città con guida completa
-- Versione: 1.0.71 (novembre 2026)
+- Versione: novembre 2026 (v344)
 - Privacy: dati sul dispositivo, accesso facoltativo. Informativa: https://noname21-spec.github.io/viatico/privacy.html
 - Sito / web app: https://noname21-spec.github.io/viatico/
-- Google Play: [link da inserire quando l'app è pubblicata]
+- Google Play e App Store: [link da inserire quando l'app è pubblicata]
 - Contatto: support.viaticum@gmail.com
 - Autore: Matteo De Vincenti
 
@@ -66,11 +66,10 @@ Viaggio in 3 tocchi. Itinerario, spese divise e tutto anche senza rete. Gratis, 
 6. Prima e dopo: un viaggio organizzato con note sparse contro lo stesso viaggio con Viaticum.
 
 ## Immagini
-La cartella `immagini/` contiene:
-- `logo-viaticum-512.png`: l'icona dell'app (512×512).
-- `copertina-1024x500.png`: la copertina con il nome e lo skyline di Roma.
-- `chiaro/` e `scuro/`: otto schermate 1080×1920 senza titoli (home, giornata, tappe, pasti, spese, I miei viaggi, scelta della città, consigli), una con il tema chiaro e una con quello scuro.
-- `con-titolo/`: le stesse schermate inserite in una cornice con un titolo, pronte per i social.
+Tutte le immagini sono nella pagina del kit (https://noname21-spec.github.io/viatico/press/) e nello zip:
+- `logo/`: icona PNG 1024 e SVG, logo orizzontale su blu, su bianco e trasparente.
+- `schermate/`: otto schermate 1320×2868 (home, adesso, tappe, pasti, spese, I miei viaggi, «Dove vai?», consigli), con il tema chiaro e con quello scuro.
+- `grafiche/`: anteprima per i social 1200×630 e banner 1024×500, in italiano e in inglese.
 
 Le schermate mostrano un viaggio di esempio a Roma dal 20 al 22 novembre. Usa le immagini così come sono; non cambiare i colori del logo (blu reale #2340A0, blu notte #14224F, senape #E1AD21).
 

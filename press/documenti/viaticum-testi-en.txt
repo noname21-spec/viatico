@@ -1,0 +1,30 @@
+Viaticum, the free app that plans your trip stop by stop, even offline
+
+A day-by-day itinerary for 44 European cities, the current stop always at hand, affordable meals near your stops and expenses split with friends. No ads, no account required.
+
+Bologna, Italy, November 2026 – Three days in Rome or a day trip to Barcelona take hours of research: what to see, in which order, how long it takes on foot, where to eat without overspending, who paid for what. Viaticum puts all of this in one app that keeps working when your phone has no signal.
+Pick the city, dates and flight times, and Viaticum builds a day-by-day itinerary with stops, times, transfers, sights and places to eat. There are 44 full city guides, from Europe's capitals to day-trip destinations. During the trip, the “Now” card shows the current stop, the time left before the next one and a “Take me there” button for your maps app. If you are early, late or have a booked time slot, the day recalculates itself.
+For meals the app suggests affordable, well-rated places near your stops, with vegetarian, gluten-free and budget filters. Expenses take seconds to log, in any currency with the day's exchange rate, and are split between friends and compared with the budget. With shared trips, everyone travelling together sees the same plan and expenses, updated within seconds.
+Before leaving there is a packing list and practical tips for each city: airport transfers, tickets, emergency numbers. Afterwards, every trip becomes a stamp in a passport of memories. On Android there are Home screen widgets and a notification with the current stop.
+Trips stay on the phone and tickets never leave the device. Signing in with Google or Apple is optional and only used to find trips on another phone. No ads and no selling of data. Viaticum is developed in Bologna by Matteo De Vincenti.
+
+Viaticum is available for free as a web app at https://noname21-spec.github.io/viatico/, installable on iPhone and Android from the Home Screen. Google Play and App Store versions are coming soon. Interface in Italian and English.
+
+Times, prices and opening hours are indicative and should always be checked with official sources.
+Press contact: support.viaticum@gmail.com · Press kit with images and logo: https://noname21-spec.github.io/viatico/press/
+
+---
+Descrizione breve / Short description:
+Viaticum plans your trip stop by stop for 44 European cities: an itinerary with times and transfers, the current stop, affordable meals and expenses split with friends. It works offline, with no ads and no account required.
+
+Features:
+• Day-by-day itinerary with times, transfers and walking minutes
+• “Now” card: the current stop, time left and “Take me there”
+• The day recalculates if you are early, late or have a booked time
+• Meals: affordable, well-rated places near your stops, with filters
+• Expenses split with friends, in any currency, with a PDF summary
+• Shared trips updated within seconds
+• Tickets and boarding passes saved in the app
+• “Before you go” list and practical tips for each city
+• Travel passport with stamps and your year in travel
+• Android widgets, light and dark theme, English interface

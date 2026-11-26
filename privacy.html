@@ -1,41 +1,142 @@
 <!doctype html>
-<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Viaticum · Privacy</title>
-<style>body{font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;max-width:680px;margin:0 auto;padding:24px 18px;color:#14224F;background:#F4F5F8}h1{font-size:1.6rem}h2{font-size:1.1rem;margin-top:1.6em}a{color:#2340A0}@media(prefers-color-scheme:dark){body{background:#0D1533;color:#E6E9F5}a{color:#FFD66E}}</style></head><body>
-<h1>Viaticum · Privacy e condizioni</h1>
-<p>Ultimo aggiornamento: 8 novembre 2026.</p>
-<h2>Che dati usa Viaticum</h2>
-<p>Viaticum funziona senza account: viaggi, spese e liste restano salvati nel tuo dispositivo. Se scegli di accedere con Google o Apple, riceviamo solo il tuo indirizzo email e l'identificativo dell'account, usati unicamente per riconoscerti.</p>
-<h2>Sincronizzazione</h2>
-<p>Con l'account attivo, i tuoi viaggi, le spese, le liste e le opzioni di costo vengono salvati su un database (Supabase) protetto, leggibile solo da te. Puoi eliminare i dati dal cloud in qualsiasi momento dalle impostazioni dell'app.</p>
-<h2>Rapporti anonimi sugli errori</h2>
-<p>Se una parte dell'app va in errore, l'app invia al database (Supabase) solo il tipo di errore, il punto del codice in cui è successo, la versione dell'app e se la usi da sito, da app installata o da Android. Non vengono inviati viaggi, nomi, email, posizione o altri dati personali, e i rapporti non sono collegati al tuo account. Puoi disattivarli in qualsiasi momento dalle impostazioni («Rapporti anonimi sugli errori»).</p>
-<h2>Biglietti e carte d'imbarco</h2>
-<p>Le foto, i PDF e i codici dei biglietti e delle carte d'imbarco che aggiungi vengono letti sul telefono e restano solo sul telefono: non vengono sincronizzati né inviati a nessuno.</p>
-<h2>Lingua dell'app</h2>
-<p>L'interfaccia in inglese è tradotta dentro l'app: nessun testo viene inviato a servizi di traduzione.</p>
-<h2>Percorsi a piedi sulla mappa</h2>
-<p>Per disegnare i tratti a piedi lungo le strade, l'app invia le coordinate dei punti del tratto al servizio di percorsi di OpenStreetMap (routing.openstreetmap.de). Il risultato resta salvato sul tuo telefono; non viene inviato nessun altro dato.</p>
-<h2>La tua posizione</h2>
-<p>Se tocchi il pulsante della posizione sulla mappa, il telefono te lo chiede e Viaticum la legge solo mentre la mappa è aperta e lo schermo è acceso. La posizione resta sul dispositivo: non viene salvata, né inviata a nessuno. Il tracciato del percorso fatto e la bussola vivono solo in memoria finché la posizione è accesa. Solo se tocchi «Percorso a piedi», le coordinate della tua posizione e della tappa vengono inviate al servizio di percorsi di OpenStreetMap (routing.openstreetmap.de) per disegnare il tragitto. Puoi spegnerla in qualsiasi momento dal pulsante o dalle impostazioni del telefono.</p>
-<h2>Meteo, mappe e ricerche</h2>
-<p>Per mostrare il meteo l'app invia le coordinate della città del viaggio a Open-Meteo (open-meteo.com). Le mappe scaricano le tessere da OpenStreetMap, e la ricerca di luoghi e locali usa Nominatim e Overpass, anch'essi di OpenStreetMap. Questi servizi ricevono, come qualsiasi sito, l'indirizzo IP del tuo telefono insieme alla zona richiesta; non ricevono il tuo nome, la tua email né altri dati del tuo account.</p>
-<h2>Cambio valuta</h2>
-<p>Per le città fuori dall'euro l'app scarica il cambio del giorno da Frankfurter (frankfurter.dev, dati della Banca centrale europea), inviando solo il codice della valuta (per esempio GBP).</p>
-<h2>Offrimi un caffè</h2>
-<p>Nella versione web, nelle impostazioni, c'è il pulsante «Offrimi un caffè»: se lo tocchi si apre la pagina di Buy Me a Coffee (buymeacoffee.com/viaticum), un servizio esterno con una sua informativa. L'app non invia loro alcun dato e non vede i pagamenti. Nell'app Android il pulsante non c'è.</p>
-<h2 id="cancellazione">Cancellare i tuoi dati e l'account</h2>
-<p>Dalle impostazioni dell'app puoi eliminare i dati salvati nel cloud. I dati sul telefono si cancellano disinstallando l'app o dalle impostazioni del telefono. Per chiedere anche la cancellazione dell'account, scrivi a support.viaticum@gmail.com dall'indirizzo con cui hai effettuato l'accesso: l'account e tutti i dati collegati vengono eliminati entro 30 giorni.</p>
-<h2>Condivisione</h2>
-<p>Non vendiamo né condividiamo i tuoi dati con terzi e non mostriamo pubblicità.</p>
-<h2>Condizioni d'uso</h2>
-<p>Viaticum è fornita «così com'è». Orari, prezzi e aperture dei locali sono indicativi: verifica sempre le informazioni ufficiali prima di partire.</p>
-<h2>Licenze e crediti</h2>
-<p>Le icone di Viaticum sono le icone a linea di Lucide (lucide.dev), distribuite con licenza ISC (© Lucide Contributors; alcune derivano da Feather, © Cole Bemis, licenza MIT). I caratteri tipografici sono Outfit per i titoli (© The Outfit Project Authors) e Figtree per i testi (© The Figtree Project Authors), entrambi con licenza SIL Open Font License 1.1, e sono inclusi nell'app: non vengono caricati da siti esterni.</p>
-<p style="font-size:.85em;opacity:.8">ISC License. Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies. THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.</p>
-<p>Le mappe usano dati © contributori di OpenStreetMap.</p>
-<p>I biglietti: la lettura dei codici usa jsQR 1.4.0 (licenza Apache 2.0, © Cosmo Wolfe), ZXing per JavaScript 0.21.3 (licenza Apache 2.0, © ZXing authors) per Aztec e PDF417, e pdf.js 3.11.174 (licenza Apache 2.0, © Mozilla Foundation) per aprire i biglietti in PDF e il disegno dei codici QR usa qrcode-generator 1.4.4 (licenza MIT, © Kazuhiko Arase); nell'app Android il disegno dei codici nei widget usa ZXing (licenza Apache 2.0). Le foto dei biglietti restano solo sul tuo telefono.</p>
-<p>Le mappe sono disegnate con Leaflet 1.9.4 (licenza BSD 2-Clause, © 2010-2023 Volodymyr Agafonkin, © 2010-2011 CloudMade) e la sincronizzazione usa la libreria @supabase/supabase-js (licenza MIT). Entrambe sono incluse nell'app e non vengono caricate da siti esterni.</p>
-<h2>Contatti</h2>
-<p>Per domande o per chiedere la cancellazione dei dati: support.viaticum@gmail.com.</p>
-<p><a href="./">← Torna a Viaticum</a></p>
-</body></html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacy · Viaticum</title>
+<meta name="description" content="Come Viaticum tratta i tuoi dati: i viaggi restano sul telefono, l'account è facoltativo.">
+<link rel="icon" href="icon-192.png?v=3">
+<link rel="stylesheet" href="pagine.css">
+</head>
+<body>
+<header class="top"><div class="in">
+  <a class="brand" href="./"><img src="icon-192.png?v=3" alt="">Viaticum</a>
+  <nav><a href="./">Apri l'app</a><a href="supporto.html">Supporto</a><a href="privacy.html" aria-current="page">Privacy</a><a href="press/">Stampa</a></nav>
+</div></header>
+<div class="hero"><div class="in">
+  <h1 data-l="it">Privacy e condizioni</h1><h1 data-l="en" hidden>Privacy and terms</h1>
+  <p data-l="it">In breve: i viaggi restano sul tuo telefono. Account e viaggio condiviso sono facoltativi, e non c'è pubblicità.</p>
+  <p data-l="en" hidden>In short: your trips stay on your phone. The account and shared trips are optional, and there are no ads.</p>
+  <div class="lang"><a class="btn on-hero" href="#it" data-set="it">Italiano</a><a class="btn on-hero" href="#en" data-set="en">English</a></div>
+</div></div>
+
+<main class="wrap">
+<section data-l="it" lang="it">
+  <p class="small">Ultimo aggiornamento: 26 novembre 2026 · Vale per l'app web su noname21-spec.github.io/viatico e per le app su Google Play e App Store.</p>
+
+  <h2>Chi è il titolare</h2>
+  <p>Viaticum è sviluppata da <b>Matteo De Vincenti</b> (Bologna), sviluppatore indipendente, titolare del trattamento per i dati descritti qui. Contatti: <a href="mailto:support.viaticum@gmail.com">support.viaticum@gmail.com</a>.</p>
+
+  <h2>Cosa resta sul tuo telefono</h2>
+  <p>Viaticum funziona senza account: viaggi, tappe, spese, liste, pasti scelti e impostazioni sono salvati nella memoria del telefono o del browser. Le foto, i PDF e i codici di biglietti e carte d'imbarco vengono letti sul telefono e restano lì: non vengono sincronizzati né inviati a nessuno. Anche le notifiche con la tappa in corso sono create sul telefono.</p>
+
+  <h2>Account e sincronizzazione (facoltativi)</h2>
+  <p>Se scegli di accedere con Google o Apple riceviamo il tuo indirizzo email e l'identificativo dell'account, usati solo per riconoscerti. Con l'account attivo, viaggi, spese, liste e opzioni di costo vengono salvati su un database (Supabase, server nell'Unione europea, Irlanda), leggibile solo da te. Biglietti e carte d'imbarco non vengono mai sincronizzati.</p>
+
+  <h2>Viaggio condiviso (facoltativo)</h2>
+  <p>Se condividi un viaggio con altre persone, date, voli, alloggio, tappe, biglietti prenotati, orari, spese, rimborsi e i nomi che hai scritto vengono salvati sul database con un codice di 6 caratteri, insieme a un codice casuale del dispositivo che ha fatto l'ultima modifica. Chi ha il codice può vedere e modificare quel viaggio: condividilo solo con chi viaggia con te. Per cancellare un viaggio condiviso scrivici indicando il codice.</p>
+
+  <h2>Rapporti anonimi sugli errori</h2>
+  <p>Se una parte dell'app va in errore, l'app invia al database solo il tipo di errore, il punto del codice, la versione dell'app e se la usi da sito, da app installata, da Android o da iPhone. Nessun viaggio, nome, email o posizione, e nessun collegamento al tuo account. Puoi spegnerli dalle impostazioni («Rapporti anonimi sugli errori»).</p>
+
+  <h2>La tua posizione</h2>
+  <p>Solo se tocchi il pulsante della posizione sulla mappa: il telefono te lo chiede e Viaticum la legge mentre la mappa è aperta e lo schermo è acceso. Resta sul dispositivo e non viene salvata. Solo se tocchi «Percorso a piedi», le coordinate della tua posizione e della tappa vengono inviate al servizio di percorsi di OpenStreetMap (routing.openstreetmap.de) per disegnare il tragitto.</p>
+
+  <h2>Servizi esterni che l'app usa</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Servizio</th><th>Cosa riceve</th><th>Quando</th></tr>
+    <tr><td><b>OpenStreetMap</b> (tessere della mappa, Nominatim, Overpass, routing.openstreetmap.de)</td><td>La zona della mappa, le ricerche di luoghi e locali, i punti dei tratti a piedi</td><td>Quando usi la mappa o cerchi un luogo</td></tr>
+    <tr><td><b>Open-Meteo</b> (open-meteo.com)</td><td>Le coordinate della città del viaggio</td><td>Per il meteo</td></tr>
+    <tr><td><b>Frankfurter</b> (frankfurter.dev, dati BCE)</td><td>Solo il codice della valuta, per esempio GBP</td><td>Per le città fuori dall'euro</td></tr>
+    <tr><td><b>Google Maps</b></td><td>La destinazione che scegli</td><td>Solo se tocchi «Portami lì» o «Cerca su Maps»: si apre l'app o il sito di Google Maps</td></tr>
+    <tr><td><b>Supabase</b> (UE)</td><td>Account, sincronizzazione, viaggi condivisi, rapporti sugli errori</td><td>Solo per le funzioni che attivi</td></tr>
+  </table></div>
+  <p>Come qualsiasi sito, questi servizi vedono l'indirizzo IP del telefono; non ricevono il tuo nome, la tua email né altri dati del tuo account. L'app è ospitata su GitHub Pages, che può registrare l'indirizzo IP nei log tecnici. L'interfaccia in inglese è tradotta dentro l'app, senza servizi di traduzione.</p>
+
+  <h2>Offrimi un caffè</h2>
+  <p>Solo nella versione web c'è il pulsante «Offrimi un caffè»: apre Buy Me a Coffee (buymeacoffee.com/viaticum), un servizio esterno con una sua informativa. L'app non invia loro dati e non vede i pagamenti. Nelle app di Google Play e App Store il pulsante non c'è.</p>
+
+  <h2>Cosa non facciamo</h2>
+  <p>Niente pubblicità, niente profilazione, niente tracciamento tra app e siti, niente vendita o cessione dei dati.</p>
+
+  <h2>Base giuridica e diritti</h2>
+  <p>Trattiamo i dati delle funzioni online solo per fornirti il servizio che hai scelto (art. 6.1.b GDPR) e, per i rapporti anonimi sugli errori, per il legittimo interesse a far funzionare l'app (art. 6.1.f). Puoi chiedere accesso, rettifica, cancellazione, limitazione e portabilità, e opporti al trattamento (artt. 15–22 GDPR), scrivendo all'indirizzo qui sopra. Puoi anche reclamare al Garante per la protezione dei dati personali (garanteprivacy.it).</p>
+
+  <h2 id="elimina">Cancellare i dati e l'account</h2>
+  <ul>
+    <li><b>Dati sul telefono:</b> impostazioni › «Cancella tutti i dati», oppure disinstalla l'app.</li>
+    <li><b>Account e dati nel cloud:</b> impostazioni › tocca il tuo account › «Elimina l'account». I viaggi sincronizzati vengono cancellati subito, e con loro l'account. L'accesso resta solo se lo usi anche per altre app dello stesso sviluppatore.</li>
+    <li><b>Senza l'app:</b> scrivi a <a href="mailto:support.viaticum@gmail.com">support.viaticum@gmail.com</a> dall'indirizzo con cui hai fatto l'accesso. Eliminiamo account e dati entro 30 giorni e te lo confermiamo.</li>
+  </ul>
+
+  <h2>Minori</h2>
+  <p>Viaticum non è pensata per bambini e non raccoglie consapevolmente dati di minori di 14 anni.</p>
+
+  <h2>Condizioni d'uso</h2>
+  <p>Viaticum è fornita «così com'è». Orari, prezzi e aperture sono indicativi: controlla sempre le informazioni ufficiali prima di partire.</p>
+</section>
+
+<section data-l="en" lang="en" hidden>
+  <p class="small">Last updated: 26 November 2026 · Applies to the web app at noname21-spec.github.io/viatico and to the Google Play and App Store apps.</p>
+
+  <h2>Who is responsible</h2>
+  <p>Viaticum is developed by <b>Matteo De Vincenti</b> (Bologna, Italy), an independent developer and the data controller for the data described here. Contact: <a href="mailto:support.viaticum@gmail.com">support.viaticum@gmail.com</a>.</p>
+
+  <h2>What stays on your phone</h2>
+  <p>Viaticum works without an account: trips, stops, expenses, lists, chosen meals and settings are stored on your phone or in your browser. Photos, PDFs and codes of tickets and boarding passes are read on the phone and stay there: they are never synced or sent anywhere. Notifications with the current stop are created on the phone too.</p>
+
+  <h2>Account and sync (optional)</h2>
+  <p>If you sign in with Google or Apple we receive your email address and account identifier, used only to recognise you. With an account, trips, expenses, lists and cost options are saved in a database (Supabase, servers in the EU, Ireland) that only you can read. Tickets and boarding passes are never synced.</p>
+
+  <h2>Shared trips (optional)</h2>
+  <p>If you share a trip with others, dates, flights, stay, stops, booked tickets and times, expenses, refunds and the names you entered are saved in the database under a 6-character code, together with a random code of the device that made the last change. Anyone with the code can see and edit that trip, so share it only with your travel companions. To delete a shared trip, write to us with its code.</p>
+
+  <h2>Anonymous error reports</h2>
+  <p>If part of the app fails, it sends only the type of error, the place in the code, the app version and whether you use the website, the installed app, Android or iPhone. No trips, names, email or location, and no link to your account. You can turn them off in settings.</p>
+
+  <h2>Your location</h2>
+  <p>Only if you tap the location button on the map: your phone asks for permission and Viaticum reads it while the map is open and the screen is on. It stays on the device and is not saved. Only if you tap “Walking route” are your position and the stop sent to OpenStreetMap's routing service (routing.openstreetmap.de) to draw the way.</p>
+
+  <h2>External services</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Service</th><th>What it receives</th><th>When</th></tr>
+    <tr><td><b>OpenStreetMap</b> (map tiles, Nominatim, Overpass, routing.openstreetmap.de)</td><td>The map area, searches for places, the points of walking routes</td><td>When you use the map or search</td></tr>
+    <tr><td><b>Open-Meteo</b> (open-meteo.com)</td><td>The coordinates of the trip city</td><td>For the weather</td></tr>
+    <tr><td><b>Frankfurter</b> (frankfurter.dev, ECB data)</td><td>Only the currency code, e.g. GBP</td><td>For cities outside the euro</td></tr>
+    <tr><td><b>Google Maps</b></td><td>The destination you choose</td><td>Only if you tap “Take me there” or “Search on Maps”</td></tr>
+    <tr><td><b>Supabase</b> (EU)</td><td>Account, sync, shared trips, error reports</td><td>Only for the features you turn on</td></tr>
+  </table></div>
+  <p>Like any website, these services see your phone's IP address; they don't receive your name, email or account data. The app is hosted on GitHub Pages, which may record IP addresses in technical logs. The English interface is translated inside the app, without translation services.</p>
+
+  <h2>Buy me a coffee</h2>
+  <p>Only the web version has a “Buy me a coffee” button, which opens Buy Me a Coffee (buymeacoffee.com/viaticum), an external service with its own policy. The app sends them no data and doesn't see payments. The Google Play and App Store apps don't have the button.</p>
+
+  <h2>What we don't do</h2>
+  <p>No ads, no profiling, no tracking across apps and websites, no selling or sharing of data.</p>
+
+  <h2>Legal basis and your rights</h2>
+  <p>We process online-feature data only to provide the service you chose (Art. 6(1)(b) GDPR) and, for anonymous error reports, our legitimate interest in keeping the app working (Art. 6(1)(f)). You can request access, rectification, erasure, restriction and portability, and object to processing (Arts. 15–22 GDPR) by writing to the address above. You can also complain to the Italian data protection authority (garanteprivacy.it) or your local authority.</p>
+
+  <h2 id="delete">Deleting your data and account</h2>
+  <ul>
+    <li><b>Data on the phone:</b> settings › “Delete all data”, or uninstall the app.</li>
+    <li><b>Account and cloud data:</b> settings › tap your account › “Delete account”. Synced trips and the account are deleted immediately. The sign-in is kept only if you also use it for other apps by the same developer.</li>
+    <li><b>Without the app:</b> write to <a href="mailto:support.viaticum@gmail.com">support.viaticum@gmail.com</a> from the address you signed in with. We delete the account and data within 30 days and confirm it.</li>
+  </ul>
+
+  <h2>Children</h2>
+  <p>Viaticum is not meant for children and does not knowingly collect data from children under 14.</p>
+
+  <h2>Terms of use</h2>
+  <p>Viaticum is provided “as is”. Times, prices and opening hours are indicative: always check official information before you go.</p>
+</section>
+
+<h2>Licenze e crediti · Licences and credits</h2>
+<p class="small">Le icone di Viaticum sono le icone a linea di Lucide (lucide.dev), licenza ISC (© Lucide Contributors; alcune derivano da Feather, © Cole Bemis, licenza MIT). Le icone 3D sono Fluent Emoji di Microsoft (licenza MIT, © Microsoft Corporation). I caratteri sono Outfit (© The Outfit Project Authors) e Figtree (© The Figtree Project Authors), licenza SIL Open Font License 1.1, inclusi nell'app e non caricati da siti esterni.</p>
+<p class="small">ISC License. Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies. THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.</p>
+<p class="small">Le mappe usano dati © contributori di OpenStreetMap e sono disegnate con Leaflet 1.9.4 (licenza BSD 2-Clause, © 2010-2023 Volodymyr Agafonkin, © 2010-2011 CloudMade). La sincronizzazione usa @supabase/supabase-js (licenza MIT). La lettura dei codici dei biglietti usa jsQR 1.4.0 (licenza Apache 2.0, © Cosmo Wolfe), ZXing per JavaScript 0.21.3 (licenza Apache 2.0, © ZXing authors) per Aztec e PDF417 e pdf.js 3.11.174 (licenza Apache 2.0, © Mozilla Foundation); il disegno dei codici QR usa qrcode-generator 1.4.4 (licenza MIT, © Kazuhiko Arase); nell'app Android i codici nei widget usano ZXing (licenza Apache 2.0). Tutte le librerie sono incluse nell'app.</p>
+</main>
+<footer><div class="in"><span>© 2026 Matteo De Vincenti</span><a href="supporto.html">Supporto</a><a href="press/">Kit stampa</a><a href="mailto:support.viaticum@gmail.com">support.viaticum@gmail.com</a></div></footer>
+<script src="pagine.js"></script>
+</body>
+</html>
