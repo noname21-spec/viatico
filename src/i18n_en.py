@@ -1,6 +1,14 @@
 # Dizionario IT -> EN dell'interfaccia (corrispondenza esatta del testo, spazi ignorati).
 # I testi delle guide delle città restano in italiano.
 D = {
+"Dalle impostazioni, «Cancella tutti i dati» elimina viaggi, spese e liste da questo telefono. Se hai fatto l'accesso, tocca il tuo account nelle impostazioni e scegli «Elimina l'account»: cancella i viaggi salvati nel cloud e l'account.": "In settings, «Delete all data» removes trips, expenses and lists from this phone. If you are signed in, tap your account in settings and choose «Delete account»: it removes the trips saved in the cloud and the account.",
+'💬 Supporto': '💬 Support', 'Supporto': 'Support',
+# v344 eliminazione dell'account
+"Elimina l'account": 'Delete account', "Elimino l'account…": 'Deleting the account…',
+"Eliminare l'account? Cancello i viaggi salvati nel cloud e il tuo accesso (se non lo usi per altre app dello stesso sviluppatore). Su questo dispositivo i viaggi restano.": 'Delete your account? I will remove the trips saved in the cloud and your sign-in (unless you use it for other apps by the same developer). Trips on this device stay.',
+"Account eliminato. I viaggi su questo dispositivo restano: puoi cancellarli dalle impostazioni o disinstallando l'app.": 'Account deleted. Trips on this device stay: you can remove them in settings or by uninstalling the app.',
+"Non riesco a eliminare l'account. Riprova tra poco o scrivi a support.viaticum@gmail.com.": "I can't delete the account. Try again shortly or write to support.viaticum@gmail.com.",
+"Per eliminare l'account serve internet": 'You need internet to delete the account',
 # v285 orario prenotato
 'Ho prenotato un altro orario': 'I booked a different time', 'Ho un orario prenotato qui': 'I have a booked time here',
 'Prenota sul sito ufficiale ↗': 'Book on the official site ↗', 'Cerca i biglietti ufficiali ↗': 'Find the official tickets ↗',

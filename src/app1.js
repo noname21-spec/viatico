@@ -1,4 +1,6 @@
-window.__IS_APP=location.hostname==='localhost'&&location.protocol==='https:'&&/Android/.test(navigator.userAgent);
+window.__IS_APP=(location.hostname==='localhost'&&location.protocol==='https:'&&/Android/.test(navigator.userAgent))||(function(){try{var C=window.Capacitor;return!!(C&&C.isNativePlatform&&C.isNativePlatform())}catch(e){return false}})();
+/* v344 app per iPhone (Capacitor, capacitor://localhost): stessa app, senza widget Android né «Offrimi un caffè» */
+window.__IS_IOS_APP=(function(){try{var C=window.Capacitor;return!!(C&&C.getPlatform&&C.getPlatform()==='ios')}catch(e){return false}})();
 /* ===== nucleo: configurazione, pianificazione, sezioni ===== */
 (function(){
 "use strict";
@@ -1633,7 +1635,7 @@ var LSCR={};function loadLib(src){if(LSCR[src])return LSCR[src];return LSCR[src]
 function imgOf(file){return new Promise(function(ok,ko){var u=URL.createObjectURL(file),im=new Image();im.onload=function(){ok(im)};im.onerror=ko;im.src=u})}
 function tixDraw(box,o){box.innerHTML="";if(o.t&&o.ci&&o.f&&o.f!=="qr_code"){var ic=new Image();ic.src=o.ci;ic.alt="Codice";ic.className="tixc tixci"+(o.f==="pdf417"?" wide":"");box.appendChild(ic);return}if(o.t&&(o.f==="qr_code"||!o.f)){loadLib("lib/qrcode.min.js").then(function(){var q=qrcode(0,"M");q.addData(o.t);q.make();var n=q.getModuleCount(),cs=Math.max(4,Math.floor(560/(n+8))),cv=document.createElement("canvas");cv.width=cv.height=cs*(n+8);var g=cv.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,cv.width,cv.height);g.fillStyle="#000";for(var r=0;r<n;r++)for(var c=0;c<n;c++)if(q.isDark(r,c))g.fillRect((c+4)*cs,(r+4)*cs,cs,cs);cv.className="tixc";cv.setAttribute("role","img");cv.setAttribute("aria-label","Codice del biglietto");box.appendChild(cv)}).catch(function(){if(o.img){var im=new Image();im.src=o.img;im.className="tixi";box.appendChild(im)}})}
  else if(o.img){var im=new Image();im.src=o.img;im.alt="Biglietto";im.className="tixi";box.appendChild(im)}}
-function tixBright(on){try{var C=window.Capacitor;if(C&&C.isNativePlatform&&C.isNativePlatform()){var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));if(pl&&pl.bright)pl.bright({on:!!on}).catch(function(){})}}catch(e){}}
+function tixBright(on){try{var C=window.Capacitor;if(C&&C.getPlatform&&C.getPlatform()==="android"){var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));if(pl&&pl.bright)pl.bright({on:!!on}).catch(function(){})}}catch(e){}}
 var TIXWL=null;
 function tixOpen(id){var o=tixGet(id);if(!o){tixPick(id,function(){tixOpen(id)});return}var q=S[id]||{},old=$("#tixo");if(old)old.remove();
  var el=document.createElement("div");el.id="tixo";el.className="tixo";el.setAttribute("role","dialog");el.setAttribute("aria-modal","true");el.setAttribute("aria-label","Biglietto: "+(q.t||""));
@@ -1647,7 +1649,7 @@ function tixOpen(id){var o=tixGet(id);if(!o){tixPick(id,function(){tixOpen(id)})
  $(".tixd",el).addEventListener("click",function(){var keep=tixGet(id);tixSet(id,null);close();renderAll();if(window.__undoToast)__undoToast("Biglietto eliminato","Annulla",function(){tixSet(id,keep);renderAll()});else toast("Biglietto eliminato")})}
 window.__tixOpen=tixOpen;
 /* v286 lettura dei codici: prima ZXing nativo (APK), poi il lettore del browser, poi jsQR e ZXing in JavaScript */
-function nPlug(){try{var C=window.Capacitor;if(C&&C.isNativePlatform&&C.isNativePlatform())return(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"))}catch(e){}return null}
+function nPlug(){try{var C=window.Capacitor;if(C&&C.getPlatform&&C.getPlatform()==="android")return(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"))}catch(e){}return null}
 function codesOf(cv){var out=[],seen={};function add(t,f,b){if(!t||seen[t])return;seen[t]=1;out.push({t:t,f:f||"qr_code",b:b||null})}
  var pl=nPlug(),p=Promise.resolve();
  if(pl&&pl.decode)p=p.then(function(){return pl.decode({png:cv.toDataURL("image/png").split(",")[1]})}).then(function(r){((r&&r.codes)||[]).forEach(function(x){add(x.t,x.f,x.b)})}).catch(function(){});
@@ -1839,9 +1841,9 @@ function wgAct(a){if(!a)return;var n=0;function tab(k){var r=$("#t-"+k);if(r){r.
  function ready(){return CFG&&TRIP&&$(".tabbar")&&!(destEl&&destEl.classList.contains("on"))}
  function run(){try{if(a==="late"){tab("itinerario");setTimeout(function(){lateAsk(false)},350)}else if(a==="spend"){tab("costi");setTimeout(function(){openExp(null)},450)}else if(a==="map")tab("mappa");else if(a==="tix"&&window.__tixImport)window.__tixImport()}catch(e){}}
  if(ready()){run();return}if(window.__openNext)window.__openNext();var iv=setInterval(function(){if(ready()&&++n>1){clearInterval(iv);run()}else if(++n>40)clearInterval(iv)},300)}
-function wgActPoll(){try{var C=window.Capacitor;if(!C||!(C.isNativePlatform&&C.isNativePlatform()))return;var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));if(!pl||!pl.act)return;pl.act().then(function(r){if(r&&r.a)wgAct(r.a)}).catch(function(){})}catch(e){}}
+function wgActPoll(){try{var C=window.Capacitor;if(!C||!(C.getPlatform&&C.getPlatform()==="android"))return;var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));if(!pl||!pl.act)return;pl.act().then(function(r){if(r&&r.a)wgAct(r.a)}).catch(function(){})}catch(e){}}
 /* v291 interruttore della notifica «in corso» (Now Bar dei Samsung), solo nell'app Android */
-function liveUi(){try{var C=window.Capacitor;if(!C||!(C.isNativePlatform&&C.isNativePlatform()))return;var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));var lb=$("#livet"),cb=$("#livec"),sm=$("#lives");if(!pl||!pl.liveGet||!lb||!cb||cb.__w)return;cb.__w=1;
+function liveUi(){try{var C=window.Capacitor;if(!C||!(C.getPlatform&&C.getPlatform()==="android"))return;var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));var lb=$("#livet"),cb=$("#livec"),sm=$("#lives");if(!pl||!pl.liveGet||!lb||!cb||cb.__w)return;cb.__w=1;
  var base=sm?sm.textContent:"",bx=$("#liveb");function show(r){if("on" in r)cb.checked=!!r.on;if(sm)sm.textContent=cb.checked&&r.perm===false?"Le notifiche di Viaticum sono spente nelle impostazioni del telefono: attivale per vederla.":cb.checked&&r.known&&r.promo===false?"Le notifiche live di Viaticum sono spente nel telefono: tocca «Impostazioni delle notifiche» e attivale.":base;if(bx)bx.hidden=!cb.checked}
  /* v298 scorciatoia alle impostazioni delle notifiche (la prova era solo per il collaudo) */
  var bs=$("#liveset"); if(bs&&pl.liveSettings)bs.addEventListener("click",function(){pl.liveSettings().then(function(r){if(!r.ok)toast("Apri Impostazioni › Notifiche › Viaticum")}).catch(function(){toast("Apri Impostazioni › Notifiche › Viaticum")})});
@@ -1850,7 +1852,7 @@ function liveUi(){try{var C=window.Capacitor;if(!C||!(C.isNativePlatform&&C.isNa
  cb.addEventListener("change",function(){pl.liveSet({on:cb.checked}).then(function(r){show(r);toast(r.on?"Viaggio in corso: attivo":"Viaggio in corso: spento")}).catch(function(){})})}catch(e){}}
 setTimeout(liveUi,1600);
 window.addEventListener("viaact",wgActPoll);setTimeout(wgActPoll,1500);window.__wgAct=wgAct;
-function wgPush(){try{var C=window.Capacitor;if(!C||!(C.isNativePlatform&&C.isNativePlatform()))return;wgWx();var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));if(!pl||!pl.save)return;var sn=wgSnap();pl.save({json:JSON.stringify(sn)}).catch(function(){});wgSky(pl,sn)}catch(e){}}
+function wgPush(){try{var C=window.Capacitor;if(!C||!(C.getPlatform&&C.getPlatform()==="android"))return;wgWx();var pl=(C.Plugins&&C.Plugins.ViaWidget)||(C.registerPlugin&&C.registerPlugin("ViaWidget"));if(!pl||!pl.save)return;var sn=wgSnap();pl.save({json:JSON.stringify(sn)}).catch(function(){});wgSky(pl,sn)}catch(e){}}
 document.addEventListener("visibilitychange",function(){if(document.hidden)wgPush()});setInterval(function(){if(!document.hidden)wgPush()},5*60*1000);
 var BOOT=true;
 function renderAll(){if(!CFG)return;if(PAR.flush)PAR.flush();TRIP=buildTrip(CFG);try{lateApply(TRIP)}catch(e){}var ti=todayIdx();SEL=ti>=0?ti:Math.min(SEL,TRIP.n-1);if(SEL<0)SEL=0;P=TRIP.days[SEL];WD=P.wd;lastNow=-2;
