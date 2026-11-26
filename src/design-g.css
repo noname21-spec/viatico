@@ -1215,7 +1215,7 @@ body.scrolled .wx .wxd{display:none}
 #dest .dbrand .dgear{width:44px!important;height:44px!important}
 
 /* v139 Android: skyline più leggero */
-html.scr svg.sky *,svg.sky.off *{animation-play-state:paused!important}
+html.scr svg.sky *,svg.sky.off *,svg.sky.scp *{animation-play-state:paused!important}
 svg.sky.sk-fix .mon,svg.sky.sk-fix .hills{animation:none!important;opacity:1!important;transform:none!important}
 
 /* v140 ingranaggio allineato in verticale al meteo e al titolo, anche a barra compatta */
@@ -4458,3 +4458,19 @@ html body #dpick:is(.dsc,.dpf) .dpband .skd{opacity:0;transition:opacity .2s}
 :root[data-theme="dark"] body #dpick .dpband .dsearch.dsearch.dsearch:focus-within,:root:has(#dm:checked) body #dpick .dpband .dsearch.dsearch.dsearch:focus-within{box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 0 0 2px #FFD66E,0 14px 32px rgba(0,0,0,.7)!important}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #dpick .dsearch .dsh{color:#B9BCC8}}
 :root[data-theme="dark"] #dpick .dsearch .dsh{color:#B9BCC8}
+
+/* v345 variabili della dissolvenza ai bordi: non ereditate, così cambiarle non ricalcola lo stile di tutta la sezione */
+@property --mt{syntax:"<length>";inherits:false;initial-value:0px}
+@property --mb{syntax:"<length>";inherits:false;initial-value:0px}
+/* v345 niente zoom della pagina con il pizzico, senza codice che blocca lo scorrimento (la mappa gestisce il suo) */
+html{touch-action:pan-x pan-y}
+/* v345 su Android (modalità leggera) niente maschera sfumata sui contenitori che scorrono: costringeva a ridisegnare tutta la sezione a ogni fotogramma */
+html.lite .blk{-webkit-mask-image:none!important;mask-image:none!important}
+/* v345 la barra in alto si compatta senza spostare né ridimensionare le sezioni che scorrono.
+   Prima «top» e «height» delle sezioni avevano una transizione legata alla barra: all'inizio di ogni scorrimento
+   tutto il contenuto veniva rimpaginato per un quarto di secondo (scatti). Ora la sezione resta ferma alla misura
+   della barra compatta e lo spazio della barra alta è un margine interno che scorre via con il contenuto. */
+html body main>.blk:is(#itinerario,#mappa,#mangiare,#costi,#consigli),html body main>.blk{top:calc(60px + 4px + env(safe-area-inset-top,0px))!important;padding-top:calc(94px - 60px)!important;scroll-padding-top:calc(94px - 60px)!important;transition:background-color .5s ease,color .5s ease!important}
+html.sa body main>.blk{height:calc(var(--apph) - 60px - 4px - env(safe-area-inset-top,0px) - var(--tb) - 24px + 34px - env(safe-area-inset-bottom,0px)*.45)!important}
+html.ios.ios.ios body main>.blk:is(#itinerario,#mappa,#mangiare,#costi,#consigli),html.ios.ios.ios body.scrolled main>.blk.on:is(#itinerario,#mappa,#mangiare,#costi,#consigli){top:0!important;padding-top:calc(94px + 4px + env(safe-area-inset-top,0px))!important;scroll-padding-top:calc(94px + 4px + env(safe-area-inset-top,0px))!important;transition:none!important}
+html.ios.ios.ios.sa body main>.blk{height:auto!important}

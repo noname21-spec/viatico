@@ -53,15 +53,19 @@ var idleT=0,held=[],lastTouch=0;
 function holdAnims(){try{document.getAnimations().forEach(function(a){var t=a.effect&&a.effect.getComputedTiming?a.effect.getComputedTiming():null;if(t&&t.iterations===Infinity&&a.playState==="running"){a.pause();held.push(a)}})}catch(e){}}
 function wakeAnims(){var n=Date.now();if(!held.length&&n-lastTouch<1500)return;lastTouch=n;if(held.length){held.forEach(function(a){try{a.play()}catch(e){}});held=[]}clearTimeout(idleT);idleT=setTimeout(holdAnims,12000)}
 ["pointerdown","pointermove","keydown","touchstart","wheel"].forEach(function(e){addEventListener(e,wakeAnims,{passive:true,capture:true})});
-addEventListener("scroll",wakeAnims,{passive:true,capture:true});
+/* v345 mentre scorri le animazioni decorative senza fine (stelle, nuvole, foglie, uccelli dello skyline e dello sfondo) restano ferme:
+   non si possono comporre sulla scheda grafica e ricalcolavano lo stile a ogni fotogramma. Ripartono 250 ms dopo l'ultimo scorrimento */
+var scP=[],scT=0;function scrollRest(){scT=0;window.__vscroll=false;var l=scP;scP=[];l.forEach(function(a){try{if(a.playState==="paused")a.play()}catch(e){}})}
+function scrollHold(){window.__vscroll=true;window.__vscrollT=Date.now();if(!scT){try{document.getAnimations().forEach(function(a){var t=a.effect&&a.effect.getComputedTiming?a.effect.getComputedTiming():null;var tg=a.effect&&a.effect.target;if(a.playState==="running"&&t&&(t.iterations===Infinity||(tg&&tg.closest&&tg.closest("svg")))){a.pause();scP.push(a)}})}catch(e){}}clearTimeout(scT);scT=setTimeout(scrollRest,250)}
+addEventListener("scroll",scrollHold,{passive:true,capture:true});
 document.addEventListener("visibilitychange",function(){if(document.hidden){clearTimeout(idleT);holdAnims()}else wakeAnims()});
 [].forEach.call(document.querySelectorAll(".tabr"),function(r){r.addEventListener("change",function(){lastTouch=0;wakeAnims()})});
 wakeAnims();
 
 /* skyline: si ferma mentre scorri e quando non si vede; se resta invisibile viene mostrato fermo */
-(function(){var R=document.documentElement,st=0,act=false;function sk(v){if(window.LITE)return;[].forEach.call(document.querySelectorAll("svg.sky"),function(x){x.classList.toggle("off",v)})}function on(){if(!act){act=true;sk(true)}clearTimeout(st);st=setTimeout(function(){act=false;sk(false)},180)}
+(function(){var R=document.documentElement,st=0,act=false;var vis=[];function sk(v){if(window.LITE)return;/* v345 classe propria (scp): prima «off» si sovrapponeva a quella dell'IntersectionObserver e dopo il primo scorrimento gli skyline fuori schermo ripartivano */(v?vis:[].slice.call(document.querySelectorAll("svg.sky.scp"))).forEach(function(x){x.classList.toggle("scp",v)})}function on(){if(!act){act=true;sk(true)}clearTimeout(st);st=setTimeout(function(){act=false;sk(false)},180)}
 addEventListener("scroll",on,{passive:true,capture:true});
-try{var io=new IntersectionObserver(function(es){es.forEach(function(e){e.target.classList.toggle("off",!e.isIntersecting)})},{threshold:0});
+try{var io=new IntersectionObserver(function(es){es.forEach(function(e){e.target.classList.toggle("off",!e.isIntersecting);var i=vis.indexOf(e.target);if(e.isIntersecting&&i<0)vis.push(e.target);else if(!e.isIntersecting&&i>=0)vis.splice(i,1)})},{threshold:0});
 function watch(){[].forEach.call(document.querySelectorAll("svg.sky:not(.zsk)"),function(s){if(!s.__w){s.__w=1;io.observe(s)}})}watch();setTimeout(watch,1500);setTimeout(watch,4000)}catch(e){}
 setTimeout(function(){[].forEach.call(document.querySelectorAll("svg.sky:not(.zsk)"),function(s){var m=s.querySelector(".mon");if(!m||!s.getBoundingClientRect().width)return;var o=parseFloat(getComputedStyle(m).opacity);var run=false;try{run=m.getAnimations().some(function(x){return x.playState==="running"})}catch(e){}if(o<.05&&!run)s.classList.add("sk-fix")})},4200)})();
 })();

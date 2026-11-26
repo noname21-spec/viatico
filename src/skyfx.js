@@ -23,7 +23,7 @@ function skyLit(sv,f){if(!sv)return;if(f==null)f=litNow(sv);var w=sv.querySelect
  for(var i=0;i<w.length;i++){var on=+w[i].getAttribute("data-o")<f;if(w[i].classList.contains("on")!==on){/* si accendono una dopo l'altra, non tutte insieme */
   w[i].style.transitionDelay=RM0.matches?"":(on?(first?.3:0)+(+w[i].getAttribute("data-o"))*(first?2.4:1.6)*Math.random()+"s":Math.random()*.8+"s");w[i].classList.toggle("on",on);k++}}}
 /* qualche finestra che si accende e si spegne mentre guardi, quando è buio */
-setInterval(function(){if(document.hidden||RM0.matches||window.LITE||document.documentElement.classList.contains("lite"))return;var a=document.querySelectorAll("svg.sky");for(var i=0;i<a.length;i++){var sv=a[i];if(!sv.getClientRects().length)continue;var hh=sv.closest("#hero");if(hh&&hh._lp)continue;
+setInterval(function(){if(document.hidden||RM0.matches||window.LITE||document.documentElement.classList.contains("lite"))return;/* v345 non mentre scorri: getClientRects ricalcola lo stile e dava un piccolo scatto ogni 3,5 s */if(window.__vscroll||Date.now()-(window.__vscrollT||0)<800)return;var a=document.querySelectorAll("svg.sky");for(var i=0;i<a.length;i++){var sv=a[i];if(!sv.getClientRects().length)continue;var hh=sv.closest("#hero");if(hh&&hh._lp)continue;
  var f=litNow(sv);if(f<.15)continue;var w=sv.querySelectorAll(".wn"),n=Math.min(3,1+(Math.random()*3|0));for(var j=0;j<n;j++){var x=w[Math.random()*w.length|0];if(!x)continue;var o=+x.getAttribute("data-o");if(Math.abs(o-f)<.25){x.style.transitionDelay=Math.random()*.6+"s";x.classList.toggle("on")}}}},3500);
 window.skyLit=skyLit;
 setInterval(function(){if(document.hidden)return;var a=document.querySelectorAll("svg.sky");for(var i=0;i<a.length;i++){var hh=a[i].closest("#hero");if(hh&&hh._lp)continue;skyLit(a[i])}},60000);document.addEventListener("visibilitychange",function(){if(document.hidden)return;var a=document.querySelectorAll("svg.sky");for(var i=0;i<a.length;i++){var hh=a[i].closest("#hero");if(!(hh&&hh._lp))skyLit(a[i])}});
@@ -119,7 +119,7 @@ var lastP=null;function persp(p){p=Math.round(p*200)/200;if(p===lastP)return;las
   var m=svg.querySelector(".mons");if(m)m.setAttribute("transform","translate("+(p*2.5).toFixed(2)+" 0)");var b=svg.querySelector(".bk");if(b)b.setAttribute("transform","translate("+(p*1.1).toFixed(2)+" 0)")}
 var last=0,until=0;
 /* l'oscillazione dura qualche secondo e poi si ferma: niente lavoro continuo quando nessuno tocca lo schermo */
-function loop(t){raf=requestAnimationFrame(loop);if(t-last<33)return;last=t;
+function loop(t){raf=requestAnimationFrame(loop);if(t-last<33||window.__vscroll)return;last=t;
   if(t>until)tx=null;
   var target=tx!==null?tx:(t<until?Math.sin(t/2600)*.45:0);px+=(target-px)*.14;persp(px);
   if(t>until&&tx===null&&Math.abs(px)<.004){px=0;persp(0);cancelAnimationFrame(raf);raf=0}}
